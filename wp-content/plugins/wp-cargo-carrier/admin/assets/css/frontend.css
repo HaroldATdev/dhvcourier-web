@@ -1,0 +1,4 @@
+/* WP Cargo Carrier - WPCargo Frontend Styles */
+.btn-xs { padding: .15rem .4rem; font-size: .78rem; }
+table td, table th { vertical-align: middle !important; }
+table code { background:#f4f4f4; padding:2px 5px; border-radius:3px; font-size:.85em; }

@@ -1,0 +1,10 @@
+/* WP Cargo Viáticos - WP Admin Styles */
+.wpcv-status.active  { color: #00a32a; font-weight: 600; }
+.wpcv-status.closed  { color: #888;    font-weight: 600; }
+
+#poststuff #post-body.columns-2 {
+	display: grid;
+	grid-template-columns: 1fr 280px;
+	gap: 20px;
+}
+#postbox-container-1 { float: none; width: auto; }

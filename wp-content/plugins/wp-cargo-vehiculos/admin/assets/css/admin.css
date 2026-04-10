@@ -1,0 +1,24 @@
+/* WP Cargo Vehículos – Admin */
+.wpcvh-badge-vencido { color: #d63638; font-weight: 600; }
+.wpcvh-badge-proximo { color: #996800; font-weight: 600; }
+
+/* Forzar visibilidad del select nativo —
+   WPCargo/Bootstrap a veces los oculta con display:none o visibility:hidden */
+.wrap select[name="tipo"],
+.wrap select[name="tipo_mant"],
+select[name="tipo"],
+select[name="tipo_mant"] {
+	display: block !important;
+	visibility: visible !important;
+	opacity: 1 !important;
+	-webkit-appearance: menulist !important;
+	appearance: menulist !important;
+	width: 100%;
+	max-width: 25em;
+	height: 30px;
+	padding: 0 8px;
+	border: 1px solid #8c8f94;
+	border-radius: 4px;
+	background-color: #fff;
+	font-size: 14px;
+}

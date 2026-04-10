@@ -1,0 +1,8 @@
+/* WP Cargo Vehículos – Frontend */
+.wpcvh-alerta-vencido { background: #fff5f5 !important; }
+.wpcvh-alerta-proximo { background: #fffde7 !important; }
+.wpcvh-km-bar { height: 6px; border-radius: 3px; background: #e2e8f0; overflow: hidden; margin-top: 4px; }
+.wpcvh-km-bar-inner { height: 100%; border-radius: 3px; transition: width .3s; }
+.wpcvh-km-bar-inner.ok      { background: #28a745; }
+.wpcvh-km-bar-inner.proximo { background: #ffc107; }
+.wpcvh-km-bar-inner.vencido { background: #dc3545; }

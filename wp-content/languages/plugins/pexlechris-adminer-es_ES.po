@@ -1,0 +1,44 @@
+# Translation of Plugins - Database Manager &#8211; WP Adminer - Stable (latest release) in Spanish (Spain)
+# This file is distributed under the same license as the Plugins - Database Manager &#8211; WP Adminer - Stable (latest release) package.
+msgid ""
+msgstr ""
+"PO-Revision-Date: 2024-12-03 19:17:00+0000\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: GlotPress/4.0.3\n"
+"Language: es\n"
+"Project-Id-Version: Plugins - Database Manager &#8211; WP Adminer - Stable (latest release)\n"
+
+#: pexlechris-adminer.php:253
+msgid "You haven't access to any database other than the site's database. In order to enable access, you need to add the following line code in the wp-config.php file"
+msgstr "No tienes acceso a ninguna base de datos aparte de la del sitio. Para activar el acceso, tienes que añadir la siguiente línea de código en el archivo wp-config.php"
+
+#: pexlechris-adminer.php:222
+msgid "Open Adminer in a new tab"
+msgstr "Abrir Adminer en una nueva pestaña"
+
+#. Author URI of the plugin
+#: pexlechris-adminer.php
+msgid "https://www.pexlechris.dev"
+msgstr "https://www.pexlechris.dev"
+
+#: inc/class-pexlechris-adminer.php:273
+msgid "You are connecting to the database..."
+msgstr "Te estás conectando a la base de datos..."
+
+#: pexlechris-adminer.php:169 pexlechris-adminer.php:205
+#: pexlechris-adminer.php:206
+msgid "WP Adminer"
+msgstr "WP Adminer"
+
+#. Author of the plugin
+#: pexlechris-adminer.php
+msgid "Pexle Chris"
+msgstr "Pexle Chris"
+
+#. Description of the plugin
+#: pexlechris-adminer.php
+msgid "Manage the database from your WordPress Dashboard using Adminer."
+msgstr "Gestiona la base de datos desde tu escritorio de WordPress mediante Adminer."

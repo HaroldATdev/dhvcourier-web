@@ -1,0 +1,10 @@
+/* WP Cargo Carrier - WP Admin Styles */
+.wpcc-status-dot.active  { color: #00a32a; font-weight: 600; }
+.wpcc-status-dot.inactive { color: #888;    font-weight: 600; }
+
+#poststuff #post-body.columns-2 {
+	display: grid;
+	grid-template-columns: 1fr 280px;
+	gap: 20px;
+}
+#postbox-container-1 { float: none; width: auto; }

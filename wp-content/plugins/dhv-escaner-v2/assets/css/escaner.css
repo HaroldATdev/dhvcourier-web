@@ -1,0 +1,344 @@
+/* ── Variables ───────────────────────────────────────────────────────────── */
+:root {
+    --le-primary: #2563EB;
+    --le-success: #16A34A;
+    --le-danger:  #DC2626;
+    --le-warning: #D97706;
+    --le-border:  #E2E8F0;
+    --le-bg:      #F8FAFC;
+    --le-card:    #FFFFFF;
+    --le-text:    #1E293B;
+    --le-muted:   #64748B;
+    --le-radius:  12px;
+    --le-shadow:  0 1px 3px rgba(0,0,0,.08), 0 4px 16px rgba(0,0,0,.05);
+}
+.le-wrap * { box-sizing: border-box; }
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+.le-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+}
+.le-header__icon {
+    font-size: 36px !important;
+    color: var(--le-primary);
+}
+.le-title {
+    font-size: 22px;
+    font-weight: 700;
+    margin: 0 0 4px;
+    color: var(--le-text);
+}
+.le-subtitle {
+    margin: 0;
+    font-size: 14px;
+    color: var(--le-muted);
+}
+
+/* ── Grid ────────────────────────────────────────────────────────────────── */
+.le-main-grid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 20px;
+    align-items: start;
+}
+
+/* ── Cards ───────────────────────────────────────────────────────────────── */
+.le-card {
+    background: var(--le-card);
+    border: 1px solid var(--le-border);
+    border-radius: var(--le-radius);
+    box-shadow: var(--le-shadow);
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+.le-card__header {
+    padding: 12px 18px;
+    background: var(--le-bg);
+    border-bottom: 1px solid var(--le-border);
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--le-text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.le-card__header .fa { font-size: 14px !important; color: var(--le-primary); }
+.le-card__body { padding: 20px; }
+.le-card__body--scroll { max-height: 480px; overflow-y: auto; padding: 0; }
+
+/* ── Campo de escaneo ────────────────────────────────────────────────────── */
+.le-scan-input-wrap {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+.le-input {
+    width: 100%;
+    border: 1px solid var(--le-border) !important;
+    border-radius: 8px !important;
+    padding: 10px 14px !important;
+    font-size: 14px !important;
+    color: var(--le-text) !important;
+    background: #fff !important;
+    transition: border-color .15s;
+    height: auto !important;
+}
+.le-input:focus {
+    border-color: var(--le-primary) !important;
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(37,99,235,.12) !important;
+}
+.le-input--large {
+    font-size: 16px !important;
+    padding: 12px 16px !important;
+    font-weight: 600 !important;
+}
+.le-select {
+    width: 100%;
+    border: 1px solid var(--le-border) !important;
+    border-radius: 8px !important;
+    padding: 10px 14px !important;
+    font-size: 14px !important;
+    color: var(--le-text) !important;
+    background: #fff !important;
+    height: auto !important;
+}
+.le-textarea {
+    width: 100%;
+    border: 1px solid var(--le-border) !important;
+    border-radius: 8px !important;
+    padding: 10px 14px !important;
+    font-size: 14px !important;
+    color: var(--le-text) !important;
+    resize: vertical;
+    background: #fff !important;
+}
+
+/* ── Campos ──────────────────────────────────────────────────────────────── */
+.le-field-row { margin-bottom: 14px; }
+.le-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--le-text);
+    margin-bottom: 6px;
+}
+.le-optional {
+    font-weight: 400;
+    color: var(--le-muted);
+    font-size: 12px;
+}
+
+/* ── Opciones ────────────────────────────────────────────────────────────── */
+.le-options-row {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+    padding-top: 4px;
+}
+.le-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    color: var(--le-muted);
+    cursor: pointer;
+}
+.le-checkbox-label input { cursor: pointer; }
+
+/* ── Botones ─────────────────────────────────────────────────────────────── */
+.le-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    white-space: nowrap;
+    transition: opacity .15s, transform .1s;
+}
+.le-btn:hover   { opacity: .86; text-decoration: none; }
+.le-btn:active  { transform: scale(.97); }
+.le-btn--primary { background: var(--le-primary); color: #fff !important; }
+.le-btn--ghost   { background: transparent; color: var(--le-muted); border: 1px solid var(--le-border); margin-left: auto; }
+.le-btn--sm      { padding: 6px 12px; font-size: 12px; }
+.le-btn .fa      { font-size: 13px !important; }
+
+/* ── Resultado ───────────────────────────────────────────────────────────── */
+.le-result {
+    padding: 14px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-top: 4px;
+    animation: le-fadein .25s ease;
+}
+@keyframes le-fadein { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:translateY(0); } }
+.le-result--success { background: #DCFCE7; border: 1px solid #BBF7D0; color: #166534; }
+.le-result--error   { background: #FEE2E2; border: 1px solid #FECACA; color: #991B1B; }
+.le-result--info    { background: #DBEAFE; border: 1px solid #BFDBFE; color: #1E40AF; }
+
+/* ── Historial ───────────────────────────────────────────────────────────── */
+.le-history-list { padding: 8px; }
+.le-empty-history {
+    text-align: center;
+    color: var(--le-muted);
+    font-size: 13px;
+    padding: 24px;
+    margin: 0;
+}
+.le-history-item {
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--le-border);
+    margin-bottom: 6px;
+    background: #fff;
+    animation: le-fadein .2s ease;
+}
+.le-history-item__tracking {
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--le-primary);
+    margin-bottom: 4px;
+}
+.le-history-item__meta {
+    font-size: 12px;
+    color: var(--le-muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+.le-history-item__status {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: #DBEAFE;
+    color: #1E40AF;
+}
+.le-history-item--error .le-history-item__tracking { color: var(--le-danger); }
+.le-history-item--error { border-color: #FECACA; }
+
+/* ── Instrucciones ───────────────────────────────────────────────────────── */
+.le-instructions {
+    background: #FEF9C3;
+    border: 1px solid #FDE68A;
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 13px;
+    color: #78350F;
+    line-height: 1.7;
+}
+.le-instructions strong { display: block; margin-bottom: 6px; }
+.le-instructions ol { margin: 0; padding-left: 18px; }
+.le-instructions .fa { font-size: 13px !important; }
+kbd {
+    background: #fff;
+    border: 1px solid #D1D5DB;
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 12px;
+    font-family: monospace;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+    .le-main-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 500px) {
+    .le-scan-input-wrap { flex-direction: column; }
+    .le-options-row { flex-direction: column; gap: 10px; }
+}
+
+/* ── Pasos ───────────────────────────────────────────────────────────────── */
+.le-step-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--le-primary);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+}
+
+/* ── Dos columnas ────────────────────────────────────────────────────────── */
+.le-two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 4px;
+}
+
+/* ── Hint debajo del select ──────────────────────────────────────────────── */
+.le-field-hint {
+    font-size: 11px;
+    color: var(--le-muted);
+    margin: 4px 0 0;
+}
+
+/* ── Toggle campos extra ─────────────────────────────────────────────────── */
+.le-extra-fields { margin-top: 8px; }
+.le-toggle-extra {
+    background: none;
+    border: none;
+    color: var(--le-primary);
+    font-size: 13px;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+}
+.le-toggle-extra .fa { font-size: 14px !important; }
+
+/* ── Badge configuración activa ──────────────────────────────────────────── */
+.le-config-badge {
+    margin-top: 14px;
+    padding: 10px 14px;
+    background: #EFF6FF;
+    border: 1px solid #BFDBFE;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #1E40AF;
+}
+.le-config-badge .fa { font-size: 12px !important; margin-right: 3px; }
+
+/* ── Contador de scans ───────────────────────────────────────────────────── */
+.le-scan-count {
+    margin-left: auto;
+    margin-right: 6px;
+    background: var(--le-primary);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+    min-width: 22px;
+    text-align: center;
+}
+
+/* ── Driver badge en historial ───────────────────────────────────────────── */
+.le-history-item__driver {
+    font-size: 11px;
+    color: var(--le-muted);
+    display: flex;
+    align-items: center;
+    gap: 3px;
+}
+.le-history-item__driver .fa { font-size: 11px !important; }
+
+@media (max-width: 640px) {
+    .le-two-col { grid-template-columns: 1fr; }
+}

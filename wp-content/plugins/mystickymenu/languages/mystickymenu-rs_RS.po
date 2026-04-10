@@ -1,0 +1,2146 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: myStickymenu\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/mystickymenu-free-"
+"uncompressed\n"
+"POT-Creation-Date: 2026-03-11 06:47:13+00:00\n"
+"PO-Revision-Date: 2017-09-15 08:38+0100\n"
+"Last-Translator: mrda <jahmirda@gmail.com>\n"
+"Language-Team: TFN <jahmirda@gmail.com>\n"
+"Language: English\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.7\n"
+"X-Poedit-KeywordsList: _;gettext;gettext_noop;__;_e\n"
+"X-Poedit-Basepath: .\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-SearchPath-0: ..\n"
+"X-Poedit-SearchPath-1: .\n"
+
+#: mystickymenu.php:1078
+msgid "404"
+msgstr ""
+
+#: admin/bar-preview.php:25 welcome-bar.php:845
+msgid "Preview"
+msgstr ""
+
+#: admin/bar-preview.php:69 welcome-bar.php:889
+msgid "Show Fullscreen Preview"
+msgstr ""
+
+#: admin/bar-preview.php:74 welcome-bar.php:894
+msgid "Minimise Preview"
+msgstr ""
+
+#: admin/bar-settings.php:117
+msgid "1. Customize Bar"
+msgstr ""
+
+#: admin/bar-settings.php:123
+msgid "2. Display rules"
+msgstr ""
+
+#: admin/bar-settings.php:130
+msgid "3. Poptin Popups"
+msgstr ""
+
+#: admin/bar-settings.php:141
+msgid "Back"
+msgstr ""
+
+#: admin/bar-settings.php:145
+msgid "Next"
+msgstr ""
+
+#: admin/bar-settings.php:158
+msgid "Save & View Dashboard"
+msgstr ""
+
+#: admin/bar-settings.php:186 welcome-bar.php:921
+msgid "Bar is currently off"
+msgstr ""
+
+#: admin/bar-settings.php:190 welcome-bar.php:925
+msgid ""
+"Your Bar is currently turned off, would you like to save and show it on your "
+"site?"
+msgstr ""
+
+#: admin/bar-settings.php:193 welcome-bar.php:928
+msgid "Just save and keep it off"
+msgstr ""
+
+#: admin/bar-settings.php:194 welcome-bar.php:929
+msgid "Save & Turn on Bar"
+msgstr ""
+
+#: admin/bar-settings.php:199 welcome-bar.php:934
+msgid "Poptin pop-up is not configured properly"
+msgstr ""
+
+#: admin/customize-bar.php:16
+msgid "Step 1"
+msgstr ""
+
+#: admin/customize-bar.php:16
+msgid "Customize your bar"
+msgstr ""
+
+#: admin/customize-bar.php:20
+msgid "Bar visibility"
+msgstr ""
+
+#: admin/customize-bar.php:30 welcome-bar.php:88
+msgid "Bar is visible"
+msgstr ""
+
+#: admin/customize-bar.php:31 welcome-bar.php:89
+msgid "Bar is hidden"
+msgstr ""
+
+#: admin/customize-bar.php:39 welcome-bar.php:97
+msgid "Bar Settings"
+msgstr ""
+
+#: admin/customize-bar.php:43 admin/customize-bar.php:377 welcome-bar.php:100
+msgid "Position"
+msgstr ""
+
+#: admin/customize-bar.php:48 welcome-bar.php:105
+msgid "Top"
+msgstr ""
+
+#: admin/customize-bar.php:52 welcome-bar.php:109
+msgid "Bottom"
+msgstr ""
+
+#: admin/customize-bar.php:54 admin/customize-bar.php:66
+#: admin/customize-bar.php:82 admin/customize-bar.php:240
+#: admin/customize-bar.php:325 admin/customize-bar.php:339
+#: admin/customize-bar.php:523 admin/customize-bar.php:535
+#: admin/customize-bar.php:561 admin/display-rules.php:47
+#: admin/display-rules.php:68 admin/display-rules.php:183 mystickymenu.php:780
+#: mystickymenu.php:901 mystickymenu.php:989 mystickymenu.php:1024
+#: welcome-bar.php:111 welcome-bar.php:123 welcome-bar.php:139
+#: welcome-bar.php:311 welcome-bar.php:396 welcome-bar.php:410
+#: welcome-bar.php:577 welcome-bar.php:589 welcome-bar.php:617
+#: welcome-bar.php:788
+msgid "Upgrade Now"
+msgstr ""
+
+#: admin/customize-bar.php:58 welcome-bar.php:115
+msgid "Height"
+msgstr ""
+
+#: admin/customize-bar.php:70 welcome-bar.php:127
+msgid "Bar Color"
+msgstr ""
+
+#: admin/customize-bar.php:77 welcome-bar.php:134
+msgid "Bar background image"
+msgstr ""
+
+#: admin/customize-bar.php:78 welcome-bar.php:135
+msgid "Choose a custom image as the background for your welcome bar"
+msgstr ""
+
+#: admin/customize-bar.php:81 welcome-bar.php:138
+msgid "Upload Background"
+msgstr ""
+
+#: admin/customize-bar.php:86 welcome-bar.php:143
+msgid "Bar Text Color"
+msgstr ""
+
+#: admin/customize-bar.php:92 welcome-bar.php:149
+msgid "Font"
+msgstr ""
+
+#: admin/customize-bar.php:95 welcome-bar.php:152
+msgid "Select font family"
+msgstr ""
+
+#: admin/customize-bar.php:108 welcome-bar.php:165
+msgid "Font Size"
+msgstr ""
+
+#: admin/customize-bar.php:117 welcome-bar.php:174
+msgid "Bar Text"
+msgstr ""
+
+#: admin/customize-bar.php:121 welcome-bar.php:178
+msgid "Static Text"
+msgstr ""
+
+#: admin/customize-bar.php:126 welcome-bar.php:183
+msgid "Sliding Texts"
+msgstr ""
+
+#: admin/customize-bar.php:127 upgrade-to-pro.php:158 welcome-bar.php:184
+msgid ""
+"Enhance Your Sticky Menu with Sliding Text. Display multiple lines of "
+"content that can scroll automatically in your desired direction."
+msgstr ""
+
+#: admin/customize-bar.php:167 welcome-bar.php:235
+msgid "Add"
+msgstr ""
+
+#: admin/customize-bar.php:171 admin/customize-bar.php:189
+#: admin/customize-bar.php:206 admin/display-rules.php:123
+#: admin/display-rules.php:201 admin/display-rules.php:225 welcome-bar.php:239
+#: welcome-bar.php:257 welcome-bar.php:275 welcome-bar.php:728
+#: welcome-bar.php:806 welcome-bar.php:830
+msgid "UPGRADE NOW"
+msgstr ""
+
+#: admin/customize-bar.php:178 welcome-bar.php:246
+#, fuzzy
+msgid "Transition styles"
+msgstr "Sticky vrijeme tranzicije"
+
+#: admin/customize-bar.php:182 welcome-bar.php:250
+msgid "Right transition"
+msgstr ""
+
+#: admin/customize-bar.php:183 welcome-bar.php:251
+msgid "Left transition"
+msgstr ""
+
+#: admin/customize-bar.php:184 welcome-bar.php:252
+msgid "Up transition"
+msgstr ""
+
+#: admin/customize-bar.php:185 welcome-bar.php:253
+msgid "Down transition"
+msgstr ""
+
+#: admin/customize-bar.php:196 welcome-bar.php:265
+#, fuzzy
+msgid "Transition speed"
+msgstr "Sticky vrijeme tranzicije"
+
+#: admin/customize-bar.php:200 welcome-bar.php:269
+msgid "Slow"
+msgstr ""
+
+#: admin/customize-bar.php:201 welcome-bar.php:270
+msgid "Medium"
+msgstr ""
+
+#: admin/customize-bar.php:202 welcome-bar.php:271
+msgid "Fast"
+msgstr ""
+
+#: admin/customize-bar.php:213 welcome-bar.php:284
+msgid "Show an X Button"
+msgstr ""
+
+#: admin/customize-bar.php:214 welcome-bar.php:285
+msgid ""
+"Choose if you want to show an X button to close the bar or not or desktop "
+"and mobile devices"
+msgstr ""
+
+#: admin/customize-bar.php:219 admin/customize-bar.php:356
+#: admin/display-rules.php:40 mystickymenu.php:786 welcome-bar.php:290
+#: welcome-bar.php:425 welcome-bar.php:653
+msgid "Desktop"
+msgstr ""
+
+#: admin/customize-bar.php:223 admin/customize-bar.php:360
+#: admin/display-rules.php:44 mystickymenu.php:792 welcome-bar.php:294
+#: welcome-bar.php:429 welcome-bar.php:657
+msgid "Mobile"
+msgstr ""
+
+#: admin/customize-bar.php:231 welcome-bar.php:302
+msgid "Countdown"
+msgstr ""
+
+#: admin/customize-bar.php:232 welcome-bar.php:303
+msgid ""
+"Add a countdown timer element to your Bar to increase conversion rate, "
+"announce flash sales, and more"
+msgstr ""
+
+#: admin/customize-bar.php:245 welcome-bar.php:316
+msgid "Collect leads"
+msgstr ""
+
+#: admin/customize-bar.php:247 welcome-bar.php:318
+msgid ""
+" Collect the visitor's details such as Name, email address or phone number "
+"from the bar. Collected visitor details can be viewed on the %1$s page"
+msgstr ""
+
+#: admin/customize-bar.php:247 mystickymenu.php:1779 welcome-bar.php:318
+msgid "Contact Form Leads"
+msgstr ""
+
+#: admin/customize-bar.php:258 welcome-bar.php:329
+msgid "Select inputs"
+msgstr ""
+
+#: admin/customize-bar.php:262 welcome-bar.php:333
+msgid "Name & email address"
+msgstr ""
+
+#: admin/customize-bar.php:266 welcome-bar.php:337
+msgid "Name & phone number"
+msgstr ""
+
+#: admin/customize-bar.php:272 welcome-bar.php:343
+msgid "Placeholder for Name"
+msgstr ""
+
+#: admin/customize-bar.php:279 welcome-bar.php:350
+msgid "Placeholder for Email"
+msgstr ""
+
+#: admin/customize-bar.php:286 welcome-bar.php:357
+msgid "Placeholder for Phone"
+msgstr ""
+
+#: admin/customize-bar.php:294 welcome-bar.php:365
+msgid "Show success message"
+msgstr ""
+
+#: admin/customize-bar.php:304 welcome-bar.php:375
+msgid "Thank You Text"
+msgstr ""
+
+#: admin/customize-bar.php:324 welcome-bar.php:395
+msgid "Send leads to email"
+msgstr ""
+
+#: admin/customize-bar.php:331 welcome-bar.php:402
+msgid "Show Coupons"
+msgstr ""
+
+#: admin/customize-bar.php:332 welcome-bar.php:403
+msgid ""
+"Add a coupon to your bar. Users can click on the coupon, copy it and use it "
+"on your website"
+msgstr ""
+
+#: admin/customize-bar.php:345 welcome-bar.php:416
+#, fuzzy
+msgid "Button Settings"
+msgstr "myStickymenu Postavke"
+
+#: admin/customize-bar.php:350 welcome-bar.php:419
+msgid "Show a Button On"
+msgstr ""
+
+#: admin/customize-bar.php:365
+msgid "Set the button's position relative to the text"
+msgstr ""
+
+#: admin/customize-bar.php:383
+msgid "Left"
+msgstr ""
+
+#: admin/customize-bar.php:387
+msgid "Center"
+msgstr ""
+
+#: admin/customize-bar.php:391
+msgid "Right"
+msgstr ""
+
+#: admin/customize-bar.php:396 welcome-bar.php:434
+msgid "Button Color"
+msgstr ""
+
+#: admin/customize-bar.php:402 welcome-bar.php:440
+msgid "Button Text Color"
+msgstr ""
+
+#: admin/customize-bar.php:408 welcome-bar.php:446
+msgid "Button Text"
+msgstr ""
+
+#: admin/customize-bar.php:414 welcome-bar.php:454
+msgid "Hover Effects"
+msgstr ""
+
+#: admin/customize-bar.php:417 admin/customize-bar.php:469 welcome-bar.php:457
+#: welcome-bar.php:513
+msgid "None"
+msgstr ""
+
+#: admin/customize-bar.php:418 welcome-bar.php:458
+msgid "Fill on effects on hover"
+msgstr ""
+
+#: admin/customize-bar.php:419 welcome-bar.php:459
+msgid "Border effects on hover"
+msgstr ""
+
+#: admin/customize-bar.php:424 welcome-bar.php:464
+msgid "Button Hover Fill effects "
+msgstr ""
+
+#: admin/customize-bar.php:427 welcome-bar.php:467
+msgid "Fill Style 1"
+msgstr ""
+
+#: admin/customize-bar.php:428 welcome-bar.php:468
+msgid "Fill Style 2"
+msgstr ""
+
+#: admin/customize-bar.php:429 welcome-bar.php:469
+msgid "Fill Style 3"
+msgstr ""
+
+#: admin/customize-bar.php:430 welcome-bar.php:470
+msgid "Fill Style 4"
+msgstr ""
+
+#: admin/customize-bar.php:431 welcome-bar.php:471
+msgid "Fill Style 5"
+msgstr ""
+
+#: admin/customize-bar.php:436 welcome-bar.php:476
+msgid "Button Hover Border effects "
+msgstr ""
+
+#: admin/customize-bar.php:439 welcome-bar.php:479
+msgid "Border Style 1"
+msgstr ""
+
+#: admin/customize-bar.php:440 welcome-bar.php:480
+msgid "Border Style 2"
+msgstr ""
+
+#: admin/customize-bar.php:441 welcome-bar.php:481
+msgid "Border Style 3"
+msgstr ""
+
+#: admin/customize-bar.php:442 welcome-bar.php:482
+msgid "Border Style 4"
+msgstr ""
+
+#: admin/customize-bar.php:447 welcome-bar.php:488
+msgid "Button Hover Text Color"
+msgstr ""
+
+#: admin/customize-bar.php:453 welcome-bar.php:495
+msgid "Button Hover Color"
+msgstr ""
+
+#: admin/customize-bar.php:459 welcome-bar.php:502
+msgid "Button Hover Border Color"
+msgstr ""
+
+#: admin/customize-bar.php:465 welcome-bar.php:509
+msgid "Attention Effect"
+msgstr ""
+
+#: admin/customize-bar.php:470 welcome-bar.php:514
+msgid "Flash"
+msgstr ""
+
+#: admin/customize-bar.php:471 welcome-bar.php:515
+msgid "Shake"
+msgstr ""
+
+#: admin/customize-bar.php:472 welcome-bar.php:516
+msgid "Swing"
+msgstr ""
+
+#: admin/customize-bar.php:473 welcome-bar.php:517
+msgid "Tada"
+msgstr ""
+
+#: admin/customize-bar.php:474 welcome-bar.php:518
+msgid "Heartbeat"
+msgstr ""
+
+#: admin/customize-bar.php:475 welcome-bar.php:519
+msgid "Wobble"
+msgstr ""
+
+#: admin/customize-bar.php:481 welcome-bar.php:526
+msgid "Action On Button Click"
+msgstr ""
+
+#: admin/customize-bar.php:487 welcome-bar.php:532
+msgid "Redirect the visitor to another URL"
+msgstr ""
+
+#: admin/customize-bar.php:488 welcome-bar.php:533
+msgid "Close the Bar"
+msgstr ""
+
+#: admin/customize-bar.php:489 welcome-bar.php:534
+msgid "Launch a Poptin pop-up"
+msgstr ""
+
+#: admin/customize-bar.php:490 welcome-bar.php:535
+msgid "Show a thank-you screen (Pro Feature)"
+msgstr ""
+
+#: admin/customize-bar.php:503 welcome-bar.php:548
+msgid "Poptin pop-up direct link"
+msgstr ""
+
+#: admin/customize-bar.php:511 welcome-bar.php:565
+msgid "Redirection link"
+msgstr ""
+
+#: admin/customize-bar.php:517 welcome-bar.php:571
+msgid "Open in a new tab"
+msgstr ""
+
+#: admin/customize-bar.php:527 welcome-bar.php:581
+msgid "rel Attribute"
+msgstr ""
+
+#: admin/customize-bar.php:530 welcome-bar.php:584
+msgid ""
+"Add a \"rel\" attribute to the button link. You can use it to add a "
+"rel=\"nofollow\", \"sponsored\", or any other \"rel\" attribute option"
+msgstr ""
+
+#: admin/customize-bar.php:539 welcome-bar.php:594
+msgid "Bar Appearance After Button Click"
+msgstr ""
+
+#: admin/customize-bar.php:540 welcome-bar.php:595
+msgid ""
+"Choose bar display settings after a visitor click on the button. The \"Don't "
+"show the Bar again for the user\" option is the preferable option if you "
+"don't want to annoy your visitors by showing the bar over and over"
+msgstr ""
+
+#: admin/customize-bar.php:545 welcome-bar.php:600
+msgid "Don't show the Bar again for the user"
+msgstr ""
+
+#: admin/customize-bar.php:546 welcome-bar.php:601
+msgid "Show the Bar again when the user visits the website next time"
+msgstr ""
+
+#: admin/customize-bar.php:547 welcome-bar.php:602
+msgid "Show the Bar when the user refreshes/goes to another page"
+msgstr ""
+
+#: admin/customize-bar.php:553 welcome-bar.php:609
+msgid "Close Bar Automatically After Click"
+msgstr ""
+
+#: admin/customize-bar.php:554 welcome-bar.php:610
+msgid ""
+"Choose if you'd like the bar to be closed automatically after button "
+"submission"
+msgstr ""
+
+#: admin/customize-bar.php:564 welcome-bar.php:620
+msgid "Close bar after "
+msgstr ""
+
+#: admin/customize-bar.php:566 welcome-bar.php:622
+msgid "Sec"
+msgstr ""
+
+#: admin/display-rules.php:16
+msgid "Step 2"
+msgstr ""
+
+#: admin/display-rules.php:16
+msgid "Display rules"
+msgstr ""
+
+#: admin/display-rules.php:20
+msgid "Triggers"
+msgstr ""
+
+#: admin/display-rules.php:24 welcome-bar.php:634
+msgid "Entry effect"
+msgstr ""
+
+#: admin/display-rules.php:28 welcome-bar.php:638
+msgid "No effect"
+msgstr ""
+
+#: admin/display-rules.php:29 welcome-bar.php:639
+msgid "Slide in"
+msgstr ""
+
+#: admin/display-rules.php:30 mystickymenu.php:821 welcome-bar.php:640
+msgid "Fade"
+msgstr ""
+
+#: admin/display-rules.php:35 mystickymenu.php:779 welcome-bar.php:649
+msgid "Devices"
+msgstr ""
+
+#: admin/display-rules.php:52 welcome-bar.php:662
+msgid "Trigger"
+msgstr ""
+
+#: admin/display-rules.php:58 welcome-bar.php:668
+msgid "After a few seconds"
+msgstr ""
+
+#: admin/display-rules.php:59 welcome-bar.php:671
+msgid "After Scroll"
+msgstr ""
+
+#: admin/display-rules.php:74
+msgid "Targeting"
+msgstr ""
+
+#: admin/display-rules.php:78 welcome-bar.php:683
+msgid "Date Scheduling"
+msgstr ""
+
+#: admin/display-rules.php:79 welcome-bar.php:684
+msgid ""
+"Set the date and time for when you want the widget to start showing and the "
+"time you would like it to stop showing. You can add up to 12 combinations of "
+"\"on and off\" triggers. This feature may be useful when you have an "
+"upcoming limited-time offer."
+msgstr ""
+
+#: admin/display-rules.php:84 welcome-bar.php:689
+msgid "Timezone"
+msgstr ""
+
+#: admin/display-rules.php:94 welcome-bar.php:699
+msgid "Start date "
+msgstr ""
+
+#: admin/display-rules.php:95 welcome-bar.php:700
+msgid ""
+"Schedule a date from which the widget will be displayed (the starting date "
+"is included)"
+msgstr ""
+
+#: admin/display-rules.php:100 welcome-bar.php:705
+msgid "Start time "
+msgstr ""
+
+#: admin/display-rules.php:107 welcome-bar.php:712
+msgid "End date "
+msgstr ""
+
+#: admin/display-rules.php:108 welcome-bar.php:713
+msgid ""
+"Schedule a date from which the widget will stop being displayed (the end "
+"date is included)"
+msgstr ""
+
+#: admin/display-rules.php:113 welcome-bar.php:718
+msgid "End time "
+msgstr ""
+
+#: admin/display-rules.php:130 admin/display-rules.php:140 mystickymenu.php:961
+#: welcome-bar.php:735 welcome-bar.php:745
+msgid "Add Rule"
+msgstr ""
+
+#: admin/display-rules.php:135 mystickymenu.php:910 upgrade-to-pro.php:185
+#: welcome-bar.php:740
+msgid "Page targeting"
+msgstr ""
+
+#: admin/display-rules.php:137 welcome-bar.php:742
+msgid ""
+" Add page targeting to ensure the bar only appears or doesn't appear for the "
+"selected pages only"
+msgstr ""
+
+#: admin/display-rules.php:144 welcome-bar.php:749
+msgid "Link that contain"
+msgstr ""
+
+#: admin/display-rules.php:145 welcome-bar.php:750
+msgid "A specific link"
+msgstr ""
+
+#: admin/display-rules.php:146 welcome-bar.php:751
+msgid "Links starting with"
+msgstr ""
+
+#: admin/display-rules.php:147 welcome-bar.php:752
+msgid "Links ending with"
+msgstr ""
+
+#: admin/display-rules.php:148 welcome-bar.php:753
+msgid "WordPress Pages"
+msgstr ""
+
+#: admin/display-rules.php:149 welcome-bar.php:754
+msgid "WordPress Posts"
+msgstr ""
+
+#: admin/display-rules.php:150 welcome-bar.php:755
+msgid "WordPress Categories"
+msgstr ""
+
+#: admin/display-rules.php:151 welcome-bar.php:756
+msgid "WordPress Tags"
+msgstr ""
+
+#: admin/display-rules.php:154 welcome-bar.php:759
+msgid "WooCommerce products"
+msgstr ""
+
+#: admin/display-rules.php:155 welcome-bar.php:760
+msgid "WooCommerce products on sale"
+msgstr ""
+
+#: admin/display-rules.php:163 mystickymenu.php:931 mystickymenu.php:969
+#: welcome-bar.php:768
+msgid "Show on"
+msgstr ""
+
+#: admin/display-rules.php:164 mystickymenu.php:932 mystickymenu.php:970
+#: welcome-bar.php:769
+msgid "Don't show on"
+msgstr ""
+
+#: admin/display-rules.php:169 mystickymenu.php:937 mystickymenu.php:975
+#: welcome-bar.php:774
+msgid "Select Rule"
+msgstr ""
+
+#: admin/display-rules.php:189 upgrade-to-pro.php:193 welcome-bar.php:794
+msgid "User targeting"
+msgstr ""
+
+#: admin/display-rules.php:190 welcome-bar.php:795
+msgid ""
+"Add a rule if you want to show the welcome bar for logged in or logged out "
+"users of your WordPress website selectively"
+msgstr ""
+
+#: admin/display-rules.php:195 welcome-bar.php:800
+msgid "Show for all users"
+msgstr ""
+
+#: admin/display-rules.php:196 welcome-bar.php:801
+msgid "Show just for logged-in users"
+msgstr ""
+
+#: admin/display-rules.php:197 welcome-bar.php:802
+msgid "Show just for logged-out users"
+msgstr ""
+
+#: admin/display-rules.php:209 upgrade-to-pro.php:189 welcome-bar.php:814
+msgid "Country targeting"
+msgstr ""
+
+#: admin/display-rules.php:211 welcome-bar.php:816
+msgid ""
+"Add country targeting to ensure the bar only appears for the selected "
+"countries only"
+msgstr ""
+
+#: admin/display-rules.php:216 admin/display-rules.php:220 welcome-bar.php:821
+#: welcome-bar.php:825
+msgid "All countries"
+msgstr ""
+
+#: admin/email-signup.php:363
+msgid "We Only Email When It's Worth It"
+msgstr ""
+
+#: admin/email-signup.php:368
+msgid "Plugin updates and features for improved performance"
+msgstr ""
+
+#: admin/email-signup.php:372
+msgid "Important security updates for site safety"
+msgstr ""
+
+#: admin/email-signup.php:377
+msgid "Limited-time offers for WordPress users seeking growth"
+msgstr ""
+
+#: admin/email-signup.php:385
+msgid "Your Email Address"
+msgstr ""
+
+#: admin/email-signup.php:390
+msgid "Count Me In"
+msgstr ""
+
+#: admin/email-signup.php:398
+msgid "Maybe Later"
+msgstr ""
+
+#: admin/email-signup.php:412
+msgid "Website Owners"
+msgstr ""
+
+#: admin/email-signup.php:424
+msgid "No Spam Ever"
+msgstr ""
+
+#: admin/email-signup.php:425
+msgid "Unsubscribe Anytime"
+msgstr ""
+
+#: admin/help.php:20
+msgid "Powered by "
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "Premio"
+msgstr ""
+
+#: admin/help.php:25 mystickymenu.php:288
+msgid "Need help?"
+msgstr ""
+
+#: admin/help.php:26 mystickymenu.php:1332
+msgid "Close"
+msgstr ""
+
+#: admin/help.php:31
+msgid "Support"
+msgstr ""
+
+#: admin/help.php:52
+msgid "Co-Founder at Premio"
+msgstr ""
+
+#: admin/help.php:55
+msgid ""
+"Hello! Are you experiencing any problems with My Sticky Bar? Please let me "
+"know :)"
+msgstr ""
+
+#: admin/help.php:58 admin/stickymenu-dashboard.php:151 mystickymenu.php:202
+#: mystickymenu.php:1831 stickymenu-dashboard.php:151
+msgid "Email"
+msgstr ""
+
+#: admin/help.php:62
+msgid "How can I help you?"
+msgstr ""
+
+#: admin/help.php:65 admin/help.php:119
+msgid "Chat"
+msgstr ""
+
+#: admin/help.php:71
+msgid "Or"
+msgstr ""
+
+#: admin/help.php:72
+msgid "Visit our Help Center >>"
+msgstr ""
+
+#: admin/help.php:108
+msgid "Sending Request..."
+msgstr ""
+
+#: admin/help.php:125
+msgid "Done!"
+msgstr ""
+
+#: admin/help.php:132
+msgid "Your message is sent successfully."
+msgstr ""
+
+#: admin/help.php:138
+msgid "There is some problem in sending request. Please send us mail on %1$s"
+msgstr ""
+
+#: admin/poptin-plugin.php:43
+msgid "Install Poptin"
+msgstr ""
+
+#. translators: %s: Plugin author.
+#: admin/poptin-plugin.php:88 recommended-plugins.php:140
+msgid "By %s"
+msgstr ""
+
+#: admin/poptin-plugin.php:114 recommended-plugins.php:166
+msgid "Install Now"
+msgstr ""
+
+#: admin/poptin-plugin.php:136 recommended-plugins.php:188
+msgid "Update Now"
+msgstr ""
+
+#: admin/poptin-plugin.php:155 recommended-plugins.php:207
+msgid "Activate"
+msgstr ""
+
+#: admin/poptin-plugin.php:168 recommended-plugins.php:220
+msgid "Network Activate"
+msgstr ""
+
+#. translators: %s: Plugin name and version.
+#: admin/poptin-plugin.php:199 recommended-plugins.php:251
+msgid "More information about %s"
+msgstr ""
+
+#: admin/poptin-plugin.php:201 recommended-plugins.php:253
+msgid "More Details"
+msgstr ""
+
+#: admin/poptin-plugin.php:231 recommended-plugins.php:283
+msgid "This plugin doesn&#8217;t work with your versions of WordPress and PHP."
+msgstr ""
+
+#. translators: 1: URL to WordPress Updates screen, 2: URL to Update PHP page.
+#: admin/poptin-plugin.php:235 recommended-plugins.php:287
+msgid ""
+"<a href=\"%1$s\">Please update WordPress</a>, and then <a "
+"href=\"%2$s\">learn more about updating PHP</a>."
+msgstr ""
+
+#. translators: %s: URL to WordPress Updates screen.
+#: admin/poptin-plugin.php:243 admin/poptin-plugin.php:259
+#: recommended-plugins.php:295 recommended-plugins.php:311
+msgid "<a href=\"%s\">Please update WordPress</a>."
+msgstr ""
+
+#. translators: %s: URL to Update PHP page.
+#: admin/poptin-plugin.php:249 admin/poptin-plugin.php:268
+#: recommended-plugins.php:301 recommended-plugins.php:320
+msgid "<a href=\"%s\">Learn more about updating PHP</a>."
+msgstr ""
+
+#: admin/poptin-plugin.php:255 recommended-plugins.php:307
+msgid "This plugin doesn&#8217;t work with your version of WordPress."
+msgstr ""
+
+#: admin/poptin-plugin.php:264 recommended-plugins.php:316
+msgid "This plugin doesn&#8217;t work with your version of PHP."
+msgstr ""
+
+#: admin/poptin-plugin.php:312 recommended-plugins.php:364
+msgid "Last Updated:"
+msgstr ""
+
+#. translators: %s: Human-readable time difference.
+#: admin/poptin-plugin.php:315 recommended-plugins.php:367
+msgid "%s ago"
+msgstr ""
+
+#. translators: %s: Number of installations.
+#: admin/poptin-plugin.php:333 recommended-plugins.php:385
+msgid "%s Active Installations"
+msgstr ""
+
+#: admin/poptin-plugin.php:339 recommended-plugins.php:391
+msgid "Untested with your version of WordPress"
+msgstr ""
+
+#: admin/poptin-plugin.php:341 recommended-plugins.php:393
+msgid "<strong>Incompatible</strong> with your version of WordPress"
+msgstr ""
+
+#: admin/poptin-plugin.php:343 recommended-plugins.php:395
+msgid "<strong>Compatible</strong> with your version of WordPress"
+msgstr ""
+
+#: admin/poptin-popup.php:15
+msgid "Step 3"
+msgstr ""
+
+#: admin/poptin-popup.php:15 admin/poptin-popup.php:40
+msgid "Add Poptin Popups"
+msgstr ""
+
+#: admin/poptin-popup.php:20
+msgid "Looking for more than a notification bar?"
+msgstr ""
+
+#: admin/poptin-popup.php:21
+msgid ""
+"With Poptin, you can create popups and forms for your website and get more "
+"email subscribers, leads & sales."
+msgstr ""
+
+#: admin/poptin-popup.php:23
+msgid "Included For Free:"
+msgstr ""
+
+#: admin/poptin-popup.php:25
+msgid "Unlimited popups and forms"
+msgstr ""
+
+#: admin/poptin-popup.php:26
+msgid "70+ native integrations"
+msgstr ""
+
+#: admin/poptin-popup.php:27
+msgid "Variety of professionally designed templates and widgets"
+msgstr ""
+
+#: admin/poptin-popup.php:28
+msgid "Drag & Drop editor, A/B test, advanced triggers & targeting options"
+msgstr ""
+
+#: admin/poptin-popup.php:35
+msgid "Manage Poptin Popups"
+msgstr ""
+
+#: admin/poptin-popup.php:43
+msgid "You can skip this step by saving the widget"
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:30 stickymenu-dashboard.php:30
+msgid "Dashboard"
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:31 admin/stickymenu-dashboard.php:112
+#: stickymenu-dashboard.php:31 stickymenu-dashboard.php:112
+msgid "Add a New Bar"
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:37 stickymenu-dashboard.php:37
+msgid "Status"
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:38 stickymenu-dashboard.php:38
+msgid "Bars"
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:39 stickymenu-dashboard.php:39
+msgid "Quick Action"
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:52 admin/stickymenu-dashboard.php:84
+#: admin/stickymenu-dashboard.php:283 recommended-plugins.php:405
+#: stickymenu-dashboard.php:52 stickymenu-dashboard.php:84
+#: stickymenu-dashboard.php:250
+msgid "Are you sure?"
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:56 stickymenu-dashboard.php:56
+msgid "You're about to turn off the bar. Are you sure about that?"
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:59 admin/stickymenu-dashboard.php:91
+#: admin/stickymenu-dashboard.php:290 stickymenu-dashboard.php:59
+#: stickymenu-dashboard.php:91 stickymenu-dashboard.php:257
+msgid "Nevermind"
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:60 admin/stickymenu-dashboard.php:291
+#: stickymenu-dashboard.php:60 stickymenu-dashboard.php:258
+msgid "Turn off"
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:65 stickymenu-dashboard.php:65
+msgid "Bar #0"
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:68 stickymenu-dashboard.php:68
+msgid "Edit"
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:72 stickymenu-dashboard.php:72
+msgid "Duplicate"
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:77 admin/stickymenu-dashboard.php:92
+#: mystickymenu.php:1835 mystickymenu.php:1875 stickymenu-dashboard.php:77
+#: stickymenu-dashboard.php:92
+msgid "Delete"
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:88 stickymenu-dashboard.php:88
+msgid ""
+"Are you sure want to delete the bar? You will lose the bar permanently and "
+"will not be able to retrieve it"
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:109 stickymenu-dashboard.php:109
+msgid "Welcome 🎉"
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:110 stickymenu-dashboard.php:110
+msgid "You're one step away from creating a bar."
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:111 stickymenu-dashboard.php:111
+msgid ""
+"Add top and bottoms bars for various purposes like showing updates, offers, "
+"countdown, flash sales, and more. You can also make any WordPress menu "
+"sticky easily."
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:117 stickymenu-dashboard.php:117
+msgid "Features"
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:120 stickymenu-dashboard.php:120
+msgid "Create new bars with unique customization"
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:121 stickymenu-dashboard.php:121
+msgid "Make your WordPress navigation menu sticky"
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:122 stickymenu-dashboard.php:122
+msgid "Explore more triggers & targeting options"
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:140 stickymenu-dashboard.php:140
+msgid "Recent Leads"
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:142 stickymenu-dashboard.php:142
+msgid "View All"
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:150 mystickymenu.php:1830
+#: stickymenu-dashboard.php:150
+msgid "Name"
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:152 mystickymenu.php:1832
+#: stickymenu-dashboard.php:152
+msgid "Phone"
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:169 stickymenu-dashboard.php:169
+msgid "Once you get a new lead, it’ll appear here"
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:197
+msgid "Create Your Popup"
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:199
+msgid "Create Your First Popup"
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:215 mystickymenu.php:704
+#: stickymenu-dashboard.php:205
+#, fuzzy
+msgid "Sticky menu"
+msgstr "myStickymenu Opcije"
+
+#: admin/stickymenu-dashboard.php:229 mystickymenu.php:802
+#: stickymenu-dashboard.php:219
+msgid "Settings"
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:230 stickymenu-dashboard.php:220
+#, fuzzy
+msgid "Disable"
+msgstr "Onemogući CSS "
+
+#: admin/stickymenu-dashboard.php:232 stickymenu-dashboard.php:222
+msgid "Configure"
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:242 stickymenu-dashboard.php:232
+msgid "How to use My Sticky Bar?"
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:243 stickymenu-dashboard.php:233
+msgid "How to add your sticky menu on specific pages only"
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:244 stickymenu-dashboard.php:234
+msgid "How to create a Bar"
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:248 stickymenu-dashboard.php:238
+msgid "Need more help? Visit our "
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:249 stickymenu-dashboard.php:238
+msgid "Help Center"
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:262
+msgid ""
+"Explore amazing products from the premio team and supercharge your wordpress "
+"website!"
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:263
+msgid "Visit website"
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:267
+msgid "Follow Us"
+msgstr ""
+
+#: admin/stickymenu-dashboard.php:287 stickymenu-dashboard.php:254
+msgid ""
+"You’re about to turn off the sticky menu feature. Are you sure about that?"
+msgstr ""
+
+#: class-email-signup.php:60
+#, fuzzy
+msgid "My Sticky Elements"
+msgstr "myStickymenu Opcije"
+
+#: class-email-signup.php:61
+msgid "Join the list 100,000+ users trust"
+msgstr ""
+
+#: class-email-signup.php:62
+msgid "100,000+"
+msgstr ""
+
+#: class-email-signup.php:63
+msgid "4.9/5 Rating"
+msgstr ""
+
+#: class-email-signup.php:64
+msgid "Based on 1,000+ Reviews"
+msgstr ""
+
+#: class-review-box.php:457
+msgid "Your"
+msgstr ""
+
+#: class-review-box.php:457
+msgid "feedback"
+msgstr ""
+
+#: class-review-box.php:457
+msgid "matters, please leave a review"
+msgstr ""
+
+#: class-review-box.php:464
+msgid ""
+"Hi there, it seems like %1$s is bringing you some value, and that's pretty "
+"awesome! Can you please show us some love and rate %2$s on WordPress? It'll "
+"only take 2 minutes of your time, and will really help us spread the word"
+msgstr ""
+
+#: class-review-box.php:468
+msgid "Gal Dubinski"
+msgstr ""
+
+#: class-review-box.php:469
+msgid "Co-founder"
+msgstr ""
+
+#: class-review-box.php:475
+msgid "Please rate us:"
+msgstr ""
+
+#: class-review-box.php:489
+msgid "You are awesome "
+msgstr ""
+
+#: class-review-box.php:490
+msgid "Thanks for your support, we really appreciate it!"
+msgstr ""
+
+#: class-review-box.php:491
+msgid "Premio team "
+msgstr ""
+
+#: class-review-box.php:503
+msgid "Would you like us to remind you about this later?"
+msgstr ""
+
+#: class-review-box.php:507
+msgid "Remind me in 3 days "
+msgstr ""
+
+#: class-review-box.php:508
+msgid "Remind me in 10 days "
+msgstr ""
+
+#: class-review-box.php:509
+msgid "Don't remind me about this "
+msgstr ""
+
+#: class-review-box.php:522 mystickymenu-review-popup.php:45
+#: mystickymenu-review-popup.php:59
+msgid "Submit"
+msgstr ""
+
+#: mystickymenu-admin-widgetanalytics.php:19
+msgid "Unlock My Sticky Bar <span>Analytics</span> 🚀"
+msgstr ""
+
+#: mystickymenu-admin-widgetanalytics.php:26
+msgid "What can you use it for?"
+msgstr ""
+
+#: mystickymenu-admin-widgetanalytics.php:30
+msgid "<strong>Discover</strong> the most frequently used channels"
+msgstr ""
+
+#: mystickymenu-admin-widgetanalytics.php:34
+msgid "Keep <strong>track</strong> of how each widget performs"
+msgstr ""
+
+#: mystickymenu-admin-widgetanalytics.php:38
+msgid ""
+"<strong>Analyze</strong> the number of unique clicks and the <strong>click-"
+"through rate</strong>"
+msgstr ""
+
+#: mystickymenu-admin-widgetanalytics.php:44
+msgid "Upgrade to Pro 🚀"
+msgstr ""
+
+#: mystickymenu-deactivate-form.php:122
+msgid "Quick feedback about My Sticky Bar"
+msgstr ""
+
+#: mystickymenu-deactivate-form.php:125
+msgid ""
+"Your feedback will help us improve the product, please tell us why did you "
+"decide to deactivate My Sticky Bar :)"
+msgstr ""
+
+#: mystickymenu-deactivate-form.php:127
+msgid "Email address"
+msgstr ""
+
+#: mystickymenu-deactivate-form.php:130
+msgid "Your comment"
+msgstr ""
+
+#: mystickymenu-deactivate-form.php:135
+msgid "Anonymous feedback"
+msgstr ""
+
+#: mystickymenu-deactivate-form.php:141
+msgid "Cancel"
+msgstr ""
+
+#: mystickymenu-review-popup.php:26
+msgid "Seems like My Sticky Bar is bringing you value  🥳"
+msgstr ""
+
+#: mystickymenu-review-popup.php:27
+msgid ""
+"Can you please show us some love and rate %1$sMy Sticky Bar%2$s? It'll "
+"really help us spread the word "
+msgstr ""
+
+#: mystickymenu-review-popup.php:32 mystickymenu-review-popup.php:39
+msgid "rating"
+msgstr ""
+
+#: mystickymenu-review-popup.php:35
+msgid "Share Your Experience"
+msgstr ""
+
+#: mystickymenu-review-popup.php:41
+msgid "Review (optional)"
+msgstr ""
+
+#: mystickymenu-review-popup.php:42
+msgid "Please write your review here"
+msgstr ""
+
+#: mystickymenu-review-popup.php:49
+msgid "Would you like to be reminded in the future?"
+msgstr ""
+
+#: mystickymenu-review-popup.php:51
+msgid "Remind me after"
+msgstr ""
+
+#: mystickymenu-review-popup.php:53
+msgid "7 Days"
+msgstr ""
+
+#: mystickymenu-review-popup.php:54
+msgid "14 Days"
+msgstr ""
+
+#: mystickymenu-review-popup.php:55
+msgid "Don't remind me"
+msgstr ""
+
+#: mystickymenu.php:190
+msgid "%1$s is required"
+msgstr ""
+
+#: mystickymenu.php:195
+msgid "Please enter your message"
+msgstr ""
+
+#: mystickymenu.php:290
+msgid "Upgrade"
+msgstr ""
+
+#: mystickymenu.php:648 mystickymenu.php:1255
+msgid "Settings saved."
+msgstr ""
+
+#: mystickymenu.php:651 mystickymenu.php:1258 mystickymenu.php:1272
+msgid "Unable to complete your request"
+msgstr ""
+
+#: mystickymenu.php:710
+msgid "Back to Dashboard"
+msgstr ""
+
+#: mystickymenu.php:714
+msgid "How To Make a Sticky Header"
+msgstr ""
+
+#: mystickymenu.php:716
+#, fuzzy
+msgid ""
+"Add sticky menu / header to any theme. <br />Simply change 'Sticky Class' to "
+"HTML element class desired to be sticky (div id can be used as well)."
+msgstr ""
+"Dodajte moderan 'sticky' meni ili zaglavlje bilo kojoj (temi). Zadate "
+"postavke rade na Twenty Thirteen temi. Za ostale teme promenite 'Sticky "
+"klasu' u div klasu za koju želite da bude sticky. Takođe, možete koristiti i "
+"div ID."
+
+#: mystickymenu.php:722
+msgid "Sticky Class"
+msgstr "Sticky klasa"
+
+#: mystickymenu.php:729
+#, fuzzy
+msgid "Select Sticky Menu"
+msgstr "myStickymenu Opcije"
+
+#: mystickymenu.php:765
+msgid "Other Class Or ID"
+msgstr ""
+
+#: mystickymenu.php:773
+msgid ""
+"Need help finding your ID/Class? Install <a href=\"%1$s\" "
+"target=\"_blank\">CSS Peeper</a> to quickly get your navigation menu ID/"
+"Class. Here's a quick <a href=\"%2$s\" target=\"_blank\">video <span "
+"class=\"dashicons dashicons-controls-play\"></span></a> of how you can do it."
+msgstr ""
+
+#: mystickymenu.php:806
+msgid "Sticky z-index"
+msgstr "Sticky z-index"
+
+#: mystickymenu.php:812
+msgid "Fade or slide effect"
+msgstr "Fade ili Slide efekt"
+
+#: mystickymenu.php:817
+msgid "Slide"
+msgstr ""
+
+#: mystickymenu.php:827
+msgid "Disable at Small Screen Sizes"
+msgstr "Onemogući na malim ekranima"
+
+#: mystickymenu.php:828
+msgid "Less than chosen screen width, set 0 to disable"
+msgstr ""
+
+#: mystickymenu.php:837
+msgid "Make visible on Scroll"
+msgstr "Učini vidljivim kad se skroluje"
+
+#: mystickymenu.php:838
+msgid "If set to 0 auto calculate will be used."
+msgstr ""
+
+#: mystickymenu.php:849
+msgid "Make visible on Scroll at homepage"
+msgstr "Učini vidljivim kad se skroluje na Homepage-u"
+
+#: mystickymenu.php:850
+msgid "If set to 0 it will use initial Make visible on Scroll value."
+msgstr ""
+
+#: mystickymenu.php:859
+msgid "Sticky Background Color"
+msgstr "Sticky pozadinska boja"
+
+#: mystickymenu.php:868
+msgid "Sticky Transition Time"
+msgstr "Sticky vrijeme tranzicije"
+
+#: mystickymenu.php:874
+#, fuzzy
+msgid "Sticky Text Color"
+msgstr "Sticky pozadinska boja"
+
+#: mystickymenu.php:883
+msgid "Sticky Opacity"
+msgstr "Sticky prozirnost"
+
+#: mystickymenu.php:884
+msgid "numbers 1-100."
+msgstr "brojevi 1-100."
+
+#: mystickymenu.php:900
+#, fuzzy
+msgid "Hide on Scroll Down"
+msgstr "Učini vidljivim kad se skroluje"
+
+#: mystickymenu.php:905
+msgid "Disable sticky menu at scroll down"
+msgstr ""
+
+#: mystickymenu.php:995 upgrade-to-pro.php:197
+#, fuzzy
+msgid "CSS style"
+msgstr "Onemogući CSS "
+
+#: mystickymenu.php:996
+#, fuzzy
+msgid "Add/edit CSS style. Leave it blank for default style."
+msgstr ""
+"Dodajte/Uredite .myfixed css klasu da biste promenili izgled sticky menija. "
+"Za podrazumevani izgled, ostavite nepopunjeno. "
+
+#: mystickymenu.php:1000
+msgid "CSS ID's and Classes to use:"
+msgstr ""
+
+#: mystickymenu.php:1012
+msgid "Disable CSS style"
+msgstr "Onemogući CSS "
+
+#: mystickymenu.php:1016
+msgid "Use this option if you plan to include CSS Style manually"
+msgstr "Koristite ukoliko želite dodati CSS ručno"
+
+#: mystickymenu.php:1023
+#, fuzzy
+msgid "Disable at"
+msgstr "Onemogući CSS "
+
+#: mystickymenu.php:1030
+msgid "front page"
+msgstr ""
+
+#: mystickymenu.php:1036
+msgid "blog page"
+msgstr ""
+
+#: mystickymenu.php:1042
+msgid "pages"
+msgstr ""
+
+#: mystickymenu.php:1048
+msgid "tags"
+msgstr ""
+
+#: mystickymenu.php:1054
+msgid "categories"
+msgstr ""
+
+#: mystickymenu.php:1060
+msgid "posts"
+msgstr ""
+
+#: mystickymenu.php:1066
+msgid "archives"
+msgstr ""
+
+#: mystickymenu.php:1072
+msgid "search"
+msgstr ""
+
+#: mystickymenu.php:1086
+msgid ""
+"<span class=\"description\"><strong>Except for this pages:</strong> </span>"
+msgstr ""
+
+#: mystickymenu.php:1093
+msgid ""
+"<span class=\"description\">Comma separated list of pages to enable. It "
+"should be page name, id or slug. Example: about-us, 1134, Contact Us. Leave "
+"blank if you realy want to disable sticky menu for all pages.</span>"
+msgstr ""
+
+#: mystickymenu.php:1100
+msgid ""
+"<span class=\"description\"><strong>Except for this posts:</strong> </span>"
+msgstr ""
+
+#: mystickymenu.php:1107
+msgid ""
+"<span class=\"description\">Comma separated list of posts to enable. It "
+"should be post name, id or slug. Example: about-us, 1134, Contact Us. Leave "
+"blank if you realy want to disable sticky menu for all posts.</span>"
+msgstr ""
+
+#: mystickymenu.php:1121
+msgid "Turn on Sticky Menu"
+msgstr ""
+
+#: mystickymenu.php:1125
+msgid ""
+"Sticky Menu is not turned on. Turn on Sticky Menu to activate sticky menu on "
+"your website."
+msgstr ""
+
+#: mystickymenu.php:1128
+msgid "Just save & keep it off"
+msgstr ""
+
+#: mystickymenu.php:1129
+msgid "Save & Turn on Sticky Menu"
+msgstr ""
+
+#: mystickymenu.php:1137 welcome-bar.php:902
+msgid "Save"
+msgstr ""
+
+#: mystickymenu.php:1139 welcome-bar.php:903
+msgid "SAVE & VIEW DASHBOARD"
+msgstr ""
+
+#: mystickymenu.php:1145 welcome-bar.php:913
+msgid "Reset"
+msgstr ""
+
+#: mystickymenu.php:1150
+msgid "Leave a review"
+msgstr ""
+
+#: mystickymenu.php:1269
+msgid "Reset Settings saved."
+msgstr ""
+
+#: mystickymenu.php:1325
+msgid "Upgrade to pro today"
+msgstr ""
+
+#: mystickymenu.php:1326
+msgid "🎨 Display coupon codes and add sliding text to the widget."
+msgstr ""
+
+#: mystickymenu.php:1327
+msgid "📱 Create multiple widgets for different devices, pages and languages."
+msgstr ""
+
+#: mystickymenu.php:1328
+msgid "🎯 Targeting by country, page, and device"
+msgstr ""
+
+#: mystickymenu.php:1329
+msgid "⏱️ Add a countdown timer to increase the conversion rate"
+msgstr ""
+
+#: mystickymenu.php:1331 mystickymenu.php:2495
+msgid "Upgrade to Pro"
+msgstr ""
+
+#: mystickymenu.php:1671
+msgid "Your request is not valid"
+msgstr ""
+
+#: mystickymenu.php:1781
+msgid ""
+"Contact's data is saved locally do make backup or export before uninstalling "
+"plugin"
+msgstr ""
+
+#: mystickymenu.php:1786
+msgid "Download & Export All Subscriber to CSV file:"
+msgstr ""
+
+#: mystickymenu.php:1787
+msgid "Download & Export to CSV"
+msgstr ""
+
+#: mystickymenu.php:1790
+msgid "Delete All Subscibers from Database:"
+msgstr ""
+
+#: mystickymenu.php:1792
+msgid "Delete All Data"
+msgstr ""
+
+#: mystickymenu.php:1818 mystickymenu.php:1820
+msgid "Search"
+msgstr ""
+
+#: mystickymenu.php:1827
+msgid "Bulk"
+msgstr ""
+
+#: mystickymenu.php:1828
+msgid "ID"
+msgstr ""
+
+#: mystickymenu.php:1829
+msgid "Widget Name"
+msgstr ""
+
+#: mystickymenu.php:1833
+msgid "Date"
+msgstr ""
+
+#: mystickymenu.php:1834
+msgid "URL"
+msgstr ""
+
+#: mystickymenu.php:1882
+msgid "No Contact Form Leads Found!"
+msgstr ""
+
+#: mystickymenu.php:2143
+msgid "Days"
+msgstr ""
+
+#: mystickymenu.php:2144
+msgid "Hours"
+msgstr ""
+
+#: mystickymenu.php:2145
+msgid "Minutes"
+msgstr ""
+
+#: mystickymenu.php:2146
+#, fuzzy
+msgid "Seconds"
+msgstr "u sekundama."
+
+#: mystickymenu.php:2370
+msgid "This field is required"
+msgstr ""
+
+#: mystickymeny-new-welcomebar.php:2
+msgid "Create a new My Sticky Bar for your website. What can you use it for?"
+msgstr ""
+
+#: recommended-plugins.php:92
+msgid "Try out our recommended plugins"
+msgstr ""
+
+#: recommended-plugins.php:94
+msgid "Hide From Menu"
+msgstr ""
+
+#: recommended-plugins.php:406
+msgid ""
+"If you hide the recommended plugins page from your menu, it won't appear "
+"there again. Are you sure you'd like to do it?"
+msgstr ""
+
+#: upgrade-to-pro.php:32
+msgid "1 Year"
+msgstr ""
+
+#: upgrade-to-pro.php:33
+msgid "Billed Yearly"
+msgstr ""
+
+#: upgrade-to-pro.php:34
+msgid "/Year"
+msgstr ""
+
+#: upgrade-to-pro.php:39
+#, fuzzy
+msgid "Less than $4.1/mo"
+msgstr "manje od"
+
+#: upgrade-to-pro.php:41 upgrade-to-pro.php:79 upgrade-to-pro.php:117
+msgid "1 Website"
+msgstr ""
+
+#: upgrade-to-pro.php:44
+msgid "Save $136"
+msgstr ""
+
+#: upgrade-to-pro.php:45
+#, fuzzy
+msgid "Less than $9.1/mo"
+msgstr "manje od"
+
+#: upgrade-to-pro.php:47 upgrade-to-pro.php:85 upgrade-to-pro.php:123
+msgid "5 Websites"
+msgstr ""
+
+#: upgrade-to-pro.php:50
+msgid "Save $2,270"
+msgstr ""
+
+#: upgrade-to-pro.php:51
+#, fuzzy
+msgid "Less than $15/mo"
+msgstr "manje od"
+
+#: upgrade-to-pro.php:53 upgrade-to-pro.php:91 upgrade-to-pro.php:129
+msgid "50 Websites"
+msgstr ""
+
+#: upgrade-to-pro.php:56 upgrade-to-pro.php:62 upgrade-to-pro.php:94
+#: upgrade-to-pro.php:100 upgrade-to-pro.php:132 upgrade-to-pro.php:138
+msgid "Save >95%"
+msgstr ""
+
+#: upgrade-to-pro.php:57
+msgid "Less than $29.1/mo"
+msgstr ""
+
+#: upgrade-to-pro.php:59 upgrade-to-pro.php:97 upgrade-to-pro.php:135
+msgid "500 Websites"
+msgstr ""
+
+#: upgrade-to-pro.php:63
+#, fuzzy
+msgid "Less than $40/mo"
+msgstr "manje od"
+
+#: upgrade-to-pro.php:65 upgrade-to-pro.php:103 upgrade-to-pro.php:141
+msgid "1000 Websites"
+msgstr ""
+
+#: upgrade-to-pro.php:70
+msgid "2 Year"
+msgstr ""
+
+#: upgrade-to-pro.php:71
+msgid "Billed Yearly after 2 Years"
+msgstr ""
+
+#: upgrade-to-pro.php:72
+msgid "/2 Years"
+msgstr ""
+
+#: upgrade-to-pro.php:76
+msgid "Save $29"
+msgstr ""
+
+#: upgrade-to-pro.php:77
+#, fuzzy
+msgid "Less than $2.9/mo"
+msgstr "manje od"
+
+#: upgrade-to-pro.php:82
+msgid "Save $321"
+msgstr ""
+
+#: upgrade-to-pro.php:83
+#, fuzzy
+msgid "Less than $7.1/mo"
+msgstr "manje od"
+
+#: upgrade-to-pro.php:88
+msgid "Save $4,600+"
+msgstr ""
+
+#: upgrade-to-pro.php:89
+msgid "Less than $11.7/mo"
+msgstr ""
+
+#: upgrade-to-pro.php:95
+msgid "Less than $21.7/mo"
+msgstr ""
+
+#: upgrade-to-pro.php:101
+msgid "Less than $30.5/mo"
+msgstr ""
+
+#: upgrade-to-pro.php:108
+msgid "Lifetime"
+msgstr ""
+
+#: upgrade-to-pro.php:109
+msgid "For Lifetime"
+msgstr ""
+
+#: upgrade-to-pro.php:110
+msgid "/Lifetime"
+msgstr ""
+
+#: upgrade-to-pro.php:114
+msgid "Save $96"
+msgstr ""
+
+#: upgrade-to-pro.php:115 upgrade-to-pro.php:121 upgrade-to-pro.php:127
+#: upgrade-to-pro.php:133 upgrade-to-pro.php:139
+msgid "Lifetime License 🚀"
+msgstr ""
+
+#: upgrade-to-pro.php:120
+msgid "Save $946"
+msgstr ""
+
+#: upgrade-to-pro.php:126
+msgid "Save $10,000+"
+msgstr ""
+
+#: upgrade-to-pro.php:149
+msgid "Multiple notification bars"
+msgstr ""
+
+#: upgrade-to-pro.php:150
+msgid ""
+"Create a separate notification bar for different pages based on page "
+"targeting rules (E.g. for different languages, different product categories "
+"and much more)"
+msgstr ""
+
+#: upgrade-to-pro.php:153
+msgid "Countdown timer"
+msgstr ""
+
+#: upgrade-to-pro.php:154
+msgid ""
+"Add a countdown timer element to your notification bars to increase "
+"conversion rate, announce flash sales, and more"
+msgstr ""
+
+#: upgrade-to-pro.php:157
+msgid "Sliding Texts or carousels"
+msgstr ""
+
+#: upgrade-to-pro.php:161
+msgid "Send contact form leads to email"
+msgstr ""
+
+#: upgrade-to-pro.php:162
+msgid "Send contact form leads to your email of choice"
+msgstr ""
+
+#: upgrade-to-pro.php:165
+msgid "Display coupons in the notification bar"
+msgstr ""
+
+#: upgrade-to-pro.php:166
+msgid "Show sale coupons for your website right from the top bar"
+msgstr ""
+
+#: upgrade-to-pro.php:169
+msgid "Widget analytics"
+msgstr ""
+
+#: upgrade-to-pro.php:170
+msgid ""
+"Unlock analytics data about your bar usage. Find out how many of your "
+"visitors see the bar and click on the button."
+msgstr ""
+
+#: upgrade-to-pro.php:173
+msgid "Show menu only on scroll up/down"
+msgstr ""
+
+#: upgrade-to-pro.php:174
+msgid "You can show the menu when scrolling up, down or both"
+msgstr ""
+
+#: upgrade-to-pro.php:177
+msgid " Customise notification bars for different devices"
+msgstr ""
+
+#: upgrade-to-pro.php:178
+msgid "You can disable the sticky effect on desktop or mobile"
+msgstr ""
+
+#: upgrade-to-pro.php:181
+msgid "Set specific date & time"
+msgstr ""
+
+#: upgrade-to-pro.php:182
+msgid ""
+"Set the specific time and date for your bar to appear. Use this feature to "
+"offer time-limited coupons or to start a promotion on a specific date or "
+"time."
+msgstr ""
+
+#: upgrade-to-pro.php:186
+msgid "Show/hide the sticky menu on specific pages"
+msgstr ""
+
+#: upgrade-to-pro.php:190
+msgid ""
+"Show or hide your notification bar for specific countries. Create unique "
+"notification bars for different countries and tailor your messaging to "
+"specific audiences"
+msgstr ""
+
+#: upgrade-to-pro.php:194
+msgid ""
+"Target your bar to users based on their login status. You can create "
+"different widgets for logged-in and logged-out visitors."
+msgstr ""
+
+#: upgrade-to-pro.php:198
+msgid "Add CSS of your own to the sticky menu"
+msgstr ""
+
+#: upgrade-to-pro.php:201
+msgid "Effects and more"
+msgstr ""
+
+#: upgrade-to-pro.php:202
+msgid ""
+"Fade/Slide, opacity, background image, custom colors, transition time and "
+"more"
+msgstr ""
+
+#: upgrade-to-pro.php:205
+msgid "More capabilities for the notification bar"
+msgstr ""
+
+#: upgrade-to-pro.php:206
+msgid ""
+"Including page targeting, delay and scroll triggers, devices, position, "
+"height, expiry date, open link in a new tab"
+msgstr ""
+
+#: upgrade-to-pro.php:270 upgrade-to-pro.php:353
+msgid "Buy now"
+msgstr ""
+
+#: upgrade-to-pro.php:384
+msgid "30 days money back guaranteed"
+msgstr ""
+
+#: upgrade-to-pro.php:388
+msgid ""
+"The plugin will always keep working even if you don't renew your license"
+msgstr ""
+
+#: upgrade-to-pro.php:489
+msgid "TRUSTED BY LEADING COMPANIES WORLDWIDE"
+msgstr ""
+
+#: upgrade-to-pro.php:495
+msgid "Frequently Asked Questions"
+msgstr ""
+
+#: welcome-bar.php:83
+msgid "Bar Visibility"
+msgstr ""
+
+#: welcome-bar.php:630
+msgid "Display Rules"
+msgstr ""
+
+#: welcome-bar.php:646
+msgid " Upgrade Now"
+msgstr ""
+
+#. Plugin Name of the plugin/theme
+#, fuzzy
+msgid "My Sticky Bar"
+msgstr "Sticky klasa"
+
+#. Plugin URI of the plugin/theme
+msgid "https://premio.io/"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid ""
+"Create a notification bar for your website with My Sticky Bar. You can "
+"customize the design, collect leads, and enjoy other advanced features. You "
+"can also make your menu sticky using My Sticky Bar."
+msgstr ""
+
+#. Author URI of the plugin/theme
+msgid "https://premio.io/downloads/mystickymenu/"
+msgstr ""
+
+#. translators: %s: Plugin name and version.
+#: admin/poptin-plugin.php:112 recommended-plugins.php:164
+msgctxt "plugin"
+msgid "Install %s now"
+msgstr ""
+
+#: admin/poptin-plugin.php:119 recommended-plugins.php:171
+msgctxt "plugin"
+msgid "Cannot Install"
+msgstr ""
+
+#. translators: %s: Plugin name and version.
+#: admin/poptin-plugin.php:134 recommended-plugins.php:186
+msgctxt "plugin"
+msgid "Update %s now"
+msgstr ""
+
+#: admin/poptin-plugin.php:141 recommended-plugins.php:193
+msgctxt "plugin"
+msgid "Cannot Update"
+msgstr ""
+
+#: admin/poptin-plugin.php:152 recommended-plugins.php:204
+msgctxt "plugin"
+msgid "Active"
+msgstr ""
+
+#. translators: %s: Plugin name.
+#: admin/poptin-plugin.php:157 recommended-plugins.php:209
+msgctxt "plugin"
+msgid "Activate %s"
+msgstr ""
+
+#. translators: %s: Plugin name.
+#: admin/poptin-plugin.php:170 recommended-plugins.php:222
+msgctxt "plugin"
+msgid "Network Activate %s"
+msgstr ""
+
+#: admin/poptin-plugin.php:183 recommended-plugins.php:235
+msgctxt "plugin"
+msgid "Installed"
+msgstr ""
+
+#. translators: %s: Number of millions.
+#: admin/poptin-plugin.php:324 recommended-plugins.php:376
+msgctxt "Active plugin installations"
+msgid "%s+ Million"
+msgid_plural "%s+ Million"
+msgstr[0] ""
+msgstr[1] ""
+
+#: admin/poptin-plugin.php:328 recommended-plugins.php:380
+#, fuzzy
+msgctxt "Active plugin installations"
+msgid "Less Than 10"
+msgstr "manje od"
+
+#, fuzzy
+#~ msgid "menu or header element class or id."
+#~ msgstr "div klasa menija ili zaglavlja."
+
+#~ msgid "px width, 0  to disable."
+#~ msgstr "px širine. 0 da biste onemogućili opciju."
+
+#~ msgid "after"
+#~ msgstr "nakon"
+
+#~ msgid "Checked is slide, unchecked is fade."
+#~ msgstr "Označeno je slide, neoznačeno je fade."
+
+#, fuzzy
+#~ msgid "If you want to change sticky hover color: "
+#~ msgstr ""
+#~ "Ako želite da promenite sticky hover boju, prvo dodajte podrazumevani "
+#~ "stil i zatim: "
+
+#~ msgid ""
+#~ "More examples <a href='http://wordpress.transformnews.com/tutorials/"
+#~ "mystickymenu-extended-style-functionality-using-myfixed-sticky-"
+#~ "class-403'>here</a>."
+#~ msgstr ""
+#~ "Više primera <a href='http://wordpress.transformnews.com/tutorials/"
+#~ "mystickymenu-extended-style-functionality-using-myfixed-sticky-"
+#~ "class-403'>ovde</a>."
+
+#~ msgid ".myfixed css class"
+#~ msgstr ".myfixed css klasa"
+
+#~ msgid "px."
+#~ msgstr "px."
+
+#~ msgid "Default style: "
+#~ msgstr "Podrazumevani izgled: "
+
+#~ msgid "px. (scroll)"
+#~ msgstr "px. (scroll)"
+
+#~ msgid "mymessage2"
+#~ msgstr "Bye"
