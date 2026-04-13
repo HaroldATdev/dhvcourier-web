@@ -1,5 +1,17 @@
 wp-config.php
 .htaccess
-*.log
 wp-content/cache/
+# Ignorar respaldos temporales de actualizaciones
+wp-content/upgrade-temp-backup/
 wp-content/upgrade/
+wp-content/backup-db/
+
+# Ignorar archivos comprimidos
+*.zip
+*.tar.gz
+
+# Ignorar logs
+*.log
+
+# Opcional: Ignorar imágenes subidas (recomendado para que el repo no pese GBs)
+wp-content/uploads/

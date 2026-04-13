@@ -279,7 +279,8 @@ add_action( 'wp_head',   'wpcte_inline_css' );
 add_action( 'wp_enqueue_scripts', 'wpcte_enqueue_frontend' );
 function wpcte_enqueue_frontend() {
     $page_id = (int) get_option( 'wpcte_page_id_tarifario_dhv' );
-    if ( $page_id && (int) get_queried_object_id() === $page_id ) {
+    // Encolar jQuery cuando estamos en la página del tarifario/ cotizador generado por el plugin
+    if ( ( $page_id && (int) get_queried_object_id() === $page_id ) || is_page( 'cotizador' ) ) {
         wp_enqueue_script( 'jquery' );
     }
 }
@@ -351,6 +352,216 @@ function wpcte_shortcode_tarifario(): string {
     if ( ! current_user_can( 'manage_options' ) ) return '<p>Acceso restringido.</p>';
     ob_start();
     wpcte_render_tarifario_page();
+    return ob_get_clean();
+}
+
+/**
+ * Inyecta selector + cotizador en la página cuyo slug sea `cotizador`.
+ * Flujo independiente: muestra selector si no hay `?tipo_envio=...`,
+ * o muestra el cotizador para el tipo seleccionado.
+ */
+add_filter('the_content', 'wpcte_inject_cotizador_page', 20);
+function wpcte_inject_cotizador_page( $content ) {
+    if ( ! is_main_query() || ! is_page() ) return $content;
+    global $post;
+    if ( ! $post ) return $content;
+    if ( $post->post_name !== 'cotizador' ) return $content;
+
+    $tarifario = wpcte_tarifario();
+    $tipo = sanitize_key( $_GET['tipo_envio'] ?? '' );
+    $tiene_alm = wpcte_tiene_almacen();
+
+    $tipos = array(
+        'puerta_puerta' => array( 'label'=>'Puerta a Puerta', 'icon'=>'fa-home',    'desc'=>'Recojo y entrega en domicilio.' ),
+        'agencia'       => array( 'label'=>'Agencia',         'icon'=>'fa-building','desc'=>'Entrega desde nuestra agencia.' ),
+        'almacen'       => array( 'label'=>'Almacén',         'icon'=>'fa-archive', 'desc'=>'Envío desde tu almacén DHV.' ),
+    );
+    // Mostrar siempre la opción 'almacen' en el selector público (no depender de stock)
+    // if ( ! $tiene_alm ) unset( $tipos['almacen'] );
+
+    ob_start();
+
+    if ( ! $tipo ) {
+        // Mostrar selector (diseño mejorado)
+        ?>
+        <style>
+        /* Selector mejorado para la página pública */
+        #wpcte-selector-hero{max-width:1100px;margin:1.2rem auto;padding:1.4rem}
+        #wpcte-selector-hero .intro{display:flex;align-items:center;gap:1rem;margin-bottom:1rem}
+        #wpcte-selector-hero .intro h2{margin:0;font-size:1.4rem;color:#073b4c}
+        #wpcte-selector-hero .intro p{margin:0;color:#556;text-align:left;opacity:.9}
+        .wpcte-grid-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-top:12px}
+        .wpcte-card-modern{background:linear-gradient(180deg,#ffffff,#f7fbff);border:1px solid #e6f2fa;border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:10px;align-items:flex-start;transition:transform .18s,box-shadow .18s;cursor:pointer;text-decoration:none;color:inherit}
+        .wpcte-card-modern:hover{transform:translateY(-6px);box-shadow:0 14px 32px rgba(3,72,110,.12)}
+        .wpcte-card-modern .icon{width:56px;height:56px;border-radius:12px;background:#e8f5fd;display:flex;align-items:center;justify-content:center;font-size:22px;color:#0077b6}
+        .wpcte-card-modern .title{font-weight:700;color:#073b4c;font-size:1rem}
+        .wpcte-card-modern .desc{font-size:.9rem;color:#406;text-align:left;opacity:.85}
+        .wpcte-card-modern .cta{margin-left:auto;padding:6px 10px;border-radius:8px;background:#0077b6;color:#fff;font-weight:700;font-size:.86rem}
+        @media(max-width:540px){#wpcte-selector-hero .intro{flex-direction:column;align-items:flex-start}}
+        </style>
+
+        <div id="wpcte-selector-hero">
+            <div class="intro">
+                <div style="font-size:2rem;color:#0077b6"><i class="fa fa-truck"></i></div>
+                <div>
+                    <h2>Simula el precio de tu envío</h2>
+                    <p>Elige el tipo de envío para ver las modalidades disponibles y calcular una cotización rápida.</p>
+                </div>
+            </div>
+
+            <div class="wpcte-grid-cards">
+                <?php foreach ( $tipos as $key => $t ): $href = esc_url( add_query_arg( array( 'tipo_envio'=>$key ), get_permalink( $post->ID ) ) ); ?>
+                    <a href="<?php echo $href; ?>" class="wpcte-card-modern" role="button" aria-label="Simular <?php echo esc_attr($t['label']); ?>">
+                        <div style="display:flex;align-items:center;width:100%">
+                            <div class="icon"><i class="fa <?php echo esc_attr($t['icon']); ?>"></i></div>
+                            <div style="margin-left:12px;flex:1">
+                                <div class="title"><?php echo esc_html($t['label']); ?></div>
+                                <div class="desc"><?php echo esc_html($t['desc']); ?></div>
+                            </div>
+                            <div class="cta">Simular</div>
+                        </div>
+                    </a>
+                <?php endforeach; ?>
+            </div>
+        </div>
+
+        <?php
+        return ob_get_clean();
+    }
+
+    // Si se eligió tipo, renderizar cotizador (modo 'crear' para mostrar controles)
+    $t = $tipos[$tipo] ?? array( 'label'=>$tipo, 'icon'=>'fa-truck' );
+    ?>
+    <style>
+    /* Estilos exclusivos para la página cotizador: pasos y ocultar botón continuar */
+    #wpcte-cot-steps{display:flex;gap:12px;align-items:center;justify-content:center;margin:1rem 0 0.8rem;padding:0 10px}
+    .wpcte-step{display:flex;flex-direction:column;align-items:center;gap:6px;padding:10px 14px;border-radius:10px;background:#f7fbfe;border:1px solid #e6f2fa;min-width:140px}
+    .wpcte-step.active{background:#0077b6;color:#fff;border-color:#0077b6;box-shadow:0 6px 18px rgba(0,120,182,.12)}
+    .wpcte-step .num{background:rgba(255,255,255,.12);border-radius:999px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-weight:700}
+    #wpcte-btn-continuar{display:none!important;} /* ocultar continuar en la página pública */
+    /* Resultado: diseño mejorado */
+    #wpcte-cot-resultado{display:none;padding:1rem;border-radius:12px;background:linear-gradient(180deg,#f7fdff,#f0fbff);border:1px solid #d7eefb;box-shadow:0 6px 20px rgba(3,72,110,.06);font-size:0.95rem;color:#074b5b}
+    #wpcte-cot-resultado.ok{display:block}
+    #wpcte-cot-resultado .wpcte-res-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px}
+    #wpcte-cot-resultado .wpcte-res-left{display:flex;flex-direction:column}
+    #wpcte-cot-resultado .wpcte-res-title{font-weight:700;color:#073b4c}
+    #wpcte-cot-resultado .wpcte-res-price{font-size:1.45rem;color:#2a9d8f;font-weight:800}
+    #wpcte-cot-resultado .wpcte-desglose{margin-top:8px;border-top:1px dashed #d9eff9;padding-top:8px;color:#114b5f}
+    #wpcte-cot-resultado .wpcte-acciones{margin-top:10px;display:flex;gap:8px}
+    #wpcte-cot-resultado .wpcte-acciones .btn{background:#0077b6;color:#fff;padding:.45rem .85rem;border-radius:8px;border:none;cursor:pointer;font-weight:700}
+    #wpcte-cot-resultado .wpcte-acciones .btn.ghost{background:transparent;color:#0077b6;border:1px solid #cfeefc}
+    @media(max-width:640px){#wpcte-cot-resultado .wpcte-res-head{flex-direction:column;align-items:flex-start}#wpcte-cot-resultado .wpcte-res-price{font-size:1.25rem}}
+    </style>
+
+    <div id="wpcte-pantalla-cotizador">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap">
+            <div class="wpcte-badge"><i class="fa <?php echo esc_attr($t['icon']); ?>"></i> Tipo: <strong><?php echo esc_html($t['label']); ?></strong></div>
+            <div id="wpcte-cot-steps" aria-hidden="false">
+                <div class="wpcte-step active"><div class="num">1</div><div style="font-weight:700">Tipo</div><div style="font-size:.8rem;color:inherit;opacity:.9">Selecciona modalidad</div></div>
+                <div class="wpcte-step"><div class="num">2</div><div style="font-weight:700">Cotizar</div><div style="font-size:.8rem;color:inherit;opacity:.9">Ingrese datos</div></div>
+                <div class="wpcte-step"><div class="num">3</div><div style="font-weight:700">Resultado</div><div style="font-size:.8rem;color:inherit;opacity:.9">Ver tarifa</div></div>
+            </div>
+        </div>
+        <div style="margin-top:1rem">
+            <?php echo wpcte_render_cotizador_html( $tarifario, $tipo, 'crear' ); ?>
+        </div>
+    </div>
+    <script>
+    (function(){
+        // Styles tweak: make steps look clickable
+        var styleAdd = document.createElement('style');
+        styleAdd.innerHTML = '\n.wpcte-step{cursor:pointer;transition:all .18s}\n.wpcte-step:hover{transform:translateY(-4px)}\n.wpcte-step.disabled{opacity:.5;pointer-events:none;transform:none}\n#wpcte-cot-btn{background:#2a9d8f;color:#fff;border:none;padding:.55rem 1.4rem;border-radius:10px;font-size:.95rem;font-weight:700;cursor:pointer;box-shadow:0 6px 18px rgba(42,157,143,.12);transition:background .12s,transform .08s}\n#wpcte-cot-btn:hover{background:#21867a}\n';
+        document.head.appendChild(styleAdd);
+
+        var steps = Array.from(document.querySelectorAll('#wpcte-cot-steps .wpcte-step'));
+        var mod = document.getElementById('wpcte-mod');
+        var calcBtn = document.getElementById('wpcte-cot-btn');
+        var resultado = document.getElementById('wpcte-cot-resultado');
+
+        function setStep(n){
+            steps.forEach(function(s,i){s.classList.toggle('active',i===n);});
+        }
+
+        function updateStepsState(){
+            // step 0 (Tipo) siempre habilitado (volver al selector)
+            // step 1 (Cotizar) habilitado siempre
+            // step 2 (Resultado) habilitado solo si hay precio calculado
+            var hasPrice = (typeof window._wpcte_precio !== 'undefined' && window._wpcte_precio !== null);
+            if(steps[2]){
+                steps[2].classList.toggle('disabled', !hasPrice);
+            }
+        }
+
+        // Click handlers for steps
+        steps.forEach(function(s, idx){
+            s.addEventListener('click', function(e){
+                if(s.classList.contains('disabled')) return;
+                if(idx===0){
+                    // volver al selector: remover query param tipo_envio
+                    try{var u=new URL(window.location.href);u.searchParams.delete('tipo_envio');window.location.href=u.toString();return;}catch(err){}
+                }
+                if(idx===1){
+                    setStep(1);
+                    // foco en modalidad
+                    if(mod){mod.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(function(){mod.focus();},200);}            
+                }
+                if(idx===2){
+                    if(typeof window._wpcte_precio!=='undefined' && window._wpcte_precio!==null){
+                        setStep(2);
+                        if(resultado) resultado.scrollIntoView({behavior:'smooth',block:'center'});
+                    }
+                }
+            });
+        });
+
+        // React to modality change and calculation
+        if(mod) mod.addEventListener('change', function(){ setStep(1); updateStepsState(); });
+        if(calcBtn) calcBtn.addEventListener('click', function(){ setTimeout(function(){ setStep(2); updateStepsState(); }, 120); });
+
+        // Poll briefly for price changes (in case calculation sets window._wpcte_precio asynchronously)
+        var pollCount=0; var pollMax=40; var pollId=setInterval(function(){ updateStepsState(); if(typeof window._wpcte_precio!=='undefined' && window._wpcte_precio!==null){ clearInterval(pollId);} if(++pollCount>pollMax) clearInterval(pollId); },150);
+
+        // Inicializar estado
+        updateStepsState();
+
+        // Mejora UI: insertar botones Copiar / Imprimir en el resultado
+        function enhanceResultado(){
+            var res=document.getElementById('wpcte-cot-resultado');
+            if(!res) return;
+            if(res.querySelector('.wpcte-res-head')) return; // ya mejorado
+            var head=document.createElement('div');head.className='wpcte-res-head';
+            var left=document.createElement('div');left.className='wpcte-res-left';
+            var title=document.createElement('div');title.className='wpcte-res-title';title.textContent='Tarifa estimada';
+            var price=document.createElement('div');price.className='wpcte-res-price';price.textContent=(window._wpcte_precio?('S/ '+Number(window._wpcte_precio).toFixed(2)):'-');
+            left.appendChild(title);left.appendChild(price);
+            var actions=document.createElement('div');actions.className='wpcte-acciones';
+            var btnCopy=document.createElement('button');btnCopy.className='btn';btnCopy.textContent='Copiar precio';
+            var btnPrint=document.createElement('button');btnPrint.className='btn ghost';btnPrint.textContent='Imprimir';
+            actions.appendChild(btnCopy);actions.appendChild(btnPrint);
+            head.appendChild(left);head.appendChild(actions);
+            // insertar al inicio
+            res.insertBefore(head,res.firstChild);
+            // mover desglose dentro de nuestro contenedor si existe
+            var desg=res.querySelector('.wpcte-desglose'); if(desg) res.appendChild(desg);
+
+            btnCopy.addEventListener('click',function(){
+                var txt=(window._wpcte_precio?('S/ '+Number(window._wpcte_precio).toFixed(2)):'');
+                if(!txt) return;
+                navigator.clipboard?.writeText(txt).then(function(){btnCopy.textContent='Copiado';setTimeout(function(){btnCopy.textContent='Copiar precio';},1400);});
+            });
+            btnPrint.addEventListener('click',function(){window.print();});
+        }
+        // Observar cambios en resultado (cuando se calcula se actualiza innerHTML)
+        var resObs=document.getElementById('wpcte-cot-resultado');
+        if(resObs){
+            var mo=new MutationObserver(function(m){enhanceResultado();});
+            mo.observe(resObs,{childList:true,subtree:true});
+            // también probar una vez
+            enhanceResultado();
+        }
+    })();
+    </script>
+    <?php
     return ob_get_clean();
 }
 
@@ -548,6 +759,7 @@ function wpcte_render_cotizador_html( $tarifario, $tipo_envio = '', $modo = 'cre
 </div>
 <script>
 (function(){
+var $ = window.jQuery || window.$;
     var lbl=document.getElementById('wpcte-dev-label');
     var chk=document.getElementById('wpcte-devolucion');
     if(lbl&&chk){
@@ -564,7 +776,7 @@ function wpcte_render_cotizador_html( $tarifario, $tipo_envio = '', $modo = 'cre
 })();
 </script>
 
-<button type="button" id="wpcte-cot-btn"><i class="fa fa-search"></i> Calcular</button>
+<button type="button" id="wpcte-cot-btn" class="my-2"><i class="fa fa-search"></i> Calcular</button>
 <div id="wpcte-cot-resultado"></div>
 </div>
 <?php if ( $modo === 'crear' ): ?>
@@ -573,6 +785,7 @@ function wpcte_render_cotizador_html( $tarifario, $tipo_envio = '', $modo = 'cre
 
 <script>
 (function(){
+var $ = window.jQuery || window.$;
 var T=<?php echo $tar_js; ?>;
 var L=<?php echo $lug_js; ?>;
 var MOD_RULES=<?php echo $mod_rules; ?>;
@@ -731,10 +944,26 @@ function filtrarVehiculos(destino){
         op.value=k;op.textContent=v.label;
         vehSel.appendChild(op);
     });
-    /* Filtrar los no disponibles en este destino */
+    /* Filtrar los no disponibles en este destino (búsqueda tolerante a mayúsculas/minúsculas) */
     var data=null;
-    if(T.lima_lima.perifericas[destino]) data=T.lima_lima.perifericas[destino];
-    else if(T.lima_lima.distritos[destino]) data=T.lima_lima.distritos[destino];
+    if(destino){
+        var key=destino;
+        // búsqueda directa
+        if(!T.lima_lima.perifericas[key] && !T.lima_lima.distritos[key]){
+            // intentar versión en mayúsculas
+            var up=String(destino).toUpperCase();
+            if(T.lima_lima.perifericas[up]||T.lima_lima.distritos[up]) key=up;
+            else {
+                // búsqueda case-insensitive sobre keys
+                var found=null;
+                Object.keys(T.lima_lima.perifericas||{}).some(function(k){ if(k.toLowerCase()===String(destino).toLowerCase()){ found=k; return true;} });
+                if(!found) Object.keys(T.lima_lima.distritos||{}).some(function(k){ if(k.toLowerCase()===String(destino).toLowerCase()){ found=k; return true;} });
+                if(found) key=found;
+            }
+        }
+        if(T.lima_lima.perifericas[key]) data=T.lima_lima.perifericas[key];
+        else if(T.lima_lima.distritos[key]) data=T.lima_lima.distritos[key];
+    }
     Array.from(vehSel.options).forEach(function(op){
         if(!op.value)return;
         op.style.display=(data&&data[op.value]===null)?'none':'';
