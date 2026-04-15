@@ -1,0 +1,5 @@
+﻿"Nombre del Remitente","Remitente registrado",Remitente,"Lugar de Origen","DNI / RUC","Teléfono Remitente",Destinatario,"Lugar de Destino","DNI Destinatario","Teléfono Destinatario","Dirección Destinatario",Monto,Peso,"Condición de Pago","Total Bultos","Lista Productos","ES Shipment Status"
+DHV-0000037,"Usuario Prueba","Usuario Prueba",LIMA,0000000,999999999,fgdgf,CHICLAYO,234342,908954480,BEBVTRBWR,11.00,1,"CONTRA ENTREGA",1,,
+DHV-0000038,"Usuario Prueba","Usuario Prueba","PUEBLO LIBRE",0000000,999999999,"DIODORO COLLAZOS M.","JESUS MARIA",000000,908954480,"AGENCIA HUAMBO",100.00,1,contado,1,,
+DHV-0000039,"Usuario Prueba","Usuario Prueba",LIMA,12345,999999999,fgdgf,"RODRIGUEZ DE MENDOZA",000000,942120497,"AGENCIA HUAMBO",10,1,CANCELADO,2,,
+DHV-0000040,"David Prueba","David Prueba",LIMA,0000000,908954480,"DIODORO COLLAZOS M.",IQUITOS,000000,dfsfds,"Av Angeles 568",25.00,1,CANCELADO,1,,
