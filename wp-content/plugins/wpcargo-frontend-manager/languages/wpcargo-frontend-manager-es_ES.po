@@ -2236,7 +2236,7 @@ msgstr "Estado del pedido"
 
 #: templates/orders.tpl.php:10
 msgid "Shipment Status"
-msgstr "ES Shipment Status"
+msgstr "Estado del envío"
 
 #: templates/orders.tpl.php:11
 msgid "Amount"

@@ -224,7 +224,7 @@ msgstr "Fecha de recogida"
 
 #: admin/classes/class-wpc-export.php:98 admin/includes/functions.php:129
 msgid "Shipment Status"
-msgstr "ES Shipment Status"
+msgstr "Estado del envío"
 
 #: admin/classes/class-wpc-export.php:103
 #: admin/templates/shipment-metabox.tpl.php:179
@@ -731,7 +731,7 @@ msgstr "Remitente registrado"
 
 #: admin/includes/hooks.php:479
 msgid "Shipment Status: "
-msgstr "ES Shipment Status"
+msgstr "Estado del envío"
 
 #: admin/includes/hooks.php:558
 msgid "SHIPPER DETAILS:"

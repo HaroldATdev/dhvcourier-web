@@ -168,4 +168,71 @@
 }
 
 /* Override mdb.min.css que oculta todos los selects */
-.dhv-recojo-wrap select { display: inline-block !important; } 
+.dhv-recojo-wrap select { display: inline-block !important; }
+
+/* =============================================
+   DHV Rutas — Entrega (extensión de estilos)
+   ============================================= */
+
+/* Alias del wrapper de entrega — reutiliza todos los estilos de recojo */
+.dhv-entrega-wrap *,
+.dhv-entrega-wrap *::before,
+.dhv-entrega-wrap *::after { box-sizing: border-box; }
+
+.dhv-entrega-wrap {
+    max-width: 860px;
+    margin: 0 auto;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    color: #2d3748;
+    padding: 0 4px;
+}
+
+/* Header entrega */
+.dhv-entrega-header {
+    display: flex; align-items: center; gap: 14px;
+    margin-bottom: 24px; padding-bottom: 16px;
+    border-bottom: 2px solid #e2e8f0;
+}
+.dhv-entrega-icon  { font-size: 2rem; line-height: 1; }
+.dhv-entrega-title { margin: 0; font-size: 1.4rem; font-weight: 700; color: #1e2a3a; }
+.dhv-entrega-date  { margin: 3px 0 0; color: #718096; font-size: .8rem; font-weight: 500; }
+
+/* Avatar de entrega en color distinto para diferenciar visualmente */
+.dhv-entrega-avatar { background: #2d7a4f !important; }
+
+/* Cabecera card entrega — tono verde oscuro */
+.dhv-entrega-wrap .dhv-cliente-header { background: #1a3d2b; }
+.dhv-entrega-wrap .dhv-cliente-header:hover { background: #244f38; }
+
+/* Punto tracking entrega */
+.dhv-entrega-dot { background: #2d7a4f !important; }
+
+/* Botón bulk entrega */
+.dhv-btn-entrega { background: #2d7a4f; color: #fff; }
+.dhv-btn-entrega:hover { background: #245f3d; }
+
+/* Badges de estado para entrega */
+.dhv-estado-en-ruta      { background: #bee3f8; color: #2a4365; }
+.dhv-estado-reprogramado { background: #feebc8; color: #7b341e; }
+.dhv-estado-anulado      { background: #e2e8f0; color: #4a5568; }
+/* dhv-estado-entregado y dhv-estado-devuelto ya están definidos arriba */
+
+/* Override select display para entrega */
+.dhv-entrega-wrap select { display: inline-block !important; }
+
+/* Responsive entrega */
+@media (max-width: 640px) {
+    .dhv-entrega-title { font-size: 1.15rem; }
+    .dhv-entrega-wrap .dhv-bulk-bar { flex-direction: column; align-items: flex-start; padding: 10px 12px; }
+    .dhv-entrega-wrap .dhv-bulk-controls { margin-left: 0; width: 100%; flex-direction: column; align-items: stretch; }
+    .dhv-entrega-wrap .dhv-status-select { width: 100%; min-width: unset; }
+    .dhv-btn-entrega { width: 100%; justify-content: center; }
+    .dhv-entrega-wrap .dhv-selected-count { align-self: flex-end; }
+    .dhv-entrega-wrap .dhv-pedido-row { flex-direction: column; align-items: flex-start; padding: 10px 12px; }
+    .dhv-entrega-wrap .dhv-pedido-right { width: 100%; }
+    .dhv-entrega-wrap .dhv-pedido-right .dhv-status-select { flex: 1; }
+}
+@media (max-width: 380px) {
+    .dhv-entrega-wrap .dhv-cliente-header { padding: 11px 10px; }
+    .dhv-entrega-wrap .dhv-badge { display: none; }
+}

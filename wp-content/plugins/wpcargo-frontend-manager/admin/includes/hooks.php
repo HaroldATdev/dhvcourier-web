@@ -614,11 +614,59 @@ function wpcfe_assigned_shipment_save( $shipment_id, $data ){
         update_post_meta( $shipment_id, 'agent_fields', get_current_user_id() );
     }
     // Assign Shipment to Driver
-    if( isset( $data['wpcargo_driver'] ) && ( can_wpcfe_add_shipment() || can_wpcfe_update_shipment() ) ){
-        $old_driver = get_post_meta( $shipment_id, 'wpcargo_driver', true );
-        update_post_meta( $shipment_id, 'wpcargo_driver', (int)$data['wpcargo_driver'] );
-        if( $old_driver != (int)$data['wpcargo_driver'] ){
-            wpcargo_assign_shipment_email( $shipment_id, (int)$data['wpcargo_driver'], __('Driver', 'wpcargo-frontend-manager' ) );
+    if ( ( can_wpcfe_add_shipment() || can_wpcfe_update_shipment() ) ){
+        // Determine submitted driver: prefer recojo field then default driver field
+        $submitted_driver = null;
+        if ( isset( $data['wpcargo_driver_recojo'] ) && $data['wpcargo_driver_recojo'] !== '' ) {
+            $submitted_driver = (int) $data['wpcargo_driver_recojo'];
+        } elseif ( isset( $data['wpcargo_driver'] ) && $data['wpcargo_driver'] !== '' ) {
+            $submitted_driver = (int) $data['wpcargo_driver'];
+        }
+        if ( $submitted_driver === null ) {
+            // nothing to do
+        } else {
+            // Determine tipo_envio: prefer submitted hidden field, then common meta keys
+            $tipo_envio = '';
+            if ( ! empty( $data['wpcte_tipo_envio'] ) ) {
+                $tipo_envio = sanitize_text_field( $data['wpcte_tipo_envio'] );
+            }
+            if ( empty( $tipo_envio ) ) {
+                $tipo_envio = sanitize_text_field( get_post_meta( $shipment_id, 'tipo_envio', true ) );
+            }
+            if ( empty( $tipo_envio ) ) {
+                $tipo_envio = sanitize_text_field( get_post_meta( $shipment_id, 'dhv_tipo_envio', true ) );
+            }
+            $tipo_norm = strtolower( str_replace( ' ', '_', trim( $tipo_envio ) ) );
+
+            // Case: Puerta a Puerta -> save recojo driver separately and set visible driver to recojo
+            if ( $tipo_norm === 'puerta_puerta' ) {
+                $old_driver = get_post_meta( $shipment_id, 'wpcargo_driver', true );
+                update_post_meta( $shipment_id, 'wpcargo_driver_recojo', $submitted_driver );
+                update_post_meta( $shipment_id, 'wpcargo_driver', $submitted_driver );
+                if ( (int)$old_driver !== $submitted_driver ){
+                    wpcargo_assign_shipment_email( $shipment_id, $submitted_driver, __('Driver', 'wpcargo-frontend-manager' ) );
+                }
+            }
+            // Case: Agencia o Almacén -> visible driver should be the entrega driver
+            elseif ( in_array( $tipo_norm, array( 'agencia', 'almacen' ), true ) ) {
+                $drv_entrega = get_post_meta( $shipment_id, 'driver_entrega_id', true );
+                $new_driver = $drv_entrega ? (int)$drv_entrega : $submitted_driver;
+                $old_driver = get_post_meta( $shipment_id, 'wpcargo_driver', true );
+                update_post_meta( $shipment_id, 'wpcargo_driver', $new_driver );
+                // Also store recojo field for completeness (use submitted value)
+                update_post_meta( $shipment_id, 'wpcargo_driver_recojo', $submitted_driver );
+                if ( (int)$old_driver !== (int)$new_driver ){
+                    wpcargo_assign_shipment_email( $shipment_id, (int)$new_driver, __('Driver', 'wpcargo-frontend-manager' ) );
+                }
+            }
+            // Default: keep existing behavior
+            else {
+                $old_driver = get_post_meta( $shipment_id, 'wpcargo_driver', true );
+                update_post_meta( $shipment_id, 'wpcargo_driver', $submitted_driver );
+                if ( (int)$old_driver !== $submitted_driver ){
+                    wpcargo_assign_shipment_email( $shipment_id, $submitted_driver, __('Driver', 'wpcargo-frontend-manager' ) );
+                }
+            }
         }
     }
         do_action( 'wpcfe_assigned_shipment_save', $shipment_id, $data );
@@ -676,7 +724,21 @@ function wpcfe_shipment_status_save( $post_id, $data ){
         && wp_verify_nonce( $data['wpcfe_add_form_fields'], 'wpcfe_add_action' ) 
         && can_wpcfe_add_shipment()
     ){
-        $__default_status = wpcfe_default_status();
+        // Determine shipment type: prefer form POST value (wpcte hidden field), fallback to saved meta
+        $tipo_envio = '';
+        if ( ! empty( $data['wpcte_tipo_envio'] ) ) {
+            $tipo_envio = sanitize_text_field( $data['wpcte_tipo_envio'] );
+        } else {
+            $tipo_envio = get_post_meta( $post_id, 'tipo_envio', true );
+        }
+
+        // For 'almacen' or 'agencia' set initial status to 'En espera', otherwise use default
+        if ( in_array( $tipo_envio, array( 'almacen', 'agencia' ), true ) ) {
+            $__default_status = 'En espera';
+        } else {
+            $__default_status = wpcfe_default_status();
+        }
+
         update_post_meta( $post_id, 'wpcargo_status', sanitize_text_field( $__default_status ) );
         wpcargo_send_email_notificatio( $post_id, sanitize_text_field( $__default_status ) );
     }

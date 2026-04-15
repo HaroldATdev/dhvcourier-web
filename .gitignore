@@ -15,3 +15,9 @@ wp-content/backup-db/
 
 # Opcional: Ignorar imágenes subidas (recomendado para que el repo no pese GBs)
 wp-content/uploads/
+# Ignorar archivos PDF generados por WPCargo
+wp-content/plugins/wpcargo-frontend-manager/admin/includes/file-container/*.pdf
+
+# Ignorar archivos temporales de edición
+*.save
+*.bak	

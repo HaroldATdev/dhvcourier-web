@@ -155,14 +155,14 @@ function wpcte_ajax_get_user_data() {
 
 function wpcte_ajax_get_tipo() {
     $post_id = absint( $_POST['post_id'] ?? 0 );
-    if ( ! $post_id ) wp_send_json_error();
+        if ( ! $post_id ) wp_send_json_error('missing');
     wp_send_json_success( array( 'tipo' => get_post_meta( $post_id, 'tipo_envio', true ) ) );
 }
 
 function wpcte_ajax_save_tarifario() {
     if ( ! current_user_can('manage_options') ) wp_send_json_error('no_permission');
     check_ajax_referer( 'wpcte_admin_nonce', 'nonce' );
-    $data = json_decode( stripslashes( $_POST['tarifario'] ?? '{}' ), true );
+        $data = json_decode( stripslashes( $_POST['tarifario'] ?? ''), true );
     if ( ! is_array( $data ) ) wp_send_json_error('invalid_data');
     // Asegurar que items de mercadería sean objetos (no arrays vacíos)
     if ( isset( $data['mercaderia']['categorias'] ) ) {
@@ -1471,7 +1471,9 @@ function wpcte_footer_crear() {
         var formEl=document.getElementById('wpcte-pantalla-form');
         f.parentNode.insertBefore(cotEl,f);f.parentNode.insertBefore(formEl,f);
         cotEl.style.display='block';formEl.appendChild(f);f.style.display='block';
-        if(!f.querySelector('[name="wpcte_tipo_envio"]')){var hi=document.createElement('input');hi.type='hidden';hi.name='wpcte_tipo_envio';hi.value=tipo;f.appendChild(hi);}
+        if(!f.querySelector('[name="wpcte_tipo_envio"]')){var hi=document.createElement('input');hi.type='hidden';hi.name='wpcte_tipo_envio';hi.value=tipo;f.appendChild(hi);} 
+        // Ensure a hidden field used for driver visibility
+        if(!f.querySelector('[name="wpcargo_driver"]')){var hd=document.createElement('input');hd.type='hidden';hd.name='wpcargo_driver';hd.value='';f.appendChild(hd);} 
         var pkg=document.getElementById('package_id');if(pkg)pkg.style.display='none';
         wpcte_insertDir('');
         wpcte_ajustarDrivers(tipo,f,null,null);
@@ -1512,14 +1514,37 @@ function wpcte_footer_crear() {
     function wpcte_ajustarDrivers(tipo,formEl,drvEgId,contEgId){
         function cambL(sn,nl){var ds=formEl?formEl.querySelector('select[name="'+sn+'"]'):null;if(!ds)return;var dg=ds.parentElement;while(dg&&!dg.querySelector(':scope>label')){dg=dg.parentElement;}var dl=dg?dg.querySelector(':scope>label'):null;if(dl)dl.textContent=nl;}
         function cambP(sn,txt){var ds=formEl?formEl.querySelector('select[name="'+sn+'"]'):null;if(!ds)return;var op=ds.querySelector('option[value=""]');if(op)op.textContent=txt;}
-        function clonarG(sn,nid,nl2,nn,pre){if(document.getElementById(nid))return;var ds=formEl?formEl.querySelector('select[name="'+sn+'"]'):null;if(!ds)return;var dg=ds.parentElement;while(dg&&!dg.querySelector(':scope>label')){dg=dg.parentElement;}if(!dg)return;var c=dg.cloneNode(true);c.id=nid;var cl=c.querySelector(':scope>label');if(cl)cl.textContent=nl2;var cs=c.querySelector('select');if(cs){cs.name=nn;cs.id=nn;if(pre)cs.value=pre;}dg.parentNode.insertBefore(c,dg.nextSibling);}
+        function clonarG(sn,nid,nl2,nn,pre){if(document.getElementById(nid))return;var ds=formEl?formEl.querySelector('select[name="'+sn+'"]'):null;if(!ds)return;var dg=ds.parentElement;while(dg&&!dg.querySelector(':scope>label')){dg=dg.parentElement;}if(!dg)return;var c=dg.cloneNode(true);c.id=nid;var cl=c.querySelector(':scope>label');if(cl)cl.textContent=nl2;var cs=c.querySelector('select');if(cs){cs.name=nn;cs.id=nn;if(pre)cs.value=pre;}c.style.display='';dg.parentNode.insertBefore(c,dg.nextSibling);}
         cambP('wpcargo_driver','-- Seleccione conductor --');
         if(tipo==='puerta_puerta'){
-            cambL('wpcargo_driver','Conductor de recojo');
+            // Clone two selects from original: recojo and entrega, then hide original container
+            clonarG('wpcargo_driver','wpcte-drv-rec','Conductor de recojo','wpcargo_driver_recojo',null);
             clonarG('wpcargo_driver','wpcte-drv-eg','Conductor de entrega','wpcargo_driver_entrega',drvEgId);
+            cambP('wpcargo_driver_recojo','-- Seleccione conductor --');
             cambP('wpcargo_driver_entrega','-- Seleccione conductor --');
             cambL('shipment_container','Contenedor de recojo');
             clonarG('shipment_container','wpcte-cont-eg','Contenedor de entrega','shipment_container_entrega',contEgId);
+            try{
+                var orig = formEl?formEl.querySelector('select[name="wpcargo_driver"]'):null;
+                if(orig){
+                    var container = orig.parentElement; while(container && !container.querySelector(':scope>label')){ container = container.parentElement; }
+                    if(container) container.style.display = 'none';
+                }
+            }catch(e){}
+            // Ensure hidden visibility field exists and sync it to recojo by default
+            try{
+                if(formEl && !formEl.querySelector('[name="wpcargo_driver"]')){
+                    var _h=document.createElement('input');_h.type='hidden';_h.name='wpcargo_driver';_h.value='';formEl.appendChild(_h);
+                }
+                var _updateHiddenDriver = function(){
+                    var hidden = formEl.querySelector('[name="wpcargo_driver"]'); if(!hidden) return;
+                    var reco = formEl.querySelector('select[name="wpcargo_driver_recojo"]');
+                    hidden.value = reco && reco.value ? reco.value : '';
+                };
+                var _recoSel = formEl.querySelector('select[name="wpcargo_driver_recojo"]'); if(_recoSel) _recoSel.addEventListener('change', _updateHiddenDriver);
+                var _entSel = formEl.querySelector('select[name="wpcargo_driver_entrega"]'); if(_entSel) _entSel.addEventListener('change', _updateHiddenDriver);
+                _updateHiddenDriver();
+            }catch(e){}
         } else {
             cambL('wpcargo_driver','Conductor de entrega');
             cambL('shipment_container','Contenedor de entrega');
@@ -1621,6 +1646,11 @@ function wpcte_listenCliente(ajaxUrl,nonce){
             cambL('wpcargo_driver','Conductor de recojo');
             clonarG('wpcargo_driver','wpcte-drv-eg','Conductor de entrega','wpcargo_driver_entrega',drvEgId);
             cambP('wpcargo_driver_entrega','-- Seleccione conductor --');
+            // Renombrar el select original para que envíe como `wpcargo_driver_recojo`
+            try{
+                var _ds = formEl?formEl.querySelector('select[name="wpcargo_driver"]'):null;
+                if(_ds){ _ds.name = 'wpcargo_driver_recojo'; _ds.id = 'wpcargo_driver_recojo'; }
+            }catch(e){}
             cambL('shipment_container','Contenedor de recojo');
             clonarG('shipment_container','wpcte-cont-eg','Contenedor de entrega','shipment_container_entrega',contEgId);
         } else {

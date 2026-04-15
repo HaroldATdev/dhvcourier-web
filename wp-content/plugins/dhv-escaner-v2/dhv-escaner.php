@@ -18,6 +18,10 @@ define( 'DHV_URL',      plugin_dir_url( __FILE__ ) );
 
 require_once DHV_PATH . 'includes/class-escaner-frontend.php';
 require_once DHV_PATH . 'includes/class-escaner-ajax.php';
+// Hooks adicionales
+if ( file_exists( DHV_PATH . 'includes/hooks.php' ) ) {
+    require_once DHV_PATH . 'includes/hooks.php';
+}
 
 // ── Activación ────────────────────────────────────────────────────────────────
 register_activation_hook( __FILE__, 'dhv_activate' );
@@ -109,3 +113,4 @@ add_action( 'plugins_loaded', function() {
     new DHV_Escaner_Ajax();
     dhv_get_frontend_page_id();
 });
+

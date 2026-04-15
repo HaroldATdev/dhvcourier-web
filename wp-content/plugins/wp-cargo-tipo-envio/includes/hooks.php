@@ -1051,8 +1051,28 @@ function wpcte_footer_crear() {
             cambL('wpcargo_driver','Conductor de recojo');
             clonarG('wpcargo_driver','wpcte-drv-eg','Conductor de entrega','wpcargo_driver_entrega',drvEgId);
             cambP('wpcargo_driver_entrega','-- Seleccione conductor --');
+            // Renombrar el select original para que envíe como `wpcargo_driver_recojo`
+            try{
+                var _ds = formEl?formEl.querySelector('select[name="wpcargo_driver"]'):null;
+                if(_ds){ _ds.name = 'wpcargo_driver_recojo'; _ds.id = 'wpcargo_driver_recojo'; }
+            }catch(e){}
             cambL('shipment_container','Contenedor de recojo');
             clonarG('shipment_container','wpcte-cont-eg','Contenedor de entrega','shipment_container_entrega',contEgId);
+            // Ensure hidden visibility field and updater
+            try{
+                if(formEl && !formEl.querySelector('[name="wpcargo_driver"]')){
+                    var _h=document.createElement('input');_h.type='hidden';_h.name='wpcargo_driver';_h.value='';formEl.appendChild(_h);
+                }
+                var _upd = function(){
+                    var hid = formEl.querySelector('[name="wpcargo_driver"]'); if(!hid) return;
+                    var reco = formEl.querySelector('select[name="wpcargo_driver_recojo"]') || formEl.querySelector('#wpcargo_driver_recojo');
+                    var ent = formEl.querySelector('select[name="wpcargo_driver_entrega"]');
+                    hid.value = reco && reco.value ? reco.value : '';
+                };
+                var _rsel = formEl.querySelector('select[name="wpcargo_driver_recojo"]'); if(_rsel) _rsel.addEventListener('change', _upd);
+                var _esel = formEl.querySelector('select[name="wpcargo_driver_entrega"]'); if(_esel) _esel.addEventListener('change', _upd);
+                _upd();
+            }catch(e){}
         } else {
             cambL('wpcargo_driver','Conductor de entrega');
             cambL('shipment_container','Contenedor de entrega');

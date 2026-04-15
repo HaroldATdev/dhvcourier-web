@@ -63,4 +63,59 @@
 	</div>
 	<div class="clearfix"></div>
 </form>
+<!-- Auto-set status to 'En espera' for certain shipment types -->
+<script type="text/javascript">
+jQuery(function($){
+	function setEnEsperaIfTipo(tipo){
+		if(!tipo) return;
+		tipo = tipo.toString();
+		if(tipo === 'almacen' || tipo === 'agencia'){
+			var $status = $("#status, select#status, select[name='status'], #wpcargo_status, select[name='wpcargo_status']");
+			if($status.length){
+				$status.val('En espera').trigger('change');
+			}
+		}
+	}
+
+	var $hidden = $('input[name="wpcte_tipo_envio"], input#wpcte_tipo_envio, input[name="tipo_envio"]');
+		if($hidden.length){
+			setEnEsperaIfTipo($hidden.val());
+		// listen for changes
+		$(document).on('change', 'select[name="tipo_envio"], select#tipo_envio, input[name="wpcte_tipo_envio"], input#wpcte_tipo_envio', function(){
+			setEnEsperaIfTipo($(this).val());
+		});
+		// observe value attribute changes if plugin updates hidden input programmatically
+		var node = $hidden.get(0);
+		if(node && window.MutationObserver){
+			var obs = new MutationObserver(function(){
+				setEnEsperaIfTipo($hidden.val());
+			});
+			obs.observe(node, { attributes: true, attributeFilter: ['value'] });
+		}
+	} else {
+		// fallback: check visible selects on page load
+		setEnEsperaIfTipo($('select[name="tipo_envio"]').val());
+		$(document).on('change', 'select[name="tipo_envio"]', function(){ setEnEsperaIfTipo($(this).val()); });
+	}
+
+		// Ensure form submits include status if tipo_envio requires 'En espera'
+		$('form.add-shipment').on('submit', function(){
+			var tipo = '';
+			if($hidden.length){ tipo = $hidden.val(); }
+			if(!tipo){ tipo = $('select[name="tipo_envio"]').val() || ''; }
+			if(tipo === 'almacen' || tipo === 'agencia'){
+				// set/create hidden inputs so server receives status
+				var $s = $(this).find('input[name="status"]');
+				if(!$s.length){
+					$(this).append('<input type="hidden" name="status" value="En espera" />');
+				} else { $s.val('En espera'); }
+				var $ws = $(this).find('input[name="wpcargo_status"]');
+				if(!$ws.length){
+					$(this).append('<input type="hidden" name="wpcargo_status" value="En espera" />');
+				} else { $ws.val('En espera'); }
+			}
+		});
+});
+</script>
+
 <?php do_action( 'before_wpcargo_shipment_history', 0); ?>

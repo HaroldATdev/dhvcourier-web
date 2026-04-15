@@ -1,36 +1,36 @@
 <?php if ( ! defined( 'ABSPATH' ) ) exit; ?>
 
-<div class="dhv-recojo-wrap">
+<div class="dhv-entrega-wrap">
 
-    <div class="dhv-recojo-header">
-        <span class="dhv-recojo-icon">📦</span>
+    <div class="dhv-entrega-header">
+        <span class="dhv-entrega-icon">🚚</span>
         <div>
-            <h2 class="dhv-recojo-title">Lista de Recojos</h2>
-            <p class="dhv-recojo-date"><?php echo date_i18n( 'd/m/Y' ); ?></p>
+            <h2 class="dhv-entrega-title">Lista de Entregas</h2>
+            <p class="dhv-entrega-date"><?php echo date_i18n( 'd/m/Y' ); ?></p>
         </div>
     </div>
 
     <?php if ( empty( $grouped ) ) : ?>
         <div class="dhv-empty-state">
             <span class="dhv-empty-icon">🎉</span>
-            <p>No tienes pedidos de recojo pendientes por hoy.</p>
+            <p>No tienes pedidos de entrega pendientes por hoy.</p>
         </div>
     <?php else : ?>
 
-        <?php foreach ( $grouped as $cliente => $pedidos ) :
-            $slug = 'dhv-cliente-' . sanitize_title( $cliente );
+        <?php foreach ( $grouped as $destinatario => $pedidos ) :
+            $slug  = 'dhv-dest-' . sanitize_title( $destinatario );
             $total = count( $pedidos );
         ?>
-        <div class="dhv-cliente-card" data-cliente="<?php echo esc_attr( $cliente ); ?>">
+        <div class="dhv-cliente-card" data-dest="<?php echo esc_attr( $destinatario ); ?>">
 
-            <!-- Cabecera del cliente (toggle) -->
-            <div class="dhv-cliente-header" data-toggle="<?php echo esc_attr( $slug ); ?>">
+            <!-- Cabecera del destinatario (toggle) -->
+            <div class="dhv-cliente-header dhv-entrega-cliente-header" data-toggle="<?php echo esc_attr( $slug ); ?>">
                 <div class="dhv-cliente-info">
-                    <span class="dhv-cliente-avatar"><?php echo esc_html( mb_substr( $cliente, 0, 1 ) ); ?></span>
-                    <span class="dhv-cliente-name"><?php echo esc_html( $cliente ); ?></span>
+                    <span class="dhv-cliente-avatar dhv-entrega-avatar"><?php echo esc_html( mb_substr( $destinatario, 0, 1 ) ); ?></span>
+                    <span class="dhv-cliente-name"><?php echo esc_html( $destinatario ); ?></span>
                 </div>
                 <div class="dhv-cliente-meta">
-                    <span class="dhv-badge"><?php echo $total; ?> recojo(s)</span>
+                    <span class="dhv-badge"><?php echo $total; ?> entrega(s)</span>
                     <span class="dhv-toggle-icon">▶</span>
                 </div>
             </div>
@@ -45,13 +45,15 @@
                         <span>Seleccionar todos</span>
                     </label>
                     <div class="dhv-bulk-controls">
-                        <select class="dhv-status-select dhv-bulk-status" data-group="<?php echo esc_attr( $slug ); ?>">
+                        <select class="dhv-status-select dhv-bulk-status dhv-entrega-bulk-status" data-group="<?php echo esc_attr( $slug ); ?>">
                             <option value="">-- Estado masivo --</option>
-                            <option value="Pendiente">Pendiente</option>
-                            <option value="Recogido">Recogido</option>
-                            <option value="En espera">En espera</option>
+                            <option value="En ruta">En ruta</option>
+                            <option value="Entregado">Entregado</option>
+                            <option value="Devuelto">Devuelto</option>
+                            <option value="Reprogramado">Reprogramado</option>
+                            <option value="Anulado">Anulado</option>
                         </select>
-                        <button class="dhv-btn dhv-btn-primary dhv-bulk-apply" data-group="<?php echo esc_attr( $slug ); ?>">
+                        <button class="dhv-btn dhv-btn-entrega dhv-bulk-apply dhv-entrega-bulk-apply" data-group="<?php echo esc_attr( $slug ); ?>">
                             ⚡ Aplicar a seleccionados
                         </button>
                         <span class="dhv-selected-count" data-group="<?php echo esc_attr( $slug ); ?>">0 seleccionado(s)</span>
@@ -67,7 +69,7 @@
                                data-group="<?php echo esc_attr( $slug ); ?>"
                                data-id="<?php echo esc_attr( $pedido['id'] ); ?>">
                         <div class="dhv-pedido-info">
-                            <span class="dhv-tracking-dot"></span>
+                            <span class="dhv-tracking-dot dhv-entrega-dot"></span>
                             <div>
                                 <strong class="dhv-tracking-num"><?php echo esc_html( $pedido['tracking'] ); ?></strong>
                                 <div class="dhv-pedido-direccion">
@@ -89,13 +91,15 @@
                         </div>
                     </div>
                     <div class="dhv-pedido-right">
-                        <select class="dhv-status-select dhv-single-status"
+                        <select class="dhv-status-select dhv-single-status dhv-entrega-single-status"
                                 data-id="<?php echo esc_attr( $pedido['id'] ); ?>">
-                            <option value="Pendiente"  <?php selected( $pedido['estado'], 'Pendiente' ); ?>>Pendiente</option>
-                            <option value="Recogido"   <?php selected( $pedido['estado'], 'Recogido' ); ?>>Recogido</option>
-                            <option value="En espera"  <?php selected( $pedido['estado'], 'En espera' ); ?>>En espera</option>
+                            <option value="En ruta"      <?php selected( $pedido['estado'], 'En ruta' ); ?>>En ruta</option>
+                            <option value="Entregado"    <?php selected( $pedido['estado'], 'Entregado' ); ?>>Entregado</option>
+                            <option value="Devuelto"     <?php selected( $pedido['estado'], 'Devuelto' ); ?>>Devuelto</option>
+                            <option value="Reprogramado" <?php selected( $pedido['estado'], 'Reprogramado' ); ?>>Reprogramado</option>
+                            <option value="Anulado"      <?php selected( $pedido['estado'], 'Anulado' ); ?>>Anulado</option>
                         </select>
-                        <button class="dhv-btn dhv-btn-apply dhv-single-apply"
+                        <button class="dhv-btn dhv-btn-apply dhv-single-apply dhv-entrega-single-apply"
                                 data-id="<?php echo esc_attr( $pedido['id'] ); ?>">
                             Aplicar
                         </button>
@@ -112,7 +116,9 @@
 
     <?php endif; ?>
 
-</div><!-- /.dhv-recojo-wrap -->
+</div><!-- /.dhv-entrega-wrap -->
 
-<!-- Toast de notificación -->
+<!-- Toast de notificación (compartido) -->
+<?php if ( ! defined( 'DHV_TOAST_RENDERED' ) ) : define( 'DHV_TOAST_RENDERED', true ); ?>
 <div class="dhv-toast" id="dhvToast"></div>
+<?php endif; ?>

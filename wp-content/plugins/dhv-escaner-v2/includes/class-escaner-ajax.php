@@ -85,6 +85,8 @@ class DHV_Escaner_Ajax {
         if ( $driver_id ) {
             $driver = get_userdata( $driver_id );
             if ( $driver && in_array( 'wpcargo_driver', (array) $driver->roles, true ) ) {
+                // Store as recojo driver and also set visible driver for initial visibility
+                update_post_meta( $shipment_id, 'wpcargo_driver_recojo', $driver_id );
                 update_post_meta( $shipment_id, 'wpcargo_driver', $driver_id );
                 $driver_updated = true;
             }
@@ -113,3 +115,4 @@ class DHV_Escaner_Ajax {
         ]);
     }
 }
+
