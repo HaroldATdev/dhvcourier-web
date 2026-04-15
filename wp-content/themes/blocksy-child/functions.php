@@ -308,3 +308,4 @@ document.addEventListener("DOMContentLoaded", function(){
 <?php
 }
 add_action('wp_footer', 'dhv_dni_ruc_script');
+// Prueba de Auto-Deploy exitosa - 2026

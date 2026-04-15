@@ -1045,11 +1045,13 @@ function wpcte_footer_crear() {
     function wpcte_ajustarDrivers(tipo,formEl,drvEgId,contEgId){
         function cambL(sn,nl){var ds=formEl?formEl.querySelector('select[name="'+sn+'"]'):null;if(!ds)return;var dg=ds.parentElement;while(dg&&!dg.querySelector(':scope>label')){dg=dg.parentElement;}var dl=dg?dg.querySelector(':scope>label'):null;if(dl)dl.textContent=nl;}
         function cambP(sn,txt){var ds=formEl?formEl.querySelector('select[name="'+sn+'"]'):null;if(!ds)return;var op=ds.querySelector('option[value=""]');if(op)op.textContent=txt;}
-        function clonarG(sn,nid,nl2,nn,pre){if(document.getElementById(nid))return;var ds=formEl?formEl.querySelector('select[name="'+sn+'"]'):null;if(!ds)return;var dg=ds.parentElement;while(dg&&!dg.querySelector(':scope>label')){dg=dg.parentElement;}if(!dg)return;var c=dg.cloneNode(true);c.id=nid;var cl=c.querySelector(':scope>label');if(cl)cl.textContent=nl2;var cs=c.querySelector('select');if(cs){cs.name=nn;cs.id=nn;if(pre)cs.value=pre;}dg.parentNode.insertBefore(c,dg.nextSibling);}
+        function clonarG(sn,nid,nl2,nn,pre){if(document.getElementById(nid))return;var ds=formEl?formEl.querySelector('select[name="'+sn+'"]'):null;if(!ds)return;var dg=ds.parentElement;while(dg&&!dg.querySelector(':scope>label')){dg=dg.parentElement;}if(!dg)return;var c=dg.cloneNode(true);c.id=nid;var cl=c.querySelector(':scope>label');if(cl)cl.textContent=nl2;var cs=c.querySelector('select');if(cs){cs.name=nn;cs.id=nn;if(pre)cs.value=pre;}c.style.display='';dg.parentNode.insertBefore(c,dg.nextSibling);}
         cambP('wpcargo_driver','-- Seleccione conductor --');
         if(tipo==='puerta_puerta'){
-            cambL('wpcargo_driver','Conductor de recojo');
+            // Clone two selects from original: recojo and entrega, then hide original container
+            clonarG('wpcargo_driver','wpcte-drv-rec','Conductor de recojo','wpcargo_driver_recojo',null);
             clonarG('wpcargo_driver','wpcte-drv-eg','Conductor de entrega','wpcargo_driver_entrega',drvEgId);
+            cambP('wpcargo_driver_recojo','-- Seleccione conductor --');
             cambP('wpcargo_driver_entrega','-- Seleccione conductor --');
             // Renombrar el select original para que envíe como `wpcargo_driver_recojo`
             try{
@@ -1058,6 +1060,13 @@ function wpcte_footer_crear() {
             }catch(e){}
             cambL('shipment_container','Contenedor de recojo');
             clonarG('shipment_container','wpcte-cont-eg','Contenedor de entrega','shipment_container_entrega',contEgId);
+            try{
+                var orig = formEl?formEl.querySelector('select[name="wpcargo_driver"]'):null;
+                if(orig){
+                    var container = orig.parentElement; while(container && !container.querySelector(':scope>label')){ container = container.parentElement; }
+                    if(container) container.style.display = 'none';
+                }
+            }catch(e){}
             // Ensure hidden visibility field and updater
             try{
                 if(formEl && !formEl.querySelector('[name="wpcargo_driver"]')){
@@ -1065,8 +1074,7 @@ function wpcte_footer_crear() {
                 }
                 var _upd = function(){
                     var hid = formEl.querySelector('[name="wpcargo_driver"]'); if(!hid) return;
-                    var reco = formEl.querySelector('select[name="wpcargo_driver_recojo"]') || formEl.querySelector('#wpcargo_driver_recojo');
-                    var ent = formEl.querySelector('select[name="wpcargo_driver_entrega"]');
+                    var reco = formEl.querySelector('select[name="wpcargo_driver_recojo"]');
                     hid.value = reco && reco.value ? reco.value : '';
                 };
                 var _rsel = formEl.querySelector('select[name="wpcargo_driver_recojo"]'); if(_rsel) _rsel.addEventListener('change', _upd);
@@ -1150,7 +1158,7 @@ function wpcte_footer_editar() {
     function wpcte_ajustarDrivers(tipo,formEl,drvEgId,contEgId){
         function cambL(sn,nl){var ds=formEl?formEl.querySelector('select[name="'+sn+'"]'):null;if(!ds)return;var dg=ds.parentElement;while(dg&&!dg.querySelector(':scope>label')){dg=dg.parentElement;}var dl=dg?dg.querySelector(':scope>label'):null;if(dl)dl.textContent=nl;}
         function cambP(sn,txt){var ds=formEl?formEl.querySelector('select[name="'+sn+'"]'):null;if(!ds)return;var op=ds.querySelector('option[value=""]');if(op)op.textContent=txt;}
-        function clonarG(sn,nid,nl2,nn,pre){if(document.getElementById(nid))return;var ds=formEl?formEl.querySelector('select[name="'+sn+'"]'):null;if(!ds)return;var dg=ds.parentElement;while(dg&&!dg.querySelector(':scope>label')){dg=dg.parentElement;}if(!dg)return;var c=dg.cloneNode(true);c.id=nid;var cl=c.querySelector(':scope>label');if(cl)cl.textContent=nl2;var cs=c.querySelector('select');if(cs){cs.name=nn;cs.id=nn;if(pre)cs.value=pre;}dg.parentNode.insertBefore(c,dg.nextSibling);}
+        function clonarG(sn,nid,nl2,nn,pre){if(document.getElementById(nid))return;var ds=formEl?formEl.querySelector('select[name="'+sn+'"]'):null;if(!ds)return;var dg=ds.parentElement;while(dg&&!dg.querySelector(':scope>label')){dg=dg.parentElement;}if(!dg)return;var c=dg.cloneNode(true);c.id=nid;var cl=c.querySelector(':scope>label');if(cl)cl.textContent=nl2;var cs=c.querySelector('select');if(cs){cs.name=nn;cs.id=nn;if(pre)cs.value=pre;}c.style.display='';dg.parentNode.insertBefore(c,dg.nextSibling);}
         cambP('wpcargo_driver','-- Seleccione conductor --');
         if(tipo==='puerta_puerta'){
             cambL('wpcargo_driver','Conductor de recojo');
