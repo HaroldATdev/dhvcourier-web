@@ -40,6 +40,11 @@ function wpcargo_pod_dashboard_table_table_action($shipment_id)
 	}
 	echo '<td class="text-center"><button type="button" class="wpcpod-sign_data show-signaturepad btn ' . $btn_color . ' btn-rounded btn-small py-1 px-4 hide-me" data-toggle="modal" data-target="#wpc_pod_signature-modal" data-id="' . $shipment_id . '">' . $btn_label . '</button></td>';
 }
+// Registrar hooks para inyectar cabecera y acción en la tabla de envíos
+add_action('wpcfe_shipment_table_header_action', 'wpcargo_pod_dashboard_table_header_action', 25);
+add_action('wpcfe_shipment_table_data_action', 'wpcargo_pod_dashboard_table_table_action', 25);
+// Registrar modal para que se imprima después de la tabla de envíos
+add_action('wpcfe_after_shipment_data', 'wpcargo_pod_after_admin_page_load_action', 10);
 function wpcargo_pod_after_admin_page_load_action()
 {
 ?>
