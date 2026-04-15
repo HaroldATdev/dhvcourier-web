@@ -218,6 +218,11 @@ function wpcpod_save_attachment()
 }
 add_action('wp_ajax_wpcpod_save_attachment', 'wpcpod_save_attachment');
 add_action('wp_ajax_nopriv_wpcpod_save_attachment', 'wpcpod_save_attachment');
+// AJAX handlers for signature pad (called from pod-scripts.js)
+add_action('wp_ajax_show_signaturepad', 'wpcargo_pod_show_shignaturepad');
+add_action('wp_ajax_nopriv_show_signaturepad', 'wpcargo_pod_show_shignaturepad');
+add_action('wp_ajax_pod_signed', 'wpcargo_pod_signed_load_action');
+add_action('wp_ajax_nopriv_pod_signed', 'wpcargo_pod_signed_load_action');
 
 function wpcargo_pod_assign_driver_save($shipment_id, $data)
 {
