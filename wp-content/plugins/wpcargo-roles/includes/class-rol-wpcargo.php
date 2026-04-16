@@ -80,6 +80,7 @@ class WCROL_Rol_WPCargo {
         $user = wp_get_current_user();
         if ( ! $user || ! ($user instanceof \WP_User) ) return false;
 
+        if ( wcrol_es_wpcargo_admin((int) $user->ID) ) return true;
         if ( in_array(self::SLUG, (array)$user->roles, true) ) return true;
         if ( user_can($user, 'wpcargo_dashboard_access') ) return true;
         if ( self::tiene_rol_en_capabilities_meta((int) $user->ID) ) return true;
@@ -96,18 +97,15 @@ class WCROL_Rol_WPCargo {
         if ( $user_id <= 0 ) return false;
 
         global $wpdb;
-        $rows = $wpdb->get_results(
-            $wpdb->prepare(
-                "SELECT meta_value FROM {$wpdb->usermeta} WHERE user_id = %d AND meta_key LIKE %s",
-                $user_id,
-                '%\\_capabilities'
-            )
-        );
+        $candidate_keys = array_values(array_unique(array_filter([
+            $wpdb->prefix . 'capabilities',
+            $wpdb->base_prefix . 'capabilities',
+            'wp_capabilities',
+        ])));
 
-        if ( empty($rows) ) return false;
-
-        foreach ( $rows as $row ) {
-            $caps = maybe_unserialize($row->meta_value);
+        foreach ( $candidate_keys as $meta_key ) {
+            $caps = get_user_meta($user_id, $meta_key, true);
+            $caps = maybe_unserialize($caps);
             if ( is_array($caps) && ! empty($caps[self::SLUG]) ) {
                 return true;
             }
