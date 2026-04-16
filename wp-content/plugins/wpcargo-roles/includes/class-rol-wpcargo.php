@@ -24,6 +24,10 @@ class WCROL_Rol_WPCargo {
         add_action('admin_init',   [__CLASS__, 'bloquear_wp_admin']);
         // Redirigir login al dashboard frontend
         add_filter('login_redirect',[__CLASS__, 'redirigir_login'], 10, 3);
+        // Asegurar que Frontend Manager lo considere en su redirección por roles
+        add_filter('wpcfe_login_redirect_dashboard_role', [__CLASS__, 'agregar_rol_en_redireccion'], 10, 1);
+        // Permitir acceso al dashboard aunque la opción de roles no esté sincronizada
+        add_filter('can_wpcfe_access_dashboard', [__CLASS__, 'permitir_dashboard_para_rol'], 10, 1);
         // Integrar el rol con la lista de acceso del dashboard WPCargo
         add_action('init', [__CLASS__, 'asegurar_acceso_dashboard'], 20);
         // Ocultar barra de admin en frontend para estos usuarios
@@ -54,6 +58,32 @@ class WCROL_Rol_WPCargo {
             $roles[] = self::SLUG;
             update_option('wpcfe_access_dashboard_role', array_values(array_unique($roles)), false);
         }
+    }
+
+    /**
+     * Añade el rol en la lista usada por wpcargo-frontend-manager para login redirect.
+     */
+    public static function agregar_rol_en_redireccion( array $roles ): array {
+        if ( ! in_array(self::SLUG, $roles, true) ) {
+            $roles[] = self::SLUG;
+        }
+        return array_values(array_unique($roles));
+    }
+
+    /**
+     * Override defensivo del permiso de acceso al dashboard de WPCargo.
+     */
+    public static function permitir_dashboard_para_rol( bool $result ): bool {
+        if ( $result ) return true;
+        if ( ! is_user_logged_in() ) return false;
+
+        $user = wp_get_current_user();
+        if ( ! $user || ! ($user instanceof \WP_User) ) return false;
+
+        if ( in_array(self::SLUG, (array)$user->roles, true) ) return true;
+        if ( user_can($user, 'wpcargo_dashboard_access') ) return true;
+
+        return false;
     }
 
     /**
