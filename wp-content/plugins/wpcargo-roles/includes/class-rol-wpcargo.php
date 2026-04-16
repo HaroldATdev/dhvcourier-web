@@ -24,6 +24,8 @@ class WCROL_Rol_WPCargo {
         add_action('admin_init',   [__CLASS__, 'bloquear_wp_admin']);
         // Redirigir login al dashboard frontend
         add_filter('login_redirect',[__CLASS__, 'redirigir_login'], 10, 3);
+        // Integrar el rol con la lista de acceso del dashboard WPCargo
+        add_action('init', [__CLASS__, 'asegurar_acceso_dashboard'], 20);
         // Ocultar barra de admin en frontend para estos usuarios
         add_action('after_setup_theme', [__CLASS__, 'ocultar_admin_bar']);
     }
@@ -36,6 +38,22 @@ class WCROL_Rol_WPCargo {
             'wpcargo_dashboard_access'=> true,  // cap personalizada
             // NO incluir 'manage_options' ni caps de admin
         ]);
+
+        self::asegurar_acceso_dashboard();
+    }
+
+    /**
+     * Asegura que el rol wpcargo_admin esté incluido en la lista
+     * de roles con acceso al dashboard de WPCargo Frontend Manager.
+     */
+    public static function asegurar_acceso_dashboard(): void {
+        $roles = get_option('wpcfe_access_dashboard_role');
+        $roles = is_array($roles) ? $roles : [];
+
+        if ( ! in_array(self::SLUG, $roles, true) ) {
+            $roles[] = self::SLUG;
+            update_option('wpcfe_access_dashboard_role', array_values(array_unique($roles)), false);
+        }
     }
 
     /**
