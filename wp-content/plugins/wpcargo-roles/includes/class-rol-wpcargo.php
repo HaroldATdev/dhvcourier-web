@@ -82,6 +82,36 @@ class WCROL_Rol_WPCargo {
 
         if ( in_array(self::SLUG, (array)$user->roles, true) ) return true;
         if ( user_can($user, 'wpcargo_dashboard_access') ) return true;
+        if ( self::tiene_rol_en_capabilities_meta((int) $user->ID) ) return true;
+
+        return false;
+    }
+
+    /**
+     * Verifica el rol directamente en usermeta *_capabilities.
+     * Sirve para casos donde WordPress no está reconociendo el rol
+     * aunque esté presente en la metadata del usuario.
+     */
+    private static function tiene_rol_en_capabilities_meta( int $user_id ): bool {
+        if ( $user_id <= 0 ) return false;
+
+        global $wpdb;
+        $rows = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT meta_value FROM {$wpdb->usermeta} WHERE user_id = %d AND meta_key LIKE %s",
+                $user_id,
+                '%\\_capabilities'
+            )
+        );
+
+        if ( empty($rows) ) return false;
+
+        foreach ( $rows as $row ) {
+            $caps = maybe_unserialize($row->meta_value);
+            if ( is_array($caps) && ! empty($caps[self::SLUG]) ) {
+                return true;
+            }
+        }
 
         return false;
     }
