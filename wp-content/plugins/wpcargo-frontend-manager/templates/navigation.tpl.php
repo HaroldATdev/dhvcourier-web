@@ -129,6 +129,22 @@ $unseen  = $unseen_shipments > 9 ? '9&#43;' : $unseen_shipments ;
             </div>
         </div>
     </nav>
+	<style>
+		/* css para scrolear el menu de navegacion en tableta*/
+		.sidebar-fixed {
+        max-height: 100vh !important; /* Limita al alto de la pantalla [cite: 50] */
+        overflow-y: auto !important;  /* Habilita el scroll vertical [cite: 51] */
+        padding-bottom: 60px !important; /* Espacio para que no se corte el último ítem */
+    	}
+		/* Estética del scrollbar para que sea sutil */
+		.sidebar-fixed::-webkit-scrollbar {
+			width: 5px;
+		}
+		.sidebar-fixed::-webkit-scrollbar-thumb {
+        background: rgba(0,0,0,0.2);
+        border-radius: 10px;
+    	}
+	</style>
     <!-- Navbar -->
     <!-- Sidebar -->
     <div class="sidebar-fixed position-fixed">
