@@ -273,20 +273,20 @@ function wpcte_render_cotizador_html( $tarifario, $tipo_envio = '', $modo = 'cre
 </div>
 
 <!-- Origen / Destino genérico -->
-<div class="wpcte-cot-row" id="wpcte-orig-dest-row" style="display:none">
-    <div class="wpcte-cot-group" id="wpcte-orig-select-wrap"><label>Origen</label>
+<div class="wpcte-cot-row" id="wpcte-orig-dest-row" style="display:none; margin-top: 30px; margin-bottom: 30px; padding: 10px 0; border-top: 1px solid #eee;">
+    <div class="wpcte-cot-group" id="wpcte-orig-select-wrap" style="margin-right: 30px; margin-bottom: 25px;"><label>Origen</label>
     <select id="wpcte-orig"><option value="">-- Seleccione --</option>
     <?php foreach ( $all_lima as $l ) echo '<option value="'.esc_attr($l).'">'.esc_html($l).'</option>'; ?>
     </select></div>
     <!-- Origen aéreo: select dinámico de orígenes -->
-    <div class="wpcte-cot-group" id="wpcte-orig-aereo-wrap" style="display:none"><label>Origen</label>
+    <div class="wpcte-cot-group" id="wpcte-orig-aereo-wrap" style="display:none; margin-right: 30px; margin-bottom: 25px;"><label>Origen</label>
     <select id="wpcte-orig-aereo-sel"><option value="">-- Seleccione --</option></select></div>
     <!-- Origen select para carga general (ciudades) -->
-    <div class="wpcte-cot-group" id="wpcte-orig-cg-wrap" style="display:none"><label>Origen</label>
+    <div class="wpcte-cot-group" id="wpcte-orig-cg-wrap" style="display:none; margin-right: 30px; margin-bottom: 25px;"><label>Origen</label>
     <select id="wpcte-orig-cg"><option value="">-- Seleccione --</option>
     <?php foreach ( $cg_origenes as $o ) echo '<option value="'.esc_attr($o).'">'.esc_html($o).'</option>'; ?>
     </select></div>
-    <div class="wpcte-cot-group"><label>Destino</label>
+    <div class="wpcte-cot-group" style="margin-bottom: 25px;"><label>Destino</label>
     <select id="wpcte-dest"><option value="">-- Seleccione --</option>
     <?php foreach ( $all_lima as $l ) echo '<option value="'.esc_attr($l).'">'.esc_html($l).'</option>'; ?>
     </select></div>
@@ -332,7 +332,7 @@ function wpcte_render_cotizador_html( $tarifario, $tipo_envio = '', $modo = 'cre
     </select></div>
     <!-- Peso -->
     <div class="wpcte-cot-group" id="wpcte-peso-wrap" style="display:none"><label>Peso (kg)</label>
-    <input type="number" id="wpcte-peso" min="0.1" step="0.1" value="1"></div>
+    <input type="number" id="wpcte-peso" min="0.1" step="any" value="1"></div>
     <!-- Dimensiones volumétricas -->
     <div class="wpcte-cot-group" id="wpcte-alto-wrap" style="display:none"><label>Alto (cm)</label>
     <input type="number" id="wpcte-alto" min="1" step="1" value="10"></div>
@@ -355,7 +355,7 @@ function wpcte_render_cotizador_html( $tarifario, $tipo_envio = '', $modo = 'cre
     <div class="wpcte-cot-group" style="flex-direction:row;align-items:center;gap:.5rem">
         <input type="checkbox" id="wpcte-devolucion" style="width:auto!important;height:auto!important;margin:0">
         <label for="wpcte-devolucion" style="margin:0;font-size:.85rem;color:#555;cursor:pointer">
-            Agregar cargo por devolución (S/ <span id="wpcte-dev-monto">-</span>)
+            Agregar cargo por devolución ( S/ <span id="wpcte-dev-monto">-</span>)
         </label>
     </div>
 </div>
@@ -786,7 +786,7 @@ document.getElementById('wpcte-cot-btn').addEventListener('click',function(){
             origCot=orig;destCot=dest;
             lines.push('<strong>'+orig+' &rarr; '+dest+'</strong> <span style="background:#e76f51;color:#fff;padding:1px 6px;border-radius:4px;font-size:.78rem">Zona Periférica</span>');
             lines.push('Vehículo: <strong>'+veh.charAt(0).toUpperCase()+veh.slice(1)+'</strong> (precio fijo)');
-            des='<div class="wpcte-desglose"><div class="wpcte-desglose-row"><span>Tarifa fija '+veh+'</span><span>S/ '+p.toFixed(2)+'</span></div><div class="wpcte-total-row"><span>TOTAL</span><span>S/ '+p.toFixed(2)+'</span></div></div>';
+            des='<div class="wpcte-desglose"><div class="wpcte-desglose-row"><span>Tarifa fija '+veh+'</span><span> S/ '+p.toFixed(2)+'</span></div><div class="wpcte-total-row"><span>TOTAL</span><span> S/ '+p.toFixed(2)+'</span></div></div>';
         } else {
             var tar=T.lima_lima.distritos[dest];
             if(!tar){res.innerHTML='&#9888; Destino no encontrado.';res.className='ok';return;}
@@ -798,7 +798,7 @@ document.getElementById('wpcte-cot-btn').addEventListener('click',function(){
             origCot=orig;destCot=dest;
             lines.push('<strong>'+orig+' &rarr; '+dest+'</strong>');
             lines.push('Vehículo: <strong>'+veh.charAt(0).toUpperCase()+veh.slice(1)+'</strong>');
-            des='<div class="wpcte-desglose"><div class="wpcte-desglose-row"><span>Base vehículo ('+veh+')</span><span>S/ '+base_v.toFixed(2)+'</span></div><div class="wpcte-desglose-row"><span>Tarifa destino '+dest+'</span><span>S/ '+precioAd.toFixed(2)+'</span></div><div class="wpcte-total-row"><span>TOTAL</span><span>S/ '+p.toFixed(2)+'</span></div></div>';
+            des='<div class="wpcte-desglose"><div class="wpcte-desglose-row"><span>Base vehículo ('+veh+')</span><span> S/ '+base_v.toFixed(2)+'</span></div><div class="wpcte-desglose-row"><span>Tarifa destino '+dest+'</span><span> S/ '+precioAd.toFixed(2)+'</span></div><div class="wpcte-total-row"><span>TOTAL</span><span> S/ '+p.toFixed(2)+'</span></div></div>';
         }
 
     /* ── Carga General ── */
@@ -826,10 +826,10 @@ document.getElementById('wpcte-cot-btn').addEventListener('click',function(){
         lines.push('<strong>'+orig+' &rarr; '+dest+'</strong> — '+mLabel2);
         if(esVol){
             lines.push('Vol: <strong>'+alto+'x'+ancho+'x'+largo+' cm</strong> = '+pesoEf.toFixed(2)+' kg vol | Lead: <strong>'+lead+'</strong>');
-            des='<div class="wpcte-desglose"><div class="wpcte-desglose-row"><span>Base</span><span>S/ '+base2.toFixed(2)+'</span></div><div class="wpcte-desglose-row"><span>'+pesoEf.toFixed(2)+' kg vol × S/ '+xkg2.toFixed(2)+' ('+mLabel2+')</span><span>S/ '+(xkg2*pesoEf).toFixed(2)+'</span></div><div class="wpcte-total-row"><span>TOTAL</span><span>S/ '+p.toFixed(2)+'</span></div></div>';
+            des='<div class="wpcte-desglose"><div class="wpcte-desglose-row"><span>Base</span><span> S/ '+base2.toFixed(2)+'</span></div><div class="wpcte-desglose-row"><span>'+pesoEf.toFixed(2)+' kg vol × S/ '+xkg2.toFixed(2)+' ('+mLabel2+')</span><span> S/ '+(xkg2*pesoEf).toFixed(2)+'</span></div><div class="wpcte-total-row"><span>TOTAL</span><span> S/ '+p.toFixed(2)+'</span></div></div>';
         } else {
             lines.push('Peso: <strong>'+pesoEf+' kg</strong> | Lead: <strong>'+lead+'</strong>');
-            des='<div class="wpcte-desglose"><div class="wpcte-desglose-row"><span>Base</span><span>S/ '+base2.toFixed(2)+'</span></div><div class="wpcte-desglose-row"><span>'+pesoEf+' kg × S/ '+xkg2.toFixed(2)+' ('+mLabel2+')</span><span>S/ '+(xkg2*pesoEf).toFixed(2)+'</span></div><div class="wpcte-total-row"><span>TOTAL</span><span>S/ '+p.toFixed(2)+'</span></div></div>';
+            des='<div class="wpcte-desglose"><div class="wpcte-desglose-row"><span>Base</span><span> S/ '+base2.toFixed(2)+'</span></div><div class="wpcte-desglose-row"><span>'+pesoEf+' kg × S/ '+xkg2.toFixed(2)+' ('+mLabel2+')</span><span> S/ '+(xkg2*pesoEf).toFixed(2)+'</span></div><div class="wpcte-total-row"><span>TOTAL</span><span> S/ '+p.toFixed(2)+'</span></div></div>';
         }
 
     /* ── Mercadería Frecuente ── */
@@ -843,7 +843,7 @@ document.getElementById('wpcte-cot-btn').addEventListener('click',function(){
         lines.push('<strong>Mercadería Frecuente</strong>');
         lines.push(T.mercaderia.categorias[cat].label+': <strong>'+prod+'</strong>');
         lines.push(orig+' &rarr; '+dest);
-        des='<div class="wpcte-desglose"><div class="wpcte-desglose-row"><span>Precio fijo</span><span>S/ '+p.toFixed(2)+'</span></div><div class="wpcte-total-row"><span>TOTAL</span><span>S/ '+p.toFixed(2)+'</span></div></div>';
+        des='<div class="wpcte-desglose"><div class="wpcte-desglose-row"><span>Precio fijo</span><span> S/ '+p.toFixed(2)+'</span></div><div class="wpcte-total-row"><span>TOTAL</span><span> S/ '+p.toFixed(2)+'</span></div></div>';
 
     /* ── Aéreos ── */
     } else if(m==='aereo'){
@@ -855,10 +855,10 @@ document.getElementById('wpcte-cot-btn').addEventListener('click',function(){
         origCot=aereoOrigSel?aereoOrigSel.value:'';destCot=dest;lead=tar3.lead;
         if(peso3<=1){
             p=tar3.precio_1kg;
-            des='<div class="wpcte-desglose"><div class="wpcte-desglose-row"><span>1 kg (tarifa base)</span><span>S/ '+p.toFixed(2)+'</span></div><div class="wpcte-total-row"><span>TOTAL</span><span>S/ '+p.toFixed(2)+'</span></div></div>';
+            des='<div class="wpcte-desglose"><div class="wpcte-desglose-row"><span>1 kg (tarifa base)</span><span> S/ '+p.toFixed(2)+'</span></div><div class="wpcte-total-row"><span>TOTAL</span><span> S/ '+p.toFixed(2)+'</span></div></div>';
         } else {
             var exc=peso3-1;p=tar3.base_kg+exc*tar3.exceso_kg;
-            des='<div class="wpcte-desglose"><div class="wpcte-desglose-row"><span>Base (1 kg)</span><span>S/ '+tar3.base_kg.toFixed(2)+'</span></div><div class="wpcte-desglose-row"><span>'+exc.toFixed(1)+' kg × S/ '+tar3.exceso_kg.toFixed(2)+'</span><span>S/ '+(exc*tar3.exceso_kg).toFixed(2)+'</span></div><div class="wpcte-total-row"><span>TOTAL</span><span>S/ '+p.toFixed(2)+'</span></div></div>';
+            des='<div class="wpcte-desglose"><div class="wpcte-desglose-row"><span>Base (1 kg)</span><span> S/ '+tar3.base_kg.toFixed(2)+'</span></div><div class="wpcte-desglose-row"><span>'+exc.toFixed(1)+' kg × S/ '+tar3.exceso_kg.toFixed(2)+'</span><span> S/ '+(exc*tar3.exceso_kg).toFixed(2)+'</span></div><div class="wpcte-total-row"><span>TOTAL</span><span> S/ '+p.toFixed(2)+'</span></div></div>';
         }
         lines.push('<strong>'+(aereoOrigSel?aereoOrigSel.value:'?')+' &rarr; '+dest+'</strong>'+(tar3.zona?' ('+tar3.zona+')':''));
         lines.push('Peso: <strong>'+peso3+' kg</strong> | Lead: <strong>'+lead+'</strong>');
@@ -881,9 +881,9 @@ document.getElementById('wpcte-cot-btn').addEventListener('click',function(){
         p=baseP4+devValor;
         lines.push('<strong>Sobre: '+esc(tS4)+'</strong> ('+mS+')');
         lines.push(sobreOrig+' &rarr; '+sobreDest);
-        des='<div class="wpcte-desglose"><div class="wpcte-desglose-row"><span>'+mS.charAt(0).toUpperCase()+mS.slice(1)+'</span><span>S/ '+baseP4.toFixed(2)+'</span></div>';
-        if(conDev) des+='<div class="wpcte-desglose-row"><span>Devolución de cargo</span><span>S/ '+devValor.toFixed(2)+'</span></div>';
-        des+='<div class="wpcte-total-row"><span>TOTAL</span><span>S/ '+p.toFixed(2)+'</span></div></div>';
+        des='<div class="wpcte-desglose"><div class="wpcte-desglose-row"><span>'+mS.charAt(0).toUpperCase()+mS.slice(1)+'</span><span> S/ '+baseP4.toFixed(2)+'</span></div>';
+        if(conDev) des+='<div class="wpcte-desglose-row"><span>Devolución de cargo</span><span> S/ '+devValor.toFixed(2)+'</span></div>';
+        des+='<div class="wpcte-total-row"><span>TOTAL</span><span> S/ '+p.toFixed(2)+'</span></div></div>';
     } else {
         res.innerHTML='&#9888; Seleccione modalidad.';res.className='ok';return;
     }
