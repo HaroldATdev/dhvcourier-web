@@ -227,6 +227,9 @@ class WCROL_Rol_WPCargo {
         if ( $tipo === 'wpcargo_admin' ) {
             // Rol exclusivo para evitar mezclas (ej. administrator + wpcargo_admin)
             $user->set_role(self::SLUG);
+            // Al cambiar a wpcargo_admin, otorgar acceso total (sin restricciones)
+            // para que vea todos los módulos por defecto
+            WCROL_Permisos::quitar_restricciones($user_id);
         } else {
             // Revertir a administrator de WordPress
             $user->set_role('administrator');
