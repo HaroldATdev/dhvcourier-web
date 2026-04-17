@@ -221,8 +221,11 @@ class WCROL_Rol_WPCargo {
         $user = get_userdata($user_id);
         if ( ! $user ) return false;
 
-        // Nunca cambiar el tipo del usuario actual (evitar auto-bloqueo)
-        if ( $user_id === get_current_user_id() ) return false;
+        // Evitar auto-bloqueo: no permitir que el usuario actual se cambie
+        // a wpcargo_admin desde esta acción.
+        if ( $user_id === get_current_user_id() && $tipo === 'wpcargo_admin' ) {
+            return false;
+        }
 
         if ( $tipo === 'wpcargo_admin' ) {
             // Rol exclusivo para evitar mezclas (ej. administrator + wpcargo_admin)
