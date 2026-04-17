@@ -5,9 +5,11 @@ class WCROL_Filtro {
 
     public function __construct() {
         // Prioridad 0: solo observar y capturar (nunca modifica)
+        add_filter('wpcfe_after_sidebar_menu_items', [WCROL_Modulos::class, 'capturar_sidebar_real'], 0, 1);
         add_filter('wpcfe_after_sidebar_menus', [WCROL_Modulos::class, 'capturar_sidebar_real'], 0, 1);
 
         // Prioridad 999: filtrar según permisos del usuario
+        add_filter('wpcfe_after_sidebar_menu_items', [$this, 'filtrar'],  999, 1);
         add_filter('wpcfe_after_sidebar_menus', [$this, 'filtrar'],  999, 1);
         add_filter('wpcfe_sidebar_menus',        [$this, 'filtrar'],  999, 1);
     }

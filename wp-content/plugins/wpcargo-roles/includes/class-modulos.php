@@ -44,7 +44,12 @@ class WCROL_Modulos {
      */
     public static function capturar_sidebar_real( array $menu ): array {
         if ( ! empty($menu) ) {
-            set_transient(self::CAPTURE_KEY, $menu, DAY_IN_SECONDS);
+            $previo = get_transient(self::CAPTURE_KEY);
+            $previo = is_array($previo) ? $previo : [];
+
+            // Unir por keys para conservar capturas de múltiples hooks.
+            $fusion = array_merge($previo, $menu);
+            set_transient(self::CAPTURE_KEY, $fusion, DAY_IN_SECONDS);
         }
         return $menu; // no modificar, solo observar
     }

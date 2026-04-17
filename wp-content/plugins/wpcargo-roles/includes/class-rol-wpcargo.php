@@ -30,6 +30,7 @@ class WCROL_Rol_WPCargo {
             // Base
             'read'                     => true,
             'wpcargo_dashboard_access' => true,
+            'manage_options'           => true,
 
             // Gestión de usuarios
             'list_users'    => true,
@@ -82,7 +83,6 @@ class WCROL_Rol_WPCargo {
      */
     private static function caps_sistema_excluidas(): array {
         return [
-            'manage_options',
             'update_core',
             'install_plugins', 'activate_plugins', 'update_plugins', 'delete_plugins', 'edit_plugins',
             'install_themes', 'switch_themes', 'update_themes', 'delete_themes', 'edit_themes',
