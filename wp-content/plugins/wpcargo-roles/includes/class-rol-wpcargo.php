@@ -20,6 +20,8 @@ class WCROL_Rol_WPCargo {
     const LABEL = 'Administrador WPCargo';
 
     public static function init(): void {
+        // Asegurar que el rol exista en runtime (no solo al activar plugin)
+        add_action('init', [__CLASS__, 'asegurar_rol_registrado'], 5);
         // Bloquear acceso a wp-admin para usuarios wpcargo_admin
         add_action('admin_init',   [__CLASS__, 'bloquear_wp_admin']);
         // Redirigir login al dashboard frontend
@@ -48,6 +50,20 @@ class WCROL_Rol_WPCargo {
         ]);
 
         self::asegurar_acceso_dashboard();
+    }
+
+    /**
+     * Registra el rol si no existe (defensivo para instalaciones migradas).
+     */
+    public static function asegurar_rol_registrado(): void {
+        if ( get_role(self::SLUG) ) {
+            return;
+        }
+
+        add_role(self::SLUG, self::LABEL, [
+            'read'                    => true,
+            'wpcargo_dashboard_access'=> true,
+        ]);
     }
 
     /**
@@ -209,14 +225,11 @@ class WCROL_Rol_WPCargo {
         if ( $user_id === get_current_user_id() ) return false;
 
         if ( $tipo === 'wpcargo_admin' ) {
-            // Quitar rol administrator, poner wpcargo_admin
-            $user->remove_role('administrator');
-            $user->remove_role('editor');
-            $user->add_role(self::SLUG);
+            // Rol exclusivo para evitar mezclas (ej. administrator + wpcargo_admin)
+            $user->set_role(self::SLUG);
         } else {
             // Revertir a administrator de WordPress
-            $user->remove_role(self::SLUG);
-            $user->add_role('administrator');
+            $user->set_role('administrator');
         }
         return true;
     }
@@ -224,6 +237,7 @@ class WCROL_Rol_WPCargo {
     /** Retorna el tipo de acceso como string legible */
     public static function tipo_acceso( int $user_id ): string {
         if ( wcrol_es_wpcargo_admin($user_id) ) return 'wpcargo_admin';
+        if ( self::tiene_rol_en_capabilities_meta($user_id) ) return 'wpcargo_admin';
         if ( wcrol_es_wp_admin($user_id) )      return 'wordpress_admin';
         return 'otro';
     }
