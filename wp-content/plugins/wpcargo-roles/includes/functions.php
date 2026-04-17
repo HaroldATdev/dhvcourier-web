@@ -67,7 +67,10 @@ function wcrol_es_wp_admin( int $user_id = 0 ): bool {
 /** ¿Es el usuario un admin de WPCargo solamente (no puede entrar a wp-admin)? */
 function wcrol_es_wpcargo_admin( int $user_id = 0 ): bool {
     $user = $user_id ? get_userdata($user_id) : wp_get_current_user();
-    return $user && in_array('wpcargo_admin', (array)$user->roles, true);
+    if ( ! $user ) return false;
+    $roles = (array) $user->roles;
+    // Solo considerar wpcargo_admin cuando NO tiene administrator.
+    return in_array('wpcargo_admin', $roles, true) && ! in_array('administrator', $roles, true);
 }
 
 /** ¿Puede el usuario actual gestionar roles? (solo wp admins) */

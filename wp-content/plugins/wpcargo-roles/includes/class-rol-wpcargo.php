@@ -159,7 +159,8 @@ class WCROL_Rol_WPCargo {
         foreach ( $candidate_keys as $meta_key ) {
             $caps = get_user_meta($user_id, $meta_key, true);
             $caps = maybe_unserialize($caps);
-            if ( is_array($caps) && ! empty($caps[self::SLUG]) ) {
+            // Si también tiene administrator, NO tratarlo como wpcargo_admin puro.
+            if ( is_array($caps) && ! empty($caps[self::SLUG]) && empty($caps['administrator']) ) {
                 return true;
             }
         }
@@ -288,9 +289,10 @@ class WCROL_Rol_WPCargo {
 
     /** Retorna el tipo de acceso como string legible */
     public static function tipo_acceso( int $user_id ): string {
+        // Prioridad: administrator siempre gana sobre wpcargo_admin en casos mixtos.
+        if ( wcrol_es_wp_admin($user_id) )      return 'wordpress_admin';
         if ( wcrol_es_wpcargo_admin($user_id) ) return 'wpcargo_admin';
         if ( self::tiene_rol_en_capabilities_meta($user_id) ) return 'wpcargo_admin';
-        if ( wcrol_es_wp_admin($user_id) )      return 'wordpress_admin';
         return 'otro';
     }
 }
