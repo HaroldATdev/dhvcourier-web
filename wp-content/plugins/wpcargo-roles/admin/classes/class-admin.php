@@ -112,7 +112,7 @@ class WCROL_Admin {
             'eliminado'    => ['success','Eliminado correctamente.'],
             'sincronizado' => ['success',"Sincronizado. {$nuevos} módulo(s) nuevo(s) encontrado(s). <strong>Nota:</strong> Para capturar módulos de plugins, navega al dashboard de WPCargo primero y luego sincroniza."],
             'error_req'    => ['error',  'Faltan campos obligatorios.'],
-            'error_propio' => ['error',  'No puedes modificar tu propio tipo de acceso.'],
+            'error_propio' => ['error',  'No puedes cambiar tu propia cuenta a Administrador WPCargo.'],
         ];
         if (isset($msgs[$key])) {
             [$t,$m] = $msgs[$key];

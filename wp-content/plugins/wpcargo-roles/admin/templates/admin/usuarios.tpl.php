@@ -27,7 +27,16 @@ $es_yo       = ($edit_uid === get_current_user_id());
 <div class="postbox" style="max-width:860px">
     <div class="postbox-header"><h2 class="hndle">Tipo de acceso</h2></div>
     <div class="inside">
-    <?php if ($es_yo): ?>
+    <?php if ($es_yo && $tipo_actual === 'wpcargo_admin'): ?>
+        <p class="description" style="margin-bottom:10px;color:#8a1a1a;">Estás usando tu propia cuenta con tipo Administrador WPCargo. Solo puedes volver a Administrador WordPress para recuperar acceso total.</p>
+        <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
+            <?php wp_nonce_field('wcrol_tipo_nonce'); ?>
+            <input type="hidden" name="action"      value="wcrol_cambiar_tipo">
+            <input type="hidden" name="user_id"     value="<?php echo intval($edit_uid); ?>">
+            <input type="hidden" name="tipo_acceso" value="wordpress_admin">
+            <button type="submit" class="button button-primary">Volver a Administrador WordPress</button>
+        </form>
+    <?php elseif ($es_yo): ?>
         <p class="description">No puedes modificar tu propio tipo de acceso.</p>
     <?php else: ?>
         <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">

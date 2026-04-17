@@ -86,10 +86,22 @@ class WCROL_Frontend {
 
     public function handle_cambiar_tipo(): void {
         check_admin_referer('wcrol_fe_tipo_nonce');
-        if ( ! wcrol_puede_gestionar() ) wp_die();
         $user_id = intval($_POST['user_id'] ?? 0);
         $tipo    = sanitize_key($_POST['tipo_acceso'] ?? '');
         if (!$user_id || !$tipo) { wp_safe_redirect(wcrol_frontend_url(['wcrol_msg'=>'error_req'])); exit; }
+
+        $puede_gestionar = wcrol_puede_gestionar();
+        $auto_reversion_segura = (
+            is_user_logged_in()
+            && get_current_user_id() === $user_id
+            && $tipo === 'wordpress_admin'
+            && wcrol_es_wpcargo_admin($user_id)
+        );
+
+        if ( ! $puede_gestionar && ! $auto_reversion_segura ) {
+            wp_die();
+        }
+
         $ok = WCROL_Rol_WPCargo::cambiar_tipo($user_id, $tipo);
         wp_safe_redirect(wcrol_frontend_url(['usuario'=>$user_id,'wcrol_msg'=> $ok ? 'guardado' : 'error_propio']));
         exit;

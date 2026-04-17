@@ -3,7 +3,7 @@ $fuentes_color = ['wpcargo_core'=>'#2271b1','plugin'=>'#00a32a','pagina'=>'#6c75
 $msgs_map = [
     'guardado'     => ['success','Cambios guardados correctamente.'],
     'error_req'    => ['danger', 'Faltan campos obligatorios.'],
-    'error_propio' => ['warning','No puedes modificar tu propio tipo de acceso.'],
+    'error_propio' => ['warning','No puedes cambiar tu propia cuenta a Administrador WPCargo.'],
 ];
 ?>
 
@@ -58,7 +58,7 @@ $msgs_map = [
         <strong style="font-size:.9rem"><i class="fa fa-key mr-1 text-warning"></i>Tipo de acceso</strong>
     </div>
     <div style="padding:16px">
-    <?php if ($es_yo): ?>
+    <?php if ($es_yo && $tipo_actual !== 'wpcargo_admin'): ?>
         <div class="alert alert-info mb-0 small"><i class="fa fa-info-circle mr-1"></i>No puedes modificar tu propio tipo de acceso.</div>
     <?php else: ?>
         <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" id="wcrol-tipo-form">
@@ -86,14 +86,15 @@ $msgs_map = [
                 <!-- Opción WPCargo Admin -->
                 <div class="col-md-6">
                     <div class="wcrol-tipo-card" data-tipo="wpcargo_admin"
-                         style="border:2px solid <?php echo $tipo_actual==='wpcargo_admin'?'#2271b1':'#dee2e6'; ?>;border-radius:6px;padding:14px 16px;cursor:pointer;background:<?php echo $tipo_actual==='wpcargo_admin'?'#f0f6fc':'#fff'; ?>">
+                         data-bloqueado="<?php echo $es_yo ? '1' : '0'; ?>"
+                         style="border:2px solid <?php echo $tipo_actual==='wpcargo_admin'?'#2271b1':'#dee2e6'; ?>;border-radius:6px;padding:14px 16px;cursor:<?php echo $es_yo ? 'not-allowed' : 'pointer'; ?>;background:<?php echo $tipo_actual==='wpcargo_admin'?'#f0f6fc':'#fff'; ?>;<?php echo $es_yo ? 'opacity:.65;' : ''; ?>">
                         <div class="d-flex align-items-start">
                             <div class="wcrol-radio-dot" style="width:18px;height:18px;border-radius:50%;border:2px solid <?php echo $tipo_actual==='wpcargo_admin'?'#2271b1':'#ccc'; ?>;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:3px">
                                 <div style="width:8px;height:8px;border-radius:50%;background:#2271b1;display:<?php echo $tipo_actual==='wpcargo_admin'?'block':'none'; ?>"></div>
                             </div>
                             <div style="margin-left:10px">
                                 <strong><i class="fa fa-shield mr-1"></i>Administrador WPCargo</strong>
-                                <div class="text-muted small mt-1">Solo accede al dashboard de WPCargo. <strong>No puede entrar a wp-admin.</strong> Ideal para asistentes y operadores.</div>
+                                <div class="text-muted small mt-1">Solo accede al dashboard de WPCargo. <strong>No puede entrar a wp-admin.</strong> Ideal para asistentes y operadores.<?php if ($es_yo): ?> <em>(No disponible para tu propia cuenta)</em><?php endif; ?></div>
                             </div>
                         </div>
                     </div>
@@ -116,6 +117,9 @@ $msgs_map = [
 
             cards.forEach(function(card){
                 card.addEventListener('click', function(){
+                    if (this.getAttribute('data-bloqueado') === '1') {
+                        return;
+                    }
                     var tipo = this.getAttribute('data-tipo');
                     hidden.value = tipo;
 
