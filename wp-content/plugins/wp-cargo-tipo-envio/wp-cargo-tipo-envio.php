@@ -670,20 +670,20 @@ function wpcte_render_cotizador_html( $tarifario, $tipo_envio = '', $modo = 'cre
 </div>
 
 <!-- Origen / Destino genérico -->
-<div class="wpcte-cot-row" id="wpcte-orig-dest-row" style="display:none">
-    <div class="wpcte-cot-group" id="wpcte-orig-select-wrap"><label>Origen</label>
+<div class="wpcte-cot-row" id="wpcte-orig-dest-row" style="display:none; margin-top: 30px; margin-bottom: 30px; padding: 10px 0; border-top: 1px solid #eee;">
+    <div class="wpcte-cot-group" id="wpcte-orig-select-wrap" style="margin-right: 30px; margin-bottom: 25px;"><label>Origen</label>
     <select id="wpcte-orig"><option value="">-- Seleccione --</option>
     <?php foreach ( $all_lima as $l ) echo '<option value="'.esc_attr($l).'">'.esc_html($l).'</option>'; ?>
     </select></div>
     <!-- Origen aéreo: select dinámico de orígenes -->
-    <div class="wpcte-cot-group" id="wpcte-orig-aereo-wrap" style="display:none"><label>Origen</label>
+    <div class="wpcte-cot-group" id="wpcte-orig-aereo-wrap" style="display:none; margin-right: 30px; margin-bottom: 25px;"><label>Origen</label>
     <select id="wpcte-orig-aereo-sel"><option value="">-- Seleccione --</option></select></div>
     <!-- Origen select para carga general (ciudades) -->
-    <div class="wpcte-cot-group" id="wpcte-orig-cg-wrap" style="display:none"><label>Origen</label>
+    <div class="wpcte-cot-group" id="wpcte-orig-cg-wrap" style="display:none; margin-right: 30px; margin-bottom: 25px;"><label>Origen</label>
     <select id="wpcte-orig-cg"><option value="">-- Seleccione --</option>
     <?php foreach ( $cg_origenes as $o ) echo '<option value="'.esc_attr($o).'">'.esc_html($o).'</option>'; ?>
     </select></div>
-    <div class="wpcte-cot-group"><label>Destino</label>
+    <div class="wpcte-cot-group" style="margin-bottom: 25px;"><label>Destino</label>
     <select id="wpcte-dest"><option value="">-- Seleccione --</option>
     <?php foreach ( $all_lima as $l ) echo '<option value="'.esc_attr($l).'">'.esc_html($l).'</option>'; ?>
     </select></div>
