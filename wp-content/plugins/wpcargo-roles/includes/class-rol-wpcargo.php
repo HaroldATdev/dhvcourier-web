@@ -134,6 +134,26 @@ class WCROL_Rol_WPCargo {
         add_action('init', [__CLASS__, 'asegurar_acceso_dashboard'], 20);
         // Ocultar barra de admin en frontend para estos usuarios
         add_action('after_setup_theme', [__CLASS__, 'ocultar_admin_bar']);
+
+        // Integración con plugin Escáner: permitir estos roles en su validación.
+        add_filter('dhv_scanner_roles', [__CLASS__, 'agregar_roles_en_escaner'], 10, 1);
+    }
+
+    /**
+     * Agrega roles permitidos para el plugin dhv-escaner-v2.
+     */
+    public static function agregar_roles_en_escaner( $roles ): array {
+        $roles = is_array($roles) ? $roles : [];
+
+        if ( ! in_array(self::SLUG, $roles, true) ) {
+            $roles[] = self::SLUG;
+        }
+
+        if ( ! in_array(self::BRANCH_MANAGER_SLUG, $roles, true) ) {
+            $roles[] = self::BRANCH_MANAGER_SLUG;
+        }
+
+        return array_values(array_unique($roles));
     }
 
     public static function crear_rol(): void {
