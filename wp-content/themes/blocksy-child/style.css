@@ -5,11 +5,3 @@
  * Template: blocksy
  * Text Domain: blocksy
  */
-/* --- PUNTO 1: Espaciado en el Cotizador --- */
-#wpcte-cotizador .wpcte-cot-row {
-    margin-top: 25px !important;
-    margin-bottom: 25px !important;
-    padding: 15px !important;
-    border: 1px solid #f0f0f0; /* Esto ayuda a que se vea cada sección separada */
-    border-radius: 5px;
-}
