@@ -8,6 +8,16 @@ $msgs_map = [
     'error_req'    => ['danger', 'Faltan campos obligatorios.'],
 ];
 $msg = sanitize_key($_GET['wcrol_msg'] ?? '');
+
+$hay_modulos_plugin = false;
+if ( is_array($modulos) ) {
+    foreach ( $modulos as $m ) {
+        if ( ($m['fuente'] ?? '') === 'plugin' ) {
+            $hay_modulos_plugin = true;
+            break;
+        }
+    }
+}
 ?>
 
 <div class="d-flex align-items-center mb-3 border-bottom pb-3">
@@ -44,7 +54,7 @@ $msg = sanitize_key($_GET['wcrol_msg'] ?? '');
     <i class="fa fa-lightbulb-o mr-1"></i>
     <strong>¿Cómo funciona?</strong> Haz clic en <strong>Sincronizar</strong> para detectar automáticamente los módulos del sidebar. 
     Para que los módulos de plugins como Viáticos o Finanzas aparezcan, primero navega a esas páginas en el dashboard y luego sincroniza.
-    <?php if ($capturado): ?>
+    <?php if ($capturado || $hay_modulos_plugin): ?>
     <br><span class="text-success"><i class="fa fa-check mr-1"></i>Se han capturado <strong><?php echo count($capturado); ?> ítem(s)</strong> del sidebar en la última visita al dashboard.</span>
     <?php else: ?>
     <br><span class="text-warning"><i class="fa fa-exclamation-triangle mr-1"></i>Aún no se ha capturado el sidebar. Visita el dashboard de WPCargo y luego sincroniza.</span>

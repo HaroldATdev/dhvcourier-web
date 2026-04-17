@@ -101,8 +101,32 @@ class WCROL_Modulos {
             $nuevos++;
         }
 
-        // 2. Ítems del sidebar capturados (añadidos por plugins via wpcfe_after_sidebar_menus)
+        // 2. Ítems del sidebar capturados (añadidos por plugins via hooks de sidebar)
         $capturado = get_transient(self::CAPTURE_KEY);
+
+        // Fallback: si no hay captura previa, intentar obtener menú en runtime.
+        if ( ! is_array($capturado) || empty($capturado) ) {
+            $capturado = [];
+
+            if ( function_exists('wpcfe_after_sidebar_menu_items') ) {
+                $items = wpcfe_after_sidebar_menu_items();
+                if ( is_array($items) && ! empty($items) ) {
+                    $capturado = array_merge($capturado, $items);
+                }
+            }
+
+            if ( function_exists('wpcfe_after_sidebar_menus') ) {
+                $menus = wpcfe_after_sidebar_menus();
+                if ( is_array($menus) && ! empty($menus) ) {
+                    $capturado = array_merge($capturado, $menus);
+                }
+            }
+
+            if ( ! empty($capturado) ) {
+                set_transient(self::CAPTURE_KEY, $capturado, DAY_IN_SECONDS);
+            }
+        }
+
         if ( is_array($capturado) ) {
             foreach ( $capturado as $sidebar_key => $item ) {
                 // Buscar si ya existe por sidebar_key o page_id
