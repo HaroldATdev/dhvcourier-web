@@ -10,6 +10,8 @@ $fuentes_color=['wpcargo_core'=>'#2271b1','plugin'=>'#00a32a','pagina'=>'#6c757d
 $tipo_actual = WCROL_Rol_WPCargo::tipo_acceso($edit_uid);
 $sin_restric = WCROL_Permisos::es_sin_restriccion($edit_uid);
 $es_yo       = ($edit_uid === get_current_user_id());
+$roles_actuales = (array) ($usuario->roles ?? []);
+$rol_mixto_admin = in_array('administrator', $roles_actuales, true) && in_array('wpcargo_admin', $roles_actuales, true);
 ?>
 <!-- ═══ EDITAR USUARIO ═══════════════════════════════════════════════ -->
 <h2 style="display:flex;align-items:center;gap:10px">
@@ -27,6 +29,9 @@ $es_yo       = ($edit_uid === get_current_user_id());
 <div class="postbox" style="max-width:860px">
     <div class="postbox-header"><h2 class="hndle">Tipo de acceso</h2></div>
     <div class="inside">
+    <?php if ($rol_mixto_admin): ?>
+        <div class="notice notice-warning inline"><p>Este usuario tiene roles mezclados (WordPress Admin + WPCargo Admin). Guarda el tipo deseado para normalizar.</p></div>
+    <?php endif; ?>
     <?php if ($es_yo && $tipo_actual === 'wpcargo_admin'): ?>
         <p class="description" style="margin-bottom:10px;color:#8a1a1a;">Estás usando tu propia cuenta con tipo Administrador WPCargo. Solo puedes volver a Administrador WordPress para recuperar acceso total.</p>
         <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">

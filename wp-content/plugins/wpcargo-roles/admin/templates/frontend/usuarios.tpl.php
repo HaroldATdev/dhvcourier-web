@@ -30,6 +30,8 @@ $msgs_map = [
     $tipo_actual = WCROL_Rol_WPCargo::tipo_acceso($edit_uid);
     $sin_restric = WCROL_Permisos::es_sin_restriccion($edit_uid);
     $es_yo       = ($edit_uid === get_current_user_id());
+    $roles_actuales = (array) ($usuario->roles ?? []);
+    $rol_mixto_admin = in_array('administrator', $roles_actuales, true) && in_array('wpcargo_admin', $roles_actuales, true);
 ?>
 
 <!-- Header del usuario -->
@@ -58,6 +60,9 @@ $msgs_map = [
         <strong style="font-size:.9rem"><i class="fa fa-key mr-1 text-warning"></i>Tipo de acceso</strong>
     </div>
     <div style="padding:16px">
+    <?php if ($rol_mixto_admin): ?>
+        <div class="alert alert-warning small mb-3"><i class="fa fa-exclamation-triangle mr-1"></i>Este usuario tiene roles mezclados (WordPress Admin + WPCargo Admin). Guarda el tipo deseado para normalizar.</div>
+    <?php endif; ?>
     <?php if ($es_yo && $tipo_actual !== 'wpcargo_admin'): ?>
         <div class="alert alert-info mb-0 small"><i class="fa fa-info-circle mr-1"></i>No puedes modificar tu propio tipo de acceso.</div>
     <?php else: ?>
@@ -101,15 +106,16 @@ $msgs_map = [
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-sm" id="wcrol-tipo-btn" <?php echo 'disabled'; ?>>
+            <button type="submit" class="btn btn-primary btn-sm" id="wcrol-tipo-btn" <?php echo $rol_mixto_admin ? '' : 'disabled'; ?>>
                 <i class="fa fa-save mr-1"></i>Guardar tipo de acceso
             </button>
-            <span class="text-muted small ml-2" id="wcrol-tipo-hint" style="display:none">Selecciona una opción para cambiar</span>
+            <span class="text-muted small ml-2" id="wcrol-tipo-hint" style="display:<?php echo $rol_mixto_admin ? 'none' : 'none'; ?>">Selecciona una opción para cambiar</span>
         </form>
 
         <script>
         (function(){
             var actual = '<?php echo esc_js($tipo_actual); ?>';
+            var rolMixto = <?php echo $rol_mixto_admin ? 'true' : 'false'; ?>;
             var cards  = document.querySelectorAll('.wcrol-tipo-card');
             var hidden = document.getElementById('wcrol-tipo-hidden');
             var btn    = document.getElementById('wcrol-tipo-btn');
@@ -135,7 +141,7 @@ $msgs_map = [
                     });
 
                     // Botón habilitado solo si cambió
-                    if (tipo !== actual) {
+                    if (tipo !== actual || rolMixto) {
                         btn.removeAttribute('disabled');
                         hint.style.display = 'none';
                     } else {
