@@ -15,6 +15,21 @@ if( is_user_logged_in() ){
 if( isset( $_GET['wpcfe'] ) && $_GET['wpcfe'] == 'update' ){
 	$p0 = 'p-0';
 }
+
+$wpcfe_can_access_dashboard = can_wpcfe_access_dashboard();
+
+if (
+    defined('WP_DEBUG') && WP_DEBUG &&
+    isset($_GET['wcrol_debug']) && $_GET['wcrol_debug'] === '1' &&
+    is_user_logged_in()
+) {
+    $debug_user = wp_get_current_user();
+    $debug_option_roles = get_option('wpcfe_access_dashboard_role');
+    error_log('[wpcfe_dashboard] access check | user_id=' . (int) $debug_user->ID .
+        ' | roles=' . wp_json_encode((array) $debug_user->roles) .
+        ' | option_roles=' . wp_json_encode($debug_option_roles) .
+        ' | can_access=' . ($wpcfe_can_access_dashboard ? '1' : '0'));
+}
 ?>
 <!--Main layout-->
 <main class="pt-5 mx-lg-5 <?php echo is_rtl() ? 'rtl' : ''; ?> <?php echo $class_not_logged; ?> ">
@@ -30,7 +45,7 @@ if( isset( $_GET['wpcfe'] ) && $_GET['wpcfe'] == 'update' ){
             $redirect_to = get_the_permalink( get_the_id() );		
             $template = wpcfe_include_template( 'login' );
             require_once( $template );
-        }elseif( !can_wpcfe_access_dashboard() ){
+        }elseif( !$wpcfe_can_access_dashboard ){
 			?>
 			<div class="col-md-12 text-center">
 				<section class="card">

@@ -26,8 +26,12 @@ class WCROL_Rol_WPCargo {
         add_filter('login_redirect',[__CLASS__, 'redirigir_login'], 10, 3);
         // Asegurar que Frontend Manager lo considere en su redirección por roles
         add_filter('wpcfe_login_redirect_dashboard_role', [__CLASS__, 'agregar_rol_en_redireccion'], 10, 1);
+        // Inyectar rol al leer la opción de roles permitidos del dashboard
+        add_filter('option_wpcfe_access_dashboard_role', [__CLASS__, 'agregar_rol_en_redireccion'], 10, 1);
         // Permitir acceso al dashboard aunque la opción de roles no esté sincronizada
         add_filter('can_wpcfe_access_dashboard', [__CLASS__, 'permitir_dashboard_para_rol'], 10, 1);
+        // Refuerzo final: evitar que otro filtro posterior vuelva a false
+        add_filter('can_wpcfe_access_dashboard', [__CLASS__, 'permitir_dashboard_para_rol_prioridad_alta'], 9999, 1);
         // Integrar el rol con la lista de acceso del dashboard WPCargo
         add_action('init', [__CLASS__, 'asegurar_acceso_dashboard'], 20);
         // Ocultar barra de admin en frontend para estos usuarios
@@ -63,7 +67,8 @@ class WCROL_Rol_WPCargo {
     /**
      * Añade el rol en la lista usada por wpcargo-frontend-manager para login redirect.
      */
-    public static function agregar_rol_en_redireccion( array $roles ): array {
+    public static function agregar_rol_en_redireccion( $roles ): array {
+        $roles = is_array($roles) ? $roles : [];
         if ( ! in_array(self::SLUG, $roles, true) ) {
             $roles[] = self::SLUG;
         }
@@ -73,19 +78,51 @@ class WCROL_Rol_WPCargo {
     /**
      * Override defensivo del permiso de acceso al dashboard de WPCargo.
      */
-    public static function permitir_dashboard_para_rol( bool $result ): bool {
-        if ( $result ) return true;
-        if ( ! is_user_logged_in() ) return false;
+    public static function permitir_dashboard_para_rol( $result ): bool {
+        if ( $result ) {
+            self::debug_log('can_wpcfe_access_dashboard already true before wcrol filter.');
+            return true;
+        }
+        if ( ! is_user_logged_in() ) {
+            self::debug_log('user not logged in.');
+            return false;
+        }
 
         $user = wp_get_current_user();
-        if ( ! $user || ! ($user instanceof \WP_User) ) return false;
+        if ( ! $user || ! ($user instanceof \WP_User) ) {
+            self::debug_log('wp_get_current_user invalid user object.');
+            return false;
+        }
 
-        if ( wcrol_es_wpcargo_admin((int) $user->ID) ) return true;
-        if ( in_array(self::SLUG, (array)$user->roles, true) ) return true;
-        if ( user_can($user, 'wpcargo_dashboard_access') ) return true;
-        if ( self::tiene_rol_en_capabilities_meta((int) $user->ID) ) return true;
+        $is_wpcargo_admin_helper = wcrol_es_wpcargo_admin((int) $user->ID);
+        $is_wpcargo_admin_role   = in_array(self::SLUG, (array)$user->roles, true);
+        $has_dashboard_cap       = user_can($user, 'wpcargo_dashboard_access');
+        $is_wpcargo_admin_meta   = self::tiene_rol_en_capabilities_meta((int) $user->ID);
 
+        self::debug_log('decision context', [
+            'user_id' => (int) $user->ID,
+            'roles' => (array) $user->roles,
+            'helper' => $is_wpcargo_admin_helper,
+            'role_match' => $is_wpcargo_admin_role,
+            'cap_match' => $has_dashboard_cap,
+            'meta_match' => $is_wpcargo_admin_meta,
+            'wp_prefix' => isset($GLOBALS['wpdb']) ? $GLOBALS['wpdb']->prefix : '',
+        ]);
+
+        if ( $is_wpcargo_admin_helper ) return true;
+        if ( $is_wpcargo_admin_role ) return true;
+        if ( $has_dashboard_cap ) return true;
+        if ( $is_wpcargo_admin_meta ) return true;
+
+        self::debug_log('final decision: false');
         return false;
+    }
+
+    /**
+     * Misma validación en prioridad alta para garantizar el allow final.
+     */
+    public static function permitir_dashboard_para_rol_prioridad_alta( $result ): bool {
+        return self::permitir_dashboard_para_rol($result);
     }
 
     /**
@@ -112,6 +149,14 @@ class WCROL_Rol_WPCargo {
         }
 
         return false;
+    }
+
+    private static function debug_log( string $message, array $context = [] ): void {
+        if ( ! defined('WP_DEBUG') || ! WP_DEBUG ) return;
+        if ( ! isset($_GET['wcrol_debug']) || $_GET['wcrol_debug'] !== '1' ) return;
+
+        $payload = $context ? ' | ' . wp_json_encode($context) : '';
+        error_log('[wcrol] ' . $message . $payload);
     }
 
     /**
