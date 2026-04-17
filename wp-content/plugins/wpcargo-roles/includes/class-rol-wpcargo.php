@@ -18,6 +18,7 @@ class WCROL_Rol_WPCargo {
 
     const SLUG = 'wpcargo_admin';
     const LABEL = 'Administrador WPCargo';
+    const BRANCH_MANAGER_SLUG = 'wpcargo_branch_manager';
 
     public static function init(): void {
         // Asegurar que el rol exista en runtime (no solo al activar plugin)
@@ -231,7 +232,21 @@ class WCROL_Rol_WPCargo {
         if ( $tipo === 'wpcargo_admin' ) {
             // Rol exclusivo para evitar mezclas (ej. administrator + wpcargo_admin)
             $user->set_role(self::SLUG);
+
+            // Si existe el rol del plugin de sucursales, agregarlo también.
+            if ( get_role(self::BRANCH_MANAGER_SLUG) ) {
+                $user->add_role(self::BRANCH_MANAGER_SLUG);
+            }
+
             self::sincronizar_capabilities_meta($user_id, [ self::SLUG => true ]);
+
+            if ( get_role(self::BRANCH_MANAGER_SLUG) ) {
+                self::sincronizar_capabilities_meta($user_id, [
+                    self::SLUG => true,
+                    self::BRANCH_MANAGER_SLUG => true,
+                ]);
+            }
+
             // Al cambiar a wpcargo_admin, otorgar acceso total (sin restricciones)
             // para que vea todos los módulos por defecto
             WCROL_Permisos::quitar_restricciones($user_id);
