@@ -1,0 +1,555 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WPCargo Invoice Addon\n"
+"POT-Creation-Date: 2021-11-11 15:12+0800\n"
+"PO-Revision-Date: 2021-11-11 15:18+0800\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: es_ES\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.0\n"
+"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
+"X-Poedit-WPHeader: wpcargo-invoice-addon.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
+"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.min.js\n"
+
+#: admin/templates/settings.tpl.php:42
+msgid "WPCargo Merge Tags"
+msgstr "Etiquetas de combinación de WPCargo"
+
+#: admin/templates/settings.tpl.php:43
+msgid "Note: Use this tags for email setup to display shipment data."
+msgstr ""
+"Nota: Utilice estas etiquetas para la configuración del correo electrónico "
+"para mostrar los datos del envío."
+
+#: admin/templates/settings.tpl.php:46
+msgid "Code"
+msgstr "Código"
+
+#: admin/templates/settings.tpl.php:47
+msgid "Label"
+msgstr "Etiqueta"
+
+#: admin/templates/settings.tpl.php:97 includes/functions.php:256
+msgid "Shipper Information"
+msgstr "Información Remitente"
+
+#: admin/templates/settings.tpl.php:105 includes/functions.php:258
+msgid "Receiver Information"
+msgstr "Información del destinatario"
+
+#: admin/templates/settings.tpl.php:119 includes/print-hooks.php:96
+msgid "PACKAGE DETAILS"
+msgstr "Detalles del paquete"
+
+#: admin/templates/settings.tpl.php:149
+msgid "Comments"
+msgstr "Comentarios"
+
+#: admin/templates/settings.tpl.php:154
+msgid "Subtotal: 0.00"
+msgstr "Subtotal: 0.00"
+
+#: admin/templates/settings.tpl.php:155
+msgid "Tax: 0.00"
+msgstr "Impuestos: 0.00"
+
+#: admin/templates/settings.tpl.php:156
+msgid "Total: 0.00"
+msgstr "Total: 0.00"
+
+#: admin/templates/settings.tpl.php:165
+msgid "Save Settings"
+msgstr "Guardar ajustes"
+
+#: includes/functions.php:13
+msgid "Invoices"
+msgstr "Facturas"
+
+#: includes/functions.php:34
+msgid "Paid"
+msgstr "Pagado"
+
+#: includes/functions.php:35
+msgid "Unpaid"
+msgstr "No pagado"
+
+#: includes/functions.php:36
+msgid "Cancelled"
+msgstr "Cancelado"
+
+#: includes/functions.php:37
+msgid "Return"
+msgstr "Volver"
+
+#: includes/functions.php:38
+msgid "Refund"
+msgstr "Reembolso"
+
+#: includes/functions.php:180
+msgid "Tracking Number"
+msgstr "Número de seguimiento"
+
+#: includes/functions.php:181
+msgid "Admin Email"
+msgstr "Correo electrónico del administrador"
+
+#: includes/functions.php:182
+msgid "Shipment Status"
+msgstr "ES Shipment Status"
+
+#: includes/functions.php:183
+msgid "Location"
+msgstr "Ubicación"
+
+#: includes/functions.php:184
+msgid "Website Name"
+msgstr "Nombre del Sitio Web"
+
+#: includes/functions.php:185
+msgid "Website URL"
+msgstr "URL del Sitio Web"
+
+#: includes/functions.php:186
+msgid "Registered Client Email"
+msgstr "Correo electrónico del cliente registrado"
+
+#: includes/functions.php:260
+msgid "Shipment Information"
+msgstr "Información de envío"
+
+#: includes/functions.php:334
+msgid ""
+"data is being process, Please wait while processing the file to download."
+msgstr ""
+"los datos se están procesando, espere mientras procesa el archivo para "
+"descargar."
+
+#: includes/functions.php:441
+msgid "Shipment "
+msgstr "Envío "
+
+#: includes/functions.php:441
+msgid " has been successfully saved."
+msgstr " se ha guardado correctamente."
+
+#: includes/functions.php:447
+msgid "Something went wrong saving your shipment. Please reload and try again"
+msgstr "Algo salió mal salvando su envío. Vuelva a cargar e inténtelo de nuevo"
+
+#: includes/functions.php:479
+msgid "Please activate your license key for WPCargo Invoice Addon"
+msgstr "Active su clave de licencia para WPCargo Invoice Addon"
+
+#: includes/functions.php:479
+msgid "Activate"
+msgstr "Activar"
+
+#: includes/functions.php:482
+msgid "This plugin requires WPTaskForce License Helper plugin to be active!"
+msgstr ""
+"¡Este plugin requiere que el plugin WPTaskForce License Helper esté activo!"
+
+#: includes/functions.php:485
+msgid "This plugin requires WPCargo plugin to be active!"
+msgstr "¡Este plugin requiere que el plugin WPCargo esté activo!"
+
+#: includes/functions.php:488
+msgid "This plugin requires WPCargo Custom Field Add-ons plugin to be active!"
+msgstr ""
+"¡Este complemento requiere que el complemento WPCargo Custom Field Add-ons "
+"esté activo!"
+
+#: includes/functions.php:491
+msgid "This plugin requires WPCargo Frontend Managers plugin to be active!"
+msgstr ""
+"¡Este plugin requiere que el plugin WPCargo Frontend Managers esté activo!"
+
+#: includes/functions.php:494
+msgid "Cheating, uh?"
+msgstr "Engañando, ¿eh?"
+
+#: includes/hooks.php:22 includes/hooks.php:65 templates/filters.php:3
+#: templates/update.php:36
+msgid "Update"
+msgstr "Actualizar"
+
+#: includes/hooks.php:27 templates/filters.php:8
+msgid "Print"
+msgstr "Imprimir"
+
+#: includes/hooks.php:58
+msgid "Edit"
+msgstr "Editar"
+
+#: includes/hooks.php:95
+msgid "Shipping Cost "
+msgstr "Gastos de envío "
+
+#: includes/hooks.php:101
+msgid "Cost "
+msgstr "Costar "
+
+#: includes/hooks.php:194 includes/intl.php:10
+msgid "Shipment Number"
+msgstr "Nombre del Remitente"
+
+#: includes/hooks.php:199 templates/update-invoice.tpl.php:68
+msgid "Print Invoice"
+msgstr "Imprimir factura"
+
+#: includes/intl.php:7 templates/filters.php:20 templates/filters.php:21
+msgid "Invoice Number"
+msgstr "Número de factura"
+
+#: includes/intl.php:13
+msgid "Shipment Type"
+msgstr "Tipo de envío"
+
+#: includes/intl.php:16
+msgid "Order No."
+msgstr "Nº de pedido"
+
+#: includes/intl.php:19 templates/invoice-export.tpl.php:22
+#: templates/update.php:19
+msgid "Status"
+msgstr "Estado"
+
+#: includes/intl.php:22
+msgid "Invoice Status"
+msgstr "Estado de la factura"
+
+#: includes/intl.php:25
+msgid "Shipment ID"
+msgstr "ID Envío"
+
+#: includes/intl.php:28
+msgid "Please activate license for WPCargo Invoice Addon plugin."
+msgstr "Active la licencia para el plugin WPCargo Invoice Addon."
+
+#: includes/intl.php:31
+msgid "Invoice Settings"
+msgstr "Ajustes"
+
+#: includes/intl.php:35
+msgid "Subtotal "
+msgstr "Subtotal "
+
+#: includes/intl.php:39
+msgid "Tax ("
+msgstr "Impuesto: "
+
+#: includes/intl.php:43
+msgid "Total "
+msgstr "Total "
+
+#: includes/intl.php:52
+msgid "No Result Found!"
+msgstr "No se han encontrados resultados!"
+
+#: includes/intl.php:55 templates/invoice-export.tpl.php:48
+msgid "Export Invoice"
+msgstr "Factura de exportación"
+
+#: includes/intl.php:58 templates/invoice-export.tpl.php:11
+msgid "Registered Shipper"
+msgstr "Remitente registrado"
+
+#: includes/invoice.php:395 includes/post_type.php:19
+msgid "Invoice"
+msgstr "Factura"
+
+#: includes/pages.php:15
+msgid "Merchant Create Order"
+msgstr "Comerciante Crear pedido"
+
+#: includes/post_type.php:13
+msgctxt "Post type general name"
+msgid "Shipment Invoice"
+msgstr "Factura de envío"
+
+#: includes/post_type.php:14
+msgctxt "Post type singular name"
+msgid "Shipment Invoice"
+msgstr "Factura de envío"
+
+#: includes/post_type.php:15
+msgctxt "Admin Menu text"
+msgid "Shipment Invoice"
+msgstr "Factura de envío"
+
+#: includes/post_type.php:16
+msgctxt "Add New on Toolbar"
+msgid "Shipment Invoice"
+msgstr "Factura de envío"
+
+#: includes/post_type.php:17 includes/post_type.php:18
+msgid "Add Invoice"
+msgstr "Añadir factura"
+
+#: includes/post_type.php:20
+msgid "Edit Invoice"
+msgstr "Editar Factura"
+
+#: includes/post_type.php:21
+msgid "View Invoice"
+msgstr "Ver factura"
+
+#: includes/post_type.php:22
+msgid "All shipment invoice"
+msgstr "Toda la factura de envío"
+
+#: includes/post_type.php:23
+msgid "Search shipment invoice"
+msgstr "Buscar factura de envío"
+
+#: includes/post_type.php:24
+msgid "Parent shipment invoice:"
+msgstr "Factura de envío principal:"
+
+#: includes/post_type.php:25
+msgid "No shipment invoice found."
+msgstr "No se ha encontrado ninguna factura de envío."
+
+#: includes/post_type.php:26
+msgid "No shipment invoice found in Trash."
+msgstr "No se encuentra ninguna factura de envío en la Papelera."
+
+#: includes/post_type.php:27
+msgctxt ""
+"Overrides the “Featured Image” phrase for this post type. Added in 4.3"
+msgid "Invoice Cover Image"
+msgstr "Imagen de portada de la factura"
+
+#: includes/post_type.php:28
+msgctxt ""
+"Overrides the “Set featured image” phrase for this post type. Added in 4.3"
+msgid "Set cover image"
+msgstr "Establecer Imagen de portada"
+
+#: includes/post_type.php:29
+msgctxt ""
+"Overrides the “Remove featured image” phrase for this post type. Added in 4.3"
+msgid "Remove cover image"
+msgstr "Quitar la imagen de portada"
+
+#: includes/post_type.php:30
+msgctxt ""
+"Overrides the “Use as featured image” phrase for this post type. Added in 4.3"
+msgid "Use as cover image"
+msgstr "Usar como imagen de portada"
+
+#: includes/post_type.php:31
+msgctxt ""
+"The post type archive label used in nav menus. Default “Post Archives”. "
+"Added in 4.4"
+msgid "Invoice archives"
+msgstr "Archivos de facturas"
+
+#: includes/post_type.php:32
+msgctxt ""
+"Overrides the “Insert into post”/”Insert into page” phrase (used when "
+"inserting media into a post). Added in 4.4"
+msgid "Insert into Invoice"
+msgstr "Insertar en factura"
+
+#: includes/post_type.php:33
+msgctxt ""
+"Overrides the “Uploaded to this post”/”Uploaded to this page” phrase (used "
+"when viewing media attached to a post). Added in 4.4"
+msgid "Uploaded to this Invoice"
+msgstr "Subido a esta factura"
+
+#: includes/post_type.php:34
+msgctxt ""
+"Screen reader text for the filter links heading on the post type listing "
+"screen. Default “Filter posts list”/”Filter pages list”. Added in 4.4"
+msgid "Filter shipment invoice list"
+msgstr "Filtrar lista de facturas de envío"
+
+#: includes/post_type.php:35
+msgctxt ""
+"Screen reader text for the pagination heading on the post type listing "
+"screen. Default “Posts list navigation”/”Pages list navigation”. Added in 4.4"
+msgid "Shipment invoice list navigation"
+msgstr "Navegación de la lista de facturas de envío"
+
+#: includes/post_type.php:36
+msgctxt ""
+"Screen reader text for the items list heading on the post type listing "
+"screen. Default “Posts list”/”Pages list”. Added in 4.4"
+msgid "Shipment invoice list"
+msgstr "Lista de facturas de envío"
+
+#: includes/print-hooks.php:59
+msgid "SHIPPER INFORMATION"
+msgstr "INFORMACIÓN DEL REMITENTE"
+
+#: includes/print-hooks.php:75
+msgid "RECEIVER INFORMATION"
+msgstr "INFORMACIÓN DEL RECEPTOR"
+
+#: includes/print-hooks.php:141
+msgid "Data empty"
+msgstr "Datos vacíos"
+
+#: includes/print-hooks.php:158
+msgid "COMMENTS"
+msgstr "COMENTARIOS"
+
+#: includes/print-hooks.php:180
+msgid "Subtotal:"
+msgstr "Subtotal:"
+
+#: includes/print-hooks.php:181
+msgid "Tax:"
+msgstr "Impuestos:"
+
+#: includes/print-hooks.php:182
+msgid "Total:"
+msgstr "Total"
+
+#: includes/scripts.php:20
+msgid "No shipment selected, Please select atleast one Shipment."
+msgstr "No se ha seleccionado ningún envío, seleccione al menos un envío."
+
+#: includes/scripts.php:23
+msgid "Waybill"
+msgstr "Porte"
+
+#: includes/scripts.php:24
+msgid "Cannot print Waybill the following Invoices status not Paid"
+msgstr ""
+"No se puede imprimir la guía de pago del siguiente estado de las facturas no "
+"pagadas"
+
+#: templates/filters.php:22
+msgid "Search"
+msgstr "Buscar"
+
+#: templates/invoice-export.tpl.php:13
+msgid "-- Registered Shipper --"
+msgstr "-- Remitente registrado --"
+
+#: templates/invoice-export.tpl.php:24
+msgid "-- Status --"
+msgstr "-- Estado --"
+
+#: templates/invoice-export.tpl.php:34 templates/invoice-export.tpl.php:40
+msgid "YYYY-MM-DD"
+msgstr "YYYY-MM-DD"
+
+#: templates/invoice-export.tpl.php:35
+msgid "Start"
+msgstr "Inicio"
+
+#: templates/invoice-export.tpl.php:41
+msgid "End"
+msgstr "Fin"
+
+#: templates/multiple-package.tpl.php:8
+msgid "Packages"
+msgstr "Paquetes"
+
+#: templates/multiple-package.tpl.php:71
+msgid "Add Package"
+msgstr "Agregar Paquete"
+
+#: templates/no-fm-addon-error.tpl.php:7 templates/notf-error.tpl.php:7
+msgid "Error Found!"
+msgstr "¡Error encontrado!"
+
+#: templates/no-fm-addon-error.tpl.php:10
+msgid ""
+"Cannot find WPCargo Frontent Manager Add-on plugin activated in your system."
+msgstr ""
+"No puede encontrar wpCargo Frontent Manager Add-on plugin activado en su "
+"sistema."
+
+#: templates/no-fm-addon-error.tpl.php:14 templates/notf-error.tpl.php:14
+msgid "Please purchase"
+msgstr "Por favor, compre"
+
+#: templates/no-fm-addon-error.tpl.php:14
+msgid "WPCargo Frontent Manager Add-on"
+msgstr "Complemento WPCargo Frontent Manager"
+
+#: templates/no-fm-addon-error.tpl.php:14
+msgid "https://www.wpcargo.com/product/wpcargo-frontend-manager/"
+msgstr "https://www.wpcargo.com/product/wpcargo-frontend-manager/"
+
+#: templates/notf-error.tpl.php:10
+msgid ""
+"Cannot find WPCargo Custom Field Add-ons plugin activated in your system."
+msgstr ""
+"No puede encontrar el complemento WPCargo Custom Field Add-ons activado en "
+"su sistema."
+
+#: templates/notf-error.tpl.php:14
+msgid "WPCargo Custom Field Add-ons"
+msgstr "Complementos de campo personalizados de WPCargo"
+
+#: templates/notf-error.tpl.php:14
+msgid "https://www.wpcargo.com/product/wpcargo-custom-field-add-ons/"
+msgstr "https://www.wpcargo.com/product/wpcargo-custom-field-add-ons/"
+
+#: templates/restriction.php:4
+msgid "Sorry your are not allowed to access this page!"
+msgstr "¡Lo sentimos, no se le permite acceder a esta página!"
+
+#: templates/restriction.php:5
+msgid "Please contact administrator for your permission."
+msgstr "Póngase en contacto con el administrador para obtener su permiso."
+
+#: templates/update-invoice.tpl.php:65
+msgid "Update Shipment"
+msgstr "Actualizar envío"
+
+#: templates/update.php:6
+msgid "Invoice Update"
+msgstr "Actualización de factura"
+
+#: templates/update.php:13
+msgid "Invoice List"
+msgstr "Lista de facturas"
+
+#: templates/update.php:21
+msgid "Select Status"
+msgstr "Seleccione Estado"
+
+#: templates/update.php:29
+msgid "Remarks"
+msgstr "Observaciones"
+
+#: templates/update.php:35
+msgid "Close"
+msgstr "Cerrar"
+
+#: wpcargo-invoice-addon.php:39
+msgid "License"
+msgstr "Licencia"
+
+#. Plugin Name of the plugin/theme
+msgid "WPCargo Invoice Addon"
+msgstr "Complemento de factura WPCargo"
+
+#. Plugin URI of the plugin/theme
+msgid "http://wptaskforce.com/"
+msgstr "http://wptaskforce.com/"
+
+#. Description of the plugin/theme
+msgid "Create invoice for each shipment created"
+msgstr "Crear factura para cada envío creado"
+
+#. Author of the plugin/theme
+msgid "<a href=\"http://www.wptaskforce.com/\">WPTaskForce</a>"
+msgstr "<a href=\"http://www.wptaskforce.com/\">WPTaskForce</a>"

@@ -1,0 +1,713 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WPCargo Invoice Addon\n"
+"POT-Creation-Date: 2023-08-25 09:10+0800\n"
+"PO-Revision-Date: 2023-08-25 09:19+0800\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.3.1\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
+"X-Poedit-WPHeader: wpcargo-invoice-addon.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
+"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.min.js\n"
+
+#: admin/templates/settings.tpl.php:45
+msgid "WPCargo Merge Tags"
+msgstr "WP 卡戈合并标签"
+
+#: admin/templates/settings.tpl.php:46
+msgid "Note: Use this tags for email setup to display shipment data."
+msgstr "注意：使用此标签设置电子邮件以显示发货数据。"
+
+#: admin/templates/settings.tpl.php:49
+msgid "Code"
+msgstr "代码"
+
+#: admin/templates/settings.tpl.php:50
+msgid "Label"
+msgstr "标签"
+
+#: admin/templates/settings.tpl.php:100 includes/functions.php:264
+msgid "Shipper Information"
+msgstr "发货人信息"
+
+#: admin/templates/settings.tpl.php:108 includes/functions.php:266
+msgid "Receiver Information"
+msgstr "收件人信息"
+
+#: admin/templates/settings.tpl.php:122 includes/print-hooks.php:198
+msgid "PACKAGE DETAILS"
+msgstr "包详细信息"
+
+#: admin/templates/settings.tpl.php:151
+msgid "Subtotal: 0.00"
+msgstr "子图： 0.00"
+
+#: admin/templates/settings.tpl.php:152
+msgid "Tax: 0.00"
+msgstr "税金： 0.00"
+
+#: admin/templates/settings.tpl.php:153
+msgid "Total: 0.00"
+msgstr "总计： 0.00"
+
+#: admin/templates/settings.tpl.php:161
+msgid "Comments"
+msgstr "评论"
+
+#: admin/templates/settings.tpl.php:170
+msgid "Save Settings"
+msgstr "保存设置"
+
+#: includes/functions.php:13
+msgid "Invoices"
+msgstr "发票"
+
+#: includes/functions.php:34
+msgid "Paid"
+msgstr "已支付"
+
+#: includes/functions.php:35
+msgid "Unpaid"
+msgstr "未支付"
+
+#: includes/functions.php:36
+msgid "Cancelled"
+msgstr "已取消"
+
+#: includes/functions.php:37
+msgid "Return"
+msgstr "返回"
+
+#: includes/functions.php:38
+msgid "Refund"
+msgstr "退款"
+
+#: includes/functions.php:178
+msgid "INVOICE"
+msgstr "发票"
+
+#: includes/functions.php:184 includes/hooks.php:669
+msgid "Tracking Number"
+msgstr "快递单号"
+
+#: includes/functions.php:185 includes/intl.php:7 templates/filters.php:20
+#: templates/filters.php:21
+msgid "Invoice Number"
+msgstr "发票号码"
+
+#: includes/functions.php:186
+msgid "Admin Email"
+msgstr "管理员电子邮件"
+
+#: includes/functions.php:187
+msgid "Shipment Status"
+msgstr "发货状态"
+
+#: includes/functions.php:188 includes/hooks.php:617 includes/hooks.php:795
+msgid "Location"
+msgstr "位置"
+
+#: includes/functions.php:189
+msgid "Website Name"
+msgstr "网站名称"
+
+#: includes/functions.php:190
+msgid "Website URL"
+msgstr "网址"
+
+#: includes/functions.php:191
+msgid "Registered Client Email"
+msgstr "注册客户电子邮件"
+
+#: includes/functions.php:268
+msgid "Shipment Information"
+msgstr "装运信息"
+
+#: includes/functions.php:342
+msgid ""
+"data is being process, Please wait while processing the file to download."
+msgstr "数据正在处理中，请等待处理文件下载。"
+
+#: includes/functions.php:449
+msgid "Shipment "
+msgstr "装船"
+
+#: includes/functions.php:449
+msgid " has been successfully saved."
+msgstr "已成功保存。"
+
+#: includes/functions.php:455
+msgid "Something went wrong saving your shipment. Please reload and try again"
+msgstr "保存您的货物出了问题。请重新加载并重新尝试"
+
+#: includes/functions.php:487
+msgid "Please activate your license key for WPCargo Invoice Addon"
+msgstr "请激活您的许可证密钥为WP卡戈发票阿登"
+
+#: includes/functions.php:487
+msgid "Activate"
+msgstr "启用"
+
+#: includes/functions.php:490
+msgid "This plugin requires WPTaskForce License Helper plugin to be active!"
+msgstr "此插件需要 WPTaskForce 许可证帮助器插件才能激活！"
+
+#: includes/functions.php:493
+msgid "This plugin requires WPCargo plugin to be active!"
+msgstr "此插件需要 WP 卡戈插件才能激活！"
+
+#: includes/functions.php:496
+msgid "This plugin requires WPCargo Custom Field Add-ons plugin to be active!"
+msgstr "此插件需要 WPCargo 自定义字段插件才能激活！"
+
+#: includes/functions.php:499
+msgid "This plugin requires WPCargo Frontend Managers plugin to be active!"
+msgstr "此插件要求 WP 卡戈前端经理插件要主动！"
+
+#: includes/functions.php:502
+msgid "Cheating, uh?"
+msgstr "作弊， 嗯？"
+
+#: includes/hooks.php:22 includes/hooks.php:65 templates/filters.php:3
+#: templates/update.php:36
+msgid "Update"
+msgstr "更新"
+
+#: includes/hooks.php:27 templates/filters.php:8
+msgid "Print"
+msgstr "打印"
+
+#: includes/hooks.php:58
+msgid "Edit"
+msgstr "编辑"
+
+#: includes/hooks.php:105 includes/intl.php:50
+msgid "Shipping Cost "
+msgstr "运费"
+
+#: includes/hooks.php:111
+msgid "Cost "
+msgstr "成本"
+
+#: includes/hooks.php:242
+msgid "INVOICE # "
+msgstr "发票 ＃"
+
+#: includes/hooks.php:244
+msgid "Tracking # "
+msgstr "跟踪 #"
+
+#: includes/hooks.php:249 templates/update-invoice.tpl.php:69
+msgid "Print Invoice"
+msgstr "打印发票"
+
+#: includes/hooks.php:369 includes/hooks.php:557
+msgid "Insurance"
+msgstr "保险"
+
+#: includes/hooks.php:545
+#, php-format
+msgid "%s"
+msgstr "%s"
+
+#: includes/hooks.php:561
+msgid "Pickup Rate"
+msgstr "接送率"
+
+#: includes/hooks.php:604 includes/hooks.php:786
+msgid "Vehicle"
+msgstr "载具"
+
+#: includes/hooks.php:664
+msgid "Shipment Details:"
+msgstr "发货详情："
+
+#: includes/hooks.php:668 includes/hooks.php:844
+msgid "Date"
+msgstr "日期"
+
+#: includes/hooks.php:670 includes/hooks.php:846
+msgid "Sender"
+msgstr "发件人"
+
+#: includes/hooks.php:671 includes/hooks.php:847
+msgid "Weight"
+msgstr "宽度"
+
+#: includes/hooks.php:672 includes/hooks.php:848 includes/intl.php:19
+#: templates/invoice-export.tpl.php:22 templates/update.php:19
+msgid "Status"
+msgstr "状态"
+
+#: includes/hooks.php:673 includes/hooks.php:849
+msgid "Free Storage"
+msgstr "免费存储"
+
+#: includes/hooks.php:674 includes/hooks.php:850
+msgid "Cost"
+msgstr "费用"
+
+#: includes/hooks.php:689 includes/hooks.php:865
+msgid "Day(s)"
+msgstr "天"
+
+#: includes/hooks.php:695 includes/hooks.php:871
+msgid "No Consolidated Shipment Found"
+msgstr "未找到合并货件"
+
+#: includes/hooks.php:705 includes/hooks.php:881
+msgid "Ordered On:"
+msgstr "订购日期："
+
+#: includes/hooks.php:709 includes/hooks.php:885
+msgid "Consolidate No.:"
+msgstr "合并编号："
+
+#: includes/hooks.php:713 includes/hooks.php:889
+msgid "Shipping Method:"
+msgstr "配送方式："
+
+#: includes/hooks.php:717 includes/hooks.php:893
+msgid "Status:"
+msgstr "状态："
+
+#: includes/hooks.php:721 includes/hooks.php:897
+msgid "Total Shipment:"
+msgstr "总出货量："
+
+#: includes/hooks.php:779
+msgid "DELIVERY INFORMATION"
+msgstr "交货信息"
+
+#: includes/hooks.php:840
+#, fuzzy
+#| msgid "SHIPPER INFORMATION"
+msgid "CONSOLIDATION INFORMATION"
+msgstr "发货人信息"
+
+#: includes/hooks.php:845
+msgid "Tracking #"
+msgstr "运单号 / 集装箱编号"
+
+#: includes/intl.php:10
+msgid "Shipment Number"
+msgstr "装运号"
+
+#: includes/intl.php:13
+msgid "Shipment Type"
+msgstr "装运类型"
+
+#: includes/intl.php:16
+msgid "Order No."
+msgstr "订单 #"
+
+#: includes/intl.php:22
+msgid "Invoice Status"
+msgstr "发票状态"
+
+#: includes/intl.php:25
+msgid "Shipment ID"
+msgstr "发运 ID"
+
+#: includes/intl.php:28
+msgid "Please activate license for WPCargo Invoice Addon plugin."
+msgstr "请激活 WP 卡戈发票添加插件的许可证。"
+
+#: includes/intl.php:31
+msgid "Invoice Settings"
+msgstr "发票设置"
+
+#: includes/intl.php:35
+msgid "Subtotal "
+msgstr "小计"
+
+#: includes/intl.php:39
+msgid "Tax ("
+msgstr "税项 （"
+
+#: includes/intl.php:43
+msgid "Total "
+msgstr "共计"
+
+#: includes/intl.php:53
+msgid "Shipping Cost:"
+msgstr "运费："
+
+#: includes/intl.php:57
+msgid "Delivery Charge "
+msgstr "运费"
+
+#: includes/intl.php:60
+msgid "Delivery Charge:"
+msgstr "运费："
+
+#: includes/intl.php:63
+msgid "Consolidation Information"
+msgstr "合并信息"
+
+#: includes/intl.php:66
+msgid "Delivery Information"
+msgstr "交货信息"
+
+#: includes/intl.php:78
+msgid "No Result Found!"
+msgstr "找不到您要的结果！"
+
+#: includes/intl.php:81 templates/invoice-export.tpl.php:48
+msgid "Export Invoice"
+msgstr "出口发票"
+
+#: includes/intl.php:84 templates/invoice-export.tpl.php:11
+msgid "Registered Shipper"
+msgstr "注册发货人"
+
+#: includes/intl.php:87
+msgid "Parcel Quotation Tax"
+msgstr "包裹报价税"
+
+#: includes/intl.php:90
+msgid "Parcel Quotation Subtotal"
+msgstr "包裹报价小计"
+
+#: includes/invoice.php:89
+msgid "Please select date range!"
+msgstr "请选择日期范围！"
+
+#: includes/invoice.php:397 includes/post_type.php:19
+msgid "Invoice"
+msgstr "发票"
+
+#: includes/pages.php:18
+msgid "Merchant Create Order"
+msgstr "商家创建订单"
+
+#: includes/post_type.php:13
+msgctxt "Post type general name"
+msgid "Shipment Invoice"
+msgstr "装运发票"
+
+#: includes/post_type.php:14
+msgctxt "Post type singular name"
+msgid "Shipment Invoice"
+msgstr "装运发票"
+
+#: includes/post_type.php:15
+msgctxt "Admin Menu text"
+msgid "Shipment Invoice"
+msgstr "装运发票"
+
+#: includes/post_type.php:16
+msgctxt "Add New on Toolbar"
+msgid "Shipment Invoice"
+msgstr "装运发票"
+
+#: includes/post_type.php:17 includes/post_type.php:18
+msgid "Add Invoice"
+msgstr "添加发票"
+
+#: includes/post_type.php:20
+msgid "Edit Invoice"
+msgstr "编辑发票"
+
+#: includes/post_type.php:21
+msgid "View Invoice"
+msgstr "查看发票"
+
+#: includes/post_type.php:22
+msgid "All shipment invoice"
+msgstr "所有装运发票"
+
+#: includes/post_type.php:23
+msgid "Search shipment invoice"
+msgstr "搜索装运发票"
+
+#: includes/post_type.php:24
+msgid "Parent shipment invoice:"
+msgstr "母装运发票："
+
+#: includes/post_type.php:25
+msgid "No shipment invoice found."
+msgstr "未找到装运发票。"
+
+#: includes/post_type.php:26
+msgid "No shipment invoice found in Trash."
+msgstr "在垃圾箱中未发现装运发票。"
+
+#: includes/post_type.php:27
+msgctxt ""
+"Overrides the “Featured Image” phrase for this post type. Added in 4.3"
+msgid "Invoice Cover Image"
+msgstr "发票封面图像"
+
+#: includes/post_type.php:28
+msgctxt ""
+"Overrides the “Set featured image” phrase for this post type. Added in 4.3"
+msgid "Set cover image"
+msgstr "设置封面图片"
+
+#: includes/post_type.php:29
+msgctxt ""
+"Overrides the “Remove featured image” phrase for this post type. Added in 4.3"
+msgid "Remove cover image"
+msgstr "删除封面图片"
+
+#: includes/post_type.php:30
+msgctxt ""
+"Overrides the “Use as featured image” phrase for this post type. Added in 4.3"
+msgid "Use as cover image"
+msgstr "用作封面图片"
+
+#: includes/post_type.php:31
+msgctxt ""
+"The post type archive label used in nav menus. Default “Post Archives”. "
+"Added in 4.4"
+msgid "Invoice archives"
+msgstr "发票档案"
+
+#: includes/post_type.php:32
+msgctxt ""
+"Overrides the “Insert into post”/”Insert into page” phrase (used when "
+"inserting media into a post). Added in 4.4"
+msgid "Insert into Invoice"
+msgstr "插入发票"
+
+#: includes/post_type.php:33
+msgctxt ""
+"Overrides the “Uploaded to this post”/”Uploaded to this page” phrase (used "
+"when viewing media attached to a post). Added in 4.4"
+msgid "Uploaded to this Invoice"
+msgstr "上传到此发票"
+
+#: includes/post_type.php:34
+msgctxt ""
+"Screen reader text for the filter links heading on the post type listing "
+"screen. Default “Filter posts list”/”Filter pages list”. Added in 4.4"
+msgid "Filter shipment invoice list"
+msgstr "过滤装运发票列表"
+
+#: includes/post_type.php:35
+msgctxt ""
+"Screen reader text for the pagination heading on the post type listing "
+"screen. Default “Posts list navigation”/”Pages list navigation”. Added in 4.4"
+msgid "Shipment invoice list navigation"
+msgstr "装运发票列表导航"
+
+#: includes/post_type.php:36
+msgctxt ""
+"Screen reader text for the items list heading on the post type listing "
+"screen. Default “Posts list”/”Pages list”. Added in 4.4"
+msgid "Shipment invoice list"
+msgstr "装运发票清单"
+
+#: includes/print-hooks.php:119
+msgid "Date:"
+msgstr "日期："
+
+#: includes/print-hooks.php:123
+msgid "Invoice No.:"
+msgstr "发票号码："
+
+#: includes/print-hooks.php:127
+msgid "Order No.:"
+msgstr "订单号:"
+
+#: includes/print-hooks.php:131
+msgid "Waybill No.:"
+msgstr "运单号："
+
+#: includes/print-hooks.php:150
+msgid "SHIPPER INFORMATION"
+msgstr "发货人信息"
+
+#: includes/print-hooks.php:166
+msgid "RECEIVER INFORMATION"
+msgstr "接收器信息"
+
+#: includes/print-hooks.php:241
+msgid "Data empty"
+msgstr "数据空"
+
+#: includes/print-hooks.php:258
+msgid "COMMENTS"
+msgstr "评论"
+
+#: includes/print-hooks.php:279
+msgid "Subtotal"
+msgstr "小计"
+
+#: includes/print-hooks.php:293
+msgid "Charge Description"
+msgstr "费用说明"
+
+#: includes/print-hooks.php:294
+msgid "Gross Charge"
+msgstr "总费用"
+
+#: includes/print-hooks.php:295
+msgid "Tax (%)"
+msgstr "税（％）"
+
+#: includes/print-hooks.php:296
+msgid "Tax"
+msgstr "税收"
+
+#: includes/print-hooks.php:297
+msgid "Net Charge"
+msgstr "净费用"
+
+#: includes/print-hooks.php:311
+msgid "Total"
+msgstr "总计"
+
+#: includes/scripts.php:27
+msgid "No shipment selected, Please select atleast one Shipment."
+msgstr "未选择发货，请选择最一个装运。"
+
+#: includes/scripts.php:30
+msgid "Waybill"
+msgstr "运单"
+
+#: includes/scripts.php:31
+msgid "Cannot print Waybill the following Invoices status not Paid"
+msgstr "无法打印未支付的以下发票状态"
+
+#: templates/filters.php:22
+msgid "Search"
+msgstr "搜索"
+
+#: templates/invoice-export.tpl.php:13
+msgid "-- Registered Shipper --"
+msgstr "-- 注册托运人 --"
+
+#: templates/invoice-export.tpl.php:24
+msgid "-- Status --"
+msgstr "- 状态 -"
+
+#: templates/invoice-export.tpl.php:34 templates/invoice-export.tpl.php:40
+msgid "YYYY-MM-DD"
+msgstr "YYYY-MM-DD"
+
+#: templates/invoice-export.tpl.php:35
+msgid "Start"
+msgstr "开始"
+
+#: templates/invoice-export.tpl.php:41
+msgid "End"
+msgstr "结束"
+
+#: templates/invoice.tpl.php:47
+msgid "INVOICE CHARGES"
+msgstr "发票费用"
+
+#: templates/multiple-package.tpl.php:5
+msgid "Packages"
+msgstr "软件包"
+
+#: templates/multiple-package.tpl.php:118
+msgid "Add"
+msgstr "添加"
+
+#: templates/no-fm-addon-error.tpl.php:7 templates/notf-error.tpl.php:7
+msgid "Error Found!"
+msgstr "发现错误！"
+
+#: templates/no-fm-addon-error.tpl.php:10
+msgid ""
+"Cannot find WPCargo Frontent Manager Add-on plugin activated in your system."
+msgstr "找不到在系统中激活的 WPCargo 前置管理器附加插件。"
+
+#: templates/no-fm-addon-error.tpl.php:14 templates/notf-error.tpl.php:14
+msgid "Please purchase"
+msgstr "请采购"
+
+#: templates/no-fm-addon-error.tpl.php:14
+msgid "WPCargo Frontent Manager Add-on"
+msgstr "WP 卡戈前部经理附加组件"
+
+#: templates/no-fm-addon-error.tpl.php:14
+msgid "https://www.wpcargo.com/product/wpcargo-frontend-manager/"
+msgstr "https://www.wpcargo.com/product/wpcargo-frontend-manager/"
+
+#: templates/notf-error.tpl.php:10
+msgid ""
+"Cannot find WPCargo Custom Field Add-ons plugin activated in your system."
+msgstr "无法找到在系统中激活的 WPCargo 自定义字段插件。"
+
+#: templates/notf-error.tpl.php:14
+msgid "WPCargo Custom Field Add-ons"
+msgstr "WP卡戈自定义字段附加组件"
+
+#: templates/notf-error.tpl.php:14
+msgid "https://www.wpcargo.com/product/wpcargo-custom-field-add-ons/"
+msgstr "https://www.wpcargo.com/product/wpcargo-custom-field-add-ons/"
+
+#: templates/restriction.php:4
+msgid "Sorry your are not allowed to access this page!"
+msgstr "对不起，您不允许访问此页面！"
+
+#: templates/restriction.php:5
+msgid "Please contact administrator for your permission."
+msgstr "请联系管理员以获得您的许可。"
+
+#: templates/update-invoice.tpl.php:66
+msgid "Update Shipment"
+msgstr "更新装运"
+
+#: templates/update.php:6
+msgid "Invoice Update"
+msgstr "发票更新"
+
+#: templates/update.php:13
+msgid "Invoice List"
+msgstr "发票列表"
+
+#: templates/update.php:21
+msgid "Select Status"
+msgstr "--选择状态-"
+
+#: templates/update.php:29
+msgid "Remarks"
+msgstr "备注"
+
+#: templates/update.php:35
+msgid "Close"
+msgstr "关闭"
+
+#: wpcargo-invoice-addon.php:48
+msgid "License"
+msgstr "许可证"
+
+#. Plugin Name of the plugin/theme
+msgid "WPCargo Invoice Addon"
+msgstr "WP卡戈发票阿登"
+
+#. Plugin URI of the plugin/theme
+msgid "http://wptaskforce.com/"
+msgstr "http://wptaskforce.com/"
+
+#. Description of the plugin/theme
+msgid "Create invoice for each shipment created"
+msgstr "为创建的每个发货创建发票"
+
+#. Author of the plugin/theme
+msgid "<a href=\"http://www.wptaskforce.com/\">WPTaskForce</a>"
+msgstr "<a href=\"http://www.wptaskforce.com/\">瓦普塔斯克力量</a>"
+
+#~ msgid "Subtotal:"
+#~ msgstr "小计："
+
+#~ msgid "Total:"
+#~ msgstr "总计："
+
+#~ msgid "Add Package"
+#~ msgstr "添加套餐"

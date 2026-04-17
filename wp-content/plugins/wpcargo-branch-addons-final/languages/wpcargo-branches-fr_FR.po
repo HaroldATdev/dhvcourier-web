@@ -1,0 +1,396 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WPCargo Branches Add-ons\n"
+"POT-Creation-Date: 2021-08-04 14:20+0800\n"
+"PO-Revision-Date: 2021-08-04 14:20+0800\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: fr_FR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.0\n"
+"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
+"X-Poedit-WPHeader: wpcargo-branch.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
+"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.min.js\n"
+
+#: admin/classes/class-branch.php:36 admin/includes/hooks.php:136
+#: admin/includes/hooks.php:166 admin/includes/hooks.php:177
+msgid "-- Select Branch Manager --"
+msgstr "-- Sélectionnez directeur de succursale --"
+
+#: admin/classes/class-scripts.php:19
+msgid "Something went wrong, Please reload the page and try again."
+msgstr ""
+"Quelque chose s’est mal passé, S’il vous plaît recharger la page et essayer "
+"à nouveau."
+
+#: admin/classes/class-scripts.php:20
+msgid "Are you sure you want to delete this data?"
+msgstr "Etes-vous sûr que vous souhaitez supprimer ces données ?"
+
+#: admin/classes/class-scripts.php:21
+msgid "Shipment transfer successfully completed."
+msgstr "Transfert d’expédition terminé avec succès."
+
+#: admin/classes/class-scripts.php:22
+msgid "Shipment transfer Failed!"
+msgstr "Transfert d’expédition échoué!"
+
+#: admin/includes/functions.php:106
+msgid "Please activate your license key for Branch Manager Add on"
+msgstr ""
+"S’il vous plaît activer votre clé de licence pour Branch Manager Ajouter sur"
+
+#: admin/includes/functions.php:108
+msgid "WPCargo license page"
+msgstr "Page de licence WPCargo"
+
+#: admin/includes/functions.php:109
+msgid "here"
+msgstr "ici"
+
+#: admin/includes/functions.php:113
+msgid ""
+"Sorry you don't have enough premission to access this page. Please contact "
+"administrator."
+msgstr ""
+"Désolé que vous n’avez pas assez de prémission pour accéder à cette page. "
+"Veuillez contacter l’administrateur."
+
+#: admin/includes/functions.php:118 admin/includes/functions.php:126
+msgid "This plugin requires"
+msgstr "Ce plugin nécessite"
+
+#: admin/includes/functions.php:119
+msgid "WPTaskForce License Helper"
+msgstr "Aide à la licence WPTaskForce"
+
+#: admin/includes/functions.php:120 admin/includes/functions.php:128
+msgid "plugin to be active!"
+msgstr "plugin pour être actif!"
+
+#: admin/includes/functions.php:127
+msgid "WPCargo"
+msgstr "WPCargo"
+
+#: admin/includes/functions.php:132
+msgid "Cheating, uh?"
+msgstr "Tricher, e uh ?"
+
+#: admin/includes/functions.php:135 admin/includes/hooks.php:133
+#: admin/includes/hooks.php:163 admin/includes/hooks.php:207
+msgid "Branch Manager"
+msgstr "Directeur de succursale"
+
+#: admin/includes/functions.php:138 admin/includes/hooks.php:5
+msgid "Shipment Branch"
+msgstr "Direction générale de l’expédition"
+
+#: admin/includes/functions.php:141
+msgid "Branch History"
+msgstr "Historique de branche"
+
+#: admin/includes/functions.php:144
+msgid "Branch Transfer"
+msgstr "Transfert de succursales"
+
+#: admin/includes/functions.php:147
+msgid "Branch Manager Settings"
+msgstr "Paramètres de gestionnaire de succursale"
+
+#: admin/includes/functions.php:150
+msgid "Assigned Branch"
+msgstr "Branche assignée"
+
+#: admin/includes/functions.php:153
+msgid "Unable to Assign Branch"
+msgstr "Impossible d’affecter la succursale"
+
+#: admin/includes/functions.php:156
+msgid "Manage Branches"
+msgstr "Gérer les succursales"
+
+#: admin/includes/functions.php:159
+msgid "Manage Branch"
+msgstr "Gérer la Direction générale"
+
+#: admin/includes/functions.php:162
+msgid "Add New Branch"
+msgstr "Nouvelle succursale"
+
+#: admin/includes/functions.php:165
+msgid "Transfer Shipment"
+msgstr "Expédition de transfert"
+
+#: admin/includes/functions.php:168 admin/includes/hooks.php:114
+msgid "Select Branch"
+msgstr "Sélectionnez Branche"
+
+#: admin/includes/functions.php:171 admin/templates/transfer.tpl.php:11
+msgid "--Select Branch--"
+msgstr "--Sélectionnez la branche--"
+
+#: admin/includes/functions.php:174
+msgid "Updated By:"
+msgstr "Mis à jour par"
+
+#: admin/includes/functions.php:177
+msgid "From:"
+msgstr "De:"
+
+#: admin/includes/functions.php:180
+msgid "To:"
+msgstr "À :"
+
+#: admin/includes/functions.php:183
+msgid "on"
+msgstr "on"
+
+#: admin/includes/functions.php:186 admin/templates/manage-branch.tpl.php:6
+msgid "Branch Code"
+msgstr "Code de section"
+
+#: admin/includes/functions.php:189 admin/templates/add-branch.tpl.php:21
+#: admin/templates/add-branch.tpl.php:22 admin/templates/edit-branch.tpl.php:21
+#: admin/templates/edit-branch.tpl.php:22
+#: admin/templates/manage-branch.tpl.php:7
+msgid "Phone"
+msgstr "Téléphone"
+
+#: admin/includes/hooks.php:179
+msgid "Please select branch before assigning branch manager."
+msgstr ""
+"Veuillez sélectionner la succursale avant d’affecter le directeur de "
+"succursale."
+
+#: admin/includes/hooks.php:238
+msgid "No available branches."
+msgstr "Pas de succursales disponibles."
+
+#: admin/includes/hooks.php:250
+msgid "Disable Email for Branch Manager?"
+msgstr "Désactiver le courriel pour le directeur de succursale?"
+
+#: admin/templates/add-branch.tpl.php:5
+msgid "Add Branch"
+msgstr "Ajouter branche"
+
+#: admin/templates/add-branch.tpl.php:13 admin/templates/add-branch.tpl.php:14
+#: admin/templates/edit-branch.tpl.php:13
+#: admin/templates/edit-branch.tpl.php:14
+#: admin/templates/manage-branch.tpl.php:5
+msgid "Branch Name"
+msgstr "Nom Succursale"
+
+#: admin/templates/add-branch.tpl.php:17 admin/templates/add-branch.tpl.php:18
+#: admin/templates/edit-branch.tpl.php:17
+#: admin/templates/edit-branch.tpl.php:18
+msgid "Code"
+msgstr "Code"
+
+#: admin/templates/add-branch.tpl.php:25 admin/templates/add-branch.tpl.php:26
+#: admin/templates/edit-branch.tpl.php:25
+#: admin/templates/edit-branch.tpl.php:26
+msgid "Address1"
+msgstr "Adresse 1"
+
+#: admin/templates/add-branch.tpl.php:29 admin/templates/add-branch.tpl.php:30
+#: admin/templates/edit-branch.tpl.php:29
+#: admin/templates/edit-branch.tpl.php:30
+msgid "Address2"
+msgstr "Adresse2"
+
+#: admin/templates/add-branch.tpl.php:33 admin/templates/add-branch.tpl.php:34
+#: admin/templates/edit-branch.tpl.php:33
+#: admin/templates/edit-branch.tpl.php:34
+msgid "City"
+msgstr "Ville"
+
+#: admin/templates/add-branch.tpl.php:37 admin/templates/add-branch.tpl.php:38
+#: admin/templates/edit-branch.tpl.php:37
+#: admin/templates/edit-branch.tpl.php:38
+msgid "Postcode / ZIP"
+msgstr "Code postal"
+
+#: admin/templates/add-branch.tpl.php:41 admin/templates/add-branch.tpl.php:42
+#: admin/templates/edit-branch.tpl.php:40
+#: admin/templates/edit-branch.tpl.php:41
+msgid "Country"
+msgstr "Pays"
+
+#: admin/templates/add-branch.tpl.php:45 admin/templates/add-branch.tpl.php:46
+#: admin/templates/edit-branch.tpl.php:44
+#: admin/templates/edit-branch.tpl.php:45
+msgid "State / County"
+msgstr "Etat / Région"
+
+#: admin/templates/add-branch.tpl.php:49 admin/templates/edit-branch.tpl.php:48
+#: admin/templates/manage-branch.tpl.php:9
+msgid "Branch Manager(s)"
+msgstr "Directeur de succursale(s)"
+
+#: admin/templates/add-branch.tpl.php:52 admin/templates/edit-branch.tpl.php:51
+msgid "Select Branch Manager"
+msgstr "Sélectionnez Branch Manager"
+
+#: admin/templates/add-branch.tpl.php:60 admin/templates/edit-branch.tpl.php:59
+#: admin/templates/manage-branch.tpl.php:14
+msgid "Branch Employee(s)"
+msgstr "Employé de la succursale"
+
+#: admin/templates/add-branch.tpl.php:63 admin/templates/edit-branch.tpl.php:62
+msgid "Select Branch Employee"
+msgstr "Sélectionnez Employé de la Direction générale"
+
+#: admin/templates/add-branch.tpl.php:71 admin/templates/edit-branch.tpl.php:70
+#: admin/templates/manage-branch.tpl.php:15
+msgid "Branch Agent(s)"
+msgstr "Agent de succursale(s)"
+
+#: admin/templates/add-branch.tpl.php:74 admin/templates/edit-branch.tpl.php:73
+msgid "Select Branch Agent"
+msgstr "Sélectionnez Agent de succursale"
+
+#: admin/templates/add-branch.tpl.php:82 admin/templates/edit-branch.tpl.php:81
+#: admin/templates/manage-branch.tpl.php:16
+msgid "Branch Client(s)"
+msgstr "Client de succursale(s)"
+
+#: admin/templates/add-branch.tpl.php:85 admin/templates/edit-branch.tpl.php:84
+msgid "Select Branch Client"
+msgstr "Sélectionner le client de la succursale"
+
+#: admin/templates/add-branch.tpl.php:93 admin/templates/edit-branch.tpl.php:92
+#: admin/templates/manage-branch.tpl.php:17
+msgid "Branch Driver(s)"
+msgstr "Conducteur de branche(s)"
+
+#: admin/templates/add-branch.tpl.php:96 admin/templates/edit-branch.tpl.php:95
+msgid "Select Branch Driver"
+msgstr "Sélectionnez Branch Driver"
+
+#: admin/templates/add-branch.tpl.php:104
+msgid "Save Branch"
+msgstr "Enregistrer la branche"
+
+#: admin/templates/branch-restriction.tpl.php:3
+msgid "Branch Restriction Settings"
+msgstr "Paramètres de restriction de branche"
+
+#: admin/templates/branch-restriction.tpl.php:5
+msgid "Restrict Branch Manager to access all Employees?"
+msgstr ""
+"Restreindre le gestionnaire de succursale pour accéder à tous les employés?"
+
+#: admin/templates/branch-restriction.tpl.php:6
+msgid "Restrict Branch Manager to access all Agents?"
+msgstr ""
+"Restreindre le gestionnaire de succursale pour accéder à tous les agents?"
+
+#: admin/templates/branch-restriction.tpl.php:7
+msgid "Restrict Branch Manager to access all Clients?"
+msgstr ""
+"Restreindre le gestionnaire de succursale pour accéder à tous les clients?"
+
+#: admin/templates/branch-restriction.tpl.php:8
+msgid "Restrict Branch Manager to access all Drivers?"
+msgstr ""
+"Restreindre le gestionnaire de succursale pour accéder à tous les "
+"conducteurs?"
+
+#: admin/templates/branch-restriction.tpl.php:9
+msgid ""
+"Note: Restriction is enabled the Branch Manager can only have assignement "
+"options based on the Assigned Users on the table list"
+msgstr ""
+"Remarque : La restriction est activée le gestionnaire de succursale ne peut "
+"avoir que des options d’attribution basées sur les utilisateurs assignés sur "
+"la liste de table"
+
+#: admin/templates/edit-branch.tpl.php:5
+#: admin/templates/edit-branch.tpl.php:105
+msgid "Update Branch"
+msgstr "Direction de mise à jour"
+
+#: admin/templates/manage-branch.tpl.php:8
+msgid "Address"
+msgstr "Adresse"
+
+#: admin/templates/manage-branch.tpl.php:10
+msgid "Branch Manager Assigned Users"
+msgstr "Gestionnaire de succursale s’est affecté aux utilisateurs"
+
+#: admin/templates/manage-branch.tpl.php:11
+msgid "Actions"
+msgstr "Actions"
+
+#: admin/templates/manage-branch.tpl.php:60
+#: admin/templates/manage-branch.tpl.php:61
+#: admin/templates/manage-branch.tpl.php:62
+#: admin/templates/manage-branch.tpl.php:63
+#: admin/templates/manage-branch.tpl.php:64
+msgid "--"
+msgstr ""
+
+#: admin/templates/transfer.tpl.php:5
+msgid "Select Branch to Transfer"
+msgstr "Sélectionnez Branche à transférer"
+
+#: admin/templates/transfer.tpl.php:19
+msgid ""
+"Scan your shipment barcode to update or enter the tracking number and press "
+"ENTER"
+msgstr ""
+"Numérisez votre code-barres d’expédition pour mettre à jour ou entrer le "
+"numéro de suivi et appuyez sur ENTER"
+
+#: admin/templates/transfer.tpl.php:22
+msgid "Notes"
+msgstr "Notes"
+
+#: admin/templates/transfer.tpl.php:24
+msgid ""
+"If you have connected your barcode scanner please scan directly to the "
+"barcode and it will automatic update the Shipment Status"
+msgstr ""
+"Si vous avez connecté votre scanner de code à barres s’il vous plaît scanner "
+"directement sur le code à barres et il mettra à jour automatiquement l’état "
+"d’expédition"
+
+#: admin/templates/transfer.tpl.php:25
+msgid ""
+"If you don't have a barcode scanner please input it to the tracking number "
+"field and press Enter on your keyboard"
+msgstr ""
+"Si vous n’avez pas de scanner de code à barres s’il vous plaît l’entrer dans "
+"le champ de numéro de suivi et appuyez sur Entrez sur votre clavier"
+
+#. Plugin Name of the plugin/theme
+msgid "WPCargo Branches Add-ons"
+msgstr "WPCargo Branches Add-ons"
+
+#. Plugin URI of the plugin/theme
+msgid "http://wpcargo.com/"
+msgstr "http://wpcargo.com/"
+
+#. Description of the plugin/theme
+msgid ""
+"This will add the lists of other branches on admin dashbard and generate "
+"shipment tracking number base on the Branches. This will work well with "
+"WPCargo Receiving Add-ons."
+msgstr ""
+"Cela ajoutera les listes d’autres branches sur admin dashbard et générera la "
+"base de numéro de suivi des expéditions sur les branches. Cela fonctionnera "
+"bien avec WPCargo Recevoir Add-ons."
+
+#. Author of the plugin/theme
+msgid "<a href=\"http://wptaskforce.com/\">WPTaskForce</a>"
+msgstr "<a href=\"http://wptaskforce.com/\">WPTaskForce</a>"

@@ -1,0 +1,384 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WPCargo Branches Add-ons\n"
+"POT-Creation-Date: 2021-08-04 14:17+0800\n"
+"PO-Revision-Date: 2021-08-04 14:18+0800\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ar\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.0\n"
+"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
+"&& n%100<=10 ? 3 : n%100>=11 && n%100<=99 ? 4 : 5);\n"
+"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
+"X-Poedit-WPHeader: wpcargo-branch.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
+"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.min.js\n"
+
+#: admin/classes/class-branch.php:36 admin/includes/hooks.php:136
+#: admin/includes/hooks.php:166 admin/includes/hooks.php:177
+msgid "-- Select Branch Manager --"
+msgstr "-- حدد مدير فرع --"
+
+#: admin/classes/class-scripts.php:19
+msgid "Something went wrong, Please reload the page and try again."
+msgstr "حدث خطأ ما، الرجاء إعادة تحميل الصفحة والمحاولة مرة أخرى."
+
+#: admin/classes/class-scripts.php:20
+msgid "Are you sure you want to delete this data?"
+msgstr "هل تريد بالتأكيد حذف هذه البيانات؟"
+
+#: admin/classes/class-scripts.php:21
+msgid "Shipment transfer successfully completed."
+msgstr "تم بنجاح عملية نقل الشحنة."
+
+#: admin/classes/class-scripts.php:22
+msgid "Shipment transfer Failed!"
+msgstr "فشل نقل الشحنة!"
+
+#: admin/includes/functions.php:106
+msgid "Please activate your license key for Branch Manager Add on"
+msgstr "الرجاء تنشيط مفتاح الترخيص الخاص بك لـ مدير فرع إضافة على"
+
+#: admin/includes/functions.php:108
+msgid "WPCargo license page"
+msgstr "صفحة ترخيص WPCargo"
+
+#: admin/includes/functions.php:109
+msgid "here"
+msgstr "هنا"
+
+#: admin/includes/functions.php:113
+msgid ""
+"Sorry you don't have enough premission to access this page. Please contact "
+"administrator."
+msgstr ""
+"آسف لم يكن لديك ما يكفي من مغفرة للوصول إلى هذه الصفحة. الرجاء الاتصال "
+"بالمسؤول."
+
+#: admin/includes/functions.php:118 admin/includes/functions.php:126
+msgid "This plugin requires"
+msgstr "يتطلب هذا البرنامج المساعد"
+
+#: admin/includes/functions.php:119
+msgid "WPTaskForce License Helper"
+msgstr "مساعد ترخيص WPTaskForce"
+
+#: admin/includes/functions.php:120 admin/includes/functions.php:128
+msgid "plugin to be active!"
+msgstr "البرنامج المساعد لتكون نشطة!"
+
+#: admin/includes/functions.php:127
+msgid "WPCargo"
+msgstr "AlarifiCargo"
+
+#: admin/includes/functions.php:132
+msgid "Cheating, uh?"
+msgstr "الغش، اه؟"
+
+#: admin/includes/functions.php:135 admin/includes/hooks.php:133
+#: admin/includes/hooks.php:163 admin/includes/hooks.php:207
+msgid "Branch Manager"
+msgstr "مدير فرع"
+
+#: admin/includes/functions.php:138 admin/includes/hooks.php:5
+msgid "Shipment Branch"
+msgstr "فرع الشحن"
+
+#: admin/includes/functions.php:141
+msgid "Branch History"
+msgstr "تاريخ الفرع"
+
+#: admin/includes/functions.php:144
+msgid "Branch Transfer"
+msgstr "تحويل الفرع"
+
+#: admin/includes/functions.php:147
+msgid "Branch Manager Settings"
+msgstr "إعدادات إدارة الفرع"
+
+#: admin/includes/functions.php:150
+msgid "Assigned Branch"
+msgstr "الفرع المخصص"
+
+#: admin/includes/functions.php:153
+msgid "Unable to Assign Branch"
+msgstr "تعذر تعيين فرع"
+
+#: admin/includes/functions.php:156
+msgid "Manage Branches"
+msgstr "إدارة الفروع"
+
+#: admin/includes/functions.php:159
+msgid "Manage Branch"
+msgstr "إدارة الفرع"
+
+#: admin/includes/functions.php:162
+msgid "Add New Branch"
+msgstr "إضافه فرع جديد"
+
+#: admin/includes/functions.php:165
+msgid "Transfer Shipment"
+msgstr "نقل الشحنة"
+
+#: admin/includes/functions.php:168 admin/includes/hooks.php:114
+msgid "Select Branch"
+msgstr "حدد الفرع"
+
+#: admin/includes/functions.php:171 admin/templates/transfer.tpl.php:11
+msgid "--Select Branch--"
+msgstr "--حدد فرع--"
+
+#: admin/includes/functions.php:174
+msgid "Updated By:"
+msgstr "تم التحديث بتاريخ"
+
+#: admin/includes/functions.php:177
+msgid "From:"
+msgstr "من:"
+
+#: admin/includes/functions.php:180
+msgid "To:"
+msgstr "الى:"
+
+#: admin/includes/functions.php:183
+msgid "on"
+msgstr "على"
+
+#: admin/includes/functions.php:186 admin/templates/manage-branch.tpl.php:6
+msgid "Branch Code"
+msgstr "رمز الفرع"
+
+#: admin/includes/functions.php:189 admin/templates/add-branch.tpl.php:21
+#: admin/templates/add-branch.tpl.php:22 admin/templates/edit-branch.tpl.php:21
+#: admin/templates/edit-branch.tpl.php:22
+#: admin/templates/manage-branch.tpl.php:7
+msgid "Phone"
+msgstr "الهاتف"
+
+#: admin/includes/hooks.php:179
+msgid "Please select branch before assigning branch manager."
+msgstr "الرجاء تحديد الفرع قبل تعيين مدير الفرع."
+
+#: admin/includes/hooks.php:238
+msgid "No available branches."
+msgstr "لا توجد فروع متوفرة."
+
+#: admin/includes/hooks.php:250
+msgid "Disable Email for Branch Manager?"
+msgstr "تعطيل البريد الإلكتروني لمدير الفرع؟"
+
+#: admin/templates/add-branch.tpl.php:5
+msgid "Add Branch"
+msgstr "إضافة فرع"
+
+#: admin/templates/add-branch.tpl.php:13 admin/templates/add-branch.tpl.php:14
+#: admin/templates/edit-branch.tpl.php:13
+#: admin/templates/edit-branch.tpl.php:14
+#: admin/templates/manage-branch.tpl.php:5
+msgid "Branch Name"
+msgstr "اسم الفرع"
+
+#: admin/templates/add-branch.tpl.php:17 admin/templates/add-branch.tpl.php:18
+#: admin/templates/edit-branch.tpl.php:17
+#: admin/templates/edit-branch.tpl.php:18
+msgid "Code"
+msgstr "كود"
+
+#: admin/templates/add-branch.tpl.php:25 admin/templates/add-branch.tpl.php:26
+#: admin/templates/edit-branch.tpl.php:25
+#: admin/templates/edit-branch.tpl.php:26
+msgid "Address1"
+msgstr "عنوان1"
+
+#: admin/templates/add-branch.tpl.php:29 admin/templates/add-branch.tpl.php:30
+#: admin/templates/edit-branch.tpl.php:29
+#: admin/templates/edit-branch.tpl.php:30
+msgid "Address2"
+msgstr "عنوان2"
+
+#: admin/templates/add-branch.tpl.php:33 admin/templates/add-branch.tpl.php:34
+#: admin/templates/edit-branch.tpl.php:33
+#: admin/templates/edit-branch.tpl.php:34
+msgid "City"
+msgstr "المدينة"
+
+#: admin/templates/add-branch.tpl.php:37 admin/templates/add-branch.tpl.php:38
+#: admin/templates/edit-branch.tpl.php:37
+#: admin/templates/edit-branch.tpl.php:38
+msgid "Postcode / ZIP"
+msgstr "الرمز البريدي"
+
+#: admin/templates/add-branch.tpl.php:41 admin/templates/add-branch.tpl.php:42
+#: admin/templates/edit-branch.tpl.php:40
+#: admin/templates/edit-branch.tpl.php:41
+msgid "Country"
+msgstr "الدولة"
+
+#: admin/templates/add-branch.tpl.php:45 admin/templates/add-branch.tpl.php:46
+#: admin/templates/edit-branch.tpl.php:44
+#: admin/templates/edit-branch.tpl.php:45
+msgid "State / County"
+msgstr "ولاية / مقاطعة"
+
+#: admin/templates/add-branch.tpl.php:49 admin/templates/edit-branch.tpl.php:48
+#: admin/templates/manage-branch.tpl.php:9
+msgid "Branch Manager(s)"
+msgstr "مدير فرع (مدراء)"
+
+#: admin/templates/add-branch.tpl.php:52 admin/templates/edit-branch.tpl.php:51
+msgid "Select Branch Manager"
+msgstr "حدد مدير الفرع"
+
+#: admin/templates/add-branch.tpl.php:60 admin/templates/edit-branch.tpl.php:59
+#: admin/templates/manage-branch.tpl.php:14
+msgid "Branch Employee(s)"
+msgstr "موظف فرع(موظف)"
+
+#: admin/templates/add-branch.tpl.php:63 admin/templates/edit-branch.tpl.php:62
+msgid "Select Branch Employee"
+msgstr "تحديد موظف الفرع"
+
+#: admin/templates/add-branch.tpl.php:71 admin/templates/edit-branch.tpl.php:70
+#: admin/templates/manage-branch.tpl.php:15
+msgid "Branch Agent(s)"
+msgstr "وكيل فرع(وكيل)"
+
+#: admin/templates/add-branch.tpl.php:74 admin/templates/edit-branch.tpl.php:73
+msgid "Select Branch Agent"
+msgstr "حدد وكيل فرع"
+
+#: admin/templates/add-branch.tpl.php:82 admin/templates/edit-branch.tpl.php:81
+#: admin/templates/manage-branch.tpl.php:16
+msgid "Branch Client(s)"
+msgstr "عميل فرع (عملاء)"
+
+#: admin/templates/add-branch.tpl.php:85 admin/templates/edit-branch.tpl.php:84
+msgid "Select Branch Client"
+msgstr "حدد عميل الفرع"
+
+#: admin/templates/add-branch.tpl.php:93 admin/templates/edit-branch.tpl.php:92
+#: admin/templates/manage-branch.tpl.php:17
+msgid "Branch Driver(s)"
+msgstr "برنامج تشغيل (برامج) فرع"
+
+#: admin/templates/add-branch.tpl.php:96 admin/templates/edit-branch.tpl.php:95
+msgid "Select Branch Driver"
+msgstr "حدد برنامج تشغيل الفرع"
+
+#: admin/templates/add-branch.tpl.php:104
+msgid "Save Branch"
+msgstr "حفظ الفرع"
+
+#: admin/templates/branch-restriction.tpl.php:3
+msgid "Branch Restriction Settings"
+msgstr "إعدادات تقييد الفرع"
+
+#: admin/templates/branch-restriction.tpl.php:5
+msgid "Restrict Branch Manager to access all Employees?"
+msgstr "تقييد مدير الفرع للوصول إلى كافة الموظفين؟"
+
+#: admin/templates/branch-restriction.tpl.php:6
+msgid "Restrict Branch Manager to access all Agents?"
+msgstr "تقييد مدير الفرع للوصول إلى كافة الوكلاء؟"
+
+#: admin/templates/branch-restriction.tpl.php:7
+msgid "Restrict Branch Manager to access all Clients?"
+msgstr "تقييد مدير الفرع للوصول إلى كافة العملاء؟"
+
+#: admin/templates/branch-restriction.tpl.php:8
+msgid "Restrict Branch Manager to access all Drivers?"
+msgstr "تقييد مدير الفرع للوصول إلى كافة برامج التشغيل؟"
+
+#: admin/templates/branch-restriction.tpl.php:9
+msgid ""
+"Note: Restriction is enabled the Branch Manager can only have assignement "
+"options based on the Assigned Users on the table list"
+msgstr ""
+"ملاحظة: يتم تمكين تقييد يمكن أن يكون مدير الفرع فقط خيارات تعيين استناداً إلى "
+"\"المستخدمين المعينين\" في قائمة الجدول"
+
+#: admin/templates/edit-branch.tpl.php:5
+#: admin/templates/edit-branch.tpl.php:105
+msgid "Update Branch"
+msgstr "تحديث الفرع"
+
+#: admin/templates/manage-branch.tpl.php:8
+msgid "Address"
+msgstr "العنوان"
+
+#: admin/templates/manage-branch.tpl.php:10
+msgid "Branch Manager Assigned Users"
+msgstr "المستخدمين المعيّنين من مدير الفرع"
+
+#: admin/templates/manage-branch.tpl.php:11
+msgid "Actions"
+msgstr "الإجراءات"
+
+#: admin/templates/manage-branch.tpl.php:60
+#: admin/templates/manage-branch.tpl.php:61
+#: admin/templates/manage-branch.tpl.php:62
+#: admin/templates/manage-branch.tpl.php:63
+#: admin/templates/manage-branch.tpl.php:64
+msgid "--"
+msgstr "--"
+
+#: admin/templates/transfer.tpl.php:5
+msgid "Select Branch to Transfer"
+msgstr "حدد فرع لنقل"
+
+#: admin/templates/transfer.tpl.php:19
+msgid ""
+"Scan your shipment barcode to update or enter the tracking number and press "
+"ENTER"
+msgstr "مسح الباركود الخاص بك شحنة لتحديث أو إدخال رقم التتبع واضغط ENTER"
+
+#: admin/templates/transfer.tpl.php:22
+msgid "Notes"
+msgstr "ملاحظات"
+
+#: admin/templates/transfer.tpl.php:24
+msgid ""
+"If you have connected your barcode scanner please scan directly to the "
+"barcode and it will automatic update the Shipment Status"
+msgstr ""
+"إذا كنت قد قمت بتوصيل ماسح الباركود الخاص بك يرجى مسح مباشرة إلى الباركود "
+"وسوف التحديث التلقائي حالة الشحن"
+
+#: admin/templates/transfer.tpl.php:25
+msgid ""
+"If you don't have a barcode scanner please input it to the tracking number "
+"field and press Enter on your keyboard"
+msgstr ""
+"إذا لم يكن لديك ماسح الباركود يرجى إدخاله إلى حقل رقم التتبع والضغط على "
+"إدخال على لوحة المفاتيح"
+
+#. Plugin Name of the plugin/theme
+msgid "WPCargo Branches Add-ons"
+msgstr "إضافات بفكارجو أفروع"
+
+#. Plugin URI of the plugin/theme
+msgid "http://wpcargo.com/"
+msgstr ""
+"هذا البرنامج المساعد يتطلب <a href=\"http://wpcargo.com/\" target=\"_blank"
+"\">WPTaskForce ترخيص المساعد</a> البرنامج المساعد لتكون نشطة!"
+
+#. Description of the plugin/theme
+msgid ""
+"This will add the lists of other branches on admin dashbard and generate "
+"shipment tracking number base on the Branches. This will work well with "
+"WPCargo Receiving Add-ons."
+msgstr ""
+"هذا وسوف تضيف قوائم الفروع الأخرى على dashbard المشرف وتوليد قاعدة رقم تتبع "
+"الشحنة على الفروع. هذا سوف يعمل بشكل جيد مع WPCargo تلقي إضافات."
+
+#. Author of the plugin/theme
+msgid "<a href=\"http://wptaskforce.com/\">WPTaskForce</a>"
+msgstr "<a href=\"http://wptaskforce.com/\">WPTaskForce</a>"

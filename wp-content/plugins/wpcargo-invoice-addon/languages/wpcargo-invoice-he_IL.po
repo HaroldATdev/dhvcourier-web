@@ -1,0 +1,543 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: WPCargo Invoice Addon\n"
+"POT-Creation-Date: 2021-11-11 15:01+0800\n"
+"PO-Revision-Date: 2021-11-11 15:04+0800\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: he_IL\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.0\n"
+"X-Poedit-Basepath: ..\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : n==2 ? 1 : n>10 && n%10==0 ? "
+"2 : 3);\n"
+"X-Poedit-Flags-xgettext: --add-comments=translators:\n"
+"X-Poedit-WPHeader: wpcargo-invoice-addon.php\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x:1,2c;_ex:1,2c;_nx:4c,1,2;esc_attr__;"
+"esc_attr_e;esc_attr_x:1,2c;esc_html__;esc_html_e;esc_html_x:1,2c;_n_noop:1,2;"
+"_nx_noop:3c,1,2;__ngettext_noop:1,2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: *.min.js\n"
+
+#: admin/templates/settings.tpl.php:42
+msgid "WPCargo Merge Tags"
+msgstr "תגי מיזוג WPCargo"
+
+#: admin/templates/settings.tpl.php:43
+msgid "Note: Use this tags for email setup to display shipment data."
+msgstr "הערה: השתמש בתגים אלה עבור הגדרת דואר אלקטרוני כדי להציג נתוני משלוח."
+
+#: admin/templates/settings.tpl.php:46
+msgid "Code"
+msgstr "קוד"
+
+#: admin/templates/settings.tpl.php:47
+msgid "Label"
+msgstr "תווית"
+
+#: admin/templates/settings.tpl.php:97 includes/functions.php:256
+msgid "Shipper Information"
+msgstr "מידע השולח"
+
+#: admin/templates/settings.tpl.php:105 includes/functions.php:258
+msgid "Receiver Information"
+msgstr "פרטי מקלט"
+
+#: admin/templates/settings.tpl.php:119 includes/print-hooks.php:96
+msgid "PACKAGE DETAILS"
+msgstr "פרטי חבילה"
+
+#: admin/templates/settings.tpl.php:149
+msgid "Comments"
+msgstr "תגובות"
+
+#: admin/templates/settings.tpl.php:154
+msgid "Subtotal: 0.00"
+msgstr "סכום ביניים: 0.00"
+
+#: admin/templates/settings.tpl.php:155
+msgid "Tax: 0.00"
+msgstr "מס: 0.00"
+
+#: admin/templates/settings.tpl.php:156
+msgid "Total: 0.00"
+msgstr "סה\"כ: 0.00"
+
+#: admin/templates/settings.tpl.php:165
+msgid "Save Settings"
+msgstr "שמור שינויים"
+
+#: includes/functions.php:13
+msgid "Invoices"
+msgstr "חשבוניות"
+
+#: includes/functions.php:34
+msgid "Paid"
+msgstr "בתשלום"
+
+#: includes/functions.php:35
+msgid "Unpaid"
+msgstr "טרם שולם"
+
+#: includes/functions.php:36
+msgid "Cancelled"
+msgstr "בוטל"
+
+#: includes/functions.php:37
+msgid "Return"
+msgstr "כפול"
+
+#: includes/functions.php:38
+msgid "Refund"
+msgstr "החזר כספי"
+
+#: includes/functions.php:180
+msgid "Tracking Number"
+msgstr "מספר מעקב"
+
+#: includes/functions.php:181
+msgid "Admin Email"
+msgstr "מנהל האתר"
+
+#: includes/functions.php:182
+msgid "Shipment Status"
+msgstr "מצב משלוח"
+
+#: includes/functions.php:183
+msgid "Location"
+msgstr "מיקום"
+
+#: includes/functions.php:184
+msgid "Website Name"
+msgstr "שם האתר"
+
+#: includes/functions.php:185
+msgid "Website URL"
+msgstr "כתובת האתר"
+
+#: includes/functions.php:186
+msgid "Registered Client Email"
+msgstr "דואר אלקטרוני לקוח רשום"
+
+#: includes/functions.php:260
+msgid "Shipment Information"
+msgstr "פרטי משלוח"
+
+#: includes/functions.php:334
+msgid ""
+"data is being process, Please wait while processing the file to download."
+msgstr "הנתונים מתבצעים, נא המתן בעת עיבוד הקובץ להורדה."
+
+#: includes/functions.php:441
+msgid "Shipment "
+msgstr "משלוח "
+
+#: includes/functions.php:441
+msgid " has been successfully saved."
+msgstr " נשמר בהצלחה."
+
+#: includes/functions.php:447
+msgid "Something went wrong saving your shipment. Please reload and try again"
+msgstr "משהו השתבש כשהציל את המשלוח שלך. נא טען מחדש ונסה שוב"
+
+#: includes/functions.php:479
+msgid "Please activate your license key for WPCargo Invoice Addon"
+msgstr "נא הפעל את מפתח הרשיון שלך עבור WPCargo חשבונית Addon"
+
+#: includes/functions.php:479
+msgid "Activate"
+msgstr "הפעל"
+
+#: includes/functions.php:482
+msgid "This plugin requires WPTaskForce License Helper plugin to be active!"
+msgstr "תוסף זה דורש תוסף עוזר רישיון WPTaskForce להיות פעיל!"
+
+#: includes/functions.php:485
+msgid "This plugin requires WPCargo plugin to be active!"
+msgstr "תוסף זה דורש תוסף WPCargo להיות פעיל!"
+
+#: includes/functions.php:488
+msgid "This plugin requires WPCargo Custom Field Add-ons plugin to be active!"
+msgstr "תוסף זה דורש תוסף הרחבות שדה מותאם אישית WPCargo להיות פעיל!"
+
+#: includes/functions.php:491
+msgid "This plugin requires WPCargo Frontend Managers plugin to be active!"
+msgstr "תוסף זה דורש תוסף מנהלי חזית WPCargo להיות פעיל!"
+
+#: includes/functions.php:494
+msgid "Cheating, uh?"
+msgstr "רמאות, אה?"
+
+#: includes/hooks.php:22 includes/hooks.php:65 templates/filters.php:3
+#: templates/update.php:36
+msgid "Update"
+msgstr "עדכון"
+
+#: includes/hooks.php:27 templates/filters.php:8
+msgid "Print"
+msgstr "הדפסה"
+
+#: includes/hooks.php:58
+msgid "Edit"
+msgstr "ערוך"
+
+#: includes/hooks.php:95
+msgid "Shipping Cost "
+msgstr "עלות משלוח "
+
+#: includes/hooks.php:101
+msgid "Cost "
+msgstr "עלות "
+
+#: includes/hooks.php:194 includes/intl.php:10
+msgid "Shipment Number"
+msgstr "מספר משלוח"
+
+#: includes/hooks.php:199 templates/update-invoice.tpl.php:68
+msgid "Print Invoice"
+msgstr "הדפס מפרט"
+
+#: includes/intl.php:7 templates/filters.php:20 templates/filters.php:21
+msgid "Invoice Number"
+msgstr "מספר חשבונית"
+
+#: includes/intl.php:13
+msgid "Shipment Type"
+msgstr "סוג משלוח"
+
+#: includes/intl.php:16
+msgid "Order No."
+msgstr "מספר הזמנה."
+
+#: includes/intl.php:19 templates/invoice-export.tpl.php:22
+#: templates/update.php:19
+msgid "Status"
+msgstr "סטטוס"
+
+#: includes/intl.php:22
+msgid "Invoice Status"
+msgstr "מצב חשבונית"
+
+#: includes/intl.php:25
+msgid "Shipment ID"
+msgstr "מזהה משלוח"
+
+#: includes/intl.php:28
+msgid "Please activate license for WPCargo Invoice Addon plugin."
+msgstr "נא הפעל את הרשיון עבור תוסף WPCargo חשבונית Addon."
+
+#: includes/intl.php:31
+msgid "Invoice Settings"
+msgstr "הגדרות חשבונית"
+
+#: includes/intl.php:35
+msgid "Subtotal "
+msgstr "סכום ביניים "
+
+#: includes/intl.php:39
+msgid "Tax ("
+msgstr "מס ("
+
+#: includes/intl.php:43
+msgid "Total "
+msgstr "סך "
+
+#: includes/intl.php:52
+msgid "No Result Found!"
+msgstr "לא נמצאו תוצאות."
+
+#: includes/intl.php:55 templates/invoice-export.tpl.php:48
+msgid "Export Invoice"
+msgstr "יצא חשבונית"
+
+#: includes/intl.php:58 templates/invoice-export.tpl.php:11
+msgid "Registered Shipper"
+msgstr "שולח רשום"
+
+#: includes/invoice.php:395 includes/post_type.php:19
+msgid "Invoice"
+msgstr "חשבונית"
+
+#: includes/pages.php:15
+msgid "Merchant Create Order"
+msgstr "יצירת בעל עסק"
+
+#: includes/post_type.php:13
+msgctxt "Post type general name"
+msgid "Shipment Invoice"
+msgstr "חשבונית משלוח"
+
+#: includes/post_type.php:14
+msgctxt "Post type singular name"
+msgid "Shipment Invoice"
+msgstr "חשבונית משלוח"
+
+#: includes/post_type.php:15
+msgctxt "Admin Menu text"
+msgid "Shipment Invoice"
+msgstr "חשבונית משלוח"
+
+#: includes/post_type.php:16
+msgctxt "Add New on Toolbar"
+msgid "Shipment Invoice"
+msgstr "חשבונית משלוח"
+
+#: includes/post_type.php:17 includes/post_type.php:18
+msgid "Add Invoice"
+msgstr "הוסף חשבונית"
+
+#: includes/post_type.php:20
+msgid "Edit Invoice"
+msgstr "ערוך חשבונית"
+
+#: includes/post_type.php:21
+msgid "View Invoice"
+msgstr "‎צפייה בחשבונית"
+
+#: includes/post_type.php:22
+msgid "All shipment invoice"
+msgstr "כל חשבונית המשלוח"
+
+#: includes/post_type.php:23
+msgid "Search shipment invoice"
+msgstr "חיפוש חשבונית משלוח"
+
+#: includes/post_type.php:24
+msgid "Parent shipment invoice:"
+msgstr "חשבונית משלוח אב:"
+
+#: includes/post_type.php:25
+msgid "No shipment invoice found."
+msgstr "לא נמצאה חשבונית משלוח."
+
+#: includes/post_type.php:26
+msgid "No shipment invoice found in Trash."
+msgstr "לא נמצאה חשבונית משלוח באשפה."
+
+#: includes/post_type.php:27
+msgctxt ""
+"Overrides the “Featured Image” phrase for this post type. Added in 4.3"
+msgid "Invoice Cover Image"
+msgstr "תמונת נושא של חשבונית"
+
+#: includes/post_type.php:28
+msgctxt ""
+"Overrides the “Set featured image” phrase for this post type. Added in 4.3"
+msgid "Set cover image"
+msgstr "הגדר תמונה ראשית"
+
+#: includes/post_type.php:29
+msgctxt ""
+"Overrides the “Remove featured image” phrase for this post type. Added in 4.3"
+msgid "Remove cover image"
+msgstr "הסר תמונה ראשית"
+
+#: includes/post_type.php:30
+msgctxt ""
+"Overrides the “Use as featured image” phrase for this post type. Added in 4.3"
+msgid "Use as cover image"
+msgstr "השתמש בתור תמונה ראשית"
+
+#: includes/post_type.php:31
+msgctxt ""
+"The post type archive label used in nav menus. Default “Post Archives”. "
+"Added in 4.4"
+msgid "Invoice archives"
+msgstr "ארכיון חשבוניות"
+
+#: includes/post_type.php:32
+msgctxt ""
+"Overrides the “Insert into post”/”Insert into page” phrase (used when "
+"inserting media into a post). Added in 4.4"
+msgid "Insert into Invoice"
+msgstr "הוסף לחשבונית"
+
+#: includes/post_type.php:33
+msgctxt ""
+"Overrides the “Uploaded to this post”/”Uploaded to this page” phrase (used "
+"when viewing media attached to a post). Added in 4.4"
+msgid "Uploaded to this Invoice"
+msgstr "הועלה לחשבונית זו"
+
+#: includes/post_type.php:34
+msgctxt ""
+"Screen reader text for the filter links heading on the post type listing "
+"screen. Default “Filter posts list”/”Filter pages list”. Added in 4.4"
+msgid "Filter shipment invoice list"
+msgstr "סינון רשימת חשבוניות משלוח"
+
+#: includes/post_type.php:35
+msgctxt ""
+"Screen reader text for the pagination heading on the post type listing "
+"screen. Default “Posts list navigation”/”Pages list navigation”. Added in 4.4"
+msgid "Shipment invoice list navigation"
+msgstr "ניווט ברשימת חשבוניות משלוח"
+
+#: includes/post_type.php:36
+msgctxt ""
+"Screen reader text for the items list heading on the post type listing "
+"screen. Default “Posts list”/”Pages list”. Added in 4.4"
+msgid "Shipment invoice list"
+msgstr "רשימת חשבוניות משלוח"
+
+#: includes/print-hooks.php:59
+msgid "SHIPPER INFORMATION"
+msgstr "מידע השולח"
+
+#: includes/print-hooks.php:75
+msgid "RECEIVER INFORMATION"
+msgstr "פרטי מקלט"
+
+#: includes/print-hooks.php:141
+msgid "Data empty"
+msgstr "הנתונים ריקים"
+
+#: includes/print-hooks.php:158
+msgid "COMMENTS"
+msgstr "תגובות"
+
+#: includes/print-hooks.php:180
+msgid "Subtotal:"
+msgstr "סכום ביניים:"
+
+#: includes/print-hooks.php:181
+msgid "Tax:"
+msgstr "מע''מ"
+
+#: includes/print-hooks.php:182
+msgid "Total:"
+msgstr "סך הכל:"
+
+#: includes/scripts.php:20
+msgid "No shipment selected, Please select atleast one Shipment."
+msgstr "לא נבחר משלוח, נא בחר לפחות משלוח אחד."
+
+#: includes/scripts.php:23
+msgid "Waybill"
+msgstr "ש-300 ש\"ר"
+
+#: includes/scripts.php:24
+msgid "Cannot print Waybill the following Invoices status not Paid"
+msgstr "אין אפשרות להדפיס שטרם את מצב החשבוניות הבא שלא שולם"
+
+#: templates/filters.php:22
+msgid "Search"
+msgstr "חיפוש"
+
+#: templates/invoice-export.tpl.php:13
+msgid "-- Registered Shipper --"
+msgstr "--מוביל רשום-"
+
+#: templates/invoice-export.tpl.php:24
+msgid "-- Status --"
+msgstr "-- סטאטוס --"
+
+#: templates/invoice-export.tpl.php:34 templates/invoice-export.tpl.php:40
+msgid "YYYY-MM-DD"
+msgstr "יום-חודש-שנה"
+
+#: templates/invoice-export.tpl.php:35
+msgid "Start"
+msgstr "התחל"
+
+#: templates/invoice-export.tpl.php:41
+msgid "End"
+msgstr "סיום"
+
+#: templates/multiple-package.tpl.php:8
+msgid "Packages"
+msgstr "חבילות"
+
+#: templates/multiple-package.tpl.php:71
+msgid "Add Package"
+msgstr "הוסף חבילה"
+
+#: templates/no-fm-addon-error.tpl.php:7 templates/notf-error.tpl.php:7
+msgid "Error Found!"
+msgstr "נמצאה שגיאה!"
+
+#: templates/no-fm-addon-error.tpl.php:10
+msgid ""
+"Cannot find WPCargo Frontent Manager Add-on plugin activated in your system."
+msgstr "אין אפשרות למצוא תוסף הרחבה של מנהל חזיתי WPCargo המופעל במערכת שלך."
+
+#: templates/no-fm-addon-error.tpl.php:14 templates/notf-error.tpl.php:14
+msgid "Please purchase"
+msgstr "נא לרכוש"
+
+#: templates/no-fm-addon-error.tpl.php:14
+msgid "WPCargo Frontent Manager Add-on"
+msgstr "הרחבת מנהל חזיתי של WPCargo"
+
+#: templates/no-fm-addon-error.tpl.php:14
+msgid "https://www.wpcargo.com/product/wpcargo-frontend-manager/"
+msgstr "https://www.wpcargo.com/product/wpcargo-frontend-manager/"
+
+#: templates/notf-error.tpl.php:10
+msgid ""
+"Cannot find WPCargo Custom Field Add-ons plugin activated in your system."
+msgstr ""
+"אין אפשרות למצוא תוסף הרחבות שדה מותאם אישית של WPCargo המופעל במערכת שלך."
+
+#: templates/notf-error.tpl.php:14
+msgid "WPCargo Custom Field Add-ons"
+msgstr "הרחבות שדה מותאמות אישית של WPCargo"
+
+#: templates/notf-error.tpl.php:14
+msgid "https://www.wpcargo.com/product/wpcargo-custom-field-add-ons/"
+msgstr "https://www.wpcargo.com/product/wpcargo-custom-field-add-ons/"
+
+#: templates/restriction.php:4
+msgid "Sorry your are not allowed to access this page!"
+msgstr "מצטערים שאסור לך לגשת לדף הזה!"
+
+#: templates/restriction.php:5
+msgid "Please contact administrator for your permission."
+msgstr "נא פנה למנהל המערכת לקבלת רשותך."
+
+#: templates/update-invoice.tpl.php:65
+msgid "Update Shipment"
+msgstr "עדכן משלוח"
+
+#: templates/update.php:6
+msgid "Invoice Update"
+msgstr "עדכון חשבונית"
+
+#: templates/update.php:13
+msgid "Invoice List"
+msgstr "רשימת חשבוניות"
+
+#: templates/update.php:21
+msgid "Select Status"
+msgstr "בחר יד"
+
+#: templates/update.php:29
+msgid "Remarks"
+msgstr "הערות"
+
+#: templates/update.php:35
+msgid "Close"
+msgstr "סגור"
+
+#: wpcargo-invoice-addon.php:39
+msgid "License"
+msgstr "רישיון"
+
+#. Plugin Name of the plugin/theme
+msgid "WPCargo Invoice Addon"
+msgstr "תוספת חשבונית WPCargo"
+
+#. Plugin URI of the plugin/theme
+msgid "http://wptaskforce.com/"
+msgstr "http://wptaskforce.com/"
+
+#. Description of the plugin/theme
+msgid "Create invoice for each shipment created"
+msgstr "צור חשבונית עבור כל משלוח שנוצר"
+
+#. Author of the plugin/theme
+msgid "<a href=\"http://www.wptaskforce.com/\">WPTaskForce</a>"
+msgstr "<a href=\"http://www.wptaskforce.com/\">WPTaskForce</a>"
