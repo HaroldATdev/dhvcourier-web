@@ -20,6 +20,101 @@ class WCROL_Rol_WPCargo {
     const LABEL = 'Administrador WPCargo';
     const BRANCH_MANAGER_SLUG = 'wpcargo_branch_manager';
 
+    /**
+     * Capacidades permitidas para wpcargo_admin.
+     * Incluye gestión de usuarios, contenido, editorial y capacidades adicionales,
+     * pero NO incluye gestión del sistema (manage_options, plugins/temas/core, etc).
+     */
+    private static function caps_wpcargo_admin(): array {
+        return [
+            // Base
+            'read'                     => true,
+            'wpcargo_dashboard_access' => true,
+
+            // Gestión de usuarios
+            'list_users'    => true,
+            'create_users'  => true,
+            'edit_users'    => true,
+            'promote_users' => true,
+            'remove_users'  => true,
+            'delete_users'  => true,
+
+            // Gestión de contenido (posts/pages)
+            'edit_posts'             => true,
+            'edit_others_posts'      => true,
+            'edit_published_posts'   => true,
+            'edit_private_posts'     => true,
+            'publish_posts'          => true,
+            'delete_posts'           => true,
+            'delete_others_posts'    => true,
+            'delete_published_posts' => true,
+            'delete_private_posts'   => true,
+            'read_private_posts'     => true,
+
+            'edit_pages'             => true,
+            'edit_others_pages'      => true,
+            'edit_published_pages'   => true,
+            'edit_private_pages'     => true,
+            'publish_pages'          => true,
+            'delete_pages'           => true,
+            'delete_others_pages'    => true,
+            'delete_published_pages' => true,
+            'delete_private_pages'   => true,
+            'read_private_pages'     => true,
+
+            // Administración editorial
+            'moderate_comments' => true,
+            'manage_categories' => true,
+            'manage_links'      => true,
+            'edit_dashboard'    => true,
+            'upload_files'      => true,
+            'import'            => true,
+            'export'            => true,
+
+            // Capacidades adicionales detectadas en el sitio
+            'wpcode_edit_snippets'     => true,
+            'wpcode_activate_snippets' => true,
+        ];
+    }
+
+    /**
+     * Capacidades de gestión del sistema que NO deben estar en wpcargo_admin.
+     */
+    private static function caps_sistema_excluidas(): array {
+        return [
+            'manage_options',
+            'update_core',
+            'install_plugins', 'activate_plugins', 'update_plugins', 'delete_plugins', 'edit_plugins',
+            'install_themes', 'switch_themes', 'update_themes', 'delete_themes', 'edit_themes',
+            'edit_files',
+            'unfiltered_upload',
+            'unfiltered_html',
+            'edit_theme_options',
+        ];
+    }
+
+    /**
+     * Crea/sincroniza el rol wpcargo_admin para instalaciones nuevas y existentes.
+     */
+    private static function sincronizar_rol_wpcargo_admin(): void {
+        $role = get_role(self::SLUG);
+
+        if ( ! $role ) {
+            add_role(self::SLUG, self::LABEL, self::caps_wpcargo_admin());
+            return;
+        }
+
+        foreach ( self::caps_wpcargo_admin() as $cap => $grant ) {
+            if ( $grant ) {
+                $role->add_cap($cap);
+            }
+        }
+
+        foreach ( self::caps_sistema_excluidas() as $cap ) {
+            $role->remove_cap($cap);
+        }
+    }
+
     public static function init(): void {
         // Asegurar que el rol exista en runtime (no solo al activar plugin)
         add_action('init', [__CLASS__, 'asegurar_rol_registrado'], 5);
@@ -42,13 +137,8 @@ class WCROL_Rol_WPCargo {
     }
 
     public static function crear_rol(): void {
-        // Eliminar y recrear para asegurar capabilities correctas
-        remove_role(self::SLUG);
-        add_role(self::SLUG, self::LABEL, [
-            'read'                    => true,  // requerido para login
-            'wpcargo_dashboard_access'=> true,  // cap personalizada
-            // NO incluir 'manage_options' ni caps de admin
-        ]);
+        // Sincronizar capacidades para asegurar definición actualizada del rol.
+        self::sincronizar_rol_wpcargo_admin();
 
         self::asegurar_acceso_dashboard();
     }
@@ -57,14 +147,7 @@ class WCROL_Rol_WPCargo {
      * Registra el rol si no existe (defensivo para instalaciones migradas).
      */
     public static function asegurar_rol_registrado(): void {
-        if ( get_role(self::SLUG) ) {
-            return;
-        }
-
-        add_role(self::SLUG, self::LABEL, [
-            'read'                    => true,
-            'wpcargo_dashboard_access'=> true,
-        ]);
+        self::sincronizar_rol_wpcargo_admin();
     }
 
     /**
