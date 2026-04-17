@@ -230,14 +230,60 @@ class WCROL_Rol_WPCargo {
         if ( $tipo === 'wpcargo_admin' ) {
             // Rol exclusivo para evitar mezclas (ej. administrator + wpcargo_admin)
             $user->set_role(self::SLUG);
+            self::sincronizar_capabilities_meta($user_id, [ self::SLUG => true ]);
             // Al cambiar a wpcargo_admin, otorgar acceso total (sin restricciones)
             // para que vea todos los módulos por defecto
             WCROL_Permisos::quitar_restricciones($user_id);
         } else {
             // Revertir a administrator de WordPress
             $user->set_role('administrator');
+            self::sincronizar_capabilities_meta($user_id, [ 'administrator' => true ]);
         }
+
+        // Evitar lecturas de rol en cache obsoleta.
+        clean_user_cache($user_id);
+
         return true;
+    }
+
+    /**
+     * Sincroniza las metas *_capabilities relevantes para evitar que el usuario
+     * quede con roles mezclados por diferencias de prefijo/blog.
+     */
+    private static function sincronizar_capabilities_meta( int $user_id, array $new_caps ): void {
+        if ( $user_id <= 0 ) return;
+
+        global $wpdb;
+
+        $keys = array_values(array_unique(array_filter([
+            $wpdb->prefix . 'capabilities',
+            $wpdb->base_prefix . 'capabilities',
+            'wp_capabilities',
+        ])));
+
+        $all_meta = get_user_meta($user_id);
+        if ( is_array($all_meta) ) {
+            foreach ( $all_meta as $meta_key => $meta_values ) {
+                if ( ! is_string($meta_key) || ! str_ends_with($meta_key, '_capabilities') ) {
+                    continue;
+                }
+
+                $current = isset($meta_values[0]) ? maybe_unserialize($meta_values[0]) : [];
+                if ( ! is_array($current) ) {
+                    continue;
+                }
+
+                // Solo tocar metas donde ya participaba esta lógica de rol.
+                if ( isset($current[self::SLUG]) || isset($current['administrator']) ) {
+                    $keys[] = $meta_key;
+                }
+            }
+        }
+
+        $keys = array_values(array_unique($keys));
+        foreach ( $keys as $meta_key ) {
+            update_user_meta($user_id, $meta_key, $new_caps);
+        }
     }
 
     /** Retorna el tipo de acceso como string legible */
