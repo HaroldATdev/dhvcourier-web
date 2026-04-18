@@ -525,31 +525,108 @@ function wpcte_inject_cotizador_page( $content ) {
         updateStepsState();
 
         // Mejora UI: insertar botones Copiar / Imprimir en el resultado
+       // Mejora UI: Estilo profesional y botones Copiar/Imprimir
         function enhanceResultado(){
-            var res=document.getElementById('wpcte-cot-resultado');
+            var res = document.getElementById('wpcte-cot-resultado');
             if(!res) return;
-            if(res.querySelector('.wpcte-res-head')) return; // ya mejorado
-            var head=document.createElement('div');head.className='wpcte-res-head';
-            var left=document.createElement('div');left.className='wpcte-res-left';
-            var title=document.createElement('div');title.className='wpcte-res-title';title.textContent='Tarifa estimada';
-            var price=document.createElement('div');price.className='wpcte-res-price';price.textContent=(window._wpcte_precio?('S/ '+Number(window._wpcte_precio).toFixed(2)):'-');
-            left.appendChild(title);left.appendChild(price);
-            var actions=document.createElement('div');actions.className='wpcte-acciones';
-            var btnCopy=document.createElement('button');btnCopy.className='btn';btnCopy.textContent='Copiar precio';
-            var btnPrint=document.createElement('button');btnPrint.className='btn ghost';btnPrint.textContent='Imprimir';
-            actions.appendChild(btnCopy);actions.appendChild(btnPrint);
-            head.appendChild(left);head.appendChild(actions);
-            // insertar al inicio
-            res.insertBefore(head,res.firstChild);
-            // mover desglose dentro de nuestro contenedor si existe
-            var desg=res.querySelector('.wpcte-desglose'); if(desg) res.appendChild(desg);
+            if(res.querySelector('.wpcte-res-head')) return; // Evita duplicados visuales [cite: 1970]
 
-            btnCopy.addEventListener('click',function(){
-                var txt=(window._wpcte_precio?('S/ '+Number(window._wpcte_precio).toFixed(2)):'');
+            // 1. Estética del contenedor principal (Diseño "No básico") [cite: 1959]
+            res.style.marginTop = "25px";
+            res.style.padding = "25px";
+            res.style.borderRadius = "12px";
+            res.style.background = "#f8fafb"; // Fondo suave corporativo [cite: 1959]
+            res.style.border = "1px solid #d4dfe6";
+            res.style.boxShadow = "0 4px 15px rgba(0,0,0,0.05)";
+
+            // 2. Crear cabecera con Título, Precio y Acciones 
+            var head = document.createElement('div');
+            head.className = 'wpcte-res-head';
+            head.style.display = "flex";
+            head.style.justifyContent = "space-between";
+            head.style.alignItems = "center";
+            head.style.marginBottom = "15px";
+
+            var left = document.createElement('div');
+            var title = document.createElement('div');
+            title.textContent = 'Tarifa estimada';
+            title.style.fontWeight = "700";
+            title.style.color = "#2c3e50";
+            title.style.fontSize = "0.9rem";
+
+            var price = document.createElement('div');
+            price.className = 'wpcte-res-price';
+            price.textContent = (window._wpcte_precio ? ('S/ ' + Number(window._wpcte_precio).toFixed(2)) : '-');
+            price.style.fontSize = "1.6rem";
+            price.style.color = "#0066cc"; // Azul DHV [cite: 1956]
+            price.style.fontWeight = "800";
+
+            left.appendChild(title);
+            left.appendChild(price);
+
+            var actions = document.createElement('div');
+            actions.className = 'wpcte-acciones';
+            actions.style.display = "flex";
+            actions.style.gap = "8px";
+
+            var btnCopy = document.createElement('button');
+            btnCopy.className = 'btn';
+            btnCopy.textContent = 'Copiar';
+            btnCopy.style.padding = "6px 12px";
+            btnCopy.style.borderRadius = "6px";
+            btnCopy.style.border = "none";
+            btnCopy.style.background = "#0066cc";
+            btnCopy.style.color = "#fff";
+            btnCopy.style.cursor = "pointer";
+            btnCopy.style.fontSize = "0.85rem";
+
+            var btnPrint = document.createElement('button');
+            btnPrint.className = 'btn ghost';
+            btnPrint.textContent = 'Imprimir';
+            btnPrint.style.padding = "6px 12px";
+            btnPrint.style.borderRadius = "6px";
+            btnPrint.style.border = "1px solid #d4dfe6";
+            btnPrint.style.background = "#fff";
+            btnPrint.style.cursor = "pointer";
+            btnPrint.style.fontSize = "0.85rem";
+
+            actions.appendChild(btnCopy);
+            actions.appendChild(btnPrint);
+            head.appendChild(left);
+            head.appendChild(actions);
+            res.insertBefore(head, res.firstChild);
+
+            // 3. Solución al S/ pegado y espaciado del desglose (Punto 1) 
+            var desg = res.querySelector('.wpcte-desglose');
+            if(desg) {
+                desg.style.marginTop = "15px";
+                desg.style.borderTop = "1px dashed #d4dfe6";
+                desg.style.paddingTop = "10px";
+
+                var rows = desg.querySelectorAll('.wpcte-desglose-row, .wpcte-total-row');
+                rows.forEach(function(row) {
+                    row.style.display = "flex";
+                    row.style.justifyContent = "space-between"; // DESCRIPCIÓN <---- ESPACIO ----> MONTO [cite: 1956]
+                    row.style.padding = "10px 0";
+                    
+                    var montoSpan = row.querySelectorAll('span')[1];
+                    if(montoSpan) {
+                        montoSpan.style.marginLeft = "20px"; // Margen de seguridad para el S/ [cite: 1956]
+                        montoSpan.style.fontWeight = "700";
+                    }
+                });
+            }
+
+            // Eventos de botones
+            btnCopy.addEventListener('click', function(){
+                var txt = (window._wpcte_precio ? ('S/ ' + Number(window._wpcte_precio).toFixed(2)) : '');
                 if(!txt) return;
-                navigator.clipboard?.writeText(txt).then(function(){btnCopy.textContent='Copiado';setTimeout(function(){btnCopy.textContent='Copiar precio';},1400);});
+                navigator.clipboard.writeText(txt).then(function(){
+                    btnCopy.textContent = 'Copiado';
+                    setTimeout(function(){ btnCopy.textContent = 'Copiar'; }, 1400);
+                });
             });
-            btnPrint.addEventListener('click',function(){window.print();});
+            btnPrint.addEventListener('click', function(){ window.print(); });
         }
         // Observar cambios en resultado (cuando se calcula se actualiza innerHTML)
         var resObs=document.getElementById('wpcte-cot-resultado');
@@ -657,45 +734,48 @@ function wpcte_render_cotizador_html( $tarifario, $tipo_envio = '', $modo = 'cre
 <h5><i class="fa fa-calculator"></i> <?php echo $modo === 'editar' ? 'Verificar precio' : 'Cotizar envío'; ?></h5>
 
 <!-- Modalidad -->
-<div class="wpcte-cot-row">
-    <div class="wpcte-cot-group"><label>Modalidad</label>
-    <select id="wpcte-mod">
-        <option value="">-- Seleccione --</option>
-        <option value="lima_lima">DHV-Dentro de Lima</option>
-        <option value="carga_general">DHV-Carga General</option>
-        <option value="mercaderia">DHV-Mercadería Frecuente</option>
-        <option value="aereo">DHV-Aéreos</option>
-        <option value="sobres">DHV-Sobres</option>
-    </select></div>
+<div class="wpcte-cot-row" style="padding: 28px; margin-bottom: 28px; background: #ffffff; border: 1px solid #e1e4e8; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+    <div class="wpcte-cot-group" style="display: flex; flex-direction: column; gap: 10px;">
+        <label style="display: block; font-weight: 700; font-size: 0.95rem; color: #2c3e50; margin-bottom: 4px; letter-spacing: 0.3px;">Modalidad</label>
+        <select id="wpcte-mod" style="width: 100%; padding: 11px 14px; border: 1px solid #dcdcdc; border-radius: 8px; background: #ffffff; height: 44px; font-size: 0.95rem; color: #555555; cursor: pointer; transition: all 0.2s ease;">
+            <option value="">-- Seleccione --</option>
+            <option value="lima_lima">DHV-Dentro de Lima</option>
+            <option value="carga_general">DHV-Carga General</option>
+            <option value="mercaderia">DHV-Mercadería Frecuente</option>
+            <option value="aereo">DHV-Aéreos</option>
+            <option value="sobres">DHV-Sobres</option>
+        </select>
+    </div>
 </div>
 
 <!-- Origen / Destino genérico -->
-<div class="wpcte-cot-row" id="wpcte-orig-dest-row" style="display:none; margin-top: 30px; margin-bottom: 30px; padding: 20px; border: 1px solid #e0e0e0; border-radius: 10px; background-color: #f9f9f9; display: flex; flex-wrap: wrap; gap: 20px;">
-    <div class="wpcte-cot-group" id="wpcte-orig-select-wrap" style="flex: 1; min-width: 200px; margin-bottom: 10px;">
-        <label style="display: block; font-weight: 700; margin-bottom: 8px; color: #444; font-size: 0.9rem;">Origen</label>
-        <select id="wpcte-orig" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc; background: #fff; height: 42px;">
+<div class="wpcte-cot-row" id="wpcte-orig-dest-row" style="display: none; margin-top: 28px; margin-bottom: 28px; padding: 28px; border: 1px solid #d4dfe6; border-radius: 10px; background-color: #f8fafb; box-shadow: 0 1px 3px rgba(0,0,0,0.08); gap: 24px;">
+    <div class="wpcte-cot-group" id="wpcte-orig-select-wrap" style="flex: 1; min-width: 240px; display: flex; flex-direction: column; gap: 8px;">
+        <label style="display: block; font-weight: 700; font-size: 0.95rem; color: #2c3e50; letter-spacing: 0.3px;">Origen</label>
+        <select id="wpcte-orig" style="width: 100%; padding: 11px 14px; border: 1px solid #dcdcdc; border-radius: 8px; background: #ffffff; height: 44px; font-size: 0.95rem; color: #555555; cursor: pointer;">
             <option value="">-- Seleccione --</option>
             <?php foreach ( $all_lima as $l ) echo '<option value="'.esc_attr($l).'">'.esc_html($l).'</option>'; ?>
         </select>
     </div>
+    </div>
     <!-- Origen aéreo: select dinámico de orígenes -->
-    <div class="wpcte-cot-group" id="wpcte-orig-aereo-wrap" style="display:none; flex: 1; min-width: 200px; margin-bottom: 10px;">
-        <label style="display: block; font-weight: 700; margin-bottom: 8px; color: #444; font-size: 0.9rem;">Origen</label>
-        <select id="wpcte-orig-aereo-sel" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc; background: #fff; height: 42px;">
+    <div class="wpcte-cot-group" id="wpcte-orig-aereo-wrap" style="display:none; flex: 1; min-width: 240px;">
+        <label style="display: block; font-weight: 700; font-size: 0.95rem; color: #2c3e50; margin-bottom: 8px;">Origen</label>
+        <select id="wpcte-orig-aereo-sel" style="width: 100%; padding: 11px 14px; border: 1px solid #dcdcdc; border-radius: 8px; background: #ffffff; height: 44px;">
             <option value="">-- Seleccione --</option>
         </select>
     </div>
     <!-- Origen select para carga general (ciudades) -->
-    <div class="wpcte-cot-group" id="wpcte-orig-cg-wrap" style="display:none; flex: 1; min-width: 200px; margin-bottom: 10px;">
-        <label style="display: block; font-weight: 700; margin-bottom: 8px; color: #444; font-size: 0.9rem;">Origen</label>
-        <select id="wpcte-orig-cg" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc; background: #fff; height: 42px;">
+    <div class="wpcte-cot-group" id="wpcte-orig-cg-wrap" style="display:none; flex: 1; min-width: 240px;">
+        <label style="display: block; font-weight: 700; font-size: 0.95rem; color: #2c3e50; margin-bottom: 8px;">Origen</label>
+        <select id="wpcte-orig-cg" style="width: 100%; padding: 11px 14px; border: 1px solid #dcdcdc; border-radius: 8px; background: #ffffff; height: 44px;">
             <option value="">-- Seleccione --</option>
             <?php foreach ( $cg_origenes as $o ) echo '<option value="'.esc_attr($o).'">'.esc_html($o).'</option>'; ?>
         </select>
     </div>
-    <div class="wpcte-cot-group" style="flex: 1; min-width: 200px; margin-bottom: 10px;">
-        <label style="display: block; font-weight: 700; margin-bottom: 8px; color: #444; font-size: 0.9rem;">Destino</label>
-        <select id="wpcte-dest" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc; background: #fff; height: 42px;">
+    <div class="wpcte-cot-group" style="flex: 1; min-width: 240px; display: flex; flex-direction: column; gap: 8px;">
+        <label style="display: block; font-weight: 700; font-size: 0.95rem; color: #2c3e50; letter-spacing: 0.3px;">Destino</label>
+        <select id="wpcte-dest" style="width: 100%; padding: 11px 14px; border: 1px solid #dcdcdc; border-radius: 8px; background: #ffffff; height: 44px; font-size: 0.95rem; color: #555555; cursor: pointer;">
             <option value="">-- Seleccione --</option>
             <?php foreach ( $all_lima as $l ) echo '<option value="'.esc_attr($l).'">'.esc_html($l).'</option>'; ?>
         </select>
@@ -703,86 +783,90 @@ function wpcte_render_cotizador_html( $tarifario, $tipo_envio = '', $modo = 'cre
 </div>
 
 <!-- Mercadería frecuente: tipo ruta + categoría + producto -->
-<div class="wpcte-cot-row" id="wpcte-merc-row" style="display:none; margin-bottom: 25px; display: flex; flex-wrap: wrap; gap: 15px; padding: 15px; border-radius: 8px; border: 1px solid #efefef;">
-    <div class="wpcte-cot-group" style="flex: 1; min-width: 180px;">
-        <label style="display: block; font-weight: 600; margin-bottom: 5px; color: #555;">Tipo de envío</label>
-        <select id="wpcte-merc-tipo" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ddd;">
+<div class="wpcte-cot-row" id="wpcte-merc-row" style="display: none; margin-bottom: 28px; padding: 28px; border: 1px solid #d4dfe6; border-radius: 10px; background: linear-gradient(135deg, #f8fafb 0%, #f0f7fc 100%); box-shadow: 0 1px 3px rgba(0,0,0,0.08); gap: 24px;">
+    <div class="wpcte-cot-group" style="flex: 1; min-width: 220px; display: flex; flex-direction: column; gap: 8px;">
+        <label style="display: block; font-weight: 700; color: #2c3e50; font-size: 0.95rem; letter-spacing: 0.3px;">Tipo de envío</label>
+        <select id="wpcte-merc-tipo" style="width: 100%; padding: 11px 14px; border: 1px solid #dcdcdc; border-radius: 8px; background: #ffffff; font-size: 0.95rem; color: #555555; height: 44px;">
             <option value="">-- Seleccione tipo --</option>
             <option value="ll">Lima → Lima</option>
             <option value="lp">Lima → Provincia</option>
             <option value="pp">Provincia → Provincia</option>
         </select>
     </div>
-    <div class="wpcte-cot-group" style="flex: 1; min-width: 180px;">
-        <label style="display: block; font-weight: 600; margin-bottom: 5px; color: #555;">Categoría</label>
-        <select id="wpcte-merc-cat" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ddd;">
+    <div class="wpcte-cot-group" style="flex: 1; min-width: 220px; display: flex; flex-direction: column; gap: 8px;">
+        <label style="display: block; font-weight: 700; color: #2c3e50; font-size: 0.95rem; letter-spacing: 0.3px;">Categoría</label>
+        <select id="wpcte-merc-cat" style="width: 100%; padding: 11px 14px; border: 1px solid #dcdcdc; border-radius: 8px; background: #ffffff; font-size: 0.95rem; color: #555555; height: 44px;">
             <option value="">-- Seleccione --</option>
             <?php foreach ( $cats as $k => $c ) echo '<option value="'.esc_attr($k).'">'.esc_html($c['label']).'</option>'; ?>
         </select>
     </div>
-    <div class="wpcte-cot-group" style="flex: 1; min-width: 180px;">
-        <label style="display: block; font-weight: 600; margin-bottom: 5px; color: #555;">Producto</label>
-        <select id="wpcte-merc-prod" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ddd;">
+    <div class="wpcte-cot-group" style="flex: 1; min-width: 220px; display: flex; flex-direction: column; gap: 8px;">
+        <label style="display: block; font-weight: 700; color: #2c3e50; font-size: 0.95rem; letter-spacing: 0.3px;">Producto</label>
+        <select id="wpcte-merc-prod" style="width: 100%; padding: 11px 14px; border: 1px solid #dcdcdc; border-radius: 8px; background: #ffffff; font-size: 0.95rem; color: #555555; height: 44px;">
             <option value="">-- Seleccione categoría --</option>
         </select>
     </div>
 </div>
 
 <!-- Extras por modalidad -->
-<div class="wpcte-cot-row" id="wpcte-extra-row" style="display:none; margin-top: 20px; display: flex; flex-wrap: wrap; gap: 15px; align-items: flex-end;">
+<div class="wpcte-cot-row" id="wpcte-extra-row" style="display: none; margin-top: 28px; padding: 28px; border: 1px solid #e1e4e8; border-radius: 10px; background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.08); gap: 24px; align-items: flex-end;">
     <!-- Vehículo (Dentro de Lima) — opciones se generan dinámicamente desde T -->
-    <div class="wpcte-cot-group" id="wpcte-veh-wrap" style="display:none; flex: 1; min-width: 150px;">
-        <label style="display: block; font-weight: 600; margin-bottom: 5px;">Vehículo</label>
-        <select id="wpcte-veh" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #ddd;">
+    <div class="wpcte-cot-group" id="wpcte-veh-wrap" style="display:none; flex: 1; min-width: 180px; display: flex; flex-direction: column; gap: 8px;">
+        <label style="display: block; font-weight: 700; font-size: 0.95rem; color: #2c3e50; letter-spacing: 0.3px;">Vehículo</label>
+        <select id="wpcte-veh" style="width: 100%; padding: 11px 14px; border: 1px solid #dcdcdc; border-radius: 8px; background: #ffffff; font-size: 0.95rem; color: #555555; height: 44px;">
             <?php foreach($tarifario['lima_lima']['vehiculos'] as $vk=>$vv): ?>
                 <option value="<?php echo esc_attr($vk); ?>"><?php echo esc_html($vv['label']); ?></option>
             <?php endforeach; ?>
         </select>
     </div>
     <!-- Entrega (Carga General / Sobres) -->
-    <div class="wpcte-cot-group" id="wpcte-mod2-wrap" style="display:none; flex: 1; min-width: 180px; margin-bottom: 15px;">
-        <label style="display: block; font-weight: 700; margin-bottom: 8px; color: #444; font-size: 0.9rem;">Entrega</label>
-        <select id="wpcte-mod2" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc; background: #fff; height: 42px;">
+    <div class="wpcte-cot-group" id="wpcte-mod2-wrap" style="display:none; flex: 1; min-width: 220px; display: flex; flex-direction: column; gap: 8px;">
+        <label style="display: block; font-weight: 700; font-size: 0.95rem; color: #2c3e50; letter-spacing: 0.3px;">Entrega</label>
+        <select id="wpcte-mod2" style="width: 100%; padding: 11px 14px; border: 1px solid #dcdcdc; border-radius: 8px; background: #ffffff; height: 44px; font-size: 0.95rem; color: #555555;">
             <option value="agencia">Agencia</option>
             <option value="domicilio">Domicilio</option>
         </select>
     </div>
     <!-- Tipo medida (Carga General) -->
-    <div class="wpcte-cot-group" id="wpcte-tipo-medida-wrap" style="display:none; flex: 1; min-width: 180px; margin-bottom: 15px;">
-        <label style="display: block; font-weight: 700; margin-bottom: 8px; color: #444; font-size: 0.9rem;">Tipo de medida</label>
-        <select id="wpcte-tipo-medida" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc; background: #fff; height: 42px;">
+    <div class="wpcte-cot-group" id="wpcte-tipo-medida-wrap" style="display:none; flex: 1; min-width: 220px; display: flex; flex-direction: column; gap: 8px;">
+        <label style="display: block; font-weight: 700; font-size: 0.95rem; color: #2c3e50; letter-spacing: 0.3px;">Tipo de medida</label>
+        <select id="wpcte-tipo-medida" style="width: 100%; padding: 11px 14px; border: 1px solid #dcdcdc; border-radius: 8px; background: #ffffff; height: 44px; font-size: 0.95rem; color: #555555;">
             <option value="kg">Peso (kg)</option>
             <option value="vol">Volumen (cm)</option>
         </select>
     </div>
     <!-- Peso -->
-    <div class="wpcte-cot-group" id="wpcte-peso-wrap" style="display:none; width: 120px; margin-bottom: 15px;">
-        <label style="display: block; font-weight: 700; margin-bottom: 8px; color: #444; font-size: 0.9rem;">Peso (kg)</label>
-        <input type="number" id="wpcte-peso" min="0.1" step="0.1" value="1" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc; height: 42px;">
+    <div class="wpcte-cot-group" id="wpcte-peso-wrap" style="display:none; flex: 0 0 160px; display: flex; flex-direction: column; gap: 8px;">
+        <label style="display: block; font-weight: 700; font-size: 0.95rem; color: #2c3e50; letter-spacing: 0.3px;">Peso (kg)</label>
+        <input type="number" id="wpcte-peso" min="0.1" step="any" value="1" style="width: 100%; padding: 11px 14px; border: 1px solid #dcdcdc; border-radius: 8px; background: #ffffff; height: 44px; font-size: 0.95rem; color: #555555;">
     </div>
-    <!-- Dimensiones volumétricas -->
-    <div class="wpcte-cot-group" id="wpcte-alto-wrap" style="display:none; width: 100px; margin-bottom: 15px;">
-        <label style="display: block; font-weight: 700; margin-bottom: 8px; color: #444; font-size: 0.9rem;">Alto (cm)</label>
-        <input type="number" id="wpcte-alto" min="1" step="1" value="10" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc; height: 42px;">
+
+    <!-- Dimensiones volumétricas !AQUI ME QUEDE-->
+    <div class="wpcte-cot-group" id="wpcte-alto-wrap" style="display: none; flex: 0 0 150px; display: flex; flex-direction: column; gap: 8px;">
+        <label style="display: block; font-weight: 700; font-size: 0.95rem; color: #2c3e50; letter-spacing: 0.3px;">Alto (cm)</label>
+        <input type="number" id="wpcte-alto" min="1" step="any" value="10" style="width: 100%; padding: 11px 14px; border: 1px solid #dcdcdc; border-radius: 8px; background: #ffffff; height: 44px; font-size: 0.95rem; color: #555555; transition: border-color 0.2s ease, box-shadow 0.2s ease;">
     </div>
-    <div class="wpcte-cot-group" id="wpcte-ancho-wrap" style="display:none; width: 100px; margin-bottom: 15px;">
-        <label style="display: block; font-weight: 700; margin-bottom: 8px; color: #444; font-size: 0.9rem;">Ancho (cm)</label>
-        <input type="number" id="wpcte-ancho" min="1" step="1" value="10" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc; height: 42px;">
+
+    <div class="wpcte-cot-group" id="wpcte-ancho-wrap" style="display: none; flex: 0 0 150px; display: flex; flex-direction: column; gap: 8px;">
+        <label style="display: block; font-weight: 700; font-size: 0.95rem; color: #2c3e50; letter-spacing: 0.3px;">Ancho (cm)</label>
+        <input type="number" id="wpcte-ancho" min="1" step="any" value="10" style="width: 100%; padding: 11px 14px; border: 1px solid #dcdcdc; border-radius: 8px; background: #ffffff; height: 44px; font-size: 0.95rem; color: #555555; transition: border-color 0.2s ease, box-shadow 0.2s ease;">
     </div>
-    <div class="wpcte-cot-group" id="wpcte-largo-wrap" style="display:none; width: 100px; margin-bottom: 15px;">
-        <label style="display: block; font-weight: 700; margin-bottom: 8px; color: #444; font-size: 0.9rem;">Largo (cm)</label>
-        <input type="number" id="wpcte-largo" min="1" step="1" value="10" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc; height: 42px;">
+
+    <div class="wpcte-cot-group" id="wpcte-largo-wrap" style="display: none; flex: 0 0 150px; display: flex; flex-direction: column; gap: 8px;">
+        <label style="display: block; font-weight: 700; font-size: 0.95rem; color: #2c3e50; letter-spacing: 0.3px;">Largo (cm)</label>
+        <input type="number" id="wpcte-largo" min="1" step="any" value="10" style="width: 100%; padding: 11px 14px; border: 1px solid #dcdcdc; border-radius: 8px; background: #ffffff; height: 44px; font-size: 0.95rem; color: #555555; transition: border-color 0.2s ease, box-shadow 0.2s ease;">
     </div>
     <!-- Sobres: solo Tipo — Origen/Destino de arriba se filtran según tipo -->
-    <div class="wpcte-cot-group" id="wpcte-sobre-tipo-wrap" style="display:none; flex: 1; min-width: 200px; margin-bottom: 15px;">
-        <label style="display: block; font-weight: 700; margin-bottom: 8px; color: #444; font-size: 0.9rem;">Tipo de envío</label>
-        <select id="wpcte-sobre-tipo" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc; background: #fff; height: 42px;">
+    <div class="wpcte-cot-group" id="wpcte-sobre-tipo-wrap" style="display: none; flex: 1; min-width: 240px; display: flex; flex-direction: column; gap: 8px;">
+        <label style="display: block; font-weight: 700; font-size: 0.95rem; color: #2c3e50; letter-spacing: 0.3px;">Tipo de envío</label>
+        <select id="wpcte-sobre-tipo" style="width: 100%; padding: 11px 14px; border: 1px solid #dcdcdc; border-radius: 8px; background: #ffffff; height: 44px; font-size: 0.95rem; color: #555555; cursor: pointer; transition: all 0.2s ease;">
             <option value="">-- Seleccione tipo --</option>
         </select>
     </div>
-    <div class="wpcte-cot-group" id="wpcte-mod-sobre-wrap" style="display:none; flex: 1; min-width: 180px; margin-bottom: 15px;">
-        <label style="display: block; font-weight: 700; margin-bottom: 8px; color: #444; font-size: 0.9rem;">Entrega</label>
-        <select id="wpcte-mod-sobre" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #ccc; background: #fff; height: 42px;">
+
+    <div class="wpcte-cot-group" id="wpcte-mod-sobre-wrap" style="display: none; flex: 1; min-width: 220px; display: flex; flex-direction: column; gap: 8px;">
+        <label style="display: block; font-weight: 700; font-size: 0.95rem; color: #2c3e50; letter-spacing: 0.3px;">Entrega</label>
+        <select id="wpcte-mod-sobre" style="width: 100%; padding: 11px 14px; border: 1px solid #dcdcdc; border-radius: 8px; background: #ffffff; height: 44px; font-size: 0.95rem; color: #555555; cursor: pointer;">
             <option value="agencia">Agencia</option>
             <option value="domicilio">Domicilio</option>
         </select>
@@ -790,12 +874,12 @@ function wpcte_render_cotizador_html( $tarifario, $tipo_envio = '', $modo = 'cre
 </div>
 
 <!-- Devolución de cargo (sobres) -->
-<div class="wpcte-cot-row" id="wpcte-devolucion-row" style="display:none; margin-top: 20px; padding: 10px;">
-    <div class="wpcte-cot-group" style="display: flex; align-items: center; gap: 0.5rem;">
-        <input type="checkbox" id="wpcte-devolucion" style="display:none">
-        <label for="wpcte-devolucion" id="wpcte-dev-label" style="margin:0; cursor:pointer; display:inline-flex; align-items:center; gap:0.5rem; padding: 10px 15px; border-radius: 25px; font-size: 0.85rem; font-weight: 700; border: 2px solid #d0e8f5; background: #f0f9ff; color: #333; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: all 0.2s;">
+<div class="wpcte-cot-row" id="wpcte-devolucion-row" style="display: none; margin-top: 28px; padding: 20px 28px; border: 1px solid #e1e4e8; border-radius: 10px; background-color: #ffffff; box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+    <div class="wpcte-cot-group" style="display: flex; align-items: center; gap: 12px;">
+        <input type="checkbox" id="wpcte-devolucion" style="display:none;">
+        <label for="wpcte-devolucion" id="wpcte-dev-label" style="margin: 0px; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; padding: 12px 18px; border-radius: 8px; font-size: 0.95rem; font-weight: 700; border: 1px solid #d4dfe6; background: #f8fafb; color: #2c3e50; box-shadow: 0 1px 3px rgba(0,0,0,0.08); transition: all 0.2s ease; user-select: none;">
             <span id="wpcte-dev-icon">☐</span>
-            <span>Cargo por devolución <strong style="margin-left: 5px; color: #007bff;">( S/ <span id="wpcte-dev-monto">-</span>)</strong></span>
+            <span>Cargo por devolución <strong style="margin-left: 8px; color: #0066cc;">( S/ <span id="wpcte-dev-monto">-</span>)</strong></span>
         </label>
     </div>
 </div>
