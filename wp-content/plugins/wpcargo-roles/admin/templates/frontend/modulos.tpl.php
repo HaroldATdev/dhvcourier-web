@@ -9,7 +9,8 @@ $msgs_map = [
 ];
 $msg = sanitize_key($_GET['wcrol_msg'] ?? '');
 
-$capturado_count = is_array($capturado) ? count($capturado) : 0;
+$capturado_value = $capturado ?? null;
+$capturado_count = is_countable($capturado_value) ? count($capturado_value) : 0;
 $hay_captura = $capturado_count > 0;
 
 $hay_modulos_plugin = false;
