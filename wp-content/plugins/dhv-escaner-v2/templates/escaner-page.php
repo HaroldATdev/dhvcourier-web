@@ -23,7 +23,7 @@ $drivers  = get_users([
 .le-assign-section{background:#fff;border:1px solid #E2E8F0;border-radius:12px;padding:20px 24px;margin-bottom:16px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
 .le-section-title{font-size:13px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:.06em;margin:0 0 14px;display:flex;align-items:center;gap:7px}
 .le-section-title .fa{font-size:13px!important;color:#2563EB}
-.le-two-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.le-two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .le-field label{display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px}
 .le-field select{
     display:block!important;width:100%!important;
@@ -148,18 +148,6 @@ kbd{background:#fff;border:1px solid #D1D5DB;border-radius:4px;padding:1px 6px;f
                 <p class="le-field-hint">Si no seleccionas, el estado actual no cambia.</p>
             </div>
             <div class="le-field">
-                <label><i class="fa fa-motorcycle" style="color:#2563EB;font-size:12px!important;"></i> Conductor de Recojo</label>
-                <select id="le-driver-select">
-                    <option value="">— Sin cambiar —</option>
-                    <?php foreach ( $drivers as $d ) : ?>
-                        <option value="<?php echo esc_attr($d->ID); ?>">
-                            <?php echo esc_html( $d->display_name ?: $d->user_email ); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-                <p class="le-field-hint">Si no seleccionas, el conductor de recojo no cambia.</p>
-            </div>
-            <div class="le-field">
                 <label><i class="fa fa-truck" style="color:#2563EB;font-size:12px!important;"></i> Conductor de Entrega</label>
                 <select id="le-delivery-driver-select">
                     <option value="">— Sin cambiar —</option>
@@ -237,14 +225,11 @@ kbd{background:#fff;border:1px solid #D1D5DB;border-radius:4px;padding:1px 6px;f
 
     // Badge configuración activa
     function updateBadge(){
-        var status          = $('#le-status-select').val();
-        var driverVal       = $('#le-driver-select').val();
-        var driverTxt       = $('#le-driver-select option:selected').text();
-        var deliveryVal     = $('#le-delivery-driver-select').val();
-        var deliveryTxt     = $('#le-delivery-driver-select option:selected').text();
+        var status      = $('#le-status-select').val();
+        var deliveryVal = $('#le-delivery-driver-select').val();
+        var deliveryTxt = $('#le-delivery-driver-select option:selected').text();
         var parts = [];
         if(status)      parts.push('<i class="fa fa-tag"></i> Estado: <strong>'+status+'</strong>');
-        if(driverVal)   parts.push('<i class="fa fa-motorcycle"></i> Recojo: <strong>'+driverTxt+'</strong>');
         if(deliveryVal) parts.push('<i class="fa fa-truck"></i> Entrega: <strong>'+deliveryTxt+'</strong>');
         if(parts.length){
             $badge.html('Se aplicará → '+parts.join(' &nbsp;+&nbsp; ')).show();
@@ -252,7 +237,7 @@ kbd{background:#fff;border:1px solid #D1D5DB;border-radius:4px;padding:1px 6px;f
             $badge.html('<i class="fa fa-eye"></i> Solo se consultará el envío sin realizar cambios.').show();
         }
     }
-    $('#le-status-select, #le-driver-select, #le-delivery-driver-select').on('change', updateBadge);
+    $('#le-status-select, #le-delivery-driver-select').on('change', updateBadge);
     updateBadge();
 
     // Escanear con Enter
@@ -270,11 +255,9 @@ kbd{background:#fff;border:1px solid #D1D5DB;border-radius:4px;padding:1px 6px;f
         var tracking = $input.val().trim();
         if(!tracking){ $input.focus(); return; }
 
-        var status          = $('#le-status-select').val();
-        var driverId        = $('#le-driver-select').val();
-        var driverTxt       = $('#le-driver-select option:selected').text();
-        var deliveryId      = $('#le-delivery-driver-select').val();
-        var deliveryTxt     = $('#le-delivery-driver-select option:selected').text();
+        var status      = $('#le-status-select').val();
+        var deliveryId  = $('#le-delivery-driver-select').val();
+        var deliveryTxt = $('#le-delivery-driver-select option:selected').text();
         var clearAfter= $('#le-clear-after').is(':checked');
         var beepOn    = $('#le-beep-sound').is(':checked');
 
@@ -286,7 +269,6 @@ kbd{background:#fff;border:1px solid #D1D5DB;border-radius:4px;padding:1px 6px;f
             nonce:DHV_Config.nonce,
             tracking_number:tracking,
             status:status,
-            driver_id:driverId,
             delivery_driver_id:deliveryId,
         },function(res){
             $('#le-btn-scan').prop('disabled',false);
@@ -295,24 +277,23 @@ kbd{background:#fff;border:1px solid #D1D5DB;border-radius:4px;padding:1px 6px;f
                 if(d.type==='updated'){
                     var msg='<i class="fa fa-check-circle"></i> <strong>#'+d.tracking+'</strong> actualizado';
                     if(d.status_updated)          msg+=' &nbsp;·&nbsp; Estado: <strong>'+d.new_status+'</strong>';
-                    if(d.driver_updated)          msg+=' &nbsp;·&nbsp; Recojo: <strong>'+driverTxt+'</strong>';
                     if(d.delivery_driver_updated) msg+=' &nbsp;·&nbsp; Entrega: <strong>'+deliveryTxt+'</strong>';
                     if(d.receiver_name)           msg+='<br><small style="opacity:.8;">'+d.receiver_name+(d.receiver_addr?' · '+d.receiver_addr:'')+'</small>';
                     showResult('success',msg);
                     if(beepOn) playBeep(false);
-                    addHistory(d.tracking,status,driverId?driverTxt:'',deliveryId?deliveryTxt:'','success');
+                    addHistory(d.tracking,status,deliveryId?deliveryTxt:'','success');
                 } else {
                     var msg='<i class="fa fa-info-circle"></i> <strong>#'+d.tracking+'</strong> — Estado actual: <strong>'+(d.status||'Sin estado')+'</strong>';
                     if(d.receiver_name) msg+='<br><small style="opacity:.8;">'+d.receiver_name+(d.receiver_addr?' · '+d.receiver_addr:'')+'</small>';
                     showResult('info',msg);
-                    addHistory(d.tracking,'','','','info');
+                    addHistory(d.tracking,'','','info');
                 }
                 scanCount++; $count.text(scanCount);
                 if(clearAfter){ $input.val('').focus(); } else { $input.select(); }
             } else {
                 var err=(res.data&&res.data.message)?res.data.message:'Error al procesar.';
                 showResult('error','<i class="fa fa-times-circle"></i> '+err);
-                addHistory(tracking,'','','error');
+                addHistory(tracking,'','error');
                 if(beepOn) playBeep(true);
                 $input.select();
             }
@@ -328,14 +309,13 @@ kbd{background:#fff;border:1px solid #D1D5DB;border-radius:4px;padding:1px 6px;f
                .addClass('le-result--'+type).html(html).show();
     }
 
-    function addHistory(tracking,status,driver,deliveryDriver,type){
+    function addHistory(tracking,status,deliveryDriver,type){
         var now=new Date();
         var time=now.toLocaleTimeString('es-PE',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
         var $e=$('#le-scan-history .le-empty-msg');
         if($e.length) $e.remove();
         var meta='<span>'+time+'</span>';
         if(status) meta+='<span class="le-history-status">'+status+'</span>';
-        if(driver&&driver.indexOf('Sin cambiar')===-1) meta+='<span class="le-history-driver"><i class="fa fa-motorcycle" style="font-size:11px!important"></i> '+driver+'</span>';
         if(deliveryDriver&&deliveryDriver.indexOf('Sin cambiar')===-1) meta+='<span class="le-history-driver"><i class="fa fa-truck" style="font-size:11px!important"></i> '+deliveryDriver+'</span>';
         var item='<div class="le-history-item le-history-item--'+type+'">'+
             '<div class="le-history-tracking"># '+tracking+'</div>'+

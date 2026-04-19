@@ -11,12 +11,11 @@ class DHV_Escaner_Ajax {
         check_ajax_referer( 'dhv_nonce', 'nonce' );
         if ( ! dhv_can_scan() ) wp_send_json_error( [ 'message' => 'Sin permisos.' ] );
 
-        $tracking          = sanitize_text_field( $_POST['tracking_number'] ?? '' );
-        $status            = sanitize_text_field( $_POST['status'] ?? '' );
-        $driver_id         = intval( $_POST['driver_id'] ?? 0 );
-        $delivery_driver_id= intval( $_POST['delivery_driver_id'] ?? 0 );
-        $location          = sanitize_text_field( $_POST['location'] ?? '' );
-        $remarks           = sanitize_textarea_field( $_POST['remarks'] ?? '' );
+        $tracking           = sanitize_text_field( $_POST['tracking_number'] ?? '' );
+        $status             = sanitize_text_field( $_POST['status'] ?? '' );
+        $delivery_driver_id = intval( $_POST['delivery_driver_id'] ?? 0 );
+        $location           = sanitize_text_field( $_POST['location'] ?? '' );
+        $remarks            = sanitize_textarea_field( $_POST['remarks'] ?? '' );
 
         if ( empty( $tracking ) ) {
             wp_send_json_error( [ 'message' => 'Ingresa un número de seguimiento.' ] );
@@ -43,7 +42,7 @@ class DHV_Escaner_Ajax {
         }
 
         // ── Si no hay nada que actualizar, solo consultar ─────────────────
-        if ( empty( $status ) && ! $driver_id && ! $delivery_driver_id ) {
+        if ( empty( $status ) && ! $delivery_driver_id ) {
             wp_send_json_success([
                 'type'          => 'info',
                 'tracking'      => $tracking,
@@ -54,7 +53,6 @@ class DHV_Escaner_Ajax {
         }
 
         $status_updated = false;
-        $driver_updated = false;
         $new_status     = get_post_meta( $shipment_id, 'wpcargo_status', true );
 
         // ── Actualizar estado ─────────────────────────────────────────────
@@ -81,24 +79,17 @@ class DHV_Escaner_Ajax {
             do_action( 'wpcargo_update_shipment_status', $shipment_id, $status, get_current_user_id() );
         }
 
-        // ── Asignar conductor de recojo ───────────────────────────────────
-        if ( $driver_id ) {
-            $driver = get_userdata( $driver_id );
-            if ( $driver && in_array( 'wpcargo_driver', (array) $driver->roles, true ) ) {
-                // Store as recojo driver and also set visible driver for initial visibility
-                update_post_meta( $shipment_id, 'wpcargo_driver_recojo', $driver_id );
-                update_post_meta( $shipment_id, 'wpcargo_driver', $driver_id );
-                $driver_updated = true;
-            }
-        }
-
         // ── Asignar conductor de entrega ──────────────────────────────────
         $delivery_driver_updated = false;
         if ( $delivery_driver_id ) {
             $delivery_driver = get_userdata( $delivery_driver_id );
             if ( $delivery_driver && in_array( 'wpcargo_driver', (array) $delivery_driver->roles, true ) ) {
-                update_post_meta( $shipment_id, 'driver_entrega_id', $delivery_driver_id );
+                update_post_meta( $shipment_id, 'wpcargo_driver_entrega', $delivery_driver_id );
                 $delivery_driver_updated = true;
+                // Si el estado actual o el recién aplicado es "En ruta", también asignar como conductor visible
+                if ( strtolower( trim( $new_status ) ) === 'en ruta' ) {
+                    update_post_meta( $shipment_id, 'wpcargo_driver', $delivery_driver_id );
+                }
             }
         }
 
@@ -108,7 +99,6 @@ class DHV_Escaner_Ajax {
             'shipment_id'            => $shipment_id,
             'new_status'             => $new_status,
             'status_updated'         => $status_updated,
-            'driver_updated'         => $driver_updated,
             'delivery_driver_updated'=> $delivery_driver_updated,
             'receiver_name'          => get_post_meta( $shipment_id, 'wpcargo_receiver_name', true ),
             'receiver_addr'          => get_post_meta( $shipment_id, 'wpcargo_receiver_address', true ),

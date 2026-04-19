@@ -24,15 +24,12 @@
 
         // ── Actualizar badge de configuración activa ──────────────────────
         function updateConfigBadge() {
-            var status          = $('#le-status-select').val();
-            var driverVal       = $('#le-driver-select').val();
-            var driverTxt       = $('#le-driver-select option:selected').text();
-            var deliveryVal     = $('#le-delivery-driver-select').val();
-            var deliveryTxt     = $('#le-delivery-driver-select option:selected').text();
+            var status      = $('#le-status-select').val();
+            var deliveryVal = $('#le-delivery-driver-select').val();
+            var deliveryTxt = $('#le-delivery-driver-select option:selected').text();
             var parts  = [];
 
             if (status)      parts.push('<i class="fa fa-tag"></i> <strong>' + status + '</strong>');
-            if (driverVal)   parts.push('<i class="fa fa-motorcycle"></i> Recojo: <strong>' + driverTxt + '</strong>');
             if (deliveryVal) parts.push('<i class="fa fa-truck"></i> Entrega: <strong>' + deliveryTxt + '</strong>');
 
             var $badge = $('#le-config-badge');
@@ -43,7 +40,7 @@
             }
         }
 
-        $('#le-status-select, #le-driver-select, #le-delivery-driver-select').on('change', updateConfigBadge);
+        $('#le-status-select, #le-delivery-driver-select').on('change', updateConfigBadge);
         updateConfigBadge();
 
         // ── Escanear al presionar Enter ───────────────────────────────────
@@ -70,8 +67,6 @@
             if (!tracking) { $input.focus(); return; }
 
             var status       = $('#le-status-select').val();
-            var driverId     = $('#le-driver-select').val();
-            var driverName   = $('#le-driver-select option:selected').text();
             var deliveryId   = $('#le-delivery-driver-select').val();
             var deliveryName = $('#le-delivery-driver-select option:selected').text();
             var location     = $('#le-location-input').val().trim();
@@ -87,7 +82,6 @@
                 nonce:              DHV_Config.nonce,
                 tracking_number:    tracking,
                 status:             status,
-                driver_id:          driverId,
                 delivery_driver_id: deliveryId,
                 location:           location,
                 remarks:            remarks,
@@ -101,18 +95,17 @@
                     if (data.type === 'updated') {
                         msg = '<i class="fa fa-check-circle"></i> <strong>#' + data.tracking + '</strong> actualizado';
                         if (data.status_updated)          msg += ' · Estado: <strong>' + data.new_status + '</strong>';
-                        if (data.driver_updated)          msg += ' · Recojo: <strong>' + driverName + '</strong>';
                         if (data.delivery_driver_updated) msg += ' · Entrega: <strong>' + deliveryName + '</strong>';
                         msg += buildInfoSnippet(data);
                         showResult('success', msg);
                         if (beepOn) playBeep(false);
-                        addToHistory(data, status, driverName, deliveryName, 'success');
+                        addToHistory(data, status, deliveryName, 'success');
                     } else {
                         msg = '<i class="fa fa-info-circle"></i> <strong>#' + data.tracking + '</strong>';
                         msg += ' — Estado actual: <strong>' + (data.status || 'Sin estado') + '</strong>';
                         msg += buildInfoSnippet(data);
                         showResult('info', msg);
-                        addToHistory(data, '', '', '', 'info');
+                        addToHistory(data, '', '', 'info');
                     }
 
                     scanCount++;
@@ -154,7 +147,7 @@
             return s;
         }
 
-        function addToHistory(data, status, driverName, deliveryName, type) {
+        function addToHistory(data, status, deliveryName, type) {
             var now  = new Date();
             var time = now.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
@@ -163,8 +156,6 @@
 
             var meta = '<span>' + time + '</span>';
             if (status) meta += '<span class="le-history-item__status">' + status + '</span>';
-            if (driverName && driverName.indexOf('Sin cambiar') === -1)
-                meta += '<span class="le-history-item__driver"><i class="fa fa-motorcycle"></i> ' + driverName + '</span>';
             if (deliveryName && deliveryName.indexOf('Sin cambiar') === -1)
                 meta += '<span class="le-history-item__driver"><i class="fa fa-truck"></i> ' + deliveryName + '</span>';
 
