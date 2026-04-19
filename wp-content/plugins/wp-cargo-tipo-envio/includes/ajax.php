@@ -30,12 +30,19 @@ function wpcte_ajax_get_user_data() {
     $dir1   = get_user_meta( $uid, 'billing_address_1', true );
     $dir2   = get_user_meta( $uid, 'billing_address_2', true );
     $dir    = $dir2 ? $dir1 . ', ' . $dir2 : $dir1;
+    $telefono = get_user_meta( $uid, 'billing_phone', true );
+    $dni = get_user_meta( $uid, 'dni_remitente', true );
+    $ciudad = get_user_meta( $uid, 'billing_city', true );
+    
+    // Debug: Log para verificar qué se está obteniendo
+    error_log("DEBUG wpcte_get_user_data - UID: $uid, Teléfono: $telefono, DNI: $dni, Ciudad: $ciudad");
+    
     wp_send_json_success( array(
         'nombre'    => $nombre,
-        'telefono'  => get_user_meta( $uid, 'billing_phone', true ),
-        'dni'       => get_user_meta( $uid, 'dni_remitente', true ),
+        'telefono'  => $telefono,
+        'dni'       => $dni,
         'direccion' => $dir,
-        'ciudad'    => get_user_meta( $uid, 'billing_city', true ),
+        'ciudad'    => $ciudad,
     ));
 }
 
