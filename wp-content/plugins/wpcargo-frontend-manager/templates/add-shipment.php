@@ -50,6 +50,28 @@
 		</div>
 		<div class="col-md-3 mb-3">
 			<section class="row"> 
+				<div id="wpcte-cost-breakdown-card" class="col-md-12 mb-4" style="display:none;">
+					<div class="card">
+						<section class="card-header">
+							Desglose de costo
+						</section>
+						<section class="card-body">
+							<div class="d-flex justify-content-between mb-2">
+								<span>Costo de servicio:</span>
+								<strong id="wpcte-costo-servicio">S/ 0.00</strong>
+							</div>
+							<div class="d-flex justify-content-between mb-2">
+								<span>Costo del producto:</span>
+								<strong id="wpcte-costo-producto">S/ 0.00</strong>
+							</div>
+							<hr class="my-2" />
+							<div class="d-flex justify-content-between">
+								<span>Monto total:</span>
+								<strong id="wpcte-monto-total">S/ 0.00</strong>
+							</div>
+						</section>
+					</div>
+				</div>
 				<?php if( has_action( 'before_wpcfe_shipment_form_submit' ) ): ?>
 					<div class="after-shipments-info col-md-12 mb-4">
 						<?php do_action( 'before_wpcfe_shipment_form_submit' ); ?>
@@ -63,6 +85,69 @@
 	</div>
 	<div class="clearfix"></div>
 </form>
+<script type="text/javascript">
+jQuery(function($){
+	function wpcteParseMoney(value){
+		if(value === null || value === undefined){
+			return NaN;
+		}
+		return parseFloat(String(value).replace(',', '.').replace(/[^0-9.\-]/g, ''));
+	}
+
+	function wpcteFmtMoney(amount){
+		return 'S/ ' + Number(amount).toFixed(2);
+	}
+
+	function wpcteGetServiceCost(){
+		var serviceCost = wpcteParseMoney(window._wpcte_monto_min_cotizacion);
+		if(!isNaN(serviceCost)){
+			return serviceCost;
+		}
+		serviceCost = wpcteParseMoney(window._wpcte_precio);
+		return isNaN(serviceCost) ? NaN : serviceCost;
+	}
+
+	function wpcteUpdateCostBreakdown(){
+		var serviceCost = wpcteGetServiceCost();
+		var $card = $('#wpcte-cost-breakdown-card');
+		if(isNaN(serviceCost) || serviceCost <= 0){
+			$card.hide();
+			return;
+		}
+
+		var amountInput = wpcteParseMoney($('#monto').val());
+		if(isNaN(amountInput)){
+			amountInput = serviceCost;
+		}
+
+		var productCost = amountInput - serviceCost;
+		if(productCost < 0){
+			productCost = 0;
+		}
+
+		var total = serviceCost + productCost;
+		$('#wpcte-costo-servicio').text(wpcteFmtMoney(serviceCost));
+		$('#wpcte-costo-producto').text(wpcteFmtMoney(productCost));
+		$('#wpcte-monto-total').text(wpcteFmtMoney(total));
+		$card.show();
+	}
+
+	$(document).on('input change blur', '#monto', wpcteUpdateCostBreakdown);
+
+	if(typeof window.wpcteSetMontoCotizado === 'function' && !window._wpcteSetMontoCotizadoWrapped){
+		var _oldWpcteSetMontoCotizado = window.wpcteSetMontoCotizado;
+		window.wpcteSetMontoCotizado = function(minimo){
+			_oldWpcteSetMontoCotizado(minimo);
+			wpcteUpdateCostBreakdown();
+		};
+		window._wpcteSetMontoCotizadoWrapped = true;
+	}
+
+	wpcteUpdateCostBreakdown();
+	setTimeout(wpcteUpdateCostBreakdown, 300);
+	setTimeout(wpcteUpdateCostBreakdown, 900);
+});
+</script>
 <!-- Auto-set status to 'En espera' for certain shipment types -->
 <script type="text/javascript">
 jQuery(function($){
