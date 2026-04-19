@@ -334,6 +334,37 @@ jQuery(document).ready(function($){
             $("#wpcfe-select-all")[0].checked = true; //change "select all" checked status to true
         }
     });
+    // Fix MDB animation conflict: close dropdown when clicking outside or toggling
+    $(document).on('click.wpcfeBulkprintDropdown', function(e) {
+        if (!$(e.target).closest('.wpcfe-bulkprint-wrapper').length) {
+            $('.wpcfe-bulkprint-wrapper').removeClass('show dropdown-animating');
+            $('.wpcfe-bulkprint-wrapper .dropdown-menu').removeClass('show fadeIn fadeOut animated');
+            $('.wpcfe-bulkprint-wrapper .dropdown-toggle').attr('aria-expanded', 'false');
+        }
+    });
+
+    $(document).on('click', '.wpcfe-bulkprint-wrapper .dropdown-toggle', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var $wrapper = $(this).closest('.wpcfe-bulkprint-wrapper');
+        var $menu = $wrapper.find('.dropdown-menu');
+        var isOpen = $wrapper.hasClass('show');
+
+        // Close all other wpcfe dropdowns first
+        $('.wpcfe-bulkprint-wrapper').not($wrapper).removeClass('show dropdown-animating');
+        $('.wpcfe-bulkprint-wrapper').not($wrapper).find('.dropdown-menu').removeClass('show fadeIn fadeOut animated');
+
+        if (isOpen) {
+            $wrapper.removeClass('show dropdown-animating');
+            $menu.removeClass('show fadeIn animated');
+            $(this).attr('aria-expanded', 'false');
+        } else {
+            $wrapper.addClass('show');
+            $menu.addClass('show');
+            $(this).attr('aria-expanded', 'true');
+        }
+    });
+
     // Bulk Print Script
     $('.wpcfe-bulkprint-wrapper').on('click', '.wpcfe-bulk-print', function(e){
         e.preventDefault();

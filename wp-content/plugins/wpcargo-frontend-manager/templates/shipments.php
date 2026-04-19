@@ -23,7 +23,7 @@
 				<?php if( !empty( $wpcfe_print_options ) ): ?>
 				<div class="wpcfe-bulkprint-wrapper dropdown" style="display:inline-block !important;">
 				<!--Trigger-->
-					<button class="btn btn-default btn-lg dropdown-toggle m-0 py-1 px-2" type="button" data-toggle="dropdown"
+					<button class="btn btn-default btn-lg dropdown-toggle m-0 py-1 px-2" type="button"
 						aria-haspopup="true" aria-expanded="false"><i class="fa fa-print"></i><span class="mx-2"><?php esc_html_e('Print', 'wpcargo-frontend-manager'); ?></span></button>
 					<!--Menu-->
 					<div class="dropdown-menu dropdown-primary">
@@ -83,7 +83,7 @@
 			<?php if( !empty( $wpcfe_print_options ) ): ?>
 				<div class="wpcfe-bulkprint-wrapper dropdown" style="display:inline-block !important;">
 				<!--Trigger-->
-					<button class="btn btn-default btn-lg dropdown-toggle m-0 py-1 px-2" type="button" data-toggle="dropdown"
+					<button class="btn btn-default btn-lg dropdown-toggle m-0 py-1 px-2" type="button"
 						aria-haspopup="true" aria-expanded="false"><i class="fa fa-print"></i><span class="mx-2"><?php esc_html_e('Print', 'wpcargo-frontend-manager'); ?></span></button>
 					<!--Menu-->
 					<div class="dropdown-menu dropdown-primary">
