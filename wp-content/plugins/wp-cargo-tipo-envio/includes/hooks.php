@@ -1023,6 +1023,7 @@ function wpcte_footer_crear() {
                 fetch(_aj,{method:'POST',credentials:'include',body:fd}).then(r=>r.json()).then(function(res){
                     if(!res.success)return;
                     var el=document.getElementById('remitente');if(el)el.value=res.data.nombre;
+                    var dni=document.getElementById('dni_remitente');if(dni)dni.value=res.data.dni||'';
                     var te=document.getElementById('telefono_remitente');if(te)te.value=res.data.telefono;
                     wpcte_insertDir(res.data.direccion);window._clienteCiudad=res.data.ciudad||'';
                 });
