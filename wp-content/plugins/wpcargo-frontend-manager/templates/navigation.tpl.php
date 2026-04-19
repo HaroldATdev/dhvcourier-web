@@ -1,6 +1,7 @@
 <!--Main Navigation-->
 <?php
 $create_active_class = ( get_the_ID() == wpcfe_admin_page() && isset( $_GET['wpcfe']) && $_GET['wpcfe'] == 'add' ) ? 'active' : '' ; 
+$shipments_active_class = ( get_the_ID() == wpcfe_admin_page() && ( ! isset( $_GET['wpcfe'] ) || ( isset( $_GET['wpcfe'] ) && ! in_array( sanitize_text_field( wp_unslash( $_GET['wpcfe'] ) ), array( 'add', 'settings' ), true ) ) ) ) ? 'active' : '';
 $unseen_shipments  = wpcfe_disable_unseen() ? 0 : wpcfe_get_user_unseen_shipments();
 $unseen  = $unseen_shipments > 9 ? '9&#43;' : $unseen_shipments ;
 
@@ -48,6 +49,102 @@ if ( ! function_exists( 'wpcfe_is_active_menu_link' ) ) {
 		}
 
 		return true;
+	}
+}
+
+if ( ! function_exists( 'wpcfe_prepare_sidebar_menu_tree' ) ) {
+	function wpcfe_prepare_sidebar_menu_tree( $menu_items ) {
+		$nodes = array();
+		foreach ( (array) $menu_items as $key => $item ) {
+			if ( ! is_array( $item ) ) {
+				continue;
+			}
+			$item['_key'] = (string) $key;
+			$item['_children'] = array();
+			$item['_parent'] = isset( $item['parent'] ) ? sanitize_key( (string) $item['parent'] ) : '';
+			$nodes[ (string) $key ] = $item;
+		}
+
+		$roots = array();
+		foreach ( array_keys( $nodes ) as $node_key ) {
+			$parent_key = $nodes[ $node_key ]['_parent'];
+			if ( $parent_key && isset( $nodes[ $parent_key ] ) ) {
+				$nodes[ $parent_key ]['_children'][ $node_key ] = &$nodes[ $node_key ];
+			} else {
+				$roots[ $node_key ] = &$nodes[ $node_key ];
+			}
+		}
+
+		return $roots;
+	}
+}
+
+if ( ! function_exists( 'wpcfe_sidebar_item_is_active' ) ) {
+	function wpcfe_sidebar_item_is_active( $menu_key, $item ) {
+		$page_id = isset( $item['page-id'] ) ? (int) $item['page-id'] : 0;
+		$permalink = isset( $item['permalink'] ) ? $item['permalink'] : '';
+		$is_active = wpcfe_is_active_menu_link( $permalink, $page_id );
+
+		// Compatibilidad con plugins que ya inyectan "active" en la key.
+		if ( ! $is_active && strpos( (string) $menu_key, ' active' ) !== false ) {
+			$is_active = true;
+		}
+
+		return $is_active;
+	}
+}
+
+if ( ! function_exists( 'wpcfe_render_sidebar_menu_nodes' ) ) {
+	function wpcfe_render_sidebar_menu_nodes( $nodes, $base_class = 'list-group-item waves-effect', $depth = 0 ) {
+		$html = '';
+		$has_active = false;
+
+		foreach ( (array) $nodes as $menu_key => $item ) {
+			$children = isset( $item['_children'] ) && is_array( $item['_children'] ) ? $item['_children'] : array();
+			$has_children = ! empty( $children );
+
+			$children_html = '';
+			$children_active = false;
+			if ( $has_children ) {
+				list( $children_html, $children_active ) = wpcfe_render_sidebar_menu_nodes( $children, $base_class, $depth + 1 );
+			}
+
+			$self_active = wpcfe_sidebar_item_is_active( $menu_key, $item );
+			$is_active = $self_active || $children_active;
+			$has_active = $has_active || $is_active;
+
+			$item_classes = trim( $base_class . ' ' . $menu_key . ' ' . ( $is_active ? 'active' : '' ) . ' ' . ( $depth > 0 ? 'wpcfe-submenu-link' : '' ) . ' ' . ( $has_children ? 'wpcfe-has-children' : '' ) );
+			$permalink = isset( $item['permalink'] ) ? $item['permalink'] : '#';
+			$label = isset( $item['label'] ) ? $item['label'] : '';
+			$icon = isset( $item['icon'] ) ? $item['icon'] : '';
+
+			$html .= '<a href="' . esc_url( $permalink ) . '" class="' . esc_attr( $item_classes ) . '">';
+			if ( ! empty( $icon ) ) {
+				$html .= '<i class="fa ' . esc_attr( $icon ) . ' mr-3"></i>';
+			}
+			$html .= wp_kses_post( $label );
+
+			if ( $has_children ) {
+				$submenu_id = 'wpcfe-submenu-' . substr( md5( (string) $menu_key . '-' . (string) $depth ), 0, 12 );
+				$html .= '<span class="wpcfe-submenu-toggle" role="button" aria-controls="' . esc_attr( $submenu_id ) . '" aria-expanded="' . ( $is_active ? 'true' : 'false' ) . '"><i class="fa fa-angle-down"></i></span>';
+			}
+			$html .= '</a>';
+
+			if ( $has_children ) {
+				$submenu_classes = 'wpcfe-submenu' . ( $is_active ? ' show' : '' );
+				$html .= '<div id="' . esc_attr( $submenu_id ) . '" class="' . esc_attr( $submenu_classes ) . '">' . $children_html . '</div>';
+			}
+		}
+
+		return array( $html, $has_active );
+	}
+}
+
+if ( ! function_exists( 'wpcfe_render_sidebar_custom_menu' ) ) {
+	function wpcfe_render_sidebar_custom_menu( $menu_items, $base_class = 'list-group-item waves-effect' ) {
+		$tree = wpcfe_prepare_sidebar_menu_tree( $menu_items );
+		list( $html ) = wpcfe_render_sidebar_menu_nodes( $tree, $base_class, 0 );
+		return $html;
 	}
 }
 
@@ -103,42 +200,20 @@ if ( ! function_exists( 'wpcfe_is_active_menu_link' ) ) {
 								<?php endif;  
 								endif;
 						if( $unseen_shipments ){ ?>
-						<a href="<?php echo get_the_permalink( wpcfe_admin_page() ); ?>" class="list-group-item waves-effect <?php //echo $create_active_class; ?>"> <i class="fa fa-cubes mr-md-3 mr-3"></i><?php echo apply_filters( 'wpcfe_shipments_menu', sprintf( __('Shipments <span class="badge badge-pill bg-danger align-top">%s</span>', 'wpcargo-frontend-manager'), $unseen ) ); ?> </a>
+						<a href="<?php echo get_the_permalink( wpcfe_admin_page() ); ?>" class="list-group-item waves-effect <?php echo $shipments_active_class; ?>"> <i class="fa fa-cubes mr-md-3 mr-3"></i><?php echo apply_filters( 'wpcfe_shipments_menu', sprintf( __('Shipments <span class="badge badge-pill bg-danger align-top">%s</span>', 'wpcargo-frontend-manager'), $unseen ) ); ?> </a>
 					<?php } else{ ?>
-						<a href="<?php echo get_the_permalink( wpcfe_admin_page() ); ?>" class="list-group-item waves-effect <?php //echo $create_active_class; ?>"> <i class="fa fa-cubes mr-md-3 mr-3"></i><?php echo apply_filters( 'wpcfe_shipments_menu', esc_html__('Shipments', 'wpcargo-frontend-manager') ); ?> </a>
+						<a href="<?php echo get_the_permalink( wpcfe_admin_page() ); ?>" class="list-group-item waves-effect <?php echo $shipments_active_class; ?>"> <i class="fa fa-cubes mr-md-3 mr-3"></i><?php echo apply_filters( 'wpcfe_shipments_menu', esc_html__('Shipments', 'wpcargo-frontend-manager') ); ?> </a>
 					<?php }
 						}
 						do_action( 'wpcfe_after_add_shipment' );
 
 						if( !empty( wpcfe_after_sidebar_menu_items() ) ){
-							foreach( wpcfe_after_sidebar_menu_items() as $item => $additional_items ){
-								$page_id = array_key_exists( 'page-id', $additional_items ) ? (int) $additional_items['page-id'] : 0;
-								$is_active = wpcfe_is_active_menu_link( $additional_items['permalink'], $page_id ) ? 'active' : '';
-								?>
-								<a href="<?php echo $additional_items['permalink']; ?>" class="dashboard-page-menu list-group-item list-group-item-action waves-effect menu-item <?php echo $item.' '.$is_active; ?>"> 
-									<?php if( !empty( $additional_items['icon'] ) ): ?>
-										<i class="fa <?php echo $additional_items['icon']; ?> mr-3"></i>
-									<?php endif; ?>
-									<?php echo $additional_items['label']; ?> 
-								</a>
-								<?php
-							}
+							echo wpcfe_render_sidebar_custom_menu( wpcfe_after_sidebar_menu_items(), 'dashboard-page-menu list-group-item list-group-item-action waves-effect menu-item' );
 						}
 					?>       
 					<?php
 						if( !empty( wpcfe_after_sidebar_menus() ) ){
-							foreach( wpcfe_after_sidebar_menus() as $item => $additional_items ){
-								$page_id = array_key_exists( 'page-id', $additional_items ) ? (int) $additional_items['page-id'] : 0;
-								$is_active = wpcfe_is_active_menu_link( $additional_items['permalink'], $page_id ) ? 'active' : '';
-								?>
-								<a href="<?php echo $additional_items['permalink']; ?>" class="list-group-item waves-effect <?php echo $item.' '.$is_active; ?>"> 
-									<?php if( !empty( $additional_items['icon'] ) ): ?>
-										<i class="fa <?php echo $additional_items['icon']; ?> mr-3"></i>
-									<?php endif; ?>
-									<?php echo $additional_items['label']; ?> 
-								</a>
-								<?php
-							}
+							echo wpcfe_render_sidebar_custom_menu( wpcfe_after_sidebar_menus(), 'list-group-item waves-effect' );
 						}
 						$wpcfe_sidebar_menu_args = array(
 							'theme_location' => 'wpcfe-dashboard-sidebar-menu',
@@ -195,6 +270,33 @@ if ( ! function_exists( 'wpcfe_is_active_menu_link' ) ) {
         background: rgba(0,0,0,0.2);
         border-radius: 10px;
     	}
+		.wpcfe-has-children {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+		}
+		.wpcfe-submenu-toggle {
+			margin-left: auto;
+			padding-left: 8px;
+			cursor: pointer;
+		}
+		.wpcfe-submenu {
+			display: none;
+		}
+		.wpcfe-submenu.show {
+			display: block;
+		}
+		.wpcfe-submenu-link {
+			padding-left: 2.4rem !important;
+			font-size: 0.95em;
+		}
+		.wpcfe-has-children.active .wpcfe-submenu-toggle i,
+		.wpcfe-has-children.wpcfe-open .wpcfe-submenu-toggle i {
+			transform: rotate(180deg);
+		}
+		.wpcfe-submenu-toggle i {
+			transition: transform .2s ease;
+		}
 	</style>
     <!-- Navbar -->
     <!-- Sidebar -->
@@ -215,43 +317,21 @@ if ( ! function_exists( 'wpcfe_is_active_menu_link' ) ) {
 						<?php endif;
 					endif; 
 					if( $unseen_shipments ){ ?>
-						<a href="<?php echo get_the_permalink( wpcfe_admin_page() ); ?>" class="list-group-item waves-effect <?php //echo $create_active_class; ?>"> <i class="fa fa-cubes mr-md-3 mr-3"></i><?php echo apply_filters( 'wpcfe_shipments_menu', sprintf( __('Shipments <span class="badge badge-pill bg-danger align-top">%s</span>', 'wpcargo-frontend-manager'), $unseen ) ); ?> </a>
+						<a href="<?php echo get_the_permalink( wpcfe_admin_page() ); ?>" class="list-group-item waves-effect <?php echo $shipments_active_class; ?>"> <i class="fa fa-cubes mr-md-3 mr-3"></i><?php echo apply_filters( 'wpcfe_shipments_menu', sprintf( __('Shipments <span class="badge badge-pill bg-danger align-top">%s</span>', 'wpcargo-frontend-manager'), $unseen ) ); ?> </a>
 					<?php } else{ ?>
-						<a href="<?php echo get_the_permalink( wpcfe_admin_page() ); ?>" class="list-group-item waves-effect <?php //echo $create_active_class; ?>"> <i class="fa fa-cubes mr-md-3 mr-3"></i><?php echo apply_filters( 'wpcfe_shipments_menu', esc_html__('Shipments', 'wpcargo-frontend-manager') ); ?> </a>
+						<a href="<?php echo get_the_permalink( wpcfe_admin_page() ); ?>" class="list-group-item waves-effect <?php echo $shipments_active_class; ?>"> <i class="fa fa-cubes mr-md-3 mr-3"></i><?php echo apply_filters( 'wpcfe_shipments_menu', esc_html__('Shipments', 'wpcargo-frontend-manager') ); ?> </a>
 					<?php }
 
 					do_action( 'wpcfe_after_add_shipment' );
 					if( !empty( wpcfe_after_sidebar_menu_items() ) ){
-						foreach( wpcfe_after_sidebar_menu_items() as $item => $additional_items ){
-							$page_id = array_key_exists( 'page-id', $additional_items ) ? $additional_items['page-id'] : 0;
-							$active_class = wpcfe_is_active_menu_link( $additional_items['permalink'], (int) $page_id ) ? 'active' : '';
-							?>
-							<a href="<?php echo $additional_items['permalink']; ?>" class="list-group-item waves-effect <?php echo $item.' '.$active_class; ?>"> 
-								<?php if( !empty( $additional_items['icon'] ) ): ?>
-									<i class="fa <?php echo $additional_items['icon']; ?> mr-3"></i>
-								<?php endif; ?>
-								<?php echo $additional_items['label']; ?> 
-							</a>
-							<?php
-						}
+						echo wpcfe_render_sidebar_custom_menu( wpcfe_after_sidebar_menu_items(), 'list-group-item waves-effect' );
 					}
 				}
 			?>
 			<?php do_action( 'wpcfe_before_sidebar_custom_menu' ); ?>
 			<?php
 				if( !empty( wpcfe_after_sidebar_menus() ) ){
-					foreach( wpcfe_after_sidebar_menus() as $item => $additional_items ){
-						$page_id = array_key_exists( 'page-id', $additional_items ) ? (int) $additional_items['page-id'] : 0;
-						$active_class = wpcfe_is_active_menu_link( $additional_items['permalink'], $page_id ) ? 'active' : '';
-						?>
-						<a href="<?php echo $additional_items['permalink']; ?>" class="list-group-item waves-effect <?php echo $item.' '.$active_class; ?>"> 
-							<?php if( !empty( $additional_items['icon'] ) ): ?>
-								<i class="fa <?php echo $additional_items['icon']; ?> mr-3"></i>
-							<?php endif; ?>
-							<?php echo $additional_items['label']; ?> 
-						</a>
-						<?php
-					}
+					echo wpcfe_render_sidebar_custom_menu( wpcfe_after_sidebar_menus(), 'list-group-item waves-effect' );
 				}
 				$wpcfe_menu_args = array(
 					'theme_location' => 'wpcfe-dashboard-sidebar-menu',
@@ -266,6 +346,27 @@ if ( ! function_exists( 'wpcfe_is_active_menu_link' ) ) {
 			?>
         </div>
     </div>
+	<script>
+	(function($){
+		$(document).on('click', '.wpcfe-submenu-toggle', function(e){
+			e.preventDefault();
+			e.stopPropagation();
+
+			var $toggle = $(this);
+			var target = $toggle.attr('aria-controls');
+			if(!target){
+				return;
+			}
+
+			var $submenu = $('#' + target);
+			var willOpen = !$submenu.hasClass('show');
+
+			$submenu.toggleClass('show', willOpen);
+			$toggle.attr('aria-expanded', willOpen ? 'true' : 'false');
+			$toggle.closest('.wpcfe-has-children').toggleClass('wpcfe-open', willOpen);
+		});
+	})(jQuery);
+	</script>
     <!-- Sidebar -->
 </header>
 <!--Main Navigation-->
