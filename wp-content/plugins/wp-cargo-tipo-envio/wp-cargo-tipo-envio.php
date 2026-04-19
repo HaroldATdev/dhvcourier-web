@@ -1618,12 +1618,21 @@ function wpcte_listenCliente(ajaxUrl,nonce){
             var uid=jQuery(this).val();if(!uid)return;
             var fd=new FormData();fd.append('action','wpcte_get_user_data');fd.append('uid',uid);fd.append('_ajax_nonce',nonce);
             fetch(ajaxUrl,{method:'POST',credentials:'include',body:fd}).then(r=>r.json()).then(function(res){
-                if(!res.success)return;
-                var el=document.getElementById('remitente');if(el)el.value=res.data.nombre;
-                var dni=document.getElementById('dni_remitente');if(dni)dni.value=res.data.dni||'';
-                var te=document.getElementById('telefono_remitente');if(te)te.value=res.data.telefono;
+                if(!res.success){console.error('AJAX Error:', res);return;}
+                console.log('AJAX Success - Data:', res.data);
+                var el=document.getElementById('remitente');if(el){el.value=res.data.nombre;console.log('Nombre llenado:', res.data.nombre);}
+                var dni=document.getElementById('dni_remitente');
+                if(dni){
+                    dni.value=res.data.dni||'';
+                    console.log('DNI llenado:', res.data.dni||'(vacío)');
+                }else{
+                    console.warn('Campo #dni_remitente NO encontrado. Buscando alternativas...');
+                    var dniAlt=document.querySelector('[name="dni_remitente"]');if(dniAlt){dniAlt.value=res.data.dni||'';console.log('DNI llenado (by name):', res.data.dni||'(vacío)');}
+                    var dniAlt2=document.querySelector('[id*="dni"]');if(dniAlt2){console.log('Campo con "dni" encontrado:', dniAlt2.id, dniAlt2);}
+                }
+                var te=document.getElementById('telefono_remitente');if(te){te.value=res.data.telefono;console.log('Teléfono llenado:', res.data.telefono);}
                 wpcte_insertDir(res.data.direccion);window._clienteCiudad=res.data.ciudad||'';
-            });
+            }).catch(e=>console.error('Fetch Error:', e));
         });
     },600);
 }
