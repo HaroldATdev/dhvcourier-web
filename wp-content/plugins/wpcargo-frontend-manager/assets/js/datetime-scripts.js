@@ -3,6 +3,7 @@ jQuery(document).ready(function($){
     if( !wpcfeDateTimeAjaxhandler.disableDatepicker ){
         $('.wpccf-datepicker').pickadate({
             format: wpcfeDateTimeAjaxhandler.dateFormat,
+            container: 'body'
         });
     }
     // Check if Frontend Manager Time Picker is disable
@@ -14,10 +15,12 @@ jQuery(document).ready(function($){
     // Get the elements
     var from_input = $('.daterange_picker.start_date').pickadate({
         format: 'yyyy-mm-dd',
+        container: 'body'
     }),
     from_picker = from_input.pickadate('picker');
     var to_input = $('.daterange_picker.end_date').pickadate({
         format: 'yyyy-mm-dd',
+        container: 'body'
     }),
     to_picker = to_input.pickadate('picker');
     
