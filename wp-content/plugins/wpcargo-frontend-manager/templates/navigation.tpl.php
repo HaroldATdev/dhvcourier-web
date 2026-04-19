@@ -227,6 +227,18 @@ if ( ! function_exists( 'wpcfe_render_sidebar_custom_menu' ) ) {
 	}
 }
 
+if ( ! function_exists( 'wpcfe_get_combined_sidebar_custom_items' ) ) {
+	function wpcfe_get_combined_sidebar_custom_items() {
+		$menu_items = function_exists( 'wpcfe_after_sidebar_menu_items' ) ? wpcfe_after_sidebar_menu_items() : array();
+		$menus = function_exists( 'wpcfe_after_sidebar_menus' ) ? wpcfe_after_sidebar_menus() : array();
+
+		$menu_items = is_array( $menu_items ) ? $menu_items : array();
+		$menus = is_array( $menus ) ? $menus : array();
+
+		return array_merge( $menu_items, $menus );
+	}
+}
+
 ?>
 <header>
     <!-- Navbar -->
@@ -286,14 +298,12 @@ if ( ! function_exists( 'wpcfe_render_sidebar_custom_menu' ) ) {
 						}
 						do_action( 'wpcfe_after_add_shipment' );
 
-						if( !empty( wpcfe_after_sidebar_menu_items() ) ){
-							echo wpcfe_render_sidebar_custom_menu( wpcfe_after_sidebar_menu_items(), 'dashboard-page-menu list-group-item list-group-item-action waves-effect menu-item' );
+						$combined_mobile_sidebar = wpcfe_get_combined_sidebar_custom_items();
+						if( !empty( $combined_mobile_sidebar ) ){
+							echo wpcfe_render_sidebar_custom_menu( $combined_mobile_sidebar, 'list-group-item waves-effect' );
 						}
-					?>       
+					?>
 					<?php
-						if( !empty( wpcfe_after_sidebar_menus() ) ){
-							echo wpcfe_render_sidebar_custom_menu( wpcfe_after_sidebar_menus(), 'list-group-item waves-effect' );
-						}
 						$wpcfe_sidebar_menu_args = array(
 							'theme_location' => 'wpcfe-dashboard-sidebar-menu',
 							'menu_class' 	 => 'list-group list-group-flush',
@@ -402,16 +412,14 @@ if ( ! function_exists( 'wpcfe_render_sidebar_custom_menu' ) ) {
 					<?php }
 
 					do_action( 'wpcfe_after_add_shipment' );
-					if( !empty( wpcfe_after_sidebar_menu_items() ) ){
-						echo wpcfe_render_sidebar_custom_menu( wpcfe_after_sidebar_menu_items(), 'list-group-item waves-effect' );
+					$combined_desktop_sidebar = wpcfe_get_combined_sidebar_custom_items();
+					if( !empty( $combined_desktop_sidebar ) ){
+						echo wpcfe_render_sidebar_custom_menu( $combined_desktop_sidebar, 'list-group-item waves-effect' );
 					}
 				}
 			?>
 			<?php do_action( 'wpcfe_before_sidebar_custom_menu' ); ?>
 			<?php
-				if( !empty( wpcfe_after_sidebar_menus() ) ){
-					echo wpcfe_render_sidebar_custom_menu( wpcfe_after_sidebar_menus(), 'list-group-item waves-effect' );
-				}
 				$wpcfe_menu_args = array(
 					'theme_location' => 'wpcfe-dashboard-sidebar-menu',
 					'menu_class' 	 => 'list-group list-group-flush',
@@ -428,16 +436,15 @@ if ( ! function_exists( 'wpcfe_render_sidebar_custom_menu' ) ) {
 	<script>
 	(function($){
 		function wpcfeToggleSubmenu($trigger){
-			var target = $trigger.find('.wpcfe-submenu-toggle').attr('aria-controls') || $trigger.attr('aria-controls');
-			if(!target){
+			var $submenu = $trigger.next('.wpcfe-submenu');
+			if(!$submenu.length){
 				return;
 			}
-
-			var $submenu = $('#' + target);
+			var $toggle = $trigger.find('.wpcfe-submenu-toggle').first();
 			var willOpen = !$submenu.hasClass('show');
 
 			$submenu.toggleClass('show', willOpen);
-			$trigger.find('.wpcfe-submenu-toggle').attr('aria-expanded', willOpen ? 'true' : 'false');
+			$toggle.attr('aria-expanded', willOpen ? 'true' : 'false');
 			$trigger.toggleClass('wpcfe-open', willOpen);
 		}
 
@@ -445,14 +452,6 @@ if ( ! function_exists( 'wpcfe_render_sidebar_custom_menu' ) ) {
 			e.preventDefault();
 			e.stopPropagation();
 			wpcfeToggleSubmenu($(this).closest('.wpcfe-parent-link'));
-		});
-
-		$(document).on('click', '.wpcfe-parent-link', function(e){
-			if($(e.target).closest('.wpcfe-submenu-toggle').length){
-				return;
-			}
-			e.preventDefault();
-			wpcfeToggleSubmenu($(this));
 		});
 	})(jQuery);
 	</script>
