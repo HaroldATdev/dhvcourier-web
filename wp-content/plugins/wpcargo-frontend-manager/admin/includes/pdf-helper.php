@@ -290,13 +290,11 @@ function wpcfe_print_shipment_ajax_callback(){
             throw new Exception('Failed to save PDF file');
         }
         
-        echo json_encode( $data_info );
-        wp_die();
+        wp_send_json_success( $data_info );
         
     } catch ( Exception $e ) {
         error_log('WPCFE Print Error: ' . $e->getMessage());
         wp_send_json_error( array( 'message' => $e->getMessage() ) );
-        wp_die();
     }
 }
 
