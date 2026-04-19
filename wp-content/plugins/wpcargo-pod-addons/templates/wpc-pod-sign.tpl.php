@@ -8,11 +8,25 @@
 	$monto_total_cobrar 	= get_post_meta($get_sid, 'monto', true);
 	$monto_total_cobrar 	= (float) str_replace(',', '.', preg_replace('/[^0-9.,\-]/', '', (string) $monto_total_cobrar));
 	$wcfin_methods 			= array();
-	if ( isset($wpdb) ) {
-		$methods_table = $wpdb->prefix . 'wcfin_metodos_pago';
-		$table_exists = $wpdb->get_var( $wpdb->prepare('SHOW TABLES LIKE %s', $methods_table) );
-		if ( $table_exists === $methods_table ) {
-			$wcfin_methods = $wpdb->get_results("SELECT id, nombre, slug FROM {$methods_table} WHERE activo=1 ORDER BY orden, id", ARRAY_A);
+	if ( class_exists('WCFIN_Metodo') ) {
+		$wcfin_active = WCFIN_Metodo::obtener_activos();
+		if ( is_array($wcfin_active) ) {
+			foreach ( $wcfin_active as $method ) {
+				$wcfin_methods[] = array(
+					'id' => isset($method->id) ? (int) $method->id : 0,
+					'nombre' => isset($method->nombre) ? (string) $method->nombre : '',
+					'slug' => isset($method->slug) ? (string) $method->slug : ''
+				);
+			}
+		}
+	} else {
+		global $wpdb;
+		if ( isset($wpdb) ) {
+			$methods_table = $wpdb->prefix . 'wcfin_metodos_pago';
+			$table_exists = $wpdb->get_var( $wpdb->prepare('SHOW TABLES LIKE %s', $methods_table) );
+			if ( $table_exists === $methods_table ) {
+				$wcfin_methods = $wpdb->get_results("SELECT id, nombre, slug FROM {$methods_table} WHERE activo=1 ORDER BY orden, id", ARRAY_A);
+			}
 		}
 	}
 	$shipment_update 		= maybe_unserialize( get_post_meta( $get_sid, 'wpcargo_shipments_update', true ) );
