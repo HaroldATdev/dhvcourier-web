@@ -170,45 +170,12 @@ jQuery(document).ready(function($){
     /*
     *   END UPLOAD AVATAR SCRIPT *****************************************************************************************************************
     */
-    $(".wpcfe-select").select2({});
-    $(".wpcfe-select-ajax").select2({
-        ajax: {
-                url: wpcfeAjaxhandler.ajaxurl, // AJAX URL is predefined in WordPress admin
-                dataType: 'json',
-                delay: 250, // delay in ms while typing when to perform a AJAX search
-                data: function (params) {
-                    return {
-                        q: params.term, // search query
-                        filter: $(this).attr('data-filter'),
-                        action: 'wpcfe_get_option' // AJAX action for admin-ajax.php
-                    };
-                },
-                processResults: function( data ) {
-                var options = [];
-                if ( data ) {
- 
-                    // data is the array of arrays, and each of them contains ID and the Label of the option
-                    $.each( data, function( index, text ) { // do not forget that "index" is just auto incremented value
-                        options.push( { id: text, text: text  } );
-                    });
- 
-                }
-                return {
-                    results: options
-                };
-            },
-            cache: true
-        },
-        minimumInputLength: 3,
-        language: {
-            inputTooShort: function(args) {
-              // args.minimum is the minimum required length
-              // args.input is the user-typed text
+    function wpcfeSelect2LanguageConfig(){
+        return {
+            inputTooShort: function() {
               return wpcfeAjaxhandler.inputTooShort;
             },
-            inputTooLong: function(args) {
-              // args.maximum is the maximum allowed length
-              // args.input is the user-typed text
+            inputTooLong: function() {
               return wpcfeAjaxhandler.inputTooLong;
             },
             errorLoading: function() {
@@ -223,11 +190,104 @@ jQuery(document).ready(function($){
             searching: function() {
               return wpcfeAjaxhandler.searching;
             },
-            maximumSelected: function(args) {
-              // args.maximum is the maximum number of items the user may select
+            maximumSelected: function() {
               return wpcfeAjaxhandler.maximumSelected;
             }
-          }
+        };
+    }
+
+    function wpcfeInitializeSelect2($context, $dropdownParent){
+        var baseConfig = {};
+        if( $dropdownParent && $dropdownParent.length ){
+            baseConfig.dropdownParent = $dropdownParent;
+        }
+
+        $context.find('.wpcfe-select').each(function(){
+            var $select = $(this);
+            if( $select.hasClass('select2-hidden-accessible') ){
+                $select.select2('destroy');
+            }
+            $select.select2(baseConfig);
+        });
+
+        $context.find('.wpcfe-select-ajax').each(function(){
+            var $select = $(this);
+            if( $select.hasClass('select2-hidden-accessible') ){
+                $select.select2('destroy');
+            }
+
+            var ajaxConfig = {
+                ajax: {
+                    url: wpcfeAjaxhandler.ajaxurl,
+                    dataType: 'json',
+                    delay: 250,
+                    data: function (params) {
+                        return {
+                            q: params.term,
+                            filter: $(this).attr('data-filter'),
+                            action: 'wpcfe_get_option'
+                        };
+                    },
+                    processResults: function( data ) {
+                        var options = [];
+                        if ( data ) {
+                            $.each( data, function( index, text ) {
+                                options.push( { id: text, text: text  } );
+                            });
+                        }
+                        return {
+                            results: options
+                        };
+                    },
+                    cache: true
+                },
+                minimumInputLength: 3,
+                language: wpcfeSelect2LanguageConfig()
+            };
+
+            if( $dropdownParent && $dropdownParent.length ){
+                ajaxConfig.dropdownParent = $dropdownParent;
+            }
+
+            $select.select2(ajaxConfig);
+        });
+    }
+
+    function wpcfeRelocateMobileFilters(){
+        var $filterForm = $('#wpcfe-filters');
+        var $filtersHome = $('#wpcfe-filters-home');
+        var $mobileModal = $('#wpcfeMobileFiltersModal');
+        var $mobileBody = $mobileModal.find('.modal-body');
+
+        if( !$filterForm.length || !$filtersHome.length || !$mobileBody.length ){
+            return;
+        }
+
+        if( window.innerWidth <= 768 ){
+            if( !$filterForm.parent().is($mobileBody) ){
+                $filterForm.appendTo($mobileBody);
+            }
+            wpcfeInitializeSelect2($filterForm, $mobileModal);
+        }else{
+            if( !$filterForm.parent().is($filtersHome) ){
+                $filterForm.appendTo($filtersHome);
+            }
+            if( $mobileModal.hasClass('show') ){
+                $mobileModal.modal('hide');
+            }
+            wpcfeInitializeSelect2($filterForm, null);
+        }
+    }
+
+    wpcfeInitializeSelect2($(document), null);
+    wpcfeRelocateMobileFilters();
+
+    $(window).on('resize', function(){
+        wpcfeRelocateMobileFilters();
+    });
+
+    $('#wpcfeMobileFiltersModal').on('shown.bs.modal', function(){
+        wpcfeInitializeSelect2($('#wpcfe-filters'), $('#wpcfeMobileFiltersModal'));
     });
     // Registration Scripts
     // Client Registration

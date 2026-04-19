@@ -248,62 +248,110 @@ ul#menu-top-menu li {
 		padding: 0;
 	}
 	#shipment-filters .filters-body > div + div {
-		margin-top: .85rem;
+		margin-top: .65rem;
 	}
-	#shipment-filters #wpcfe-filters,
 	#shipment-filters #wpcfe-search {
 		width: 100%!important;
 		max-width: 100%;
 		margin: 0;
-		padding: .9rem;
+		padding: .85rem;
 		border: 1px solid #e8eef5;
 		border-radius: 14px;
 		background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
 		box-shadow: 0 8px 24px rgba(17, 24, 39, .06);
 	}
-	#shipment-filters #wpcfe-filters .row {
-		margin: 0;
-		display: block;
+	#shipment-filters .wpcfe-desktop-filter-col {
+		display: none;
 	}
-	#shipment-filters #wpcfe-filters .form-group.wpcfe-filter,
-	#shipment-filters #wpcfe-filters .submit-filter {
-		width: 100%!important;
-		max-width: 100%!important;
-		margin: 0 0 .75rem!important;
+	#shipment-filters #wpcfe-search {
+		padding: .75rem;
 	}
-	#shipment-filters #wpcfe-filters .form-group.wpcfe-filter:last-of-type {
-		margin-bottom: .85rem!important;
+	#shipment-filters #wpcfe-search .form-sm {
+		display: flex;
+		align-items: center;
+		gap: .5rem;
 	}
-	#shipment-filters #wpcfe-filters .select2,
-	#shipment-filters #wpcfe-filters .select2-container,
-	#shipment-filters #wpcfe-filters select,
 	#shipment-filters #wpcfe-search input {
 		width: 100%!important;
 		max-width: 100%!important;
+		margin: 0;
 	}
-	#shipment-filters #wpcfe-filters .select2-selection--single,
-	#shipment-filters #wpcfe-filters select,
 	#shipment-filters #wpcfe-search input {
 		height: 44px!important;
 		border-radius: 10px;
 		border: 1px solid #dbe4ee;
 		background: #fff;
 	}
-	#shipment-filters #wpcfe-search .form-sm {
+	#shipment-filters .wpcfe-mobile-search-actions {
+		display: flex;
+		align-items: stretch;
+		gap: .45rem;
+		flex: 0 0 auto;
+	}
+	#shipment-filters .wpcfe-mobile-search-submit {
+		min-width: 74px;
+		padding-left: .65rem;
+		padding-right: .65rem;
+	}
+	#shipment-filters .wpcfe-mobile-filter-trigger {
+		min-width: 86px;
+		padding-left: .7rem;
+		padding-right: .7rem;
+		border-radius: 10px;
+	}
+	#shipment-filters #wpcfeMobileFiltersModal .modal-dialog {
+		margin: .75rem;
+	}
+	#shipment-filters #wpcfeMobileFiltersModal .modal-content {
+		border: none;
+		border-radius: 16px;
+		overflow: hidden;
+	}
+	#shipment-filters #wpcfeMobileFiltersModal .modal-header {
+		padding: .9rem 1rem;
+		border-bottom: 1px solid #edf2f7;
+	}
+	#shipment-filters #wpcfeMobileFiltersModal .modal-body {
+		padding: 1rem;
+		background: #f8fbff;
+	}
+	#shipment-filters #wpcfeMobileFiltersModal #wpcfe-filters {
+		width: 100%!important;
+		margin: 0;
+		padding: 0;
+		border: 0;
+		background: transparent;
+		box-shadow: none;
+	}
+	#shipment-filters #wpcfeMobileFiltersModal #wpcfe-filters .row {
+		margin: 0;
 		display: block;
 	}
-	#shipment-filters #wpcfe-search label {
-		padding-left: 0;
+	#shipment-filters #wpcfeMobileFiltersModal #wpcfe-filters .form-group.wpcfe-filter,
+	#shipment-filters #wpcfeMobileFiltersModal #wpcfe-filters .submit-filter {
+		width: 100%!important;
+		max-width: 100%!important;
+		margin: 0 0 .8rem!important;
 	}
-	#shipment-filters #wpcfe-search input {
-		margin-bottom: .75rem;
+	#shipment-filters #wpcfeMobileFiltersModal #wpcfe-filters .select2,
+	#shipment-filters #wpcfeMobileFiltersModal #wpcfe-filters .select2-container,
+	#shipment-filters #wpcfeMobileFiltersModal #wpcfe-filters select {
+		width: 100%!important;
+		max-width: 100%!important;
 	}
-	#shipment-filters #wpcfe-filters .submit-filter {
+	#shipment-filters #wpcfeMobileFiltersModal #wpcfe-filters .select2-selection--single,
+	#shipment-filters #wpcfeMobileFiltersModal #wpcfe-filters select {
+		height: 44px!important;
+		border-radius: 10px;
+		border: 1px solid #dbe4ee;
+		background: #fff;
+	}
+	#shipment-filters #wpcfeMobileFiltersModal #wpcfe-filters .submit-filter {
 		display: grid;
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 		gap: .65rem;
 	}
-	#shipment-filters #wpcfe-filters .submit-filter .btn,
+	#shipment-filters #wpcfeMobileFiltersModal #wpcfe-filters .submit-filter .btn,
 	#shipment-filters #wpcfe-search .btn {
 		width: 100%;
 		margin: 0!important;
@@ -311,7 +359,7 @@ ul#menu-top-menu li {
 		border-radius: 10px;
 		font-weight: 600;
 	}
-	#shipment-filters #wpcfe-filters .submit-filter .btn {
+	#shipment-filters #wpcfeMobileFiltersModal #wpcfe-filters .submit-filter .btn {
 		padding-left: .75rem;
 		padding-right: .75rem;
 	}
