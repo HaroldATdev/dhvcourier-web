@@ -39,9 +39,9 @@ function wpcfe_initialize_hooks(){
         // Assign Agent - DESHABILITADO EN BULK MODAL
         add_action( 'wpcfe_assign_form_content', 'wpcfe_assign_agent_callback', 10, 1 );
         // add_action( 'wpcfe_bulk_assign_form_content', 'wpcfe_assign_agent_callback', 10, 1 );
-        // Employee Agent
+        // Employee Agent - DESHABILITADO EN BULK MODAL
         add_action( 'wpcfe_assign_form_content', 'wpcfe_assign_employee_callback', 10, 1 );
-        add_action( 'wpcfe_bulk_assign_form_content', 'wpcfe_assign_employee_callback', 10, 1 );
+        // add_action( 'wpcfe_bulk_assign_form_content', 'wpcfe_assign_employee_callback', 10, 1 );
         // Assign Driver
         add_action( 'wpcfe_assign_form_content', 'wpcfe_assign_driver_callback', 10, 1 );
         add_action( 'wpcfe_bulk_assign_form_content', 'wpcfe_assign_driver_callback', 10, 1 );
@@ -220,10 +220,10 @@ function wpcfe_assign_employee_callback( $shipment_id ){
 function wpcfe_assign_driver_callback( $shipment_id ){
     $wpcargo_driver = wpcfe_get_users('wpcargo_driver');
     if( !empty( $wpcargo_driver ) ): ?>
-        <!-- Motorizado de Recojo -->
+        <!-- Conductor de Recojo -->
         <div class="form-group">
             <div class="select-no-margin">
-                <label><?php esc_html_e('Motorizado Recojo','wpcargo-frontend-manager'); ?></label>
+                <label><?php esc_html_e('Conductor Recojo','wpcargo-frontend-manager'); ?></label>
                 <select name="wpcargo_driver_recojo" class="mdb-select mt-0 form-control browser-default" id="wpcargo_driver_recojo" >
                     <option value=""><?php esc_html_e('-- Select Driver --','wpcargo-frontend-manager'); ?></option>
                     <?php foreach( $wpcargo_driver as $driverID => $driverName ): ?>
@@ -232,10 +232,10 @@ function wpcfe_assign_driver_callback( $shipment_id ){
                 </select>
             </div>
         </div>
-        <!-- Motorizado de Entrega -->
+        <!-- Conductor de Entrega -->
         <div class="form-group">
             <div class="select-no-margin">
-                <label><?php esc_html_e('Motorizado Entrega','wpcargo-frontend-manager'); ?></label>
+                <label><?php esc_html_e('Conductor Entrega','wpcargo-frontend-manager'); ?></label>
                 <select name="wpcargo_driver_entrega" class="mdb-select mt-0 form-control browser-default" id="wpcargo_driver_entrega" >
                     <option value=""><?php esc_html_e('-- Select Driver --','wpcargo-frontend-manager'); ?></option>
                     <?php foreach( $wpcargo_driver as $driverID => $driverName ): ?>

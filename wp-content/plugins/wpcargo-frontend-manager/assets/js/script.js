@@ -426,8 +426,8 @@ jQuery(document).ready(function($){
     //Bulk Assign Shipments
     function reset_shipment( id, number ){
         $('#shipmentBulkUpdateModal .shipment-list-wrapper .shipment-list li').remove();
-        $('#shipmentBulkUpdateModal #registered_employee').val('');
-        // Cliente y Agente removidos del modal
+        // Cliente, Agente y Empleado removidos del modal
+        // $('#shipmentBulkUpdateModal #registered_employee').val('');
         // $('#shipmentBulkUpdateModal #registered_client').val('');
         // $('#shipmentBulkUpdateModal #registered_agent').val('');
         // Drivers de recojo y entrega
