@@ -5,6 +5,22 @@ $pens     = $datos['pens']     ?? [];
 $total_facturado   = array_sum(array_map(fn($t)=>floatval($t->monto_total),$trans));
 $total_pendientes  = count(array_filter($trans,fn($t)=>$t->estado==='pendiente'));
 $total_penalidades = array_sum(array_map(fn($p)=>floatval($p->monto_aplicado),$pens));
+
+$pod_payments_map = [];
+if ( ! empty($trans) ) {
+    $shipment_ids = array_values(array_unique(array_map(function($t){
+        return (int)($t->shipment_id ?? 0);
+    }, $trans)));
+    foreach ( $shipment_ids as $sid ) {
+        if ( ! $sid ) {
+            continue;
+        }
+        $rows = get_post_meta($sid, 'wpcargo-pod-payments', true);
+        if ( is_array($rows) && ! empty($rows) ) {
+            $pod_payments_map[$sid] = $rows;
+        }
+    }
+}
 ?>
 
 <!-- Navegación interna -->
@@ -99,15 +115,38 @@ $total_penalidades = array_sum(array_map(fn($p)=>floatval($p->monto_aplicado),$p
     <div class="table-responsive">
     <table class="table table-hover table-sm mb-0">
         <thead class="thead-light">
-            <tr><th>Envío</th><th>Condición</th><th>Método</th><th>Servicio S/</th><th>Total S/</th><th>Estado</th><th>Fecha</th><th>Operador</th></tr>
+            <tr><th>Envío</th><th>Condición</th><th>Método</th><th>Detalle POD</th><th>Servicio S/</th><th>Total S/</th><th>Estado</th><th>Fecha</th><th>Operador</th></tr>
         </thead>
         <tbody>
         <?php if ($trans): foreach($trans as $t):
-            $vars=json_decode($t->variables_json??'{}',true); ?>
+            $vars=json_decode($t->variables_json??'{}',true);
+            $sid = (int)($t->shipment_id ?? 0);
+            $pod_rows = $pod_payments_map[$sid] ?? [];
+        ?>
             <tr>
                 <td><a href="<?php echo esc_url(get_edit_post_link($t->shipment_id)); ?>"><?php echo esc_html($t->envio_titulo??'#'.$t->shipment_id); ?></a></td>
                 <td><span class="badge badge-light"><?php echo esc_html($t->condicion_nombre); ?></span></td>
                 <td><?php echo esc_html($t->metodo_nombre); ?></td>
+                <td>
+                    <?php if ( ! empty($pod_rows) ): ?>
+                        <div class="small" style="min-width:200px;line-height:1.35">
+                            <?php foreach ( $pod_rows as $pr ):
+                                $mname = sanitize_text_field((string)($pr['method_name'] ?? 'Método'));
+                                $amount = number_format((float)($pr['amount'] ?? 0), 2);
+                                $img = esc_url((string)($pr['image_url'] ?? ''));
+                            ?>
+                                <div>
+                                    <strong><?php echo esc_html($mname); ?></strong>: S/ <?php echo esc_html($amount); ?>
+                                    <?php if ( ! empty($img) ): ?>
+                                        · <a href="<?php echo $img; ?>" target="_blank" rel="noopener noreferrer">Comprobante</a>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php else: ?>
+                        <span class="text-muted small">—</span>
+                    <?php endif; ?>
+                </td>
                 <td>S/ <?php echo number_format(floatval($vars['monto_servicio']??$t->monto_servicio),2); ?></td>
                 <td><strong>S/ <?php echo number_format(floatval($t->monto_total),2); ?></strong></td>
                 <td><?php echo $t->estado==='confirmado'
@@ -118,7 +157,7 @@ $total_penalidades = array_sum(array_map(fn($p)=>floatval($p->monto_aplicado),$p
                 <td class="small"><?php echo esc_html($t->operador??'—'); ?></td>
             </tr>
         <?php endforeach; else: ?>
-            <tr><td colspan="8" class="text-center text-muted py-4">
+            <tr><td colspan="9" class="text-center text-muted py-4">
                 <i class="fa fa-inbox fa-2x d-block mb-2"></i>Sin transacciones en este período.
             </td></tr>
         <?php endif; ?>

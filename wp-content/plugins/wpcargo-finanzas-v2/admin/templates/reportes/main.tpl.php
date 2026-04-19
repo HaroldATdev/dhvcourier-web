@@ -11,6 +11,22 @@ foreach ( $trans as $t ) {
     if ( $t->estado === 'pendiente' ) $total_pendientes++;
 }
 foreach ( $pens as $p ) $total_penalidades += floatval($p->monto_aplicado);
+
+$pod_payments_map = [];
+if ( ! empty($trans) ) {
+    $shipment_ids = array_values(array_unique(array_map(function($t){
+        return (int)($t->shipment_id ?? 0);
+    }, $trans)));
+    foreach ( $shipment_ids as $sid ) {
+        if ( ! $sid ) {
+            continue;
+        }
+        $rows = get_post_meta($sid, 'wpcargo-pod-payments', true);
+        if ( is_array($rows) && ! empty($rows) ) {
+            $pod_payments_map[$sid] = $rows;
+        }
+    }
+}
 ?>
 <div class="wrap">
 <h1>Reportes Financieros</h1>
@@ -76,18 +92,41 @@ foreach ( $pens as $p ) $total_penalidades += floatval($p->monto_aplicado);
     <table class="wp-list-table widefat fixed striped" style="border:none">
         <thead><tr>
             <th>Envío</th><th>Condición</th><th>Método</th>
-            <th>Servicio S/</th><th>Producto S/</th><th>Total S/</th>
+            <th>Detalle POD</th><th>Servicio S/</th><th>Producto S/</th><th>Total S/</th>
             <th>Estado</th><th>Fecha</th><th>Operador</th>
         </tr></thead>
         <tbody>
         <?php if ($trans): foreach($trans as $t):
-            $vars = json_decode($t->variables_json??'{}',true); ?>
+            $vars = json_decode($t->variables_json??'{}',true);
+            $sid = (int)($t->shipment_id ?? 0);
+            $pod_rows = $pod_payments_map[$sid] ?? [];
+        ?>
             <tr>
                 <td><a href="<?php echo esc_url(get_edit_post_link($t->shipment_id)); ?>">
                     <?php echo esc_html($t->envio_titulo ?: '#'.$t->shipment_id); ?>
                 </a></td>
                 <td><?php echo esc_html($t->condicion_nombre); ?></td>
                 <td><?php echo esc_html($t->metodo_nombre); ?></td>
+                <td>
+                    <?php if ( ! empty($pod_rows) ): ?>
+                        <div style="min-width:220px;line-height:1.35">
+                            <?php foreach ( $pod_rows as $pr ):
+                                $mname = sanitize_text_field((string)($pr['method_name'] ?? 'Método'));
+                                $amount = number_format((float)($pr['amount'] ?? 0), 2);
+                                $img = esc_url((string)($pr['image_url'] ?? ''));
+                            ?>
+                                <div>
+                                    <strong><?php echo esc_html($mname); ?></strong>: S/ <?php echo esc_html($amount); ?>
+                                    <?php if ( ! empty($img) ): ?>
+                                        · <a href="<?php echo $img; ?>" target="_blank" rel="noopener noreferrer">Comprobante</a>
+                                    <?php endif; ?>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php else: ?>
+                        <span style="color:#888">—</span>
+                    <?php endif; ?>
+                </td>
                 <td>S/ <?php echo number_format(floatval($vars['monto_servicio']??$t->monto_servicio),2); ?></td>
                 <td>S/ <?php echo number_format(floatval($vars['monto_producto']??0),2); ?></td>
                 <td><strong>S/ <?php echo number_format(floatval($t->monto_total),2); ?></strong></td>
@@ -99,7 +138,7 @@ foreach ( $pens as $p ) $total_penalidades += floatval($p->monto_aplicado);
                 <td><?php echo esc_html($t->operador??'—'); ?></td>
             </tr>
         <?php endforeach; else: ?>
-            <tr><td colspan="9" style="text-align:center;padding:20px;color:#888">Sin transacciones en este período.</td></tr>
+            <tr><td colspan="10" style="text-align:center;padding:20px;color:#888">Sin transacciones en este período.</td></tr>
         <?php endif; ?>
         </tbody>
     </table>
