@@ -340,7 +340,6 @@ function wpcfe_initialize_table_hooks(){
     // Shipment Status Column
     add_action( 'wpcfe_shipment_table_header', 'wpcfe_shipment_table_header_status', 25 ); 
     add_action( 'wpcfe_shipment_table_data', 'wpcfe_shipment_table_data_status', 25 );
-    add_action( 'wpcfe_after_shipment_data', 'wpcfe_status_transition_modal_template', 30 );
     // Shipment Print Column
     add_action( 'wpcfe_shipment_table_header_action', 'wpcfe_shipment_table_header_action_print', 25 ); 
     add_action( 'wpcfe_shipment_table_data_action', 'wpcfe_shipment_table_action_print', 25 );

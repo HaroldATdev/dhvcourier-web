@@ -335,104 +335,143 @@ jQuery(document).ready(function($){
         }
     });
 
-    // Shipment status transition in table (select -> modal -> ajax)
-    var wpcfeStatusTransitionSelect = null;
+    // Shipment status transition in table (select -> Swal -> ajax)
+    function wpcfeApplyStatusCellUpdate($select, shipmentId, data){
+        var $row = $('#shipment-' + shipmentId);
+        var $statusCell = $row.find('td.shipment-status');
+        var oldClass = $select.data('current-class');
+
+        if( oldClass ){
+            $statusCell.removeClass(oldClass);
+            $row.removeClass(oldClass);
+        }
+
+        $statusCell.addClass(data.new_class);
+        $row.addClass(data.new_class);
+
+        if( data.is_final || !data.options || !data.options.length ){
+            $statusCell.text(data.new_status);
+            return;
+        }
+
+        var selectHTML = '';
+        selectHTML += '<select class="form-control browser-default custom-select wpcfe-status-transition-select" ';
+        selectHTML += 'data-shipment-id="' + shipmentId + '" ';
+        selectHTML += 'data-current-status="' + data.new_status + '" ';
+        selectHTML += 'data-current-class="' + data.new_class + '">';
+        selectHTML += '<option value="">' + data.new_status + '</option>';
+        for( var i = 0; i < data.options.length; i++ ){
+            selectHTML += '<option value="' + data.options[i] + '">' + data.options[i] + '</option>';
+        }
+        selectHTML += '</select>';
+        $statusCell.html(selectHTML);
+    }
 
     $('#shipment-list').on('change', '.wpcfe-status-transition-select', function(){
         var $select = $(this);
+        var shipmentId = $select.data('shipment-id');
         var newStatus = $select.val();
+        var statusTransitionError = wpcfeAjaxhandler.statusTransitionError || downloadFileErrorMessage;
+
         if( !newStatus ){
             return;
         }
 
-        wpcfeStatusTransitionSelect = $select;
-        $('#wpcfeStatusTransitionShipmentId').val( $select.data('shipment-id') );
-        $('#wpcfeStatusTransitionNewStatus').val( newStatus );
-        $('#wpcfeStatusTransitionTarget').text( newStatus );
-        $('#wpcfeStatusTransitionRemarks').val('');
-        $('#wpcfeStatusTransitionModal').modal('show');
-    });
-
-    $('#wpcfeStatusTransitionModal').on('hidden.bs.modal', function(){
-        if( wpcfeStatusTransitionSelect ){
-            wpcfeStatusTransitionSelect.val('');
-        }
-    });
-
-    $('#wpcfe-status-transition-form').on('submit', function(e){
-        e.preventDefault();
-
-        var shipmentId = $('#wpcfeStatusTransitionShipmentId').val();
-        var newStatus  = $('#wpcfeStatusTransitionNewStatus').val();
-        var remarks    = $('#wpcfeStatusTransitionRemarks').val();
-        var statusTransitionError = wpcfeAjaxhandler.statusTransitionError || downloadFileErrorMessage;
-
-        if( !shipmentId || !newStatus ){
-            alert(statusTransitionError);
+        if( typeof Swal === 'undefined' ){
+            var fallbackRemarks = window.prompt('Observaciones (opcional):', '') || '';
+            $('body').append('<div class="wpcfe-spinner">Loading...</div>');
+            $.ajax({
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    action: 'wpcfe_status_transition_update',
+                    nonce: wpcfeAjaxhandler.statusTransitionNonce,
+                    shipment_id: shipmentId,
+                    new_status: newStatus,
+                    remarks: fallbackRemarks
+                },
+                url: wpcfeAjaxhandler.ajaxurl,
+                success: function(response){
+                    $('body .wpcfe-spinner').remove();
+                    if( !response || response.success === false || !response.data ){
+                        var msg = (response && response.data && response.data.message) ? response.data.message : statusTransitionError;
+                        alert(msg);
+                        $select.val('');
+                        return;
+                    }
+                    wpcfeApplyStatusCellUpdate($select, shipmentId, response.data);
+                    showNotification('success', response.data.message || 'Status updated successfully.', 'check');
+                },
+                error: function(jqXHR){
+                    $('body .wpcfe-spinner').remove();
+                    alert(statusTransitionError + ' (' + jqXHR.status + ')');
+                    $select.val('');
+                }
+            });
             return;
         }
 
-        $.ajax({
-            type: 'POST',
-            dataType: 'json',
-            data: {
-                action: 'wpcfe_status_transition_update',
-                nonce: wpcfeAjaxhandler.statusTransitionNonce,
-                shipment_id: shipmentId,
-                new_status: newStatus,
-                remarks: remarks
-            },
-            url: wpcfeAjaxhandler.ajaxurl,
-            beforeSend: function(){
-                $('body').append('<div class="wpcfe-spinner">Loading...</div>');
-            },
-            success: function(response){
-                $('body .wpcfe-spinner').remove();
-
-                if( !response || response.success === false || !response.data ){
-                    var msg = (response && response.data && response.data.message) ? response.data.message : statusTransitionError;
-                    alert(msg);
-                    return;
-                }
-
-                var data = response.data;
-                var $row = $('#shipment-' + shipmentId);
-                var $statusCell = $row.find('td.shipment-status');
-
-                if( wpcfeStatusTransitionSelect ){
-                    var oldClass = wpcfeStatusTransitionSelect.data('current-class');
-                    if( oldClass ){
-                        $statusCell.removeClass(oldClass);
-                        $row.removeClass(oldClass);
-                    }
-                }
-
-                $statusCell.addClass(data.new_class);
-                $row.addClass(data.new_class);
-
-                if( data.is_final || !data.options || !data.options.length ){
-                    $statusCell.text(data.new_status);
-                }else{
-                    var selectHTML = '';
-                    selectHTML += '<select class="form-control browser-default custom-select wpcfe-status-transition-select" ';
-                    selectHTML += 'data-shipment-id="' + shipmentId + '" ';
-                    selectHTML += 'data-current-status="' + data.new_status + '" ';
-                    selectHTML += 'data-current-class="' + data.new_class + '">';
-                    selectHTML += '<option value="">' + data.new_status + '</option>';
-                    for( var i = 0; i < data.options.length; i++ ){
-                        selectHTML += '<option value="' + data.options[i] + '">' + data.options[i] + '</option>';
-                    }
-                    selectHTML += '</select>';
-                    $statusCell.html(selectHTML);
-                }
-
-                $('#wpcfeStatusTransitionModal').modal('hide');
-                showNotification('success', data.message || 'Status updated successfully.', 'check');
-            },
-            error: function(jqXHR){
-                $('body .wpcfe-spinner').remove();
-                alert(statusTransitionError + ' (' + jqXHR.status + ')');
+        Swal.fire({
+            title: 'Confirmar cambio de estado',
+            html: '<div class="text-left">'
+                + '<p class="mb-2">Nuevo estado: <strong>' + newStatus + '</strong></p>'
+                + '<textarea id="wpcfe-swal-remarks" class="swal2-textarea" placeholder="Observaciones (opcional)" style="margin:0;width:100%;height:110px;"></textarea>'
+                + '</div>',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Confirmar',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#0d6efd',
+            cancelButtonColor: '#6c757d',
+            reverseButtons: true,
+            focusConfirm: false,
+            preConfirm: function(){
+                return {
+                    remarks: $('#wpcfe-swal-remarks').val() || ''
+                };
             }
+        }).then(function(result){
+            if( !result.isConfirmed ){
+                $select.val('');
+                return;
+            }
+
+            $.ajax({
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    action: 'wpcfe_status_transition_update',
+                    nonce: wpcfeAjaxhandler.statusTransitionNonce,
+                    shipment_id: shipmentId,
+                    new_status: newStatus,
+                    remarks: result.value ? result.value.remarks : ''
+                },
+                url: wpcfeAjaxhandler.ajaxurl,
+                beforeSend: function(){
+                    Swal.fire({
+                        title: 'Actualizando...',
+                        allowOutsideClick: false,
+                        didOpen: function(){
+                            Swal.showLoading();
+                        }
+                    });
+                },
+                success: function(response){
+                    if( !response || response.success === false || !response.data ){
+                        var msg = (response && response.data && response.data.message) ? response.data.message : statusTransitionError;
+                        Swal.fire({ icon: 'error', title: 'Error', text: msg });
+                        $select.val('');
+                        return;
+                    }
+
+                    wpcfeApplyStatusCellUpdate($select, shipmentId, response.data);
+                    Swal.fire({ icon: 'success', title: 'Actualizado', text: response.data.message || 'Estado actualizado correctamente.' });
+                },
+                error: function(jqXHR){
+                    Swal.fire({ icon: 'error', title: 'Error', text: statusTransitionError + ' (' + jqXHR.status + ')' });
+                    $select.val('');
+                }
+            });
         });
     });
 

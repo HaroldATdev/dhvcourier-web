@@ -60,6 +60,32 @@ ul#menu-top-menu li {
     padding: .5rem 1.6rem !important;
 }
 
+/* Shipment status transition select in dashboard table */
+#shipment-list td.shipment-status .wpcfe-status-transition-select {
+	min-width: 138px;
+	height: 30px;
+	font-size: 12px;
+	font-weight: 600;
+	border: 1px solid #dbe3ec;
+	border-radius: 8px;
+	background-color: #f8fbff;
+	color: #1f2d3d;
+	padding: 4px 28px 4px 10px;
+	transition: all .18s ease;
+}
+
+#shipment-list td.shipment-status .wpcfe-status-transition-select:hover {
+	border-color: #9ec5fe;
+	background-color: #f1f7ff;
+}
+
+#shipment-list td.shipment-status .wpcfe-status-transition-select:focus {
+	outline: 0;
+	border-color: #0d6efd;
+	box-shadow: 0 0 0 2px rgba(13, 110, 253, .15);
+	background-color: #fff;
+}
+
 /* Table row print portal menu */
 .wpcfe-portal-menu {
     min-width: 100px !important;

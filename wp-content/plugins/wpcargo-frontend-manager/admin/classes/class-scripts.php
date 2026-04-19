@@ -19,6 +19,7 @@ class WPCFE_Scripts{
                 wp_enqueue_style( 'wpcfe-select2-styles', WPCFE_URL . 'assets/css/select2.min.css', array(), WPCFE_VERSION );
                 wp_enqueue_style( 'wpcfe-mdb-styles', WPCFE_URL . 'assets/css/mdb.min.css', array(), WPCFE_VERSION );
                 wp_enqueue_style( 'wpcfe-croppie-styles', WPCFE_URL . 'assets/css/croppie.css', array(), WPCFE_VERSION );
+                wp_enqueue_style( 'wpcfe-swal2-styles', 'https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css', array(), '11.26.3' );
                 wp_enqueue_style( 'wpcfe-styles', WPCFE_URL . 'assets/css/style.css', WPCFE_VERSION );
                 wp_enqueue_style( 'wpcfe-wpcfm-styles', WPCFE_URL . 'assets/css/wpcfm-style.css', WPCFE_VERSION );
                 // Scripts       
@@ -33,8 +34,9 @@ class WPCFE_Scripts{
                 wp_register_script( 'wpcfe-chart-scripts', WPCFE_URL . 'assets/js/chart.min.js', array( 'jquery' ), WPCFE_VERSION, false );           	
                 wp_register_script( 'wpcfe-chart-util-scripts', WPCFE_URL . 'assets/js/util.js', array( 'jquery' ), WPCFE_VERSION, false );           	
             	wp_register_script( 'wpcfe-registration-scripts', WPCFE_URL . 'assets/js/registration-scripts.js', array( 'jquery' ), WPCFE_VERSION, true );
+                wp_register_script( 'wpcfe-swal2-scripts', 'https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js', array(), '11.26.3', true );
             	
-            	wp_register_script( 'wpcfe-scripts', WPCFE_URL . 'assets/js/script.js', array( 'jquery' ), WPCFE_VERSION, true );
+	            wp_register_script( 'wpcfe-scripts', WPCFE_URL . 'assets/js/script.js', array( 'jquery', 'wpcfe-swal2-scripts' ), WPCFE_VERSION, true );
             	
                 wp_enqueue_script( 'jquery' );
                 wp_enqueue_media();
@@ -48,6 +50,7 @@ class WPCFE_Scripts{
                 wp_enqueue_script('wpcfe-croppie-scripts');
                 wp_enqueue_script('wpcfe-repeater-js');
                 wp_enqueue_script('wpcfe-datetime-scripts' );
+                wp_enqueue_script('wpcfe-swal2-scripts');
 
                 if( isset($_GET['wpcfe']) && $_GET['wpcfe'] == 'dashboard' ){
                     wp_enqueue_script('wpcfe-chart-scripts' );
