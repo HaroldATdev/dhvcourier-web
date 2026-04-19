@@ -135,8 +135,7 @@ function wpcargo_pod_signed_load_action()
 	$shipment_id 			= $shipment_id ? (int)$shipment_id['value'] : 0;
 	$signature_id 			= wpcpod_find_metakey($form_data, '__pod_signature');
 	$signature_id 			= $signature_id ? (int)$signature_id['value'] : false;
-	$shipment_status 		= wpcpod_find_metakey($form_data, 'status');
-	$shipment_status 		= $shipment_status ? $shipment_status['value'] : false;
+	$shipment_status 		= 'Entregado';
 
 	// Save Shipment History
 	$history 				= maybe_unserialize(get_post_meta($shipment_id, 'wpcargo_shipments_update', true));
@@ -151,7 +150,11 @@ function wpcargo_pod_signed_load_action()
 	if (!empty($history_metakeys)) {
 		foreach ($history_metakeys as $sign_key) {
 			$meta_data = wpcpod_find_metakey($form_data, $sign_key);
-			$pod_history[$sign_key] = $meta_data['value'];
+			if( $sign_key === 'status' ){
+				$pod_history[$sign_key] = 'Entregado';
+				continue;
+			}
+			$pod_history[$sign_key] = $meta_data ? $meta_data['value'] : '';
 		}
 	}
 	$pod_history		= apply_filters('wpcargo_pod_current_history', $pod_history);
