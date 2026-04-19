@@ -16,7 +16,8 @@ if ( ! function_exists( 'wpcfe_normalize_menu_url' ) ) {
 if ( ! function_exists( 'wpcfe_is_active_menu_link' ) ) {
 	function wpcfe_is_active_menu_link( $permalink, $page_id = 0 ) {
 		$page_id = (int) $page_id;
-		if ( $page_id > 0 && (int) get_queried_object_id() === $page_id ) {
+		$target_query = wp_parse_url( (string) $permalink, PHP_URL_QUERY );
+		if ( $page_id > 0 && (int) get_queried_object_id() === $page_id && empty( $target_query ) ) {
 			return true;
 		}
 
@@ -30,7 +31,6 @@ if ( ! function_exists( 'wpcfe_is_active_menu_link' ) ) {
 			return false;
 		}
 
-		$target_query = wp_parse_url( (string) $permalink, PHP_URL_QUERY );
 		if ( empty( $target_query ) ) {
 			return true;
 		}
