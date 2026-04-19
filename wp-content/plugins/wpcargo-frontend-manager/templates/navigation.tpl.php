@@ -188,10 +188,11 @@ if ( ! function_exists( 'wpcfe_render_sidebar_menu_nodes' ) ) {
 			}
 
 			$self_active = wpcfe_sidebar_item_is_active( $menu_key, $item );
-			$is_active = $self_active || $children_active;
+			$is_active = $has_children ? $children_active : $self_active;
+			$is_open = $has_children ? ( $children_active || $self_active ) : false;
 			$has_active = $has_active || $is_active;
 
-			$item_classes = trim( $base_class . ' ' . $menu_key . ' ' . ( $is_active ? 'active' : '' ) . ' ' . ( $depth > 0 ? 'wpcfe-submenu-link' : '' ) . ' ' . ( $has_children ? 'wpcfe-has-children' : '' ) );
+			$item_classes = trim( $base_class . ' ' . $menu_key . ' ' . ( $is_active ? 'active' : '' ) . ' ' . ( $depth > 0 ? 'wpcfe-submenu-link' : '' ) . ' ' . ( $has_children ? 'wpcfe-has-children wpcfe-parent-link' : '' ) );
 			$permalink = isset( $item['permalink'] ) ? $item['permalink'] : '#';
 			$label = isset( $item['label'] ) ? $item['label'] : '';
 			$icon = isset( $item['icon'] ) ? $item['icon'] : '';
@@ -204,12 +205,12 @@ if ( ! function_exists( 'wpcfe_render_sidebar_menu_nodes' ) ) {
 
 			if ( $has_children ) {
 				$submenu_id = 'wpcfe-submenu-' . substr( md5( (string) $menu_key . '-' . (string) $depth ), 0, 12 );
-				$html .= '<span class="wpcfe-submenu-toggle" role="button" aria-controls="' . esc_attr( $submenu_id ) . '" aria-expanded="' . ( $is_active ? 'true' : 'false' ) . '"><i class="fa fa-angle-down"></i></span>';
+				$html .= '<span class="wpcfe-submenu-toggle" role="button" aria-controls="' . esc_attr( $submenu_id ) . '" aria-expanded="' . ( $is_open ? 'true' : 'false' ) . '"><i class="fa fa-angle-down"></i></span>';
 			}
 			$html .= '</a>';
 
 			if ( $has_children ) {
-				$submenu_classes = 'wpcfe-submenu' . ( $is_active ? ' show' : '' );
+				$submenu_classes = 'wpcfe-submenu' . ( $is_open ? ' show' : '' );
 				$html .= '<div id="' . esc_attr( $submenu_id ) . '" class="' . esc_attr( $submenu_classes ) . '">' . $children_html . '</div>';
 			}
 		}
@@ -426,12 +427,8 @@ if ( ! function_exists( 'wpcfe_render_sidebar_custom_menu' ) ) {
     </div>
 	<script>
 	(function($){
-		$(document).on('click', '.wpcfe-submenu-toggle', function(e){
-			e.preventDefault();
-			e.stopPropagation();
-
-			var $toggle = $(this);
-			var target = $toggle.attr('aria-controls');
+		function wpcfeToggleSubmenu($trigger){
+			var target = $trigger.find('.wpcfe-submenu-toggle').attr('aria-controls') || $trigger.attr('aria-controls');
 			if(!target){
 				return;
 			}
@@ -440,8 +437,22 @@ if ( ! function_exists( 'wpcfe_render_sidebar_custom_menu' ) ) {
 			var willOpen = !$submenu.hasClass('show');
 
 			$submenu.toggleClass('show', willOpen);
-			$toggle.attr('aria-expanded', willOpen ? 'true' : 'false');
-			$toggle.closest('.wpcfe-has-children').toggleClass('wpcfe-open', willOpen);
+			$trigger.find('.wpcfe-submenu-toggle').attr('aria-expanded', willOpen ? 'true' : 'false');
+			$trigger.toggleClass('wpcfe-open', willOpen);
+		}
+
+		$(document).on('click', '.wpcfe-submenu-toggle', function(e){
+			e.preventDefault();
+			e.stopPropagation();
+			wpcfeToggleSubmenu($(this).closest('.wpcfe-parent-link'));
+		});
+
+		$(document).on('click', '.wpcfe-parent-link', function(e){
+			if($(e.target).closest('.wpcfe-submenu-toggle').length){
+				return;
+			}
+			e.preventDefault();
+			wpcfeToggleSubmenu($(this));
 		});
 	})(jQuery);
 	</script>
