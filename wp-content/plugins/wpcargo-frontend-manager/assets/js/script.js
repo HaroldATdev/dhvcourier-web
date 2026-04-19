@@ -335,24 +335,27 @@ jQuery(document).ready(function($){
         }
     });
     // Fix MDB animation conflict: close dropdown when clicking outside or toggling
-    $(document).on('click.wpcfeBulkprintDropdown', function(e) {
-        if (!$(e.target).closest('.wpcfe-bulkprint-wrapper').length) {
-            $('.wpcfe-bulkprint-wrapper').removeClass('show dropdown-animating');
-            $('.wpcfe-bulkprint-wrapper .dropdown-menu').removeClass('show fadeIn fadeOut animated');
-            $('.wpcfe-bulkprint-wrapper .dropdown-toggle').attr('aria-expanded', 'false');
+    var wpcfeDropdownSelector = '.wpcfe-bulkprint-wrapper, .wpcfe-print-dropdown';
+
+    $(document).on('click.wpcfeDropdown', function(e) {
+        if (!$(e.target).closest(wpcfeDropdownSelector).length) {
+            $(wpcfeDropdownSelector).removeClass('show dropdown-animating');
+            $(wpcfeDropdownSelector + ' .dropdown-menu').removeClass('show fadeIn fadeOut animated');
+            $(wpcfeDropdownSelector + ' .dropdown-toggle').attr('aria-expanded', 'false');
         }
     });
 
-    $(document).on('click', '.wpcfe-bulkprint-wrapper .dropdown-toggle', function(e) {
+    $(document).on('click', wpcfeDropdownSelector + ' .dropdown-toggle', function(e) {
         e.preventDefault();
         e.stopPropagation();
-        var $wrapper = $(this).closest('.wpcfe-bulkprint-wrapper');
+        var $wrapper = $(this).closest(wpcfeDropdownSelector);
         var $menu = $wrapper.find('.dropdown-menu');
         var isOpen = $wrapper.hasClass('show');
 
         // Close all other wpcfe dropdowns first
-        $('.wpcfe-bulkprint-wrapper').not($wrapper).removeClass('show dropdown-animating');
-        $('.wpcfe-bulkprint-wrapper').not($wrapper).find('.dropdown-menu').removeClass('show fadeIn fadeOut animated');
+        $(wpcfeDropdownSelector).not($wrapper).removeClass('show dropdown-animating');
+        $(wpcfeDropdownSelector).not($wrapper).find('.dropdown-menu').removeClass('show fadeIn fadeOut animated');
+        $(wpcfeDropdownSelector).not($wrapper).find('.dropdown-toggle').attr('aria-expanded', 'false');
 
         if (isOpen) {
             $wrapper.removeClass('show dropdown-animating');
