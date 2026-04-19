@@ -337,25 +337,88 @@ jQuery(document).ready(function($){
     // Fix MDB animation conflict: close dropdown when clicking outside or toggling
     var wpcfeDropdownSelector = '.wpcfe-bulkprint-wrapper, .wpcfe-print-dropdown';
 
+    // Portal-based dropdown for .wpcfe-print-dropdown (inside table rows)
+    // Moves the menu to <body> to avoid table layout stretching
+    function wpcfeOpenPortalMenu($btn) {
+        var $wrapper = $btn.closest('.wpcfe-print-dropdown');
+        var $menu    = $wrapper.find('.dropdown-menu').first();
+
+        // Clone menu to body if not already there
+        if (!$menu.data('wpcfe-portal')) {
+            $menu.data('wpcfe-portal', true);
+            $menu.detach().appendTo('body').css({
+                position: 'fixed',
+                zIndex:   99999,
+                display:  'none'
+            });
+            $menu.data('wpcfe-owner', $wrapper);
+        }
+
+        var rect    = $btn[0].getBoundingClientRect();
+        var menuH   = $menu.outerHeight(true) || 120;
+        var spaceB  = window.innerHeight - rect.bottom;
+        var top     = spaceB >= menuH ? rect.bottom : rect.top - menuH;
+
+        $menu.css({ top: top, left: rect.left, display: 'block' })
+             .addClass('show');
+        $wrapper.addClass('show');
+        $btn.attr('aria-expanded', 'true');
+    }
+
+    function wpcfeClosePortalMenu($btn) {
+        var $wrapper = $btn.closest('.wpcfe-print-dropdown');
+        var $menu    = $wrapper.find('.dropdown-menu').first();
+
+        // If menu was portalled to body, find it there
+        if (!$menu.length || !$wrapper.is($menu.data('wpcfe-owner'))) {
+            $menu = $('body > .dropdown-menu').filter(function() {
+                return $(this).data('wpcfe-owner') && $(this).data('wpcfe-owner').is($wrapper);
+            });
+        }
+        $menu.css('display', 'none').removeClass('show fadeIn animated');
+        $wrapper.removeClass('show dropdown-animating');
+        $btn.attr('aria-expanded', 'false');
+    }
+
+    function wpcfeCloseAllPortalMenus() {
+        $('body > .dropdown-menu[data-wpcfe-portal]').css('display', 'none').removeClass('show fadeIn animated');
+        $('body > .dropdown-menu').filter(function(){ return $(this).data('wpcfe-portal'); })
+            .css('display','none').removeClass('show');
+        $('.wpcfe-print-dropdown').removeClass('show dropdown-animating');
+        $('.wpcfe-print-dropdown .dropdown-toggle').attr('aria-expanded','false');
+    }
+
+    // Close portal menus on outside click or scroll
     $(document).on('click.wpcfeDropdown', function(e) {
-        if (!$(e.target).closest(wpcfeDropdownSelector).length) {
-            $(wpcfeDropdownSelector).removeClass('show dropdown-animating');
-            $(wpcfeDropdownSelector + ' .dropdown-menu').removeClass('show fadeIn fadeOut animated');
-            $(wpcfeDropdownSelector + ' .dropdown-toggle').attr('aria-expanded', 'false');
+        // Close bulkprint-wrapper dropdowns
+        if (!$(e.target).closest('.wpcfe-bulkprint-wrapper').length) {
+            $('.wpcfe-bulkprint-wrapper').removeClass('show dropdown-animating');
+            $('.wpcfe-bulkprint-wrapper .dropdown-menu').removeClass('show fadeIn fadeOut animated');
+            $('.wpcfe-bulkprint-wrapper .dropdown-toggle').attr('aria-expanded', 'false');
+        }
+        // Close portal menus
+        if (!$(e.target).closest('.wpcfe-print-dropdown').length &&
+            !$(e.target).closest('body > .dropdown-menu').length) {
+            wpcfeCloseAllPortalMenus();
         }
     });
 
-    $(document).on('click', wpcfeDropdownSelector + ' .dropdown-toggle', function(e) {
+    $(window).on('scroll.wpcfeDropdown resize.wpcfeDropdown', function() {
+        wpcfeCloseAllPortalMenus();
+    });
+
+    // Toggle for .wpcfe-bulkprint-wrapper (normal, outside table)
+    $(document).on('click', '.wpcfe-bulkprint-wrapper .dropdown-toggle', function(e) {
         e.preventDefault();
         e.stopPropagation();
-        var $wrapper = $(this).closest(wpcfeDropdownSelector);
-        var $menu = $wrapper.find('.dropdown-menu');
-        var isOpen = $wrapper.hasClass('show');
+        var $wrapper = $(this).closest('.wpcfe-bulkprint-wrapper');
+        var $menu    = $wrapper.find('.dropdown-menu');
+        var isOpen   = $wrapper.hasClass('show');
 
-        // Close all other wpcfe dropdowns first
-        $(wpcfeDropdownSelector).not($wrapper).removeClass('show dropdown-animating');
-        $(wpcfeDropdownSelector).not($wrapper).find('.dropdown-menu').removeClass('show fadeIn fadeOut animated');
-        $(wpcfeDropdownSelector).not($wrapper).find('.dropdown-toggle').attr('aria-expanded', 'false');
+        $('.wpcfe-bulkprint-wrapper').not($wrapper).removeClass('show dropdown-animating');
+        $('.wpcfe-bulkprint-wrapper').not($wrapper).find('.dropdown-menu').removeClass('show fadeIn fadeOut animated');
+        $('.wpcfe-bulkprint-wrapper').not($wrapper).find('.dropdown-toggle').attr('aria-expanded', 'false');
+        wpcfeCloseAllPortalMenus();
 
         if (isOpen) {
             $wrapper.removeClass('show dropdown-animating');
@@ -366,6 +429,52 @@ jQuery(document).ready(function($){
             $menu.addClass('show');
             $(this).attr('aria-expanded', 'true');
         }
+    });
+
+    // Toggle for .wpcfe-print-dropdown (inside table - uses portal)
+    $(document).on('click', '.wpcfe-print-dropdown .dropdown-toggle', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var $btn     = $(this);
+        var $wrapper = $btn.closest('.wpcfe-print-dropdown');
+        var isOpen   = $wrapper.hasClass('show');
+
+        // Close all other dropdowns first
+        $('.wpcfe-bulkprint-wrapper').removeClass('show dropdown-animating');
+        $('.wpcfe-bulkprint-wrapper .dropdown-menu').removeClass('show fadeIn fadeOut animated');
+        wpcfeCloseAllPortalMenus();
+
+        if (!isOpen) {
+            wpcfeOpenPortalMenu($btn);
+        }
+    });
+
+    // Delegate clicks inside portal menus to the original .print-shipment handler
+    $(document).on('click', 'body > .dropdown-menu .dropdown-item', function(e) {
+        e.preventDefault();
+        wpcfeCloseAllPortalMenus();
+        var shipmentID = $(this).data('id');
+        var printType  = $(this).data('type');
+        if (!shipmentID || !printType) return;
+        $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            data: { action: 'wpcfe_print_shipment', shipmentID: shipmentID, printType: printType },
+            url: wpcfeAjaxhandler.ajaxurl,
+            beforeSend: function() { $('body').append('<div class="wpcfe-spinner">Loading...</div>'); },
+            success: function(response) {
+                $('body .wpcfe-spinner').remove();
+                if (!response || response.success === false || !response.data || $.isEmptyObject(response.data)) {
+                    alert(downloadFileErrorMessage); return;
+                }
+                if (!response.data.file_url) { alert(downloadFileErrorMessage); return; }
+                download_file(response.data.file_url, response.data.file_name);
+            },
+            error: function(jqXHR) {
+                $('body .wpcfe-spinner').remove();
+                alert(downloadFileErrorMessage + ' (' + jqXHR.status + ')');
+            }
+        });
     });
 
     // Bulk Print Script
