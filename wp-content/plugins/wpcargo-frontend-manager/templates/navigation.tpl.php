@@ -53,6 +53,73 @@ if ( ! function_exists( 'wpcfe_is_active_menu_link' ) ) {
 }
 
 if ( ! function_exists( 'wpcfe_prepare_sidebar_menu_tree' ) ) {
+	function wpcfe_get_explicit_parent_key( $item ) {
+		$parent_aliases = array( 'parent', 'parent_key', 'parent-key', 'parent_slug', 'parent-slug', 'child_of', 'child-of' );
+		foreach ( $parent_aliases as $alias ) {
+			if ( ! empty( $item[ $alias ] ) ) {
+				return sanitize_key( (string) $item[ $alias ] );
+			}
+		}
+		return '';
+	}
+
+	function wpcfe_get_url_parts( $url ) {
+		$path = wpcfe_normalize_menu_url( $url );
+		$query = wp_parse_url( (string) $url, PHP_URL_QUERY );
+		$args = array();
+		parse_str( (string) $query, $args );
+		return array( $path, (array) $args );
+	}
+
+	function wpcfe_find_inferred_parent_key( $node_key, $node, $all_nodes ) {
+		$child_url = isset( $node['permalink'] ) ? $node['permalink'] : '';
+		list( $child_path, $child_args ) = wpcfe_get_url_parts( $child_url );
+
+		if ( empty( $child_path ) || empty( $child_args ) ) {
+			return '';
+		}
+
+		$candidate_key = '';
+		$candidate_arg_count = -1;
+
+		foreach ( $all_nodes as $parent_key => $parent_node ) {
+			if ( $parent_key === $node_key ) {
+				continue;
+			}
+
+			$parent_url = isset( $parent_node['permalink'] ) ? $parent_node['permalink'] : '';
+			list( $parent_path, $parent_args ) = wpcfe_get_url_parts( $parent_url );
+
+			if ( $parent_path !== $child_path ) {
+				continue;
+			}
+
+			if ( count( $parent_args ) >= count( $child_args ) ) {
+				continue;
+			}
+
+			$is_subset = true;
+			foreach ( $parent_args as $arg_key => $arg_value ) {
+				if ( ! array_key_exists( $arg_key, $child_args ) || (string) $child_args[ $arg_key ] !== (string) $arg_value ) {
+					$is_subset = false;
+					break;
+				}
+			}
+
+			if ( ! $is_subset ) {
+				continue;
+			}
+
+			$parent_arg_count = count( $parent_args );
+			if ( $parent_arg_count > $candidate_arg_count ) {
+				$candidate_arg_count = $parent_arg_count;
+				$candidate_key = (string) $parent_key;
+			}
+		}
+
+		return $candidate_key;
+	}
+
 	function wpcfe_prepare_sidebar_menu_tree( $menu_items ) {
 		$nodes = array();
 		foreach ( (array) $menu_items as $key => $item ) {
@@ -61,8 +128,19 @@ if ( ! function_exists( 'wpcfe_prepare_sidebar_menu_tree' ) ) {
 			}
 			$item['_key'] = (string) $key;
 			$item['_children'] = array();
-			$item['_parent'] = isset( $item['parent'] ) ? sanitize_key( (string) $item['parent'] ) : '';
+			$item['_parent'] = wpcfe_get_explicit_parent_key( $item );
 			$nodes[ (string) $key ] = $item;
+		}
+
+		// Inferencia: si no hay parent explícito, intenta asociar por misma URL base con query más específica.
+		foreach ( array_keys( $nodes ) as $node_key ) {
+			if ( ! empty( $nodes[ $node_key ]['_parent'] ) ) {
+				continue;
+			}
+			$inferred_parent = wpcfe_find_inferred_parent_key( $node_key, $nodes[ $node_key ], $nodes );
+			if ( ! empty( $inferred_parent ) ) {
+				$nodes[ $node_key ]['_parent'] = $inferred_parent;
+			}
 		}
 
 		$roots = array();
