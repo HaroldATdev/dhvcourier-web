@@ -259,6 +259,10 @@ function wpcfe_status_transition_update_ajax(){
         wp_send_json_error( array( 'message' => __( 'Transition is not allowed for this shipment.', 'wpcargo-frontend-manager' ) ) );
     }
 
+    if ( wpcfe_status_transition_normalize( $new_status ) === 'entregado' ) {
+        wp_send_json_error( array( 'message' => __( 'Delivered status must be completed through POD signature.', 'wpcargo-frontend-manager' ) ) );
+    }
+
     $new_status = trim( $new_status );
 
     update_post_meta( $shipment_id, 'wpcargo_status', $new_status );

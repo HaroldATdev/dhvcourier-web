@@ -46,13 +46,24 @@ function wpcargo_pod_dashboard_table_table_action($shipment_id)
 {
 	if ( ! wpcargo_pod_can_sign_shipment() ) return;
 	$signature = get_post_meta($shipment_id, 'wpcargo-pod-signature', true);
+	$current_status = get_post_meta($shipment_id, 'wpcargo_status', true);
+	$normalized_status = strtolower( remove_accents( trim( (string) $current_status ) ) );
+	$is_en_ruta = ( $normalized_status === 'en ruta' );
 	$btn_label = apply_filters('pod_table_header_sign_label', __('Sign', 'wpcargo-pod'));
 	$btn_color = 'btn-outline-info';
+	$btn_disabled = '';
+	$btn_disabled_class = '';
+	$btn_title = '';
 	if ($signature) {
 		$btn_label = apply_filters('pod_table_header_signed_label', __('Signed', 'wpcargo-pod'));
 		$btn_color = 'btn-outline-blue-grey';
 	}
-	echo '<td class="text-center"><button type="button" class="wpcpod-sign_data show-signaturepad btn ' . $btn_color . ' btn-rounded btn-small py-1 px-4 hide-me" data-toggle="modal" data-target="#wpc_pod_signature-modal" data-id="' . $shipment_id . '">' . $btn_label . '</button></td>';
+	if ( ! $is_en_ruta ) {
+		$btn_disabled = ' disabled="disabled"';
+		$btn_disabled_class = ' disabled';
+		$btn_title = ' title="' . esc_attr__( 'Disponible solo cuando el envío está En ruta', 'wpcargo-pod' ) . '"';
+	}
+	echo '<td class="text-center"><button type="button" class="wpcpod-sign_data show-signaturepad btn ' . $btn_color . ' btn-rounded btn-small py-1 px-4 hide-me' . $btn_disabled_class . '" data-toggle="modal" data-target="#wpc_pod_signature-modal" data-id="' . $shipment_id . '"' . $btn_disabled . $btn_title . '>' . $btn_label . '</button></td>';
 }
 // Registrar hooks para inyectar cabecera y acción en la tabla de envíos
 add_action('wpcfe_shipment_table_header_action', 'wpcargo_pod_dashboard_table_header_action', 25);

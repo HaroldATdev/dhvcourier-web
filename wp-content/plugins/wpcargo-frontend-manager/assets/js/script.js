@@ -437,6 +437,37 @@ jQuery(document).ready(function($){
             return;
         }
 
+        var normalizedNewStatus = (newStatus || '').toString().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+        if( normalizedNewStatus === 'entregado' ){
+            var $row = $('#shipment-' + shipmentId);
+            var $signBtn = $row.find('.show-signaturepad').first();
+            if( !$signBtn.length ){
+                if( typeof Swal !== 'undefined' ){
+                    Swal.fire({ icon: 'error', title: 'Error', text: 'No se encontró el botón Firmar para este envío.' });
+                }else{
+                    alert('No se encontró el botón Firmar para este envío.');
+                }
+                $select.val('');
+                return;
+            }
+            if( $signBtn.is(':disabled') || $signBtn.hasClass('disabled') ){
+                if( typeof Swal !== 'undefined' ){
+                    Swal.fire({ icon: 'warning', title: 'Acción no disponible', text: 'Solo puede firmar cuando el envío está En ruta.' });
+                }else{
+                    alert('Solo puede firmar cuando el envío está En ruta.');
+                }
+                $select.val('');
+                return;
+            }
+
+            $('#wpc_pod_signature-modal')
+                .data('force-delivered', 1)
+                .data('shipment-id', shipmentId);
+            $signBtn.trigger('click');
+            $select.val('');
+            return;
+        }
+
         if( typeof Swal === 'undefined' ){
             var fallbackRemarks = window.prompt('Observaciones (opcional):', '') || '';
             $('body').append('<div class="wpcfe-spinner">Loading...</div>');
