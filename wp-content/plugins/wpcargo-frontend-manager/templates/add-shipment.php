@@ -9,23 +9,21 @@
 				endif;
 				$counter = 1;
 				$row_class = '';
-				foreach ( wpcfe_get_shipment_sections() as $section => $section_header ) {		
+				foreach ( wpcfe_get_shipment_sections() as $section => $section_header ) {
 					if( empty( $section ) ){
 						continue;
 					}
 					$column = 12;
-					// if( ( $section == 'shipper_info' || $section == 'receiver_info' ) && $counter <= 2 && count(wpcfe_get_shipment_sections() ) > 1 ){
 					if( ( $section == 'shipper_info' || $section == 'receiver_info' ) && $counter <= 2 ){
 						$column = 6;
 					}
-					$column = apply_filters( 'wpcfe_shipment_form_column', $column, $section ); 
-
+					$column = apply_filters( 'wpcfe_shipment_form_column', $column, $section );
 					?>
 					<div id="<?php echo $section; ?>" class="col-md-<?php echo $column; ?> mb-4">
 						<div class="card">
 							<section class="card-header">
 								<?php echo $section_header; ?>
-							</section>				
+							</section>
 							<section class="card-body">
 								<div class="row">
 									<?php if( has_action( 'before_wpcfe_'.$section.'_form_fields' ) ): ?>
@@ -40,6 +38,30 @@
 							</section>
 						</div>
 					</div>
+					<?php if( $section === 'shipment_info' ): ?>
+						<div id="wpcte-cost-breakdown-card" class="col-md-12 mb-4" style="display:none;">
+							<div class="card">
+								<section class="card-header">
+									Desglose de costo
+								</section>
+								<section class="card-body">
+									<div class="d-flex justify-content-between mb-2">
+										<span>Costo de servicio:</span>
+										<strong id="wpcte-costo-servicio">S/ 0.00</strong>
+									</div>
+									<div class="d-flex justify-content-between mb-2">
+										<span>Costo del producto:</span>
+										<strong id="wpcte-costo-producto">S/ 0.00</strong>
+									</div>
+									<hr class="my-2" />
+									<div class="d-flex justify-content-between">
+										<span>Monto total:</span>
+										<strong id="wpcte-monto-total">S/ 0.00</strong>
+									</div>
+								</section>
+							</div>
+						</div>
+					<?php endif; ?>
 					<?php
 					$counter++;
 				}
@@ -50,28 +72,6 @@
 		</div>
 		<div class="col-md-3 mb-3">
 			<section class="row"> 
-				<div id="wpcte-cost-breakdown-card" class="col-md-12 mb-4" style="display:none;">
-					<div class="card">
-						<section class="card-header">
-							Desglose de costo
-						</section>
-						<section class="card-body">
-							<div class="d-flex justify-content-between mb-2">
-								<span>Costo de servicio:</span>
-								<strong id="wpcte-costo-servicio">S/ 0.00</strong>
-							</div>
-							<div class="d-flex justify-content-between mb-2">
-								<span>Costo del producto:</span>
-								<strong id="wpcte-costo-producto">S/ 0.00</strong>
-							</div>
-							<hr class="my-2" />
-							<div class="d-flex justify-content-between">
-								<span>Monto total:</span>
-								<strong id="wpcte-monto-total">S/ 0.00</strong>
-							</div>
-						</section>
-					</div>
-				</div>
 				<?php if( has_action( 'before_wpcfe_shipment_form_submit' ) ): ?>
 					<div class="after-shipments-info col-md-12 mb-4">
 						<?php do_action( 'before_wpcfe_shipment_form_submit' ); ?>
