@@ -4,6 +4,53 @@ $create_active_class = ( get_the_ID() == wpcfe_admin_page() && isset( $_GET['wpc
 $unseen_shipments  = wpcfe_disable_unseen() ? 0 : wpcfe_get_user_unseen_shipments();
 $unseen  = $unseen_shipments > 9 ? '9&#43;' : $unseen_shipments ;
 
+if ( ! function_exists( 'wpcfe_normalize_menu_url' ) ) {
+	function wpcfe_normalize_menu_url( $url ) {
+		$path = wp_parse_url( (string) $url, PHP_URL_PATH );
+		$path = is_string( $path ) ? untrailingslashit( $path ) : '';
+		return $path !== '' ? $path : '/';
+	}
+}
+
+if ( ! function_exists( 'wpcfe_is_active_menu_link' ) ) {
+	function wpcfe_is_active_menu_link( $permalink, $page_id = 0 ) {
+		$page_id = (int) $page_id;
+		if ( $page_id > 0 && (int) get_queried_object_id() === $page_id ) {
+			return true;
+		}
+
+		$current_uri = isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '';
+		$current_url = home_url( $current_uri );
+
+		$current_path = wpcfe_normalize_menu_url( $current_url );
+		$target_path  = wpcfe_normalize_menu_url( $permalink );
+
+		if ( $current_path !== $target_path ) {
+			return false;
+		}
+
+		$target_query = wp_parse_url( (string) $permalink, PHP_URL_QUERY );
+		if ( empty( $target_query ) ) {
+			return true;
+		}
+
+		$current_query = wp_parse_url( $current_url, PHP_URL_QUERY );
+		parse_str( (string) $target_query, $target_args );
+		parse_str( (string) $current_query, $current_args );
+
+		foreach ( $target_args as $key => $value ) {
+			if ( ! array_key_exists( $key, $current_args ) ) {
+				return false;
+			}
+			if ( (string) $current_args[ $key ] !== (string) $value ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+}
+
 ?>
 <header>
     <!-- Navbar -->
@@ -65,8 +112,10 @@ $unseen  = $unseen_shipments > 9 ? '9&#43;' : $unseen_shipments ;
 
 						if( !empty( wpcfe_after_sidebar_menu_items() ) ){
 							foreach( wpcfe_after_sidebar_menu_items() as $item => $additional_items ){
+								$page_id = array_key_exists( 'page-id', $additional_items ) ? (int) $additional_items['page-id'] : 0;
+								$is_active = wpcfe_is_active_menu_link( $additional_items['permalink'], $page_id ) ? 'active' : '';
 								?>
-								<a href="<?php echo $additional_items['permalink']; ?>" class="dashboard-page-menu list-group-item list-group-item-action waves-effect menu-item <?php echo $item; ?>"> 
+								<a href="<?php echo $additional_items['permalink']; ?>" class="dashboard-page-menu list-group-item list-group-item-action waves-effect menu-item <?php echo $item.' '.$is_active; ?>"> 
 									<?php if( !empty( $additional_items['icon'] ) ): ?>
 										<i class="fa <?php echo $additional_items['icon']; ?> mr-3"></i>
 									<?php endif; ?>
@@ -79,8 +128,10 @@ $unseen  = $unseen_shipments > 9 ? '9&#43;' : $unseen_shipments ;
 					<?php
 						if( !empty( wpcfe_after_sidebar_menus() ) ){
 							foreach( wpcfe_after_sidebar_menus() as $item => $additional_items ){
+								$page_id = array_key_exists( 'page-id', $additional_items ) ? (int) $additional_items['page-id'] : 0;
+								$is_active = wpcfe_is_active_menu_link( $additional_items['permalink'], $page_id ) ? 'active' : '';
 								?>
-								<a href="<?php echo $additional_items['permalink']; ?>" class="list-group-item waves-effect <?php echo $item; ?>"> 
+								<a href="<?php echo $additional_items['permalink']; ?>" class="list-group-item waves-effect <?php echo $item.' '.$is_active; ?>"> 
 									<?php if( !empty( $additional_items['icon'] ) ): ?>
 										<i class="fa <?php echo $additional_items['icon']; ?> mr-3"></i>
 									<?php endif; ?>
@@ -173,10 +224,7 @@ $unseen  = $unseen_shipments > 9 ? '9&#43;' : $unseen_shipments ;
 					if( !empty( wpcfe_after_sidebar_menu_items() ) ){
 						foreach( wpcfe_after_sidebar_menu_items() as $item => $additional_items ){
 							$page_id = array_key_exists( 'page-id', $additional_items ) ? $additional_items['page-id'] : 0;
-							$active_class = '';
-							if( !isset($_GET['wpcfe']) && get_the_ID() == $page_id ){
-								$active_class = 'active';
-							}
+							$active_class = wpcfe_is_active_menu_link( $additional_items['permalink'], (int) $page_id ) ? 'active' : '';
 							?>
 							<a href="<?php echo $additional_items['permalink']; ?>" class="list-group-item waves-effect <?php echo $item.' '.$active_class; ?>"> 
 								<?php if( !empty( $additional_items['icon'] ) ): ?>
@@ -193,8 +241,10 @@ $unseen  = $unseen_shipments > 9 ? '9&#43;' : $unseen_shipments ;
 			<?php
 				if( !empty( wpcfe_after_sidebar_menus() ) ){
 					foreach( wpcfe_after_sidebar_menus() as $item => $additional_items ){
+						$page_id = array_key_exists( 'page-id', $additional_items ) ? (int) $additional_items['page-id'] : 0;
+						$active_class = wpcfe_is_active_menu_link( $additional_items['permalink'], $page_id ) ? 'active' : '';
 						?>
-						<a href="<?php echo $additional_items['permalink']; ?>" class="list-group-item waves-effect <?php echo $item; ?>"> 
+						<a href="<?php echo $additional_items['permalink']; ?>" class="list-group-item waves-effect <?php echo $item.' '.$active_class; ?>"> 
 							<?php if( !empty( $additional_items['icon'] ) ): ?>
 								<i class="fa <?php echo $additional_items['icon']; ?> mr-3"></i>
 							<?php endif; ?>
