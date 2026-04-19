@@ -242,6 +242,231 @@ function wpcpod_validate_and_normalize_payment_rows( $shipment_id, $rows ) {
 	return $normalized;
 }
 
+function wpcpod_get_finanzas_default_condicion_id() {
+	global $wpdb;
+	$table = $wpdb->prefix . 'wcfin_condiciones';
+	$table_exists = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) );
+	if ( $table_exists !== $table ) {
+		return 0;
+	}
+
+	$condicion_id = (int) $wpdb->get_var(
+		$wpdb->prepare(
+			"SELECT id FROM {$table} WHERE slug=%s AND activo=1 ORDER BY id ASC LIMIT 1",
+			'contraentrega'
+		)
+	);
+	if ( $condicion_id > 0 ) {
+		return $condicion_id;
+	}
+
+	return (int) $wpdb->get_var( "SELECT id FROM {$table} WHERE activo=1 ORDER BY orden ASC, id ASC LIMIT 1" );
+}
+
+function wpcpod_sync_payments_to_finanzas( $shipment_id, $payment_rows ) {
+	global $wpdb;
+
+	$shipment_id = (int) $shipment_id;
+	if ( ! $shipment_id || ! is_array( $payment_rows ) || empty( $payment_rows ) ) {
+		return true;
+	}
+
+	$table_trans = $wpdb->prefix . 'wcfin_transacciones';
+	$table_mov   = $wpdb->prefix . 'wcfin_movimientos';
+	$table_regla = $wpdb->prefix . 'wcfin_reglas';
+
+	$required_tables = array( $table_trans, $table_mov, $table_regla );
+	foreach ( $required_tables as $table_name ) {
+		$table_exists = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table_name ) );
+		if ( $table_exists !== $table_name ) {
+			return true;
+		}
+	}
+
+	$condicion_id = wpcpod_get_finanzas_default_condicion_id();
+	if ( $condicion_id <= 0 ) {
+		return new WP_Error( 'wpcpod_finanzas_condicion_missing', __( 'No se pudo determinar la condicion de pago en Finanzas.', 'wpcargo-pod' ) );
+	}
+
+	$pod_trans_ids = $wpdb->get_col(
+		$wpdb->prepare(
+			"SELECT id FROM {$table_trans} WHERE shipment_id=%d AND notas LIKE %s",
+			$shipment_id,
+			'[POD]%'
+		)
+	);
+	if ( ! empty( $pod_trans_ids ) ) {
+		$pod_trans_ids = array_map( 'intval', $pod_trans_ids );
+		$id_list = implode( ',', $pod_trans_ids );
+		$wpdb->query( "DELETE FROM {$table_mov} WHERE transaccion_id IN ({$id_list})" );
+		$wpdb->query( "DELETE FROM {$table_trans} WHERE id IN ({$id_list})" );
+	}
+
+	foreach ( $payment_rows as $row ) {
+		$method_id = isset( $row['method_id'] ) ? (int) $row['method_id'] : 0;
+		$amount = isset( $row['amount'] ) ? (float) $row['amount'] : 0.0;
+		if ( $method_id <= 0 || $amount <= 0 ) {
+			continue;
+		}
+
+		$amount = (float) number_format( $amount, 2, '.', '' );
+		$variables = array(
+			'monto_total'         => $amount,
+			'monto_servicio'      => 0.0,
+			'monto_producto'      => $amount,
+			'monto_contraentrega' => $amount,
+			'origen'              => 'pod',
+		);
+
+		$method_name = isset( $row['method_name'] ) ? sanitize_text_field( (string) $row['method_name'] ) : '';
+		$image_url = isset( $row['image_url'] ) ? esc_url_raw( (string) $row['image_url'] ) : '';
+		$notas = '[POD] ' . ( $method_name ? $method_name : __( 'Metodo', 'wpcargo-pod' ) );
+		if ( ! empty( $image_url ) ) {
+			$notas .= ' | ' . $image_url;
+		}
+
+		$inserted = $wpdb->insert(
+			$table_trans,
+			array(
+				'shipment_id'    => $shipment_id,
+				'metodo_id'      => $method_id,
+				'condicion_id'   => $condicion_id,
+				'monto_servicio' => 0,
+				'monto_total'    => $amount,
+				'variables_json' => wp_json_encode( $variables ),
+				'estado'         => 'confirmado',
+				'notas'          => $notas,
+				'creado_por'     => get_current_user_id(),
+				'fecha_creacion' => current_time( 'mysql' ),
+				'fecha_confirm'  => current_time( 'mysql' ),
+			),
+			array( '%d', '%d', '%d', '%f', '%f', '%s', '%s', '%s', '%d', '%s', '%s' )
+		);
+
+		if ( false === $inserted ) {
+			return new WP_Error( 'wpcpod_finanzas_insert_trans_failed', __( 'No se pudo guardar la transaccion POD en Finanzas.', 'wpcargo-pod' ) . ' ' . $wpdb->last_error );
+		}
+
+		$trans_id = (int) $wpdb->insert_id;
+		$reglas = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT * FROM {$table_regla}
+				 WHERE metodo_id=%d AND (condicion_id=%d OR condicion_id IS NULL)
+				 ORDER BY condicion_id DESC",
+				$method_id,
+				$condicion_id
+			)
+		);
+
+		$used_accounts = array();
+		$movement_count = 0;
+		foreach ( (array) $reglas as $regla ) {
+			$cuenta = isset( $regla->cuenta_afectada ) ? (string) $regla->cuenta_afectada : '';
+			if ( empty( $cuenta ) || in_array( $cuenta, $used_accounts, true ) ) {
+				continue;
+			}
+			$used_accounts[] = $cuenta;
+
+			$base = isset( $regla->base_calculo ) ? (string) $regla->base_calculo : 'monto_total';
+			$mov_amount = isset( $variables[ $base ] ) ? (float) $variables[ $base ] : 0.0;
+			if ( $mov_amount <= 0 ) {
+				continue;
+			}
+
+			$description_tpl = isset( $regla->descripcion_tpl ) ? (string) $regla->descripcion_tpl : '';
+			$description = $description_tpl ? sprintf( $description_tpl, number_format( $mov_amount, 2 ) ) : '[POD] Movimiento automático';
+			$mov_inserted = $wpdb->insert(
+				$table_mov,
+				array(
+					'transaccion_id' => $trans_id,
+					'shipment_id'    => $shipment_id,
+					'cuenta'         => $cuenta,
+					'monto'          => $mov_amount,
+					'signo'          => isset( $regla->signo ) ? (int) $regla->signo : 1,
+					'descripcion'    => $description,
+					'tipo'           => 'transaccion',
+					'fecha'          => current_time( 'mysql' ),
+				),
+				array( '%d', '%d', '%s', '%f', '%d', '%s', '%s', '%s' )
+			);
+
+			if ( false === $mov_inserted ) {
+				return new WP_Error( 'wpcpod_finanzas_insert_mov_failed', __( 'No se pudo guardar movimientos POD en Finanzas.', 'wpcargo-pod' ) . ' ' . $wpdb->last_error );
+			}
+			$movement_count++;
+		}
+
+		if ( $movement_count === 0 ) {
+			$wpdb->insert(
+				$table_mov,
+				array(
+					'transaccion_id' => $trans_id,
+					'shipment_id'    => $shipment_id,
+					'cuenta'         => 'balance_motorizado',
+					'monto'          => $amount,
+					'signo'          => 1,
+					'descripcion'    => '[POD] Movimiento automático por ausencia de reglas',
+					'tipo'           => 'transaccion',
+					'fecha'          => current_time( 'mysql' ),
+				),
+				array( '%d', '%d', '%s', '%f', '%d', '%s', '%s', '%s' )
+			);
+		}
+	}
+
+	return true;
+}
+
+function wpcpod_backfill_existing_pod_payments_to_finanzas() {
+	$backfill_flag = get_option( 'wpcpod_finanzas_backfill_done_v1', '' );
+	if ( ! empty( $backfill_flag ) ) {
+		return;
+	}
+
+	global $wpdb;
+	$table_trans = $wpdb->prefix . 'wcfin_transacciones';
+	$table_exists = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table_trans ) );
+	if ( $table_exists !== $table_trans ) {
+		return;
+	}
+
+	$rows = $wpdb->get_results(
+		$wpdb->prepare(
+			"SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key=%s",
+			'wpcargo-pod-payments'
+		)
+	);
+
+	if ( empty( $rows ) ) {
+		update_option( 'wpcpod_finanzas_backfill_done_v1', current_time( 'mysql' ), false );
+		return;
+	}
+
+	$ok = 0;
+	$failed = 0;
+	foreach ( $rows as $row ) {
+		$shipment_id = isset( $row->post_id ) ? (int) $row->post_id : 0;
+		if ( $shipment_id <= 0 ) {
+			continue;
+		}
+
+		$payment_rows = maybe_unserialize( $row->meta_value );
+		if ( ! is_array( $payment_rows ) || empty( $payment_rows ) ) {
+			continue;
+		}
+
+		$sync = wpcpod_sync_payments_to_finanzas( $shipment_id, $payment_rows );
+		if ( is_wp_error( $sync ) ) {
+			$failed++;
+			continue;
+		}
+		$ok++;
+	}
+
+	update_option( 'wpcpod_finanzas_backfill_done_v1', current_time( 'mysql' ) . '|ok:' . $ok . '|failed:' . $failed, false );
+}
+add_action( 'init', 'wpcpod_backfill_existing_pod_payments_to_finanzas', 25 );
+
 function wpcargo_pod_signed_load_action()
 {
 	global $wpcargo;
@@ -315,6 +540,14 @@ function wpcargo_pod_signed_load_action()
 		update_post_meta($shipment_id,	'wpcargo-pod-signature', $signature_id);
 	}
 	update_post_meta( $shipment_id, 'wpcargo-pod-payments', $payment_rows );
+	$finanzas_sync = wpcpod_sync_payments_to_finanzas( $shipment_id, $payment_rows );
+	if ( is_wp_error( $finanzas_sync ) ) {
+		wp_send_json(array(
+			'status' => 'error',
+			'message' => $finanzas_sync->get_error_message()
+		));
+		wp_die();
+	}
 	// Save Shipment Status
 	update_post_meta($shipment_id,	'wpcargo_status', $shipment_status);
 
