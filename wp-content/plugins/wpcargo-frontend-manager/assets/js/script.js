@@ -339,53 +339,48 @@ jQuery(document).ready(function($){
 
     // Portal-based dropdown for .wpcfe-print-dropdown (inside table rows)
     // Moves the menu to <body> to avoid table layout stretching
+
+    // Get the portal menu for a wrapper, searching body if already moved
+    function wpcfeGetPortalMenu($wrapper) {
+        // First try finding it already in body
+        var $found = $('body').children('.wpcfe-portal-menu').filter(function() {
+            return $(this).data('wpcfe-owner-id') === $wrapper.data('wpcfe-id');
+        });
+        if ($found.length) return $found;
+        // Otherwise grab it from the wrapper and move it
+        var $menu = $wrapper.find('.dropdown-menu').first();
+        if (!$menu.length) return $();
+        // Assign a stable ID to this wrapper for lookup
+        if (!$wrapper.data('wpcfe-id')) {
+            $wrapper.data('wpcfe-id', 'wpcfe-' + Date.now() + Math.random());
+        }
+        $menu.addClass('wpcfe-portal-menu')
+             .data('wpcfe-owner-id', $wrapper.data('wpcfe-id'))
+             .detach()
+             .appendTo('body')
+             .css({ position: 'fixed', zIndex: 99999, display: 'none' });
+        return $menu;
+    }
+
     function wpcfeOpenPortalMenu($btn) {
         var $wrapper = $btn.closest('.wpcfe-print-dropdown');
-        var $menu    = $wrapper.find('.dropdown-menu').first();
+        var $menu    = wpcfeGetPortalMenu($wrapper);
+        if (!$menu.length) return;
 
-        // Clone menu to body if not already there
-        if (!$menu.data('wpcfe-portal')) {
-            $menu.data('wpcfe-portal', true);
-            $menu.detach().appendTo('body').css({
-                position: 'fixed',
-                zIndex:   99999,
-                display:  'none'
-            });
-            $menu.data('wpcfe-owner', $wrapper);
-        }
+        var rect   = $btn[0].getBoundingClientRect();
+        var menuH  = $menu.outerHeight(true) || 120;
+        var spaceB = window.innerHeight - rect.bottom;
+        var top    = spaceB >= menuH ? rect.bottom : rect.top - menuH;
 
-        var rect    = $btn[0].getBoundingClientRect();
-        var menuH   = $menu.outerHeight(true) || 120;
-        var spaceB  = window.innerHeight - rect.bottom;
-        var top     = spaceB >= menuH ? rect.bottom : rect.top - menuH;
-
-        $menu.css({ top: top, left: rect.left, display: 'block' })
-             .addClass('show');
+        $menu.css({ top: top, left: rect.left, display: 'block' }).addClass('show');
         $wrapper.addClass('show');
         $btn.attr('aria-expanded', 'true');
     }
 
-    function wpcfeClosePortalMenu($btn) {
-        var $wrapper = $btn.closest('.wpcfe-print-dropdown');
-        var $menu    = $wrapper.find('.dropdown-menu').first();
-
-        // If menu was portalled to body, find it there
-        if (!$menu.length || !$wrapper.is($menu.data('wpcfe-owner'))) {
-            $menu = $('body > .dropdown-menu').filter(function() {
-                return $(this).data('wpcfe-owner') && $(this).data('wpcfe-owner').is($wrapper);
-            });
-        }
-        $menu.css('display', 'none').removeClass('show fadeIn animated');
-        $wrapper.removeClass('show dropdown-animating');
-        $btn.attr('aria-expanded', 'false');
-    }
-
     function wpcfeCloseAllPortalMenus() {
-        $('body > .dropdown-menu[data-wpcfe-portal]').css('display', 'none').removeClass('show fadeIn animated');
-        $('body > .dropdown-menu').filter(function(){ return $(this).data('wpcfe-portal'); })
-            .css('display','none').removeClass('show');
+        $('body').children('.wpcfe-portal-menu').css('display', 'none').removeClass('show fadeIn animated');
         $('.wpcfe-print-dropdown').removeClass('show dropdown-animating');
-        $('.wpcfe-print-dropdown .dropdown-toggle').attr('aria-expanded','false');
+        $('.wpcfe-print-dropdown .dropdown-toggle').attr('aria-expanded', 'false');
     }
 
     // Close portal menus on outside click or scroll
