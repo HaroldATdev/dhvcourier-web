@@ -92,9 +92,9 @@ function wpcfe_shipment_table_action_print( $shipment_id ){
     if( empty( $print_options ) ) return false;
     ?>
     <td class="text-center print-shipment">
-        <div class="dropdown" style="display:inline-block !important;">
+        <div class="wpcfe-bulkprint-wrapper dropdown" style="display:inline-block !important;">
             <!--Trigger-->
-            <button class="btn btn-default btn-sm dropdown-toggle m-0 py-1 px-2" type="button" data-toggle="dropdown"
+            <button class="btn btn-default btn-sm dropdown-toggle m-0 py-1 px-2" type="button"
                 aria-haspopup="true" aria-expanded="false"><i class="fa fa-print"></i></button>
             <!--Menu-->
             <div class="dropdown-menu dropdown-primary">
