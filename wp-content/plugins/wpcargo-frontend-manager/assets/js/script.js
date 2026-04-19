@@ -427,8 +427,12 @@ jQuery(document).ready(function($){
     function reset_shipment( id, number ){
         $('#shipmentBulkUpdateModal .shipment-list-wrapper .shipment-list li').remove();
         $('#shipmentBulkUpdateModal #registered_employee').val('');
-        $('#shipmentBulkUpdateModal #registered_client').val('');
-        $('#shipmentBulkUpdateModal #registered_agent').val('');
+        // Cliente y Agente removidos del modal
+        // $('#shipmentBulkUpdateModal #registered_client').val('');
+        // $('#shipmentBulkUpdateModal #registered_agent').val('');
+        // Drivers de recojo y entrega
+        $('#shipmentBulkUpdateModal #wpcargo_driver_recojo').val('');
+        $('#shipmentBulkUpdateModal #wpcargo_driver_entrega').val('');
     }
     function reset_selected_shipment( ){
         $("#wpcfe-select-all")[0].checked = false;

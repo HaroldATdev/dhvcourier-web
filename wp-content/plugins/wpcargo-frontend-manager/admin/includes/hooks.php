@@ -33,12 +33,12 @@ function wpcfe_initialize_hooks(){
     add_filter( 'wp_new_user_notification_email_admin', 'wpcfe_wp_new_user_notification_email_admin', 10, 3 );
     // Assign Shipment Hooks
    // if( ( isset( $_GET['wpcfe'] ) && $_GET['wpcfe'] == 'add') ||  ( isset( $_GET['wpcfe'] ) && $_GET['wpcfe'] == 'update') ){
-         // Assign Client
+         // Assign Client - DESHABILITADO EN BULK MODAL
         add_action( 'wpcfe_assign_form_content', 'wpcfe_assign_client_callback', 10, 1 );
-        add_action( 'wpcfe_bulk_assign_form_content', 'wpcfe_assign_client_callback', 10, 1 );
-        // Assign Agent
+        // add_action( 'wpcfe_bulk_assign_form_content', 'wpcfe_assign_client_callback', 10, 1 );
+        // Assign Agent - DESHABILITADO EN BULK MODAL
         add_action( 'wpcfe_assign_form_content', 'wpcfe_assign_agent_callback', 10, 1 );
-        add_action( 'wpcfe_bulk_assign_form_content', 'wpcfe_assign_agent_callback', 10, 1 );
+        // add_action( 'wpcfe_bulk_assign_form_content', 'wpcfe_assign_agent_callback', 10, 1 );
         // Employee Agent
         add_action( 'wpcfe_assign_form_content', 'wpcfe_assign_employee_callback', 10, 1 );
         add_action( 'wpcfe_bulk_assign_form_content', 'wpcfe_assign_employee_callback', 10, 1 );
@@ -220,13 +220,26 @@ function wpcfe_assign_employee_callback( $shipment_id ){
 function wpcfe_assign_driver_callback( $shipment_id ){
     $wpcargo_driver = wpcfe_get_users('wpcargo_driver');
     if( !empty( $wpcargo_driver ) ): ?>
+        <!-- Motorizado de Recojo -->
         <div class="form-group">
             <div class="select-no-margin">
-                <label><?php esc_html_e('Driver','wpcargo-frontend-manager'); ?></label>
-                <select name="wpcargo_driver" class="mdb-select mt-0 form-control browser-default" id="wpcargo_driver" >
+                <label><?php esc_html_e('Motorizado Recojo','wpcargo-frontend-manager'); ?></label>
+                <select name="wpcargo_driver_recojo" class="mdb-select mt-0 form-control browser-default" id="wpcargo_driver_recojo" >
                     <option value=""><?php esc_html_e('-- Select Driver --','wpcargo-frontend-manager'); ?></option>
                     <?php foreach( $wpcargo_driver as $driverID => $driverName ): ?>
-                        <option value="<?php echo $driverID; ?>" <?php selected( get_post_meta( $shipment_id, 'wpcargo_driver', TRUE ), $driverID ); ?>><?php echo $driverName; ?></option>
+                        <option value="<?php echo $driverID; ?>" <?php selected( get_post_meta( $shipment_id, 'wpcargo_driver_recojo', TRUE ), $driverID ); ?>><?php echo $driverName; ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+        </div>
+        <!-- Motorizado de Entrega -->
+        <div class="form-group">
+            <div class="select-no-margin">
+                <label><?php esc_html_e('Motorizado Entrega','wpcargo-frontend-manager'); ?></label>
+                <select name="wpcargo_driver_entrega" class="mdb-select mt-0 form-control browser-default" id="wpcargo_driver_entrega" >
+                    <option value=""><?php esc_html_e('-- Select Driver --','wpcargo-frontend-manager'); ?></option>
+                    <?php foreach( $wpcargo_driver as $driverID => $driverName ): ?>
+                        <option value="<?php echo $driverID; ?>" <?php selected( get_post_meta( $shipment_id, 'wpcargo_driver_entrega', TRUE ), $driverID ); ?>><?php echo $driverName; ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
