@@ -188,7 +188,7 @@ if ( ! function_exists( 'wpcfe_render_sidebar_menu_nodes' ) ) {
 			}
 
 			$self_active = wpcfe_sidebar_item_is_active( $menu_key, $item );
-			$is_active = $has_children ? $children_active : $self_active;
+			$is_active = $has_children ? ( $self_active && ! $children_active ) : $self_active;
 			$is_open = $has_children ? ( $children_active || $self_active ) : false;
 			$has_active = $has_active || $is_active;
 
