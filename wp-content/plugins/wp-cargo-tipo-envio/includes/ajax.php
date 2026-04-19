@@ -33,7 +33,7 @@ function wpcte_ajax_get_user_data() {
     wp_send_json_success( array(
         'nombre'    => $nombre,
         'telefono'  => get_user_meta( $uid, 'billing_phone', true ),
-        'dni'       => get_user_meta( $uid, 'wpcc_dni', true ),
+        'dni'       => get_user_meta( $uid, 'dni_remitente', true ),
         'direccion' => $dir,
         'ciudad'    => get_user_meta( $uid, 'billing_city', true ),
     ));
