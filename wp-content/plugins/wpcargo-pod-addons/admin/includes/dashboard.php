@@ -24,15 +24,27 @@ function wpcargo_pod_dashboard_registered_scripts($script)
 }
 add_filter('wpcfe_registered_styles', 'wpcargo_pod_dashboard_registered_styles', 10, 1);
 add_filter('wpcfe_registered_scripts', 'wpcargo_pod_dashboard_registered_scripts', 10, 1);
+
+function wpcargo_pod_can_sign_shipment()
+{
+	$user = wp_get_current_user();
+	if ( ! $user || empty( $user->roles ) ) {
+		return false;
+	}
+
+	$allowed_roles = array( 'wpcargo_driver', 'administrator', 'wpcargo_admin' );
+	return ! empty( array_intersect( $allowed_roles, $user->roles ) );
+}
+
 // Add Shipment table header "Sign"
 function wpcargo_pod_dashboard_table_header_action()
 {
-	if ( ! current_user_can( 'wpcargo_driver' ) ) return;
+	if ( ! wpcargo_pod_can_sign_shipment() ) return;
 	echo '<th class="wpcpod-sign_data text-center hide-me">' . apply_filters('pod_table_header_sign_label', __('Sign', 'wpcargo-pod')) . '</th>';
 }
 function wpcargo_pod_dashboard_table_table_action($shipment_id)
 {
-	if ( ! current_user_can( 'wpcargo_driver' ) ) return;
+	if ( ! wpcargo_pod_can_sign_shipment() ) return;
 	$signature = get_post_meta($shipment_id, 'wpcargo-pod-signature', true);
 	$btn_label = apply_filters('pod_table_header_sign_label', __('Sign', 'wpcargo-pod'));
 	$btn_color = 'btn-outline-info';
