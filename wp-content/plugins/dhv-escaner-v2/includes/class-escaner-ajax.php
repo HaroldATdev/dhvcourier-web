@@ -86,9 +86,16 @@ class DHV_Escaner_Ajax {
             if ( $delivery_driver && in_array( 'wpcargo_driver', (array) $delivery_driver->roles, true ) ) {
                 update_post_meta( $shipment_id, 'wpcargo_driver_entrega', $delivery_driver_id );
                 $delivery_driver_updated = true;
-                // Si el estado actual o el recién aplicado es "En ruta", también asignar como conductor visible
-                if ( strtolower( trim( $new_status ) ) === 'en ruta' ) {
-                    update_post_meta( $shipment_id, 'wpcargo_driver', $delivery_driver_id );
+                // Si el envío es "puerta a puerta" y el estado NO es "Pendiente" ni "Recogido", asignar como conductor visible
+                $status_check = strtolower( trim( $new_status ) );
+                if ( ! in_array( $status_check, [ 'pendiente', 'recogido' ], true ) ) {
+                    $tipo = get_post_meta( $shipment_id, 'wpcte_tipo_envio', true );
+                    if ( empty( $tipo ) ) $tipo = get_post_meta( $shipment_id, 'tipo_envio', true );
+                    if ( empty( $tipo ) ) $tipo = get_post_meta( $shipment_id, 'dhv_tipo_envio', true );
+                    $tipo_norm = is_string( $tipo ) ? strtolower( str_replace( ' ', '_', $tipo ) ) : '';
+                    if ( $tipo_norm === 'puerta_a_puerta' ) {
+                        update_post_meta( $shipment_id, 'wpcargo_driver', $delivery_driver_id );
+                    }
                 }
             }
         }
