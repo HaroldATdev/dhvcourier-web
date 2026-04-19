@@ -117,6 +117,131 @@ function wpcargo_pod_show_shignaturepad()
 	echo $output;
 	wp_die();
 }
+
+function wpcpod_get_form_values_by_name( $form_data, $target_name ) {
+	$values = array();
+	if ( ! is_array( $form_data ) ) {
+		return $values;
+	}
+	foreach ( $form_data as $item ) {
+		if ( ! is_array( $item ) || ! isset( $item['name'] ) ) {
+			continue;
+		}
+		if ( $item['name'] !== $target_name ) {
+			continue;
+		}
+		$values[] = isset( $item['value'] ) ? $item['value'] : '';
+	}
+	return $values;
+}
+
+function wpcpod_extract_payment_rows_from_form( $form_data ) {
+	$methods = wpcpod_get_form_values_by_name( $form_data, 'pod_payment_method[]' );
+	if ( empty( $methods ) ) {
+		$methods = wpcpod_get_form_values_by_name( $form_data, 'pod_payment_method' );
+	}
+	$amounts = wpcpod_get_form_values_by_name( $form_data, 'pod_payment_amount[]' );
+	if ( empty( $amounts ) ) {
+		$amounts = wpcpod_get_form_values_by_name( $form_data, 'pod_payment_amount' );
+	}
+	$images = wpcpod_get_form_values_by_name( $form_data, 'pod_payment_image[]' );
+	if ( empty( $images ) ) {
+		$images = wpcpod_get_form_values_by_name( $form_data, 'pod_payment_image' );
+	}
+
+	$count = max( count( $methods ), count( $amounts ), count( $images ) );
+	$rows = array();
+	for ( $i = 0; $i < $count; $i++ ) {
+		$method_id = isset( $methods[ $i ] ) ? (int) $methods[ $i ] : 0;
+		$amount_raw = isset( $amounts[ $i ] ) ? (string) $amounts[ $i ] : '';
+		$image_id = isset( $images[ $i ] ) ? (int) $images[ $i ] : 0;
+		if ( ! $method_id && $amount_raw === '' && ! $image_id ) {
+			continue;
+		}
+		$amount_raw = preg_replace('/[^0-9,\.\-]/', '', $amount_raw);
+		$amount = (float) str_replace(',', '.', $amount_raw);
+		$rows[] = array(
+			'method_id' => $method_id,
+			'amount'    => $amount,
+			'image_id'  => $image_id,
+		);
+	}
+	return $rows;
+}
+
+function wpcpod_validate_and_normalize_payment_rows( $shipment_id, $rows ) {
+	global $wpdb;
+	if ( ! is_array( $rows ) || empty( $rows ) ) {
+		return new WP_Error( 'wpcpod_payment_required', __( 'Debe agregar al menos un metodo de pago.', 'wpcargo-pod' ) );
+	}
+
+	$table = $wpdb->prefix . 'wcfin_metodos_pago';
+	$table_exists = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) );
+	if ( $table_exists !== $table ) {
+		return new WP_Error( 'wpcpod_payment_methods_unavailable', __( 'No se encontraron metodos de pago en el plugin de finanzas.', 'wpcargo-pod' ) );
+	}
+
+	$method_ids = array_values( array_unique( array_map( 'intval', wp_list_pluck( $rows, 'method_id' ) ) ) );
+	$method_ids = array_filter( $method_ids );
+	if ( empty( $method_ids ) ) {
+		return new WP_Error( 'wpcpod_payment_method_missing', __( 'Debe seleccionar metodos de pago validos.', 'wpcargo-pod' ) );
+	}
+
+	$placeholders = implode( ',', array_fill( 0, count( $method_ids ), '%d' ) );
+	$query = $wpdb->prepare( "SELECT id, nombre, slug FROM {$table} WHERE activo=1 AND id IN ({$placeholders})", $method_ids );
+	$methods = $wpdb->get_results( $query, ARRAY_A );
+	$methods_map = array();
+	foreach ( (array) $methods as $method ) {
+		$methods_map[ (int) $method['id'] ] = $method;
+	}
+
+	$seen = array();
+	$total_assigned = 0.0;
+	$normalized = array();
+	foreach ( $rows as $row ) {
+		$method_id = isset( $row['method_id'] ) ? (int) $row['method_id'] : 0;
+		$amount = isset( $row['amount'] ) ? (float) $row['amount'] : 0.0;
+		$image_id = isset( $row['image_id'] ) ? (int) $row['image_id'] : 0;
+
+		if ( ! $method_id || ! isset( $methods_map[ $method_id ] ) ) {
+			return new WP_Error( 'wpcpod_payment_invalid_method', __( 'Hay metodos de pago no validos.', 'wpcargo-pod' ) );
+		}
+		if ( isset( $seen[ $method_id ] ) ) {
+			return new WP_Error( 'wpcpod_payment_duplicated_method', __( 'No se permite repetir metodos de pago.', 'wpcargo-pod' ) );
+		}
+		$seen[ $method_id ] = true;
+
+		if ( $amount <= 0 ) {
+			return new WP_Error( 'wpcpod_payment_invalid_amount', __( 'Todos los metodos deben tener un monto mayor a 0.', 'wpcargo-pod' ) );
+		}
+
+		$slug = (string) $methods_map[ $method_id ]['slug'];
+		if ( $slug !== 'motorizado_efectivo' && $image_id <= 0 ) {
+			return new WP_Error( 'wpcpod_payment_image_required', __( 'Debe subir comprobante en todos los metodos que lo requieren.', 'wpcargo-pod' ) );
+		}
+
+		$total_assigned += $amount;
+		$normalized[] = array(
+			'method_id'   => $method_id,
+			'method_name' => (string) $methods_map[ $method_id ]['nombre'],
+			'slug'        => $slug,
+			'amount'      => (float) number_format( $amount, 2, '.', '' ),
+			'image_id'    => $image_id,
+			'image_url'   => $image_id ? (string) wp_get_attachment_url( $image_id ) : '',
+		);
+	}
+
+	$total_raw = get_post_meta( (int) $shipment_id, 'monto', true );
+	$total_raw = preg_replace('/[^0-9,\.\-]/', '', (string) $total_raw);
+	$total_required = (float) str_replace(',', '.', $total_raw);
+
+	if ( abs( $total_assigned - $total_required ) > 0.01 ) {
+		return new WP_Error( 'wpcpod_payment_total_mismatch', __( 'La suma de metodos de pago debe ser igual al monto total a cobrar.', 'wpcargo-pod' ) );
+	}
+
+	return $normalized;
+}
+
 function wpcargo_pod_signed_load_action()
 {
 	global $wpcargo;
@@ -133,8 +258,33 @@ function wpcargo_pod_signed_load_action()
 	$form_data 				= $_POST['formData'];
 	$shipment_id 			= wpcpod_find_metakey($form_data, '__pod_id');
 	$shipment_id 			= $shipment_id ? (int)$shipment_id['value'] : 0;
+	$payment_rows 			= wpcpod_extract_payment_rows_from_form( $form_data );
+	$payment_rows 			= wpcpod_validate_and_normalize_payment_rows( $shipment_id, $payment_rows );
+	if ( is_wp_error( $payment_rows ) ) {
+		wp_send_json(array(
+			'status' => 'error',
+			'message' => $payment_rows->get_error_message()
+		));
+		wp_die();
+	}
 	$signature_id 			= wpcpod_find_metakey($form_data, '__pod_signature');
 	$signature_id 			= $signature_id ? (int)$signature_id['value'] : false;
+	if ( ! $signature_id ) {
+		wp_send_json(array(
+			'status' => 'error',
+			'message' => __('Debe existir una firma generada para actualizar el POD.', 'wpcargo-pod')
+		));
+		wp_die();
+	}
+	$saved_images = get_post_meta( $shipment_id, 'wpcargo-pod-image', true );
+	$saved_images = array_filter( array_map( 'trim', explode( ',', (string) $saved_images ) ) );
+	if ( empty( $saved_images ) ) {
+		wp_send_json(array(
+			'status' => 'error',
+			'message' => __('Debe agregar al menos una imagen POD antes de actualizar.', 'wpcargo-pod')
+		));
+		wp_die();
+	}
 	$shipment_status 		= 'Entregado';
 
 	// Save Shipment History
@@ -164,6 +314,7 @@ function wpcargo_pod_signed_load_action()
 	if ($signature_id) {
 		update_post_meta($shipment_id,	'wpcargo-pod-signature', $signature_id);
 	}
+	update_post_meta( $shipment_id, 'wpcargo-pod-payments', $payment_rows );
 	// Save Shipment Status
 	update_post_meta($shipment_id,	'wpcargo_status', $shipment_status);
 
