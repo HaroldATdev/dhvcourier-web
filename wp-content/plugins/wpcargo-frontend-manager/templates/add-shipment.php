@@ -87,6 +87,44 @@
 </form>
 <script type="text/javascript">
 jQuery(function($){
+	function wpcteEnableMontoDecimals(){
+		var $monto = $('#monto');
+		if(!$monto.length){
+			return;
+		}
+
+		$monto.attr('step', '0.01');
+		$monto.attr('inputmode', 'decimal');
+		if(!$monto.attr('min')){
+			$monto.attr('min', '0');
+		}
+
+		$monto.on('input.wpcteDecimalFix blur.wpcteDecimalFix', function(){
+			var val = $(this).val();
+			if(typeof val === 'string' && val.indexOf(',') !== -1){
+				$(this).val(val.replace(',', '.'));
+			}
+		});
+
+		$('form.add-shipment').off('submit.wpcteDecimalFix').on('submit.wpcteDecimalFix', function(){
+			var raw = $monto.val();
+			if(raw === null || raw === undefined || raw === ''){
+				return;
+			}
+
+			var normalized = String(raw).replace(',', '.').replace(/[^0-9.\-]/g, '');
+			var firstDot = normalized.indexOf('.');
+			if(firstDot !== -1){
+				normalized = normalized.slice(0, firstDot + 1) + normalized.slice(firstDot + 1).replace(/\./g, '');
+			}
+			$monto.val(normalized);
+		});
+	}
+
+	wpcteEnableMontoDecimals();
+	setTimeout(wpcteEnableMontoDecimals, 300);
+	setTimeout(wpcteEnableMontoDecimals, 900);
+
 	function wpcteParseMoney(value){
 		if(value === null || value === undefined){
 			return NaN;
