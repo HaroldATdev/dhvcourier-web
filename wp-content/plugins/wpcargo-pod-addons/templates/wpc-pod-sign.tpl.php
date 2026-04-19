@@ -53,6 +53,7 @@
 			</div>	
 			<div id="images-section">
 				<a href="#" id="wpcargo-pod-img-btn" class="wpcargo-btn wpcargo-btn-success"><?php esc_html_e( 'ADD IMAGES', 'wpcargo-pod' ); ?></a>	
+				<input type="file" id="wpcargo-pod-img-input" accept="image/*" capture="environment" multiple style="display:none;">
 				<div id="wpcargo-pod-images">			
 					<p class="header-pod-result"><?php esc_html_e('Your current captured images:', 'wpcargo-pod' ); ?></p>
 					<?php
@@ -190,6 +191,7 @@
 							'<div class="form-group mb-2 pod-payment-image-group">' +
 								'<label class="mb-1">Comprobante</label><br>' +
 								'<button type="button" class="btn btn-sm btn-outline-secondary pod-payment-upload">Subir imagen</button>' +
+								'<input type="file" class="pod-payment-file-input" accept="image/*" capture="environment" style="display:none;" />' +
 								'<input type="hidden" class="pod-payment-image-id" name="pod_payment_image[]" value="'+ imageVal +'" />' +
 								'<span class="pod-payment-image-state ml-2 '+ hasImage +'">'+ imageText +'</span>' +
 							'</div>' +
@@ -297,6 +299,47 @@
 			validatePodCompletion();
 		}
 
+		function uploadPodFile(file, onSuccess, onError){
+			if(!file){
+				if(typeof onError === 'function'){
+					onError('Archivo inválido.');
+				}
+				return;
+			}
+
+			const formData = new FormData();
+			formData.append('action', 'wpcpod_upload_image');
+			formData.append('shipmentID', shipmentID);
+			formData.append('pod_file', file);
+			if(window.wpcargoPODAJAXHandler && window.wpcargoPODAJAXHandler.sign_nonce){
+				formData.append('nonce', window.wpcargoPODAJAXHandler.sign_nonce);
+			}
+
+			$.ajax({
+				type: 'POST',
+				url: AJAXHANDLER,
+				data: formData,
+				processData: false,
+				contentType: false,
+				success: function(response){
+					if(response && response.status === 'success' && response.attachment_id){
+						if(typeof onSuccess === 'function'){
+							onSuccess(response);
+						}
+						return;
+					}
+					if(typeof onError === 'function'){
+						onError((response && response.message) ? response.message : 'No se pudo subir la imagen.');
+					}
+				},
+				error: function(){
+					if(typeof onError === 'function'){
+						onError('Error de red al subir imagen.');
+					}
+				}
+			});
+		}
+
 		$('#pod-add-payment-method').on('click', function(){
 			addPaymentRow();
 		});
@@ -320,19 +363,29 @@
 		$paymentCards.on('click', '.pod-payment-upload', function(e){
 			e.preventDefault();
 			const $row = $(this).closest('.pod-payment-row');
-			const mediaUpload = wp.media({
-				title: 'Subir comprobante',
-				multiple: false,
-				button: { text: 'Usar imagen' }
-			}).open().on('select', function(){
-				const attachment = mediaUpload.state().get('selection').first().toJSON();
-				if(!attachment || !attachment.id){
-					return;
-				}
-				$row.find('.pod-payment-image-id').val(String(attachment.id));
+			$row.find('.pod-payment-file-input').trigger('click');
+		});
+
+		$paymentCards.on('change', '.pod-payment-file-input', function(){
+			const $row = $(this).closest('.pod-payment-row');
+			const file = this.files && this.files.length ? this.files[0] : null;
+			if(!file){
+				return;
+			}
+
+			$row.find('.pod-payment-image-state').removeClass('has-image').text('Subiendo...');
+			uploadPodFile(file, function(response){
+				$row.find('.pod-payment-image-id').val(String(response.attachment_id));
 				$row.find('.pod-payment-image-state').addClass('has-image').text('Comprobante seleccionado');
 				validatePodCompletion();
+			}, function(message){
+				$row.find('.pod-payment-image-id').val('');
+				$row.find('.pod-payment-image-state').removeClass('has-image').text('Sin comprobante');
+				alert(message);
+				validatePodCompletion();
 			});
+
+			$(this).val('');
 		});
 
 		$(document).on('ajaxComplete', function(event, xhr, settings){
@@ -379,35 +432,47 @@
 				}
 			});
 		});
-		$( '#wpcargo-pod-img-btn' ).click(function(e) {
-			e.preventDefault();		
-			var insertImage 	= wp.media.controller.Library.extend({
-				defaults :  _.defaults({					
-				}, wp.media.controller.Library.prototype.defaults )
-			});
-			var media_upload = wp.media({
-				title: "<?php esc_html_e('Upload Images', 'wpcargo-pod' ); ?>",
-				multiple: true, 
-				button : { text : "<?php esc_html_e('Upload Images', 'wpcargo-pod' ); ?>" },
-			}).open().on( 'select', function() {
-				attachment = media_upload.state().get( 'selection' ).toJSON();
-				var ids = [];
-				for (i = 0; i < attachment.length; i++) {
-					if(attachment[i]['subtype'] == 'png' || attachment[i]['subtype'] == 'jpeg' || attachment[i]['subtype'] == 'jpg' || attachment[i]['subtype'] == 'gif' || attachment[i]['subtype'] == 'gif' || attachment[i]['subtype'] == 'svg'){
-						ids[i] = attachment[i]['id'];
+		$('#wpcargo-pod-img-btn').on('click', function(e){
+			e.preventDefault();
+			$('#wpcargo-pod-img-input').trigger('click');
+		});
+
+		$('#wpcargo-pod-img-input').on('change', function(){
+			const files = this.files ? Array.prototype.slice.call(this.files) : [];
+			if(!files.length){
+				return;
+			}
+			const uploadedIds = [];
+
+			function uploadNext(index){
+				if(index >= files.length){
+					if(!uploadedIds.length){
+						validatePodCompletion();
+						return;
 					}
+					$.post(AJAXHANDLER, {
+						action: 'wpcpod_save_attachment',
+						attachments: uploadedIds,
+						shipmentID: shipmentID
+					}, function(response){
+						$('#wpcargo-pod-images').html(response);
+						validatePodCompletion();
+					});
+					return;
 				}
-				if( ids.length === 0 ){ return; } 
-				var data = {
-					'action': 'wpcpod_save_attachment',
-					'attachments': ids,
-					'shipmentID': shipmentID
-				};
-				$.post(AJAXHANDLER, data , function(response){
-					$("#wpcargo-pod-images").html( response );
-				});	
-			});
-		});	
+
+				uploadPodFile(files[index], function(response){
+					uploadedIds.push(response.attachment_id);
+					uploadNext(index + 1);
+				}, function(message){
+					alert(message);
+					uploadNext(index + 1);
+				});
+			}
+
+			uploadNext(0);
+			$(this).val('');
+		});
 
 		$('#wpc_pod_signature-form').on('submit', function(e){
 			validatePodCompletion();

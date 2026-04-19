@@ -397,6 +397,46 @@ function wpcpod_save_attachment()
 }
 add_action('wp_ajax_wpcpod_save_attachment', 'wpcpod_save_attachment');
 add_action('wp_ajax_nopriv_wpcpod_save_attachment', 'wpcpod_save_attachment');
+
+function wpcpod_upload_image() {
+	if ( ! empty($_REQUEST['nonce']) && ! wp_verify_nonce($_REQUEST['nonce'], 'wpcpod_signature-nonce') ) {
+		wp_send_json(array(
+			'status' => 'error',
+			'message' => __('Token inválido. Recargue la página e intente nuevamente.', 'wpcargo-pod')
+		));
+		wp_die();
+	}
+
+	if ( empty($_FILES['pod_file']) || ! isset($_FILES['pod_file']['tmp_name']) ) {
+		wp_send_json(array(
+			'status' => 'error',
+			'message' => __('No se recibió ningún archivo.', 'wpcargo-pod')
+		));
+		wp_die();
+	}
+
+	require_once ABSPATH . 'wp-admin/includes/file.php';
+	require_once ABSPATH . 'wp-admin/includes/media.php';
+	require_once ABSPATH . 'wp-admin/includes/image.php';
+
+	$attachment_id = media_handle_upload('pod_file', 0);
+	if ( is_wp_error($attachment_id) ) {
+		wp_send_json(array(
+			'status' => 'error',
+			'message' => $attachment_id->get_error_message()
+		));
+		wp_die();
+	}
+
+	wp_send_json(array(
+		'status' => 'success',
+		'attachment_id' => (int) $attachment_id,
+		'url' => (string) wp_get_attachment_url($attachment_id)
+	));
+	wp_die();
+}
+add_action('wp_ajax_wpcpod_upload_image', 'wpcpod_upload_image');
+add_action('wp_ajax_nopriv_wpcpod_upload_image', 'wpcpod_upload_image');
 // AJAX handlers for signature pad (called from pod-scripts.js)
 add_action('wp_ajax_show_signaturepad', 'wpcargo_pod_show_shignaturepad');
 add_action('wp_ajax_nopriv_show_signaturepad', 'wpcargo_pod_show_shignaturepad');

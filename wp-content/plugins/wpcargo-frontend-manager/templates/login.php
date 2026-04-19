@@ -85,19 +85,29 @@
 
 	#loginform .wpcfe-password-toggle {
 		position: absolute;
-		right: 10px;
+		right: 6px;
 		top: 50%;
 		transform: translateY(-50%);
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
-		width: 24px;
-		height: 24px;
+		width: 38px;
+		height: 38px;
 		padding: 0;
 		border: 0;
 		background: transparent;
 		color: #6c757d;
 		cursor: pointer;
+		touch-action: manipulation;
+		z-index: 3;
+	}
+
+	#loginform .wpcfe-password-toggle:focus {
+		outline: none;
+	}
+
+	#loginform .wpcfe-password-toggle svg {
+		pointer-events: none;
 	}
 </style>
 <script type="text/javascript">
@@ -105,11 +115,21 @@
 	function initPasswordToggle(){
 		var passInput = document.getElementById('user_pass');
 		var toggleBtn = document.querySelector('#loginform .wpcfe-password-toggle');
+		var lastToggleAt = 0;
 		if(!passInput || !toggleBtn){
 			return;
 		}
 
-		toggleBtn.addEventListener('click', function(){
+		function handleToggle(event){
+			if(event){
+				event.preventDefault();
+			}
+			var now = Date.now();
+			if(now - lastToggleAt < 200){
+				return;
+			}
+			lastToggleAt = now;
+
 			var willShow = passInput.type === 'password';
 			passInput.type = willShow ? 'text' : 'password';
 			toggleBtn.setAttribute('aria-pressed', willShow ? 'true' : 'false');
@@ -121,7 +141,14 @@
 				openEye.style.display = willShow ? 'none' : 'inline-flex';
 				closedEye.style.display = willShow ? 'inline-flex' : 'none';
 			}
-		});
+		}
+
+		if(window.PointerEvent){
+			toggleBtn.addEventListener('pointerup', handleToggle);
+		}else{
+			toggleBtn.addEventListener('touchend', handleToggle);
+			toggleBtn.addEventListener('click', handleToggle);
+		}
 	}
 
 	if(document.readyState === 'loading'){
