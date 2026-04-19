@@ -33,10 +33,6 @@ function wpcte_ajax_get_user_data() {
     $telefono = get_user_meta( $uid, 'billing_phone', true );
     $dni = get_user_meta( $uid, 'dni_remitente', true );
     $ciudad = get_user_meta( $uid, 'billing_city', true );
-    
-    // Debug: Log para verificar qué se está obteniendo
-    error_log("DEBUG wpcte_get_user_data - UID: $uid, Teléfono: $telefono, DNI: $dni, Ciudad: $ciudad");
-    
     wp_send_json_success( array(
         'nombre'    => $nombre,
         'telefono'  => $telefono,

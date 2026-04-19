@@ -144,11 +144,15 @@ function wpcte_ajax_get_user_data() {
     $dir1   = get_user_meta( $uid, 'billing_address_1', true );
     $dir2   = get_user_meta( $uid, 'billing_address_2', true );
     $dir    = $dir2 ? $dir1 . ', ' . $dir2 : $dir1;
+    $telefono = get_user_meta( $uid, 'billing_phone', true );
+    $dni = get_user_meta( $uid, 'dni_remitente', true );
+    $ciudad = get_user_meta( $uid, 'billing_city', true );
     wp_send_json_success( array(
         'nombre'    => $nombre,
-        'telefono'  => get_user_meta( $uid, 'billing_phone', true ),
+        'telefono'  => $telefono,
+        'dni'       => $dni,
         'direccion' => $dir,
-        'ciudad'    => get_user_meta( $uid, 'billing_city', true ),
+        'ciudad'    => $ciudad,
     ));
 }
 
