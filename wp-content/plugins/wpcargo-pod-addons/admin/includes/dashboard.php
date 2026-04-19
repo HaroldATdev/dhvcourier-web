@@ -432,6 +432,12 @@ function wpcargo_pod_sidebar_menu($menu_array)
 	if (!function_exists('wpcfe_admin_page')) {
 		return false;
 	}
+	$current_user = wp_get_current_user();
+	$current_roles = is_a($current_user, 'WP_User') ? (array) $current_user->roles : array();
+	$is_driver_sidebar_user = in_array('wpcargo_diver', $current_roles, true) || in_array('wpcargo_driver', $current_roles, true);
+	$delivery_label = $is_driver_sidebar_user ? __('Lista de Entregas', 'wpcargo-pod') : __('Delivery Route', 'wpcargo-pod');
+	$pickup_label = $is_driver_sidebar_user ? __('Lista de Recojos', 'wpcargo-pod') : __('Pickup Route', 'wpcargo-pod');
+
 	if (wpcpod_route_allowed_user()) {
 		$wpcpod_route_class = 'wpcpod-route';
 		$wpcpod_pickup_route_class = 'wpcpod-pickup-route';
@@ -442,12 +448,12 @@ function wpcargo_pod_sidebar_menu($menu_array)
 			$wpcpod_pickup_route_class .= ' active';
 		}
 		$menu_array[$wpcpod_route_class] = array(
-			'label' => apply_filters('wpcpod_delivery_driver_route_sidemenu_label', __('Delivery Route', 'wpcargo-pod')),
+			'label' => apply_filters('wpcpod_delivery_driver_route_sidemenu_label', $delivery_label),
 			'permalink' => get_the_permalink(wpcpod_route_page()),
 			'icon' => 'fa-map-o'
 		);
 		$menu_array[$wpcpod_pickup_route_class] = array(
-			'label' => apply_filters('wpcpod_pickup_driver_route_sidemenu_label', __('Pickup Route', 'wpcargo-pod')),
+			'label' => apply_filters('wpcpod_pickup_driver_route_sidemenu_label', $pickup_label),
 			'permalink' => get_the_permalink(wpcpod_pickup_route_page()),
 			'icon' => 'fa-map-o'
 		);

@@ -1338,6 +1338,44 @@ document.getElementById('wpcte-cot-btn').addEventListener('click',function(){
     window._wpcte_dest=destCot;
 });
 
+    var montoMinCotizacion=null;
+    function wpcteParseMonto(v){
+        if(v===null||v===undefined)return NaN;
+        return parseFloat(String(v).replace(',', '.').replace(/[^0-9.\-]/g,''));
+    }
+    function wpcteAvisarMontoMenor(minimo){
+        var msg='El monto ingresado es menor al de la cotización. Se restableció a S/ '+Number(minimo).toFixed(2)+'.';
+        if(typeof Swal!=='undefined'&&Swal&&typeof Swal.fire==='function'){
+            Swal.fire({icon:'warning',title:'Monto menor al cotizado',text:msg});
+        }else{
+            alert(msg);
+        }
+    }
+    function wpcteInitValidacionMonto(){
+        var me=document.getElementById('monto');
+        if(!me||me.dataset.wpcteMinMontoBound==='1')return;
+        me.dataset.wpcteMinMontoBound='1';
+        var validar=function(){
+            if(montoMinCotizacion===null||montoMinCotizacion===undefined)return;
+            var actual=wpcteParseMonto(me.value);
+            if(isNaN(actual)||actual<Number(montoMinCotizacion)){
+                me.value=Number(montoMinCotizacion).toFixed(2);
+                wpcteAvisarMontoMenor(montoMinCotizacion);
+            }
+        };
+        me.addEventListener('change',validar);
+        me.addEventListener('blur',validar);
+    }
+    window.wpcteSetMontoCotizado=function(minimo){
+        var n=Number(minimo);
+        if(isNaN(n))return;
+        montoMinCotizacion=n;
+        window._wpcte_monto_min_cotizacion=n;
+        var me=document.getElementById('monto');
+        if(me)me.value=n.toFixed(2);
+        wpcteInitValidacionMonto();
+    };
+
 /* ── Botón continuar (solo crear) ─────────────────────────── */
 var btnCont2=document.getElementById('wpcte-btn-continuar');
 if(btnCont2){
@@ -1349,7 +1387,7 @@ if(btnCont2){
         if(pantallaForm) pantallaForm.style.display='block';
         if(pantallaCot) pantallaCot.style.display='none';
         function _fillCampos(){
-            var me=document.getElementById('monto');if(me)me.value=_pc.toFixed(2);
+            if(typeof window.wpcteSetMontoCotizado==='function'){window.wpcteSetMontoCotizado(_pc);}else{var me=document.getElementById('monto');if(me)me.value=_pc.toFixed(2);} 
             function s2(id,val){
                 if(!val)return;
                 var $s=typeof jQuery!=='undefined'?jQuery('#'+id):null;
@@ -1704,7 +1742,7 @@ function wpcte_listenCliente(ajaxUrl,nonce){
             calcBtn.addEventListener('click',function(){
                 setTimeout(function(){
                     var p=window._wpcte_precio;if(p===null||p===undefined)return;
-                    var me=document.getElementById('monto');if(me)me.value=p.toFixed(2);
+                    if(typeof window.wpcteSetMontoCotizado==='function'){window.wpcteSetMontoCotizado(p);}else{var me=document.getElementById('monto');if(me)me.value=p.toFixed(2);} 
                     function s2(id,val){if(!val)return;var $s=$('#'+id);if(!$s.length)return;if($s.find('option[value="'+val+'"]').length){$s.val(val).trigger('change');}else{$s.append(new Option(val,val,true,true)).trigger('change');}}
                     function _fE(){var o=window._wpcte_orig,d=window._wpcte_dest;if(o)s2('lugar_origen',o);if(d)s2('lugar_destino',d);}
                     _fE();setTimeout(_fE,400);setTimeout(_fE,900);
