@@ -27,10 +27,12 @@ add_filter('wpcfe_registered_scripts', 'wpcargo_pod_dashboard_registered_scripts
 // Add Shipment table header "Sign"
 function wpcargo_pod_dashboard_table_header_action()
 {
+	if ( ! current_user_can( 'wpcargo_driver' ) ) return;
 	echo '<th class="wpcpod-sign_data text-center hide-me">' . apply_filters('pod_table_header_sign_label', __('Sign', 'wpcargo-pod')) . '</th>';
 }
 function wpcargo_pod_dashboard_table_table_action($shipment_id)
 {
+	if ( ! current_user_can( 'wpcargo_driver' ) ) return;
 	$signature = get_post_meta($shipment_id, 'wpcargo-pod-signature', true);
 	$btn_label = apply_filters('pod_table_header_sign_label', __('Sign', 'wpcargo-pod'));
 	$btn_color = 'btn-outline-info';
