@@ -334,6 +334,108 @@ jQuery(document).ready(function($){
             $("#wpcfe-select-all")[0].checked = true; //change "select all" checked status to true
         }
     });
+
+    // Shipment status transition in table (select -> modal -> ajax)
+    var wpcfeStatusTransitionSelect = null;
+
+    $('#shipment-list').on('change', '.wpcfe-status-transition-select', function(){
+        var $select = $(this);
+        var newStatus = $select.val();
+        if( !newStatus ){
+            return;
+        }
+
+        wpcfeStatusTransitionSelect = $select;
+        $('#wpcfeStatusTransitionShipmentId').val( $select.data('shipment-id') );
+        $('#wpcfeStatusTransitionNewStatus').val( newStatus );
+        $('#wpcfeStatusTransitionTarget').text( newStatus );
+        $('#wpcfeStatusTransitionRemarks').val('');
+        $('#wpcfeStatusTransitionModal').modal('show');
+    });
+
+    $('#wpcfeStatusTransitionModal').on('hidden.bs.modal', function(){
+        if( wpcfeStatusTransitionSelect ){
+            wpcfeStatusTransitionSelect.val('');
+        }
+    });
+
+    $('#wpcfe-status-transition-form').on('submit', function(e){
+        e.preventDefault();
+
+        var shipmentId = $('#wpcfeStatusTransitionShipmentId').val();
+        var newStatus  = $('#wpcfeStatusTransitionNewStatus').val();
+        var remarks    = $('#wpcfeStatusTransitionRemarks').val();
+        var statusTransitionError = wpcfeAjaxhandler.statusTransitionError || downloadFileErrorMessage;
+
+        if( !shipmentId || !newStatus ){
+            alert(statusTransitionError);
+            return;
+        }
+
+        $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                action: 'wpcfe_status_transition_update',
+                nonce: wpcfeAjaxhandler.statusTransitionNonce,
+                shipment_id: shipmentId,
+                new_status: newStatus,
+                remarks: remarks
+            },
+            url: wpcfeAjaxhandler.ajaxurl,
+            beforeSend: function(){
+                $('body').append('<div class="wpcfe-spinner">Loading...</div>');
+            },
+            success: function(response){
+                $('body .wpcfe-spinner').remove();
+
+                if( !response || response.success === false || !response.data ){
+                    var msg = (response && response.data && response.data.message) ? response.data.message : statusTransitionError;
+                    alert(msg);
+                    return;
+                }
+
+                var data = response.data;
+                var $row = $('#shipment-' + shipmentId);
+                var $statusCell = $row.find('td.shipment-status');
+
+                if( wpcfeStatusTransitionSelect ){
+                    var oldClass = wpcfeStatusTransitionSelect.data('current-class');
+                    if( oldClass ){
+                        $statusCell.removeClass(oldClass);
+                        $row.removeClass(oldClass);
+                    }
+                }
+
+                $statusCell.addClass(data.new_class);
+                $row.addClass(data.new_class);
+
+                if( data.is_final || !data.options || !data.options.length ){
+                    $statusCell.text(data.new_status);
+                }else{
+                    var selectHTML = '';
+                    selectHTML += '<select class="form-control browser-default custom-select wpcfe-status-transition-select" ';
+                    selectHTML += 'data-shipment-id="' + shipmentId + '" ';
+                    selectHTML += 'data-current-status="' + data.new_status + '" ';
+                    selectHTML += 'data-current-class="' + data.new_class + '">';
+                    selectHTML += '<option value="">' + data.new_status + '</option>';
+                    for( var i = 0; i < data.options.length; i++ ){
+                        selectHTML += '<option value="' + data.options[i] + '">' + data.options[i] + '</option>';
+                    }
+                    selectHTML += '</select>';
+                    $statusCell.html(selectHTML);
+                }
+
+                $('#wpcfeStatusTransitionModal').modal('hide');
+                showNotification('success', data.message || 'Status updated successfully.', 'check');
+            },
+            error: function(jqXHR){
+                $('body .wpcfe-spinner').remove();
+                alert(statusTransitionError + ' (' + jqXHR.status + ')');
+            }
+        });
+    });
+
     // Fix MDB animation conflict: close dropdown when clicking outside or toggling
     var wpcfeDropdownSelector = '.wpcfe-bulkprint-wrapper, .wpcfe-print-dropdown';
 

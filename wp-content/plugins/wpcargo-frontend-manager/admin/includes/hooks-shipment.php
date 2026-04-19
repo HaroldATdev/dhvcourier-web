@@ -71,9 +71,104 @@ function wpcfe_shipment_number_data_callback( $shipment_id ){
 function wpcfe_shipment_table_header_status(){
     ?><th><?php _e('Status', 'wpcargo-frontend-manager' ); ?></th><?php
 }
+
+function wpcfe_status_transition_normalize( $value ){
+    $value = is_string( $value ) ? trim( $value ) : '';
+    $value = strtolower( remove_accents( $value ) );
+    $value = str_replace( array('_', '-'), ' ', $value );
+    $value = preg_replace('/\s+/', ' ', $value );
+    return trim( $value );
+}
+
+function wpcfe_status_transition_is_final( $status ){
+    $normalized = wpcfe_status_transition_normalize( $status );
+    $final = array(
+        'entregado',
+        'anulado',
+        'devuelto',
+        'reprogramado'
+    );
+    return in_array( $normalized, $final, true );
+}
+
+function wpcfe_status_transition_shipment_type( $shipment_id ){
+    $type = get_post_meta( $shipment_id, 'tipo_envio', true );
+    if ( empty( $type ) ) {
+        $type = wpcfe_get_shipment_type( $shipment_id );
+    }
+
+    $normalized = wpcfe_status_transition_normalize( $type );
+
+    if ( in_array( $normalized, array( 'puerta a puerta', 'puerta puerta', 'puerta', 'door to door' ), true ) ) {
+        return 'puerta_a_puerta';
+    }
+    if ( in_array( $normalized, array( 'agencia', 'agency' ), true ) ) {
+        return 'agencia';
+    }
+    if ( in_array( $normalized, array( 'almacen', 'almacenamiento', 'warehouse' ), true ) ) {
+        return 'almacen';
+    }
+    return $normalized;
+}
+
+function wpcfe_status_transition_options( $shipment_id, $current_status ){
+    $shipment_type = wpcfe_status_transition_shipment_type( $shipment_id );
+    $status = wpcfe_status_transition_normalize( $current_status );
+
+    if ( wpcfe_status_transition_is_final( $current_status ) ) {
+        return array();
+    }
+
+    if ( $status === 'pendiente' && $shipment_type === 'puerta_a_puerta' ) {
+        return array( 'Recogido', 'Anulado' );
+    }
+
+    if ( $status === 'recogido' && $shipment_type === 'puerta_a_puerta' ) {
+        return array( 'En espera', 'Anulado' );
+    }
+
+    if ( $status === 'en espera' ) {
+        return array( 'En ruta', 'Anulado' );
+    }
+
+    if ( $status === 'en ruta' ) {
+        return array( 'Entregado', 'Anulado', 'Devuelto', 'Reprogramado' );
+    }
+
+    return array();
+}
+
+function wpcfe_status_transition_is_allowed( $shipment_id, $current_status, $new_status ){
+    $options = wpcfe_status_transition_options( $shipment_id, $current_status );
+    $normalized_new = wpcfe_status_transition_normalize( $new_status );
+    foreach ( $options as $option ) {
+        if ( wpcfe_status_transition_normalize( $option ) === $normalized_new ) {
+            return true;
+        }
+    }
+    return false;
+}
+
 function wpcfe_shipment_table_data_status( $shipment_id  ){
     $status = get_post_meta( $shipment_id, 'wpcargo_status', true );
-    ?><td class="shipment-status <?php echo wpcfe_to_slug( $status ); ?>"><?php echo $status; ?></td><?php
+    $options = wpcfe_status_transition_options( $shipment_id, $status );
+    ?>
+    <td class="shipment-status <?php echo wpcfe_to_slug( $status ); ?>">
+        <?php if ( ! empty( $options ) ): ?>
+            <select class="form-control browser-default custom-select wpcfe-status-transition-select"
+                data-shipment-id="<?php echo (int) $shipment_id; ?>"
+                data-current-status="<?php echo esc_attr( $status ); ?>"
+                data-current-class="<?php echo esc_attr( wpcfe_to_slug( $status ) ); ?>">
+                <option value=""><?php echo esc_html( $status ); ?></option>
+                <?php foreach ( $options as $option ): ?>
+                    <option value="<?php echo esc_attr( $option ); ?>"><?php echo esc_html( $option ); ?></option>
+                <?php endforeach; ?>
+            </select>
+        <?php else: ?>
+            <?php echo esc_html( $status ); ?>
+        <?php endif; ?>
+    </td>
+    <?php
 }
 function wpcfe_shipment_table_header_type(){
     ?><th><?php _e('Shipment Type', 'wpcargo-frontend-manager' ); ?></th><?php
@@ -106,6 +201,109 @@ function wpcfe_shipment_table_action_print( $shipment_id ){
     </td>
     <?php
 } 
+
+function wpcfe_status_transition_modal_template(){
+    ?>
+    <div class="modal fade" id="wpcfeStatusTransitionModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><?php esc_html_e('Confirmar cambio de estado', 'wpcargo-frontend-manager'); ?></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="wpcfe-status-transition-form">
+                    <div class="modal-body">
+                        <p class="mb-2"><?php esc_html_e('Nuevo estado:', 'wpcargo-frontend-manager'); ?> <strong id="wpcfeStatusTransitionTarget">-</strong></p>
+                        <input type="hidden" id="wpcfeStatusTransitionShipmentId" value="">
+                        <input type="hidden" id="wpcfeStatusTransitionNewStatus" value="">
+                        <div class="form-group mb-0">
+                            <label for="wpcfeStatusTransitionRemarks"><?php esc_html_e('Observaciones (opcional)', 'wpcargo-frontend-manager'); ?></label>
+                            <textarea id="wpcfeStatusTransitionRemarks" class="form-control" rows="4" placeholder="<?php esc_attr_e('Ingrese observaciones', 'wpcargo-frontend-manager'); ?>"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal"><?php esc_html_e('Cancelar', 'wpcargo-frontend-manager'); ?></button>
+                        <button type="submit" class="btn btn-primary"><?php esc_html_e('Confirmar', 'wpcargo-frontend-manager'); ?></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <?php
+}
+
+function wpcfe_status_transition_update_ajax(){
+    global $wpcargo;
+
+    $nonce = isset( $_POST['nonce'] ) ? sanitize_text_field( $_POST['nonce'] ) : '';
+    if ( ! wp_verify_nonce( $nonce, 'wpcfe_status_transition_action' ) ) {
+        wp_send_json_error( array( 'message' => __( 'Invalid security token.', 'wpcargo-frontend-manager' ) ) );
+    }
+
+    if ( ! is_user_logged_in() ) {
+        wp_send_json_error( array( 'message' => __( 'Unauthorized request.', 'wpcargo-frontend-manager' ) ) );
+    }
+
+    $shipment_id = isset( $_POST['shipment_id'] ) ? absint( $_POST['shipment_id'] ) : 0;
+    $new_status  = isset( $_POST['new_status'] ) ? sanitize_text_field( $_POST['new_status'] ) : '';
+    $remarks     = isset( $_POST['remarks'] ) ? sanitize_textarea_field( $_POST['remarks'] ) : '';
+
+    if ( ! $shipment_id || empty( $new_status ) ) {
+        wp_send_json_error( array( 'message' => __( 'Invalid shipment data.', 'wpcargo-frontend-manager' ) ) );
+    }
+
+    $current_status = get_post_meta( $shipment_id, 'wpcargo_status', true );
+    if ( ! wpcfe_status_transition_is_allowed( $shipment_id, $current_status, $new_status ) ) {
+        wp_send_json_error( array( 'message' => __( 'Transition is not allowed for this shipment.', 'wpcargo-frontend-manager' ) ) );
+    }
+
+    $new_status = trim( $new_status );
+
+    update_post_meta( $shipment_id, 'wpcargo_status', $new_status );
+    if ( function_exists( 'wpcfe_save_report' ) ) {
+        wpcfe_save_report( $shipment_id, $current_status, $new_status );
+    }
+
+    $history = get_post_meta( $shipment_id, 'wpcargo_shipments_update', true );
+    $history = $history ? maybe_unserialize( $history ) : array();
+    if ( ! is_array( $history ) ) {
+        $history = array();
+    }
+
+    $user_id = get_current_user_id();
+    $full_name = $wpcargo->user_fullname( $user_id );
+    $location = get_post_meta( $shipment_id, 'location', true );
+
+    $history_record = array(
+        'date' => current_time( 'Y-m-d' ),
+        'time' => current_time( 'H:i' ),
+        'location' => $location,
+        'status' => $new_status,
+        'updated-name' => $full_name,
+        'remarks' => $remarks,
+    );
+
+    $history[] = $history_record;
+    update_post_meta( $shipment_id, 'wpcargo_shipments_update', $history );
+
+    if ( wpcfe_status_transition_normalize( $new_status ) !== wpcfe_status_transition_normalize( $current_status ) ) {
+        wpcargo_send_email_notificatio( $shipment_id, $new_status );
+        do_action( 'wpcargo_extra_send_email_notification', $shipment_id, $new_status );
+        do_action( 'wpc_add_sms_shipment_history', $shipment_id );
+    }
+
+    $next_options = wpcfe_status_transition_options( $shipment_id, $new_status );
+
+    wp_send_json_success( array(
+        'new_status' => $new_status,
+        'new_class' => wpcfe_to_slug( $new_status ),
+        'options' => $next_options,
+        'is_final' => wpcfe_status_transition_is_final( $new_status ) || empty( $next_options ),
+        'message' => __( 'Shipment status updated successfully.', 'wpcargo-frontend-manager' ),
+    ) );
+}
 function wpcfe_seen_shipment_callback(){
     global $post;
     if( !function_exists( 'wpcfe_admin_page' ) || !$post ){
@@ -142,6 +340,7 @@ function wpcfe_initialize_table_hooks(){
     // Shipment Status Column
     add_action( 'wpcfe_shipment_table_header', 'wpcfe_shipment_table_header_status', 25 ); 
     add_action( 'wpcfe_shipment_table_data', 'wpcfe_shipment_table_data_status', 25 );
+    add_action( 'wpcfe_after_shipment_data', 'wpcfe_status_transition_modal_template', 30 );
     // Shipment Print Column
     add_action( 'wpcfe_shipment_table_header_action', 'wpcfe_shipment_table_header_action_print', 25 ); 
     add_action( 'wpcfe_shipment_table_data_action', 'wpcfe_shipment_table_action_print', 25 );
@@ -149,5 +348,6 @@ function wpcfe_initialize_table_hooks(){
     add_filter( 'wpcfe_shipment_action_rows', 'wpcfe_shipment_update_action_row', 10, 2 );
     add_filter( 'wpcfe_shipment_action_rows', 'wpcfe_shipment_delete_action_row', 10, 2 );
     add_action( 'wp_head', 'wpcfe_seen_shipment_callback' );
+    add_action( 'wp_ajax_wpcfe_status_transition_update', 'wpcfe_status_transition_update_ajax' );
 }
 add_action( 'plugins_loaded', 'wpcfe_initialize_table_hooks' );

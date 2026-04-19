@@ -64,6 +64,7 @@ class WPCFE_Scripts{
                 $dashboardURL = ( $wpcfe_admin ) ? get_the_permalink( $wpcfe_admin ) : get_the_permalink() ;
                 $translation   = array(
                     'ajaxurl'               => admin_url( 'admin-ajax.php' ),
+                    'statusTransitionNonce' => wp_create_nonce( 'wpcfe_status_transition_action' ),
                     'notification'          => json_encode( $notification ),
                     'shipmentConfirmation'  => __('Are you sure you want to delete this selected Shipment?', 'wpcargo-frontend-manager'),
                     'downloadErrorMessage'  => __('No shipment selected, Please select atleast one Shipment.', 'wpcargo-frontend-manager'),
@@ -87,6 +88,7 @@ class WPCFE_Scripts{
                     'confirmRepeaterDelete' => __('Are you sure you want to delete section?', 'wpcargo-frontend-manager'),
                     'bulkUpdateError'       => __('No shipment has been updated', 'wpcargo-frontend-manager'),
                     'bulkUpdateSuccess'     => __('Selected Shipements has been updated', 'wpcargo-frontend-manager'),
+                    'statusTransitionError' => __('Could not update shipment status.', 'wpcargo-frontend-manager'),
                     'pageURL'               => get_the_permalink(),
                 );
                 $translation_datetime   = array(
