@@ -383,8 +383,13 @@ html[dir="rtl"] #shipments-table-list td {
 .account-dropdown li {
     text-decoration: none;
     display: block;
-    padding: 5px 20px;
+  padding: 0;
 	cursor: pointer;
+}
+.account-dropdown li > a {
+  display: block;
+  padding: 5px 20px;
+  width: 100%;
 }
 .account-dropdown li:not(:last-child) {
     border-bottom: 1px solid #ededed;
