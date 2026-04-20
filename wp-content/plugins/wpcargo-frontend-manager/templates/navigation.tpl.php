@@ -1,7 +1,7 @@
 <!--Main Navigation-->
 <?php
 $create_active_class = ( get_the_ID() == wpcfe_admin_page() && isset( $_GET['wpcfe']) && $_GET['wpcfe'] == 'add' ) ? 'active' : '' ; 
-$shipments_active_class = ( get_the_ID() == wpcfe_admin_page() && ( ! isset( $_GET['wpcfe'] ) || ( isset( $_GET['wpcfe'] ) && ! in_array( sanitize_text_field( wp_unslash( $_GET['wpcfe'] ) ), array( 'add', 'settings' ), true ) ) ) ) ? 'active' : '';
+$shipments_active_class = ( get_the_ID() == wpcfe_admin_page() && ( ! isset( $_GET['wpcfe'] ) || ( isset( $_GET['wpcfe'] ) && ! in_array( sanitize_text_field( wp_unslash( $_GET['wpcfe'] ) ), array( 'add', 'settings', 'dashboard' ), true ) ) ) ) ? 'active' : '';
 $unseen_shipments  = wpcfe_disable_unseen() ? 0 : wpcfe_get_user_unseen_shipments();
 $unseen  = $unseen_shipments > 9 ? '9&#43;' : $unseen_shipments ;
 
