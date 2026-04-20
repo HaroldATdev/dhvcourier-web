@@ -2,7 +2,7 @@
 	<div class="modal-content">
 		<div class="header">
 			<h1>
-				<?php esc_html_e('Update Branch', 'wpcargo-branches' ); ?>
+				<?php esc_html_e('Actualizar Sucursal', 'wpcargo-branches' ); ?>
 				<span class="close">x</span>
 			</h1>
 		</div>
@@ -43,7 +43,7 @@
 					<tr>
 						<td colspan="2">
 							<input type="hidden" id="branchid" name="branchid" value="">
-							<input type="submit" class="button button-primary button-large" name="submit" value="<?php esc_html_e('Update Branch', 'wpcargo-branches' ); ?>">
+							<button type="submit" class="wpcbm-btn-submit btn btn-primary"><?php esc_html_e('Actualizar Sucursal', 'wpcargo-branches' ); ?></button>
 						</td>
 					</tr>
 				</table>

@@ -356,157 +356,30 @@ function wpcbm_plugins_loaded_cb(){
 }
 add_action('plugins_loaded', 'wpcbm_plugins_loaded_cb');
 /*
-** WPCargo Frontend Dashboard - Administrar Sucursales
-** Agrega ítem al sidebar del panel de WPCargo (solo administradores)
-** Mismo patrón que wpcfe_after_sidebar_menus usado por otros addons
+** WPCargo Dashboard Widget - Administrar Sucursales
 */
-
-/**
- * Obtiene o crea la página frontend de sucursales (con shortcode).
- */
-function wpcbm_get_frontend_page_id(): int {
-	$saved = (int) get_option( 'wpcbm_frontend_page_id' );
-	if ( $saved && get_post_status( $saved ) === 'publish' ) {
-		return $saved;
-	}
-	global $wpdb;
-	$id = (int) $wpdb->get_var(
-		"SELECT ID FROM {$wpdb->prefix}posts
-		 WHERE post_content LIKE '%[wpcbm-sucursales]%'
-		   AND post_status = 'publish'
-		 LIMIT 1"
-	);
-	if ( ! $id ) {
-		$id = (int) wp_insert_post( array(
-			'post_title'   => __( 'Administrar Sucursales', 'wpcargo-branches' ),
-			'post_content' => '[wpcbm-sucursales]',
-			'post_status'  => 'publish',
-			'post_type'    => 'page',
-		) );
-	}
-	if ( $id ) {
-		update_post_meta( $id, '_wp_page_template', 'dashboard.php' );
-		update_post_meta( $id, 'wpcfe_menu_icon',   'fa fa-building mr-3' );
-		update_option( 'wpcbm_frontend_page_id', $id, false );
-	}
-	return $id;
-}
-
-/**
- * URL de la página frontend de sucursales.
- */
-function wpcbm_frontend_url(): string {
-	return get_permalink( wpcbm_get_frontend_page_id() ) ?: home_url( '/administrar-sucursales/' );
-}
-
-/**
- * Registra el shortcode [wpcbm-sucursales] que renderiza el módulo.
- */
-add_shortcode( 'wpcbm-sucursales', 'wpcbm_frontend_shortcode' );
-function wpcbm_frontend_shortcode(): string {
-	if ( ! current_user_can( 'manage_options' ) ) {
-		return '<div class="alert alert-warning"><i class="fa fa-lock mr-2"></i>' .
-		       esc_html__( 'Acceso restringido.', 'wpcargo-branches' ) . '</div>';
-	}
-	$all_branches = wpcbm_get_all_branch( -1 );
-	global $wpcargo;
-	ob_start();
-	?>
-	<div class="wpcbm-fe-wrap">
-
-		<div class="d-flex align-items-center mb-3 border-bottom pb-3">
-			<div class="mr-auto">
-				<h5 class="mb-0">
-					<i class="fa fa-building mr-2 text-primary"></i>
-					<?php esc_html_e( 'Administrar Sucursales', 'wpcargo-branches' ); ?>
-				</h5>
-				<small class="text-muted">
-					<?php esc_html_e( 'Lista de todas las sucursales registradas.', 'wpcargo-branches' ); ?>
-				</small>
-			</div>
-			<a href="<?php echo esc_url( admin_url( 'admin.php?page=manage_branch' ) ); ?>"
-			   class="btn btn-primary btn-sm">
-				<i class="fa fa-cog mr-1"></i>
-				<?php esc_html_e( 'Gestionar en Admin', 'wpcargo-branches' ); ?>
-			</a>
-		</div>
-
-		<?php if ( ! empty( $all_branches ) ) : ?>
-		<div class="table-responsive">
-			<table class="table table-sm table-bordered table-hover wpcbm-fe-table">
-				<thead class="thead-light">
-					<tr>
-						<th><?php esc_html_e( 'Nombre', 'wpcargo-branches' ); ?></th>
-						<th><?php esc_html_e( 'Código', 'wpcargo-branches' ); ?></th>
-						<th><?php esc_html_e( 'Teléfono', 'wpcargo-branches' ); ?></th>
-						<th><?php esc_html_e( 'Ciudad', 'wpcargo-branches' ); ?></th>
-						<th><?php esc_html_e( 'Colaborador', 'wpcargo-branches' ); ?></th>
-					</tr>
-				</thead>
-				<tbody>
-				<?php foreach ( $all_branches as $branch ) :
-					$branch_manager      = array();
-					$unserialize_branch  = @unserialize( $branch->branch_manager );
-					if ( $unserialize_branch ) {
-						foreach ( $unserialize_branch as $branch_data ) {
-							$branch_manager[] = $wpcargo->user_fullname( $branch_data );
-						}
-					}
-					$assigned_bm = ! empty( $branch_manager ) ? join( ', ', $branch_manager ) : '--';
-				?>
-					<tr>
-						<td><?php echo esc_html( $branch->name ); ?></td>
-						<td><?php echo esc_html( $branch->code ); ?></td>
-						<td><?php echo esc_html( $branch->phone ); ?></td>
-						<td><?php echo esc_html( $branch->city ); ?></td>
-						<td><?php echo esc_html( $assigned_bm ); ?></td>
-					</tr>
-				<?php endforeach; ?>
-				</tbody>
-			</table>
-		</div>
-		<?php else : ?>
-			<p class="text-muted">
-				<?php esc_html_e( 'No hay sucursales registradas.', 'wpcargo-branches' ); ?>
-			</p>
-		<?php endif; ?>
-
-	</div>
-	<?php
-	return ob_get_clean();
-}
-
-/**
- * Agrega "Administrar Sucursales" al sidebar del panel frontend de WPCargo.
- * Solo visible para administradores (manage_options).
- */
-add_filter( 'wpcfe_after_sidebar_menus', 'wpcbm_sidebar_menu_item', 30, 1 );
-function wpcbm_sidebar_menu_item( array $menu ): array {
-	if ( ! current_user_can( 'manage_options' ) ) {
-		return $menu;
-	}
-	$menu['wpcbm-sucursales'] = array(
-		'page-id'   => wpcbm_get_frontend_page_id(),
-		'label'     => __( 'Administrar Sucursales', 'wpcargo-branches' ),
-		'permalink' => wpcbm_frontend_url(),
-		'icon'      => 'fa-building',
-	);
-	return $menu;
-}
-
-// WordPress admin dashboard widget (solo administradores)
-add_action( 'wp_dashboard_setup', 'wpcbm_wp_dashboard_widget_register' );
-function wpcbm_wp_dashboard_widget_register() {
-	if ( ! current_user_can( 'manage_options' ) ) {
-		return;
-	}
+add_action( 'wpcargo_dashboard_widgets', 'wpcbm_dashboard_widget_register' );
+function wpcbm_dashboard_widget_register(){
 	wp_add_dashboard_widget(
 		'wpcbm_branches_dashboard_widget',
 		esc_html__( 'Administrar Sucursales', 'wpcargo-branches' ),
-		'wpcbm_wp_dashboard_widget_display'
+		'wpcbm_dashboard_widget_display'
 	);
 }
-function wpcbm_wp_dashboard_widget_display() {
+// Also hook into WordPress dashboard
+add_action( 'wp_dashboard_setup', 'wpcbm_wp_dashboard_widget_register' );
+function wpcbm_wp_dashboard_widget_register(){
+	wp_add_dashboard_widget(
+		'wpcbm_branches_dashboard_widget',
+		esc_html__( 'Administrar Sucursales', 'wpcargo-branches' ),
+		'wpcbm_dashboard_widget_display'
+	);
+}
+function wpcbm_dashboard_widget_display(){
+	if( empty( get_option( WPC_BRANCHES_BASENAME ) ) ){
+		echo '<p>' . wpcdm_activate_license_message() . '</p>';
+		return;
+	}
 	$all_branches = wpcbm_get_all_branch( -1 );
 	global $wpcargo;
 	?>
@@ -515,29 +388,30 @@ function wpcbm_wp_dashboard_widget_display() {
 		#wpcbm_branches_dashboard_widget .wpcbm-dash-table th { background:#f1f1f1; padding:6px 8px; text-align:left; border-bottom:1px solid #ddd; }
 		#wpcbm_branches_dashboard_widget .wpcbm-dash-table td { padding:6px 8px; border-bottom:1px solid #f0f0f0; vertical-align:top; }
 		#wpcbm_branches_dashboard_widget .wpcbm-dash-table tr:last-child td { border-bottom:none; }
+		#wpcbm_branches_dashboard_widget .wpcbm-dash-actions a { margin-right:6px; text-decoration:none; }
 		#wpcbm_branches_dashboard_widget .wpcbm-dash-link { display:inline-block; margin-top:10px; font-weight:600; }
 	</style>
-	<?php if ( ! empty( $all_branches ) ) : ?>
+	<?php if( !empty( $all_branches ) ): ?>
 	<table class="wpcbm-dash-table">
 		<thead>
 			<tr>
-				<th><?php esc_html_e( 'Nombre', 'wpcargo-branches' ); ?></th>
-				<th><?php esc_html_e( 'Código', 'wpcargo-branches' ); ?></th>
-				<th><?php esc_html_e( 'Teléfono', 'wpcargo-branches' ); ?></th>
-				<th><?php esc_html_e( 'Ciudad', 'wpcargo-branches' ); ?></th>
-				<th><?php esc_html_e( 'Colaborador', 'wpcargo-branches' ); ?></th>
+				<th><?php esc_html_e('Nombre', 'wpcargo-branches'); ?></th>
+				<th><?php esc_html_e('Código', 'wpcargo-branches'); ?></th>
+				<th><?php esc_html_e('Teléfono', 'wpcargo-branches'); ?></th>
+				<th><?php esc_html_e('Ciudad', 'wpcargo-branches'); ?></th>
+				<th><?php esc_html_e('Colaborador', 'wpcargo-branches'); ?></th>
 			</tr>
 		</thead>
 		<tbody>
-		<?php foreach ( $all_branches as $branch ) :
-			$branch_manager     = array();
+		<?php foreach( $all_branches as $branch ):
+			$branch_manager = array();
 			$unserialize_branch = @unserialize( $branch->branch_manager );
-			if ( $unserialize_branch ) {
-				foreach ( $unserialize_branch as $branch_data ) {
+			if( $unserialize_branch ){
+				foreach( $unserialize_branch as $branch_data ){
 					$branch_manager[] = $wpcargo->user_fullname( $branch_data );
 				}
 			}
-			$assigned_bm = ! empty( $branch_manager ) ? join( ', ', $branch_manager ) : '--';
+			$assigned_bm = !empty( $branch_manager ) ? join(', ', $branch_manager ) : '--';
 		?>
 			<tr>
 				<td><?php echo esc_html( $branch->name ); ?></td>
@@ -549,11 +423,9 @@ function wpcbm_wp_dashboard_widget_display() {
 		<?php endforeach; ?>
 		</tbody>
 	</table>
-	<?php else : ?>
-		<p><?php esc_html_e( 'No hay sucursales registradas.', 'wpcargo-branches' ); ?></p>
+	<?php else: ?>
+		<p><?php esc_html_e('No hay sucursales registradas.', 'wpcargo-branches'); ?></p>
 	<?php endif; ?>
-	<a class="wpcbm-dash-link" href="<?php echo esc_url( admin_url( 'admin.php?page=manage_branch' ) ); ?>">
-		<?php esc_html_e( 'Administrar Sucursales →', 'wpcargo-branches' ); ?>
-	</a>
+	<a class="wpcbm-dash-link" href="<?php echo admin_url('admin.php?page=manage_branch'); ?>"><?php esc_html_e('Administrar Sucursales →', 'wpcargo-branches'); ?></a>
 	<?php
 }

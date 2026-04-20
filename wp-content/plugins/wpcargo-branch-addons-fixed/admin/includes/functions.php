@@ -72,7 +72,12 @@ function wpcargo_get_branch_managers(){
 	$branch_managers = get_users( apply_filters( 'wpcargo_branch_manager_args', $args ) );
 	if( !empty( $branch_managers ) ){
 		foreach ( $branch_managers  as $branch_manager ) {
-			$branch_managers_list[$branch_manager->ID] = $wpcargo->user_fullname( $branch_manager->ID );
+			if ( $wpcargo && method_exists( $wpcargo, 'user_fullname' ) ) {
+				$branch_managers_list[$branch_manager->ID] = $wpcargo->user_fullname( $branch_manager->ID );
+			} else {
+				$name = trim( $branch_manager->first_name . ' ' . $branch_manager->last_name );
+				$branch_managers_list[$branch_manager->ID] = $name ?: $branch_manager->display_name;
+			}
 		}
 	}
 	return $branch_managers_list;
@@ -226,7 +231,7 @@ function wpcbranch_get_current_branch_callback() {
 function wpcdm_activate_license_message(){
 	return sprintf( 
 		'%s <a href="%s" title="%s">%s</a>',
-		esc_html__('Please activate your license key for Branch Manager Add on', 'wpcargo-branches'),
+		esc_html__('Por favor activa tu clave de licencia para el Add-on de Sucursales', 'wpcargo-branches'),
 		admin_url().'admin.php?page=wptaskforce-helper',
 		esc_html__('WPCargo license page', 'wpcargo-branches'),
 		esc_html__('here', 'wpcargo-branches')
@@ -267,7 +272,7 @@ function wpcdm_branch_transfer_label(){
 	return esc_html__('Branch Transfer', 'wpcargo-branches');
 }
 function wpcdm_branch_manager_settings_label(){
-	return esc_html__( 'Branch Manager Settings', 'wpcargo-branches' );
+	return esc_html__( 'Configuración de Colaborador de Sucursal', 'wpcargo-branches' );
 }
 function wpcdm_assign_branch_label(){
 	return esc_html__( 'Assigned Branch', 'wpcargo-branches' );

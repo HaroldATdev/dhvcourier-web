@@ -16,6 +16,30 @@ function wpcbranch_activation_callback(){
     wpcbranch_create_manage_branch_table();
     add_option('current_branch', '');
     wpc_braches_database_updates();
+    // Crear página del dashboard WPCargo
+    wpcbm_crear_pagina_frontend();
+}
+
+function wpcbm_crear_pagina_frontend(){
+    global $wpdb;
+    $saved = (int) get_option('wpcbm_pagina_id');
+    if ( $saved && get_post_status($saved) === 'publish' ) return;
+    $id = (int) $wpdb->get_var(
+        "SELECT ID FROM {$wpdb->prefix}posts WHERE ( post_content LIKE '%[wpcbm-sucursales]%' OR post_content LIKE '%[wpcbm_sucursales]%' ) AND post_status='publish' ORDER BY ID ASC LIMIT 1"
+    );
+    if ( ! $id ) {
+        $id = (int) wp_insert_post( array(
+            'post_title'   => 'Sucursales',
+            'post_content' => '[wpcbm-sucursales]',
+            'post_status'  => 'publish',
+            'post_type'    => 'page',
+        ) );
+    }
+    if ( $id ) {
+        update_post_meta( $id, '_wp_page_template', 'dashboard.php' );
+        update_post_meta( $id, 'wpcfe_menu_icon',   'fa fa-code-branch mr-3' );
+        update_option( 'wpcbm_pagina_id', $id, false );
+    }
 }
 function wpcbranch_deactivation_callback(){
 

@@ -26,7 +26,7 @@ register_deactivation_hook( WPC_BRANCHES_FILE, 'wpcbranch_deactivation_callback'
 
 // ==========================================
 // BYPASS: Force license to appear as active
-// Modified on 2025-10-20 to allow usage without license restrictions
+// Modified on 2025-10-20 to allow usage without license restriction
 // ==========================================
 add_action('init', function() {
 	if (!get_option(WPC_BRANCHES_BASENAME)) {

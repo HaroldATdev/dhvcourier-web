@@ -2,7 +2,7 @@
 	<div class="modal-content">
 		<div class="header">
 			<h1>
-				<?php esc_html_e('Add Branch', 'wpcargo-branches' ); ?>
+				<?php esc_html_e('Agregar Sucursal', 'wpcargo-branches' ); ?>
 				<span class="close">x</span>
 			</h1>
 		</div>
@@ -41,7 +41,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td colspan="2"><input type="submit" class="button button-primary button-large" name="submit" value="<?php esc_html_e('Save Branch', 'wpcargo-branches' ); ?>"></td>
+						<td colspan="2"><button type="submit" class="wpcbm-btn-submit btn btn-primary"><?php esc_html_e('Guardar Sucursal', 'wpcargo-branches' ); ?></button></td>
 						<td></td>
 					</tr>
 				</table>
