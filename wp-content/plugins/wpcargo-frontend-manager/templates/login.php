@@ -75,6 +75,23 @@
 	</div>
 </div>
 <style>
+	#loginform .login-username > label,
+	#loginform .login-password > label {
+		position: static !important;
+		transform: none !important;
+		display: block;
+		margin-bottom: 6px;
+		left: auto !important;
+		top: auto !important;
+		font-size: 1rem;
+		line-height: 1.25;
+	}
+
+	#loginform .login-username,
+	#loginform .login-password {
+		padding-top: 0;
+	}
+
 	#loginform .wpcfe-password-field-wrap {
 		position: relative;
 	}
