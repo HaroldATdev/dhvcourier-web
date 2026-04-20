@@ -35,8 +35,8 @@ class WPC_Branch_Frontend {
         if ( $id && get_post_status( $id ) === 'publish' ) {
             // Asegurar que el ícono del sidebar esté siempre actualizado
             $icon_actual = get_post_meta( $id, 'wpcfe_menu_icon', true );
-            if ( $icon_actual !== 'fa-sitemap' ) {
-                update_post_meta( $id, 'wpcfe_menu_icon', 'fa-sitemap' );
+            if ( $icon_actual !== 'fa-building-o' ) {
+                update_post_meta( $id, 'wpcfe_menu_icon', 'fa-building-o' );
             }
             return $id;
         }
@@ -73,7 +73,7 @@ class WPC_Branch_Frontend {
 
         if ( $id ) {
             update_post_meta( $id, '_wp_page_template', 'dashboard.php' );
-            update_post_meta( $id, 'wpcfe_menu_icon',   'fa-sitemap' );
+            update_post_meta( $id, 'wpcfe_menu_icon',   'fa-building-o' );
             update_option( 'wpcbm_pagina_id', $id, false );
         }
 
@@ -101,9 +101,9 @@ class WPC_Branch_Frontend {
 
         $menu['wpcbm-sucursales'] = [
             'page-id'   => (int) get_option( 'wpcbm_pagina_id' ),
-            'label'     => 'Administrar Sucursales',
+            'label'     => 'Sucursales',
             'permalink' => $this->url_base(),
-            'icon'      => 'fa-sitemap',
+            'icon'      => 'fa-building-o',
         ];
 
         return $menu;
