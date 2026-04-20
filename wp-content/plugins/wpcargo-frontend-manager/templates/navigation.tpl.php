@@ -391,7 +391,7 @@ if ( ! function_exists( 'wpcfe_get_combined_sidebar_custom_items' ) ) {
 				max-height: calc(100vh - 56px);
 				overflow-y: auto;
 				-webkit-overflow-scrolling: touch;
-				padding-bottom: 2px;
+				padding-bottom: 12px;
 			}
 			#navbarMobileMenuContent .mobile-sidebar-menu {
 				max-height: calc(100vh - 170px);
@@ -400,25 +400,22 @@ if ( ! function_exists( 'wpcfe_get_combined_sidebar_custom_items' ) ) {
 				padding-right: 4px;
 			}
 			#navbarMobileMenuContent .list-group-item {
-				padding-top: .1rem;
-				padding-bottom: .1rem;
-				line-height: 1.1;
-				font-size: .2rem;
+				padding-top: .55rem;
+				padding-bottom: .55rem;
+				line-height: 1.2;
+				font-size: .92rem;
 			}
 			#navbarMobileMenuContent .list-group-item i.fa {
-				font-size: .1rem;
-				margin-right: .35rem !important;
+				font-size: .95rem;
+				margin-right: .45rem !important;
 			}
 			#navbarMobileMenuContent .wpcfe-submenu-link {
-				padding-left: 1.6rem !important;
-				font-size: .84rem;
-			}
-			#navbarMobileMenuContent .wpcfe-submenu-toggle {
-				padding-left: 4px;
+				padding-left: 1.9rem !important;
+				font-size: .88rem;
 			}
 			#navbarMobileMenuContent .badge {
-				font-size: .62rem;
-				padding: .15em .35em;
+				font-size: .68rem;
+				padding: .22em .45em;
 			}
 			#navbarMobileMenuContent .mobile-sidebar-menu::-webkit-scrollbar {
 				width: 5px;

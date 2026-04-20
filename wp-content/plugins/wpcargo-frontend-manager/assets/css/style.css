@@ -169,8 +169,8 @@ ul#menu-top-menu li {
 	}
 	#navbarMobileMenuContent .mobile-sidebar-menu .list-group-item,
 	#navbarMobileMenuContent .dashboard-page-menu.list-group-item {
-		padding: .9rem 0;
-		font-size: .97rem;
+		padding: .45rem 0;
+		font-size: .8rem;
 		line-height: 1.35;
 	}
 	.navbar-collapse.collapse.show .dashboard-page-menu{
