@@ -79,10 +79,6 @@
 		position: relative;
 	}
 
-	#loginform .wpcfe-password-field-wrap #user_pass {
-		padding-right: 46px;
-	}
-
 
 	#loginform .wpcfe-password-toggle {
 		position: absolute;
