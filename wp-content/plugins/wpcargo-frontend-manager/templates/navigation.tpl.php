@@ -400,22 +400,25 @@ if ( ! function_exists( 'wpcfe_get_combined_sidebar_custom_items' ) ) {
 				padding-right: 4px;
 			}
 			#navbarMobileMenuContent .list-group-item {
-				padding-top: .55rem;
-				padding-bottom: .55rem;
-				line-height: 1.2;
-				font-size: .92rem;
-			}
-			#navbarMobileMenuContent .list-group-item i.fa {
-				font-size: .95rem;
-				margin-right: .45rem !important;
-			}
-			#navbarMobileMenuContent .wpcfe-submenu-link {
-				padding-left: 1.9rem !important;
+				padding-top: .38rem;
+				padding-bottom: .38rem;
+				line-height: 1.1;
 				font-size: .88rem;
 			}
+			#navbarMobileMenuContent .list-group-item i.fa {
+				font-size: .88rem;
+				margin-right: .35rem !important;
+			}
+			#navbarMobileMenuContent .wpcfe-submenu-link {
+				padding-left: 1.6rem !important;
+				font-size: .84rem;
+			}
+			#navbarMobileMenuContent .wpcfe-submenu-toggle {
+				padding-left: 4px;
+			}
 			#navbarMobileMenuContent .badge {
-				font-size: .68rem;
-				padding: .22em .45em;
+				font-size: .62rem;
+				padding: .15em .35em;
 			}
 			#navbarMobileMenuContent .mobile-sidebar-menu::-webkit-scrollbar {
 				width: 5px;
