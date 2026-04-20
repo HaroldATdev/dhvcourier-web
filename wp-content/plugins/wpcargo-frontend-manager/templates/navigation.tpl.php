@@ -386,6 +386,45 @@ if ( ! function_exists( 'wpcfe_get_combined_sidebar_custom_items' ) ) {
 		.wpcfe-submenu-toggle i {
 			transition: transform .2s ease;
 		}
+		@media (max-width: 991.98px) {
+			#navbarMobileMenuContent {
+				max-height: calc(100vh - 56px);
+				overflow-y: auto;
+				-webkit-overflow-scrolling: touch;
+				padding-bottom: 12px;
+			}
+			#navbarMobileMenuContent .mobile-sidebar-menu {
+				max-height: calc(100vh - 170px);
+				overflow-y: auto;
+				-webkit-overflow-scrolling: touch;
+				padding-right: 4px;
+			}
+			#navbarMobileMenuContent .list-group-item {
+				padding-top: .55rem;
+				padding-bottom: .55rem;
+				line-height: 1.2;
+				font-size: .92rem;
+			}
+			#navbarMobileMenuContent .list-group-item i.fa {
+				font-size: .95rem;
+				margin-right: .45rem !important;
+			}
+			#navbarMobileMenuContent .wpcfe-submenu-link {
+				padding-left: 1.9rem !important;
+				font-size: .88rem;
+			}
+			#navbarMobileMenuContent .badge {
+				font-size: .68rem;
+				padding: .22em .45em;
+			}
+			#navbarMobileMenuContent .mobile-sidebar-menu::-webkit-scrollbar {
+				width: 5px;
+			}
+			#navbarMobileMenuContent .mobile-sidebar-menu::-webkit-scrollbar-thumb {
+				background: rgba(0, 0, 0, 0.2);
+				border-radius: 10px;
+			}
+		}
 	</style>
     <!-- Navbar -->
     <!-- Sidebar -->
