@@ -79,6 +79,10 @@
 		position: relative;
 	}
 
+	#loginform .wpcfe-password-field-wrap #user_pass {
+		padding-right: 46px;
+	}
+
 
 	#loginform .wpcfe-password-toggle {
 		position: absolute;
@@ -95,6 +99,9 @@
 		background: transparent;
 		color: #6c757d;
 		cursor: pointer;
+		line-height: 1;
+		appearance: none;
+		-webkit-appearance: none;
 		touch-action: manipulation;
 		z-index: 3;
 	}
@@ -116,10 +123,15 @@
 		if(!passInput || !toggleBtn){
 			return;
 		}
+		if(toggleBtn.getAttribute('data-password-toggle-bound') === '1'){
+			return;
+		}
+		toggleBtn.setAttribute('data-password-toggle-bound', '1');
 
 		function handleToggle(event){
 			if(event){
 				event.preventDefault();
+				event.stopPropagation();
 			}
 			var now = Date.now();
 			if(now - lastToggleAt < 200){
@@ -140,11 +152,10 @@
 			}
 		}
 
+		toggleBtn.addEventListener('click', handleToggle);
+		toggleBtn.addEventListener('touchend', handleToggle, { passive: false });
 		if(window.PointerEvent){
 			toggleBtn.addEventListener('pointerup', handleToggle);
-		}else{
-			toggleBtn.addEventListener('touchend', handleToggle);
-			toggleBtn.addEventListener('click', handleToggle);
 		}
 	}
 
