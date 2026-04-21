@@ -127,7 +127,8 @@ add_filter('wpcargo_shipment_query_filter', function( $metakey ){
 	$metakey[] = 'shipment_branch';
 	return $metakey;
 });
-add_action('wpc_after_shipment_designation', 'wpc_mb_assign_branch_manager');
+// Comentado: ya no mostrar select de colaborador individual; visibilidad depende de sucursal únicamente.
+// add_action('wpc_after_shipment_designation', 'wpc_mb_assign_branch_manager');
 function wpc_mb_assign_branch_manager( $shipment_id ){
 	?>
 	<div class="section-wrapper">

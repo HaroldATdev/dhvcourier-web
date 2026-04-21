@@ -230,6 +230,9 @@ jQuery(document).ready(function( $ ){
         });
     }
 
+    // Comentado: ya no manejar select de colaborador individual.
+    // La visibilidad de envíos depende de la sucursal, no de colaborador específico.
+    /*
     $('.misc-pub-section #wpc-user-branch').change(function(){
 		var selectedBranch = $('#wpc-user-branch option:selected').val();
 		$.ajax({
@@ -256,6 +259,7 @@ jQuery(document).ready(function( $ ){
              } 
         });
 	});
+    */
 
     const removeAffixes = function() {
         $.ajax({
