@@ -301,6 +301,9 @@ class WPC_Branch_Manager{
 		}
 		# insert into the database
 		$result = $wpdb->insert($table_name, $formatted_data, $placeholders);
+		if ( $result && function_exists( 'wpcbranch_compat_sync_branch_user_meta' ) ) {
+			wpcbranch_compat_sync_branch_user_meta( (int) $wpdb->insert_id );
+		}
 		echo $result;
 		wp_die();
 	}
@@ -309,6 +312,8 @@ class WPC_Branch_Manager{
 		$table_name 	= $wpdb->prefix . WPC_BRANCHES_TABLE;
 		parse_str($_POST['formData'], $output);
 		$branchID = (int)$output['branchid'];
+		$previous_branch = wpcdm_get_branch( $branchID );
+		$previous_users = function_exists( 'wpcbranch_compat_extract_branch_user_ids' ) ? wpcbranch_compat_extract_branch_user_ids( $previous_branch ) : array();
 		$default_form_keys = array_keys(wpcbm_add_update_branch_fields());
 		$formatted_data = array();
 		$placeholders = array();
@@ -337,6 +342,9 @@ class WPC_Branch_Manager{
 		}
 		# update row data
 		$result = $wpdb->update($table_name, $formatted_data, array('id' => $branchID), $placeholders);
+		if ( false !== $result && function_exists( 'wpcbranch_compat_sync_branch_user_meta' ) ) {
+			wpcbranch_compat_sync_branch_user_meta( $branchID, $previous_users );
+		}
 		echo $result;
 		wp_die();
 	}
@@ -344,7 +352,12 @@ class WPC_Branch_Manager{
 		global $wpdb;
 		$table_name 	= $wpdb->prefix . WPC_BRANCHES_TABLE;
 	    $branchID 		= sanitize_text_field( $_POST['branchID'] );
+	    $previous_branch = wpcdm_get_branch( $branchID );
+	    $previous_users = function_exists( 'wpcbranch_compat_extract_branch_user_ids' ) ? wpcbranch_compat_extract_branch_user_ids( $previous_branch ) : array();
 	    $result 		= $wpdb->delete( $table_name, array( 'id' => $branchID ), array( '%d' ) );
+	    if ( $result && function_exists( 'wpcbranch_compat_sync_branch_user_meta' ) ) {
+	    	wpcbranch_compat_sync_branch_user_meta( 0, $previous_users );
+	    }
 	    echo $result;
 	    wp_die();
 	}

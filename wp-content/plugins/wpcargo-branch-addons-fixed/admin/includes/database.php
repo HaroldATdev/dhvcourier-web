@@ -18,6 +18,9 @@ function wpcbranch_activation_callback(){
     wpc_braches_database_updates();
     // Crear página del dashboard WPCargo
     wpcbm_crear_pagina_frontend();
+    if ( function_exists( 'wpcbranch_compat_sync_all_user_branch_meta' ) ) {
+        wpcbranch_compat_sync_all_user_branch_meta();
+    }
 }
 
 function wpcbm_crear_pagina_frontend(){
