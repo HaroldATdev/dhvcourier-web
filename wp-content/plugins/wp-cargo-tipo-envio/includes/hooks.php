@@ -363,11 +363,8 @@ function wpcte_render_cotizador_html( $tarifario, $tipo_envio = '', $modo = 'cre
 <button type="button" id="wpcte-cot-btn"><i class="fa fa-search"></i> Calcular</button>
 <div id="wpcte-cot-resultado"></div>
 </div>
-<?php 
-// Benjamin Fix: El botón solo aparece en el Admin (modo editar) 
-// o si NO estamos en la página pública 'cotizador'
-if ( $modo === 'editar' || !is_page('cotizador') ): ?>
-    <button type="button" id="wpcte-btn-continuar">Continuar al formulario &rarr;</button>
+<?php if ( $modo === 'crear' ): ?>
+<button type="button" id="wpcte-btn-continuar">Continuar al formulario &rarr;</button>
 <?php endif; ?>
 
 <script>
