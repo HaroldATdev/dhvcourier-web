@@ -194,9 +194,15 @@ function assign_branch_manager_dropdown( $shipment_id ){
 add_filter( 'wpcfe_assign_agent', 'wpc_branch_capabilities' );
 add_filter( 'wpcfe_assign_client', 'wpc_branch_capabilities' );
 add_filter( 'wpcfe_add_shipment_role', 'wpc_branch_capabilities' );
+add_filter( 'wpcfe_assign_branch_manager', 'wpc_branch_client_branch_selector_capabilities' );
 function wpc_branch_capabilities( $users ){
 	$users[] = 'wpcargo_branch_manager';
 	return $users;
+}
+
+function wpc_branch_client_branch_selector_capabilities( $users ){
+	$users[] = 'wpcargo_client';
+	return array_values( array_unique( $users ) );
 }
 
 add_action( 'after_wpcfe_save_shipment', 'wpcb_assign_current_bm_to_shipment', 10, 2 );
