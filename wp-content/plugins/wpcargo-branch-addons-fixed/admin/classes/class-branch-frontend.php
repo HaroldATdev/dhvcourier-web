@@ -258,15 +258,27 @@ class WPC_Branch_Frontend {
              */
             function wpcbmInitModalSelects() {
                 $('.select-bm').each(function(){
-                    if ( typeof $.fn.select2 !== 'undefined' && $(this).hasClass('select2-hidden-accessible') ) {
-                        $(this).select2('destroy');
+                    var $select = $(this);
+                    var $modalContent = $select.closest('.modal-content');
+
+                    if ( typeof $.fn.select2 === 'undefined' ) {
+                        $select.css({ display: 'block', width: '100%' });
+                        return;
                     }
 
-                    this.style.setProperty('display', 'block', 'important');
-                    this.style.setProperty('visibility', 'visible', 'important');
-                    this.style.setProperty('opacity', '1', 'important');
-                    this.style.setProperty('width', '100%', 'important');
-                    $(this).attr('size', 6);
+                    if ( $select.hasClass('select2-hidden-accessible') ) {
+                        $select.select2('destroy');
+                    }
+
+                    $select.css({ width: '100%' });
+                    $select.select2({
+                        placeholder : '-- Seleccionar colaborador --',
+                        width        : '100%',
+                        closeOnSelect: false,
+                        allowClear   : true,
+                        dropdownParent: $modalContent.length ? $modalContent : $select.closest('.modal'),
+                        language     : { noResults: function(){ return 'Sin resultados'; } },
+                    });
                 });
             }
 
@@ -546,14 +558,6 @@ class WPC_Branch_Frontend {
         }
         .add-branch-table input[type=text]:focus {
             outline:none; border-color:#1a9bcf; box-shadow:0 0 0 3px rgba(26,155,207,.15);
-        }
-
-        /* Forzar select nativo de colaboradores en modales */
-        .wpcbm-wrap .modal select.select-bm {
-            display:block !important;
-            visibility:visible !important;
-            opacity:1 !important;
-            width:100% !important;
         }
 
         /* Botón submit del modal */

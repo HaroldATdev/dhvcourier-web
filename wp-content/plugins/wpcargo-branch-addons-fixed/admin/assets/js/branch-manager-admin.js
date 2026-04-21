@@ -3,15 +3,29 @@ jQuery(document).ready(function( $ ){
 
     function prepareBranchManagerSelects() {
         $('.select-bm').each(function(){
-            if ( typeof $.fn.select2 !== 'undefined' && $(this).hasClass('select2-hidden-accessible') ) {
-                $(this).select2('destroy');
+            var $select = $(this);
+            var $modalContent = $select.closest('.modal-content');
+
+            if ( typeof $.fn.select2 === 'undefined' ) {
+                $select.css('width', '100%');
+                return;
             }
 
-            this.style.setProperty('display', 'block', 'important');
-            this.style.setProperty('visibility', 'visible', 'important');
-            this.style.setProperty('opacity', '1', 'important');
-            this.style.setProperty('width', '100%', 'important');
-            $(this).attr('size', 6);
+            if ( $select.hasClass('select2-hidden-accessible') ) {
+                $select.select2('destroy');
+            }
+
+            $select.css('width', '100%');
+            $select.select2({
+                placeholder: '-- Seleccionar colaborador --',
+                width: '100%',
+                closeOnSelect: false,
+                allowClear: true,
+                dropdownParent: $modalContent.length ? $modalContent : $select.closest('.modal'),
+                language: {
+                    noResults: function(){ return 'Sin resultados'; }
+                }
+            });
         });
     }
 
