@@ -187,7 +187,6 @@ function wpcbranch_compat_apply_branch_assignment( $shipment_id, $branch, $data 
 
     $shipment_id = (int) $shipment_id;
     $meta_map    = array(
-        'wpcargo_branch_manager',
         'agent_fields',
         'wpcargo_driver',
         'wpcargo_employee',
@@ -276,9 +275,14 @@ function wpcbranch_compat_dashboard_meta_query( $meta_query ) {
         return $meta_query;
     }
 
+    $user_branch = wpcbranch_compat_find_user_branch_id();
+    if ( ! $user_branch ) {
+        return $meta_query;
+    }
+
     $meta_query['__assignment'] = array(
-        'key'     => 'wpcargo_branch_manager',
-        'value'   => get_current_user_id(),
+        'key'     => 'shipment_branch',
+        'value'   => $user_branch,
         'compare' => '=',
     );
 
@@ -290,14 +294,31 @@ function wpcbranch_compat_replace_assignment_meta_key( $sql ) {
         return $sql;
     }
 
-    return str_replace(
+    $user_id     = get_current_user_id();
+    $user_branch = wpcbranch_compat_find_user_branch_id();
+    if ( ! $user_id || ! $user_branch ) {
+        return $sql;
+    }
+
+    $sql = str_replace(
         array(
             "'registered_shipper'",
             "'agent_fields'",
             "'wpcargo_driver'",
             "'wpcargo_employee'",
         ),
-        "'wpcargo_branch_manager'",
+        "'shipment_branch'",
+        $sql
+    );
+
+    // Replace current-user comparisons with current-branch comparisons for branch managers.
+    return str_replace(
+        array(
+            ' = ' . (int) $user_id,
+            ' = ' . (string) (int) $user_id,
+            " = '" . (int) $user_id . "'",
+        ),
+        ' = ' . (int) $user_branch,
         $sql
     );
 }

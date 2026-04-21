@@ -158,7 +158,6 @@ function wpc_admin_scripts( $scripts ){
 	return $scripts;
 }
 
-add_action( 'wpcfe_after_designation_dropdown', 'assign_branch_manager_dropdown' );
 function assign_branch_manager_dropdown( $shipment_id ){
 	$branch 			= get_post_meta( $shipment_id, 'shipment_branch', true );
 	$get_branch 		= wpcdm_get_branch( $branch );
