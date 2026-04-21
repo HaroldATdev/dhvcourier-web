@@ -279,6 +279,10 @@ add_action( 'wp_head',   'wpcte_inline_css' );
 add_action( 'wp_enqueue_scripts', 'wpcte_enqueue_frontend' );
 function wpcte_enqueue_frontend() {
     $page_id = (int) get_option( 'wpcte_page_id_tarifario_dhv' );
+
+    // Benjamin Fix: Cargamos el CSS que el Admin ya usa para que la Web pública se vea profesional
+    wp_enqueue_style( 'wpcte-admin-css', WPCTE_URL . 'admin/assets/css/tipo-envio.css', array(), WPCTE_VERSION );
+
     // Encolar jQuery cuando estamos en la página del tarifario/ cotizador generado por el plugin
     if ( ( $page_id && (int) get_queried_object_id() === $page_id ) || is_page( 'cotizador' ) ) {
         wp_enqueue_script( 'jquery' );
