@@ -7,7 +7,10 @@ jQuery(document).ready(function( $ ){
                 $(this).select2('destroy');
             }
 
-            $(this).css('width', '100%');
+            this.style.setProperty('display', 'block', 'important');
+            this.style.setProperty('visibility', 'visible', 'important');
+            this.style.setProperty('opacity', '1', 'important');
+            this.style.setProperty('width', '100%', 'important');
             $(this).attr('size', 6);
         });
     }

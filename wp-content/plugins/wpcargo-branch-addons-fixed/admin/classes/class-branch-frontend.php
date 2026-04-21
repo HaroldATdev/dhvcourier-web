@@ -262,7 +262,10 @@ class WPC_Branch_Frontend {
                         $(this).select2('destroy');
                     }
 
-                    $(this).css({ display: 'block', width: '100%' });
+                    this.style.setProperty('display', 'block', 'important');
+                    this.style.setProperty('visibility', 'visible', 'important');
+                    this.style.setProperty('opacity', '1', 'important');
+                    this.style.setProperty('width', '100%', 'important');
                     $(this).attr('size', 6);
                 });
             }
@@ -543,6 +546,14 @@ class WPC_Branch_Frontend {
         }
         .add-branch-table input[type=text]:focus {
             outline:none; border-color:#1a9bcf; box-shadow:0 0 0 3px rgba(26,155,207,.15);
+        }
+
+        /* Forzar select nativo de colaboradores en modales */
+        .wpcbm-wrap .modal select.select-bm {
+            display:block !important;
+            visibility:visible !important;
+            opacity:1 !important;
+            width:100% !important;
         }
 
         /* Botón submit del modal */
