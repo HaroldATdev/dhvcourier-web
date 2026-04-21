@@ -32,7 +32,7 @@
 					<tr>
 						<td><label for="update-branch_manager"><?php esc_html_e('Colaborador de Sucursal', 'wpcargo-branches'); ?></label>:</td>
 						<td>
-							<select id="update-branch_manager" name="branch_manager[]" class="select-bm" data-el_label="Colaborador de Sucursal" multiple>
+							<select id="update-branch_manager" name="branch_manager[]" class="select-bm" data-el_label="Colaborador de Sucursal" multiple size="6" style="width:100%;">
 								<option value="">-- Seleccionar --</option>
 								<?php foreach( wpcargo_get_branch_managers() as $mgr_id => $mgr_name ): ?>
 									<option value="<?php echo $mgr_id; ?>"><?php echo $mgr_name; ?></option>

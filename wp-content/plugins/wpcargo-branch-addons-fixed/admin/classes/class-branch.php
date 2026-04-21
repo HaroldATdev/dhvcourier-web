@@ -395,10 +395,10 @@ class WPC_Branch_Manager{
 	}
 	function transfer_branch_callback(){
 		global $wpdb;
-		$branch 		= sanitize_text_field( $_POST['branch'] );
-		$shipmentNumber = trim(sanitize_text_field( $_POST['shipmentNumber'] ));
-		$sql 			= "SELECT `ID` FROM `".$wpdb->prefix."posts` WHERE `post_type` LIKE 'wpcargo_shipment' AND `post_status` LIKE 'publish' AND `post_title` LIKE '".$shipmentNumber."' LIMIT 1";
-		$shipmentID 	=  $wpdb->get_var( $sql );
+		$branch 		= isset( $_POST['branch'] ) ? absint( $_POST['branch'] ) : 0;
+		$shipmentNumber = isset( $_POST['shipmentNumber'] ) ? trim( sanitize_text_field( $_POST['shipmentNumber'] ) ) : '';
+		$sql 			= "SELECT `ID` FROM `{$wpdb->posts}` WHERE `post_type` = 'wpcargo_shipment' AND `post_status` = 'publish' AND `post_title` = %s LIMIT 1";
+		$shipmentID 	= (int) $wpdb->get_var( $wpdb->prepare( $sql, $shipmentNumber ) );
 		if( $shipmentID  ){
 			$current_user 				= wp_get_current_user();
 	        $current_branch 			= get_post_meta( $shipmentID, 'shipment_branch', true );
@@ -420,7 +420,12 @@ class WPC_Branch_Manager{
 	    	}else{
 	    		update_post_meta($shipmentID, 'shipment_branch_history', maybe_serialize( array( $new_history ) ) );
 	    	}
-	    	update_post_meta( $shipmentID, 'shipment_branch', $branch );
+	    	if ( function_exists( 'wpcbranch_compat_transfer_shipment_branch' ) ) {
+	    		wpcbranch_compat_transfer_shipment_branch( $shipmentID, $branch );
+	    	} else {
+	    		delete_post_meta( $shipmentID, 'wpcargo_branch_manager' );
+	    		update_post_meta( $shipmentID, 'shipment_branch', $branch );
+	    	}
 		}
 		echo $shipmentID;
 		wp_die();

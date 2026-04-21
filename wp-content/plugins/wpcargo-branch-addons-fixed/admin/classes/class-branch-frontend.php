@@ -254,20 +254,16 @@ class WPC_Branch_Frontend {
         <script>
         jQuery(document).ready(function($){
             /*
-             * Re-inicializar Select2 en los modales con width:100% y placeholder en español.
+             * Mantener los selectores de colaboradores como select nativo multiple.
              */
-            function wpcbmInitModalSelect2() {
-                if ( typeof $.fn.select2 === 'undefined' ) return;
+            function wpcbmInitModalSelects() {
                 $('.select-bm').each(function(){
-                    if ( $(this).hasClass('select2-hidden-accessible') ) {
+                    if ( typeof $.fn.select2 !== 'undefined' && $(this).hasClass('select2-hidden-accessible') ) {
                         $(this).select2('destroy');
                     }
-                    $(this).select2({
-                        placeholder : '-- Seleccionar --',
-                        width        : '100%',
-                        allowClear   : true,
-                        language     : { noResults: function(){ return 'Sin resultados'; } },
-                    });
+
+                    $(this).css({ display: 'block', width: '100%' });
+                    $(this).attr('size', 6);
                 });
             }
 
@@ -275,7 +271,7 @@ class WPC_Branch_Frontend {
             $('#add-branch').on('click', function(e){
                 e.preventDefault();
                 $('#addBranchModal').css({ display: 'block' });
-                setTimeout( wpcbmInitModalSelect2, 80 );
+                setTimeout( wpcbmInitModalSelects, 80 );
             });
 
             /*
@@ -296,7 +292,7 @@ class WPC_Branch_Frontend {
                         if ( m.type === 'attributes' && m.attributeName === 'style' ) {
                             if ( $('#editBranchModal').css('display') === 'block' ) {
                                 setTimeout(function(){
-                                    wpcbmInitModalSelect2();
+                                    wpcbmInitModalSelects();
                                     wpcbmFixBranchManagerSelect('#edit-branch #update-branch_manager');
                                 }, 120);
                             }
@@ -311,8 +307,7 @@ class WPC_Branch_Frontend {
 
             /*
              * Parsear el valor del select#update-branch_manager.
-             * El JS original pone el valor serializado PHP (ej: a:1:{i:0;s:2:"42";})
-             * o un array JSON. Necesitamos extraer los IDs numéricos y aplicarlos a Select2.
+             * El valor puede venir como array JSON o string serializado PHP.
              */
             function wpcbmFixBranchManagerSelect( selector ) {
                 var $sel = $(selector);

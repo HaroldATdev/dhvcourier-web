@@ -1,6 +1,17 @@
 jQuery(document).ready(function( $ ){
     'use strict';
 
+    function prepareBranchManagerSelects() {
+        $('.select-bm').each(function(){
+            if ( typeof $.fn.select2 !== 'undefined' && $(this).hasClass('select2-hidden-accessible') ) {
+                $(this).select2('destroy');
+            }
+
+            $(this).css('width', '100%');
+            $(this).attr('size', 6);
+        });
+    }
+
     $('#wpcbranch-restriction').on('click', '.wpcbranch_access', function(){
         var optValue    = $(this).prop("checked") === true ? 1 : 0 ;
         var optName     = $(this).attr('name');
@@ -24,16 +35,7 @@ jQuery(document).ready(function( $ ){
     $('#add-branch').on('click', function( e ){
         e.preventDefault();
         $('#addBranchModal').css({'display':'block'});
-        $('.select-bm').each(function(){
-            if ( $(this).hasClass('select2-hidden-accessible') ) {
-                $(this).select2('destroy');
-            }
-            let $label = $(this).attr('data-el_label');
-            $(this).select2({
-                placeholder: `Seleccionar ${$label}`,
-                width: '100%',
-            });
-        });
+        prepareBranchManagerSelects();
     });
 
     $('#wpc-branch-wrapper').on('click', '.edit', function( e ){
@@ -69,25 +71,16 @@ jQuery(document).ready(function( $ ){
                     $('#editBranchModal').css({'display':'block'});
                     $('body .wpc-loading').remove();
 
-                    // Inicializar/re-inicializar Select2 y luego aplicar los valores
+                    // Mantener el selector nativo y luego re-aplicar los valores cargados.
                     setTimeout(function(){
-                        $('.select-bm').each(function(){
-                            if ( $(this).hasClass('select2-hidden-accessible') ) {
-                                $(this).select2('destroy');
-                            }
-                            let $label = $(this).attr('data-el_label');
-                            $(this).select2({
-                                placeholder: `Seleccionar ${$label}`,
-                                width: '100%',
-                            });
-                        });
-                        // Re-aplicar valores DESPUÉS de inicializar Select2
+                        prepareBranchManagerSelects();
+
                         for (let key in response) {
                             if (Object.hasOwnProperty.call(response, key)) {
                                 let value = response[key];
                                 let fieldKey = key === 'id' ? 'branchid' : `update-${key}`;
                                 let $field = $(`#edit-branch #${fieldKey}`);
-                                if ( $field.length && $field.hasClass('select2-hidden-accessible') ) {
+                                if ( $field.length && $field.is('select[multiple]') ) {
                                     $field.val(value).trigger('change');
                                 }
                             }

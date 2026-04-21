@@ -243,6 +243,31 @@ function wpcbranch_compat_assign_shipment_branch( $shipment_id, $data ) {
     return wpcbranch_compat_apply_branch_assignment( $shipment_id, $branch, (array) $data, ! (int) get_post_meta( $shipment_id, 'shipment_branch', true ) );
 }
 
+function wpcbranch_compat_transfer_shipment_branch( $shipment_id, $branch_id ) {
+    $shipment_id = (int) $shipment_id;
+    $branch_id   = (int) $branch_id;
+
+    if ( ! $shipment_id || ! $branch_id ) {
+        return false;
+    }
+
+    $branch = wpcdm_get_branch( $branch_id );
+    if ( empty( $branch ) ) {
+        return false;
+    }
+
+    delete_post_meta( $shipment_id, 'wpcargo_branch_manager' );
+
+    return wpcbranch_compat_apply_branch_assignment(
+        $shipment_id,
+        $branch,
+        array(
+            'shipment_branch' => $branch_id,
+        ),
+        true
+    );
+}
+
 function wpcbranch_compat_dashboard_access( $result ) {
     if ( $result ) {
         return $result;
