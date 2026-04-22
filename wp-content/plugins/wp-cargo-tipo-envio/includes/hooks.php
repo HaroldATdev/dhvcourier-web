@@ -986,11 +986,14 @@ function wpcte_footer_crear() {
     $t          = $tipos[$tipo] ?? array( 'label'=>$tipo, 'icon'=>'fa-truck' );
     $tarifario  = wpcte_tarifario();
     $es_admin   = current_user_can('manage_options') ? 1 : 0;
+    $usuario_actual = wp_get_current_user();
+    $es_cliente = in_array( 'wpcargo_client', (array) $usuario_actual->roles, true ) ? 1 : 0;
+    $current_uid = (int) $usuario_actual->ID;
     $ajaxurl    = admin_url('admin-ajax.php');
-    $nonce      = $es_admin ? wp_create_nonce('wpcte_get_user') : '';
+    $nonce      = wp_create_nonce('wpcte_get_user');
 
     if ( ! $es_admin ) {
-        $u      = wp_get_current_user();
+        $u      = $usuario_actual;
         $nombre = trim( $u->first_name.' '.$u->last_name ) ?: $u->display_name;
         $dir1   = get_user_meta( $u->ID, 'billing_address_1', true );
         $dir2   = get_user_meta( $u->ID, 'billing_address_2', true );
@@ -1008,6 +1011,8 @@ function wpcte_footer_crear() {
     $ajaxurl_js = wp_json_encode( $ajaxurl );
     $nonce_js   = wp_json_encode( $nonce );
     $esadmin_js = $es_admin ? 'true' : 'false';
+    $escliente_js = $es_cliente ? 'true' : 'false';
+    $current_uid_js = wp_json_encode( $current_uid );
     ?>
     <div id="wpcte-pantalla-cotizador" style="display:none">
         <button type="button" class="wpcte-back-btn" onclick="wpcteIrSelector()">&larr; Cambiar tipo de envío</button>
@@ -1032,15 +1037,49 @@ function wpcte_footer_crear() {
         var tipo=<?php echo $tipo_js; ?>;
         var uData=<?php echo $datos_js; ?>;
         var isAdmin=<?php echo $esadmin_js; ?>;
+        var isClient=<?php echo $escliente_js; ?>;
         var ajaxUrl=<?php echo $ajaxurl_js; ?>;
         var nonce=<?php echo $nonce_js; ?>;
+        var currentUserId=<?php echo $current_uid_js; ?>;
         var f=document.querySelector('form.add-shipment');
-        if(!isAdmin&&uData){(function(d){
-            var rem=document.getElementById('remitente');if(rem)rem.value=d.nombre||'';
-            var tel=document.getElementById('telefono_remitente');if(tel)tel.value=d.telefono||'';
-            wpcte_insertDir(d.direccion||'');window._clienteCiudad=d.ciudad||'';
-        })(uData);}
         if(!f)return;
+        function fillClientFields(data){
+            var rem=document.getElementById('remitente');if(rem)rem.value=data.nombre||'';
+            var tel=document.getElementById('telefono_remitente');if(tel)tel.value=data.telefono||'';
+            var dni=document.getElementById('dni_remitente');if(dni)dni.value=data.dni||'';
+            wpcte_insertDir(data.direccion||'');window._clienteCiudad=data.ciudad||'';
+        }
+        function ensureClientShipmentField(uid){
+            var select=document.getElementById('registered_client')||f.querySelector('[name="registered_shipper"]');
+            if(select){
+                var optionExists=select.querySelector('option[value="'+uid+'"]');
+                if(!optionExists){
+                    select.appendChild(new Option('', uid, true, true));
+                }
+                select.value=String(uid);
+                select.setAttribute('disabled','disabled');
+                var group=select.closest('.form-group')||select.parentElement;
+                if(group)group.style.display='none';
+            }
+            var hidden=f.querySelector('input[name="registered_shipper"][type="hidden"]');
+            if(!hidden){
+                hidden=document.createElement('input');
+                hidden.type='hidden';
+                hidden.name='registered_shipper';
+                f.appendChild(hidden);
+            }
+            hidden.value=uid;
+        }
+        function loadClientData(uid){
+            var fd=new FormData();fd.append('action','wpcte_get_user_data');fd.append('uid',uid);fd.append('_ajax_nonce',nonce);
+            fetch(ajaxUrl,{method:'POST',credentials:'include',body:fd}).then(r=>r.json()).then(function(res){
+                if(!res.success){
+                    if(uData)fillClientFields(uData);
+                    return;
+                }
+                fillClientFields(res.data||{});
+            }).catch(function(){if(uData)fillClientFields(uData);});
+        }
         f.style.display='none';
         var cotEl=document.getElementById('wpcte-pantalla-cotizador');
         var formEl=document.getElementById('wpcte-pantalla-form');
@@ -1050,6 +1089,12 @@ function wpcte_footer_crear() {
         var pkg=document.getElementById('package_id');if(pkg)pkg.style.display='none';
         wpcte_insertDir('');
         wpcte_ajustarDrivers(tipo,f,null,null);
+        if(isClient&&currentUserId){
+            ensureClientShipmentField(currentUserId);
+            loadClientData(currentUserId);
+        }else if(!isAdmin&&uData){
+            fillClientFields(uData);
+        }
         if(isAdmin) wpcte_listenCliente(ajaxUrl,nonce);
     });
     </script>

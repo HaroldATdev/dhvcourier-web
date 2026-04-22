@@ -21,9 +21,11 @@ function wpcte_ajax_set_tipo() {
 }
 
 function wpcte_ajax_get_user_data() {
-    if ( ! current_user_can('manage_options') ) wp_send_json_error('no_permission');
     $uid = absint( $_POST['uid'] ?? 0 );
     if ( ! $uid ) wp_send_json_error('no_uid');
+    $current_user = wp_get_current_user();
+    $is_same_client = in_array( 'wpcargo_client', (array) $current_user->roles, true ) && (int) $current_user->ID === $uid;
+    if ( ! current_user_can('manage_options') && ! $is_same_client ) wp_send_json_error('no_permission');
     $u = get_userdata( $uid );
     if ( ! $u ) wp_send_json_error('not_found');
     $nombre = trim( $u->first_name . ' ' . $u->last_name ) ?: $u->display_name;
