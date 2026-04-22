@@ -1793,8 +1793,37 @@ function wpcte_listenCliente(ajaxUrl,nonce){
             cambL('shipment_container','Contenedor de recojo');
             clonarG('shipment_container','wpcte-cont-eg','Contenedor de entrega','shipment_container_entrega',contEgId);
         } else {
+            try{
+                var recClone = document.getElementById('wpcte-drv-rec'); if(recClone) recClone.remove();
+                var recSel = formEl ? formEl.querySelector('select[name="wpcargo_driver_recojo"]') : null;
+                if ( recSel ) {
+                    var recWrap = recSel.parentElement;
+                    while ( recWrap && !recWrap.querySelector(':scope>label') ) { recWrap = recWrap.parentElement; }
+                    if ( recWrap && recWrap.parentNode ) recWrap.parentNode.removeChild(recWrap);
+                    else if ( recSel.parentNode ) recSel.parentNode.removeChild(recSel);
+                }
+                // Si el original fue renombrado previamente, restaurar su nombre estándar
+                var origRec = formEl ? formEl.querySelector('select#wpcargo_driver_recojo') : null;
+                if ( origRec && !formEl.querySelector('select[name="wpcargo_driver"]') ) {
+                    origRec.name = 'wpcargo_driver';
+                    origRec.id   = 'wpcargo_driver';
+                }
+            }catch(e){}
             cambL('wpcargo_driver','Conductor de entrega');
             cambL('shipment_container','Contenedor de entrega');
+            try{
+                if(formEl && !formEl.querySelector('[name="wpcargo_driver"]')){
+                    var _h2=document.createElement('input');_h2.type='hidden';_h2.name='wpcargo_driver';_h2.value='';formEl.appendChild(_h2);
+                }
+                var _syncEnt = function(){
+                    var hid = formEl.querySelector('[name="wpcargo_driver"]'); if(!hid) return;
+                    var ent = formEl.querySelector('select[name="wpcargo_driver_entrega"]') || formEl.querySelector('select[name="wpcargo_driver"]');
+                    hid.value = ent && ent.value ? ent.value : '';
+                };
+                var _entSel = formEl.querySelector('select[name="wpcargo_driver_entrega"]') || formEl.querySelector('select[name="wpcargo_driver"]');
+                if(_entSel) _entSel.addEventListener('change', _syncEnt);
+                _syncEnt();
+            }catch(e){}
         }
     }
     }
