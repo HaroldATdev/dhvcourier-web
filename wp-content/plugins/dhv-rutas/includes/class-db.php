@@ -8,7 +8,7 @@ class DHV_Rutas_DB {
     public static function get_recojo_shipments( $driver_id ) {
         global $wpdb;
 
-        $pickup_statuses = array( 'Pendiente', 'En espera', 'Recogido' );
+        $pickup_statuses = array( 'Pendiente', 'Recogido' );
         $placeholders    = implode( ',', array_fill( 0, count( $pickup_statuses ), '%s' ) );
 
         $query = $wpdb->prepare(
@@ -66,7 +66,7 @@ class DHV_Rutas_DB {
     public static function get_entrega_shipments( $driver_id ) {
         global $wpdb;
 
-        $delivery_statuses = array( 'En ruta', 'Entregado', 'Devuelto', 'Reprogramado', 'Anulado' );
+        $delivery_statuses = array( 'En espera', 'En ruta', 'Entregado', 'Devuelto', 'Reprogramado', 'Anulado' );
         $placeholders      = implode( ',', array_fill( 0, count( $delivery_statuses ), '%s' ) );
 
         $query = $wpdb->prepare(
@@ -127,8 +127,8 @@ class DHV_Rutas_DB {
         if ( (int) $assigned !== (int) $driver_id ) return false;
 
         $allowed = ( $mode === 'entrega' )
-            ? array( 'En ruta', 'Entregado', 'Devuelto', 'Reprogramado', 'Anulado' )
-            : array( 'Pendiente', 'En espera', 'Recogido' );
+            ? array( 'En espera', 'En ruta', 'Entregado', 'Devuelto', 'Reprogramado', 'Anulado' )
+            : array( 'Pendiente', 'Recogido' );
 
         if ( ! in_array( $new_status, $allowed, true ) ) return false;
 

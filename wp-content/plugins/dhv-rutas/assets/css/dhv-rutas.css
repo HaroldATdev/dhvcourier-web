@@ -66,6 +66,36 @@
 .dhv-cliente-body  { display: none; }
 .dhv-cliente-card.is-open .dhv-cliente-body { display: block; }
 
+/* Buscador por card */
+.dhv-card-search-wrap {
+    padding: 10px 16px;
+    border-bottom: 1px solid #e2e8f0;
+    background: #fff;
+}
+.dhv-card-search {
+    width: 100%;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-size: .84rem;
+    color: #2d3748;
+}
+.dhv-card-search:focus {
+    outline: 2px solid #1a6fc4;
+    outline-offset: 1px;
+}
+.dhv-card-search-empty {
+    margin: 8px 16px 12px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: #f7fafc;
+    color: #718096;
+    font-size: .82rem;
+}
+.dhv-row-hidden {
+    display: none !important;
+}
+
 /* Bulk bar */
 .dhv-bulk-bar {
     display: flex; flex-wrap: wrap; align-items: center;
@@ -152,6 +182,7 @@
 /* ── RESPONSIVE MÓVIL ── */
 @media (max-width: 640px) {
     .dhv-recojo-title { font-size: 1.15rem; }
+    .dhv-card-search-wrap { padding: 10px 12px; }
     .dhv-bulk-bar { flex-direction: column; align-items: flex-start; padding: 10px 12px; }
     .dhv-bulk-controls { margin-left: 0; width: 100%; flex-direction: column; align-items: stretch; }
     .dhv-status-select  { width: 100%; min-width: unset; }
@@ -223,6 +254,7 @@
 /* Responsive entrega */
 @media (max-width: 640px) {
     .dhv-entrega-title { font-size: 1.15rem; }
+    .dhv-entrega-wrap .dhv-card-search-wrap { padding: 10px 12px; }
     .dhv-entrega-wrap .dhv-bulk-bar { flex-direction: column; align-items: flex-start; padding: 10px 12px; }
     .dhv-entrega-wrap .dhv-bulk-controls { margin-left: 0; width: 100%; flex-direction: column; align-items: stretch; }
     .dhv-entrega-wrap .dhv-status-select { width: 100%; min-width: unset; }

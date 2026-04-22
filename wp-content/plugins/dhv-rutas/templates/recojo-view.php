@@ -38,6 +38,15 @@
             <!-- Contenido desplegable -->
             <div class="dhv-cliente-body" id="<?php echo esc_attr( $slug ); ?>">
 
+                <div class="dhv-card-search-wrap">
+                    <input
+                        type="text"
+                        class="dhv-card-search"
+                        data-group="<?php echo esc_attr( $slug ); ?>"
+                        placeholder="Buscar por tracking o telefono"
+                    >
+                </div>
+
                 <!-- Barra de acción masiva -->
                 <div class="dhv-bulk-bar">
                     <label class="dhv-check-label">
@@ -49,7 +58,6 @@
                             <option value="">-- Estado masivo --</option>
                             <option value="Pendiente">Pendiente</option>
                             <option value="Recogido">Recogido</option>
-                            <option value="En espera">En espera</option>
                         </select>
                         <button class="dhv-btn dhv-btn-primary dhv-bulk-apply" data-group="<?php echo esc_attr( $slug ); ?>">
                             ⚡ Aplicar a seleccionados
@@ -60,7 +68,10 @@
 
                 <!-- Lista de pedidos -->
                 <?php foreach ( $pedidos as $pedido ) : ?>
-                <div class="dhv-pedido-row" data-id="<?php echo esc_attr( $pedido['id'] ); ?>">
+                 <div class="dhv-pedido-row"
+                     data-id="<?php echo esc_attr( $pedido['id'] ); ?>"
+                     data-tracking="<?php echo esc_attr( $pedido['tracking'] ); ?>"
+                     data-telefono="<?php echo esc_attr( preg_replace( '/\D+/', '', (string) $pedido['telefono'] ) ); ?>">
                     <div class="dhv-pedido-left">
                         <input type="checkbox"
                                class="dhv-pedido-check"
@@ -93,7 +104,6 @@
                                 data-id="<?php echo esc_attr( $pedido['id'] ); ?>">
                             <option value="Pendiente"  <?php selected( $pedido['estado'], 'Pendiente' ); ?>>Pendiente</option>
                             <option value="Recogido"   <?php selected( $pedido['estado'], 'Recogido' ); ?>>Recogido</option>
-                            <option value="En espera"  <?php selected( $pedido['estado'], 'En espera' ); ?>>En espera</option>
                         </select>
                         <button class="dhv-btn dhv-btn-apply dhv-single-apply"
                                 data-id="<?php echo esc_attr( $pedido['id'] ); ?>">
@@ -105,6 +115,10 @@
                     </div>
                 </div>
                 <?php endforeach; ?>
+
+                <div class="dhv-card-search-empty" data-group="<?php echo esc_attr( $slug ); ?>" style="display:none;">
+                    No se encontraron pedidos para este filtro.
+                </div>
 
             </div><!-- /.dhv-cliente-body -->
         </div><!-- /.dhv-cliente-card -->

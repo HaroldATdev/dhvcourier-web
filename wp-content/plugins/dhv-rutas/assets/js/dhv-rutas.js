@@ -15,6 +15,74 @@
         if (c) c.textContent = n + ' seleccionado(s)';
     }
 
+    function normalizeText(value) {
+        var text = (value || '').toString().toLowerCase().trim();
+        if (typeof text.normalize === 'function') {
+            text = text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        }
+        return text;
+    }
+
+    function onlyDigits(value) {
+        return (value || '').toString().replace(/\D+/g, '');
+    }
+
+    function applyCardSearch(input) {
+        var group = input.dataset.group;
+        if (!group) return;
+
+        var termText = normalizeText(input.value);
+        var termDigits = onlyDigits(input.value);
+        var rows = document.querySelectorAll('.dhv-pedido-check[data-group="' + group + '"]');
+        var visible = 0;
+
+        rows.forEach(function (cb) {
+            var row = cb.closest('.dhv-pedido-row');
+            if (!row) return;
+
+            var tracking = normalizeText(row.dataset.tracking || (row.querySelector('.dhv-tracking-num') ? row.querySelector('.dhv-tracking-num').textContent : ''));
+            var phoneDigits = onlyDigits(row.dataset.telefono || (row.querySelector('.dhv-tel-link') ? row.querySelector('.dhv-tel-link').textContent : ''));
+            var phoneText = normalizeText(phoneDigits);
+
+            var match = !termText;
+            if (!match) {
+                match = tracking.indexOf(termText) !== -1;
+            }
+            if (!match && termDigits) {
+                match = phoneDigits.indexOf(termDigits) !== -1;
+            }
+            if (!match && termText) {
+                match = phoneText.indexOf(termText) !== -1;
+            }
+
+            if (match) {
+                row.classList.remove('dhv-row-hidden');
+                visible++;
+            } else {
+                row.classList.add('dhv-row-hidden');
+                cb.checked = false;
+                row.classList.remove('is-selected');
+            }
+        });
+
+        var all = document.querySelector('.dhv-select-all[data-group="' + group + '"]');
+        if (all) {
+            var visibleChecks = Array.from(document.querySelectorAll('.dhv-pedido-check[data-group="' + group + '"]')).filter(function (cb) {
+                var row = cb.closest('.dhv-pedido-row');
+                return row && !row.classList.contains('dhv-row-hidden');
+            });
+            var selectedVisible = visibleChecks.filter(function (cb) { return cb.checked; }).length;
+            all.checked = (visibleChecks.length > 0 && visibleChecks.length === selectedVisible);
+        }
+
+        var empty = document.querySelector('.dhv-card-search-empty[data-group="' + group + '"]');
+        if (empty) {
+            empty.style.display = visible === 0 ? 'block' : 'none';
+        }
+
+        updateCount(group);
+    }
+
     function doAjax(data, callback) {
         var body = new URLSearchParams();
         Object.keys(data).forEach(function (k) {
@@ -124,6 +192,9 @@
         if (e.target.classList.contains('dhv-select-all')) {
             var group = e.target.dataset.group;
             document.querySelectorAll('.dhv-pedido-check[data-group="' + group + '"]').forEach(function (cb) {
+                if (cb.closest('.dhv-pedido-row').classList.contains('dhv-row-hidden')) {
+                    return;
+                }
                 cb.checked = e.target.checked;
                 cb.closest('.dhv-pedido-row').classList.toggle('is-selected', e.target.checked);
             });
@@ -132,11 +203,21 @@
         if (e.target.classList.contains('dhv-pedido-check')) {
             var group2 = e.target.dataset.group;
             e.target.closest('.dhv-pedido-row').classList.toggle('is-selected', e.target.checked);
-            var total = document.querySelectorAll('.dhv-pedido-check[data-group="' + group2 + '"]').length;
-            var sel   = document.querySelectorAll('.dhv-pedido-check[data-group="' + group2 + '"]:checked').length;
+            var visibleChecks2 = Array.from(document.querySelectorAll('.dhv-pedido-check[data-group="' + group2 + '"]')).filter(function (cb) {
+                var row = cb.closest('.dhv-pedido-row');
+                return row && !row.classList.contains('dhv-row-hidden');
+            });
+            var total = visibleChecks2.length;
+            var sel = visibleChecks2.filter(function (cb) { return cb.checked; }).length;
             var all   = document.querySelector('.dhv-select-all[data-group="' + group2 + '"]');
             if (all) all.checked = (total === sel && total > 0);
             updateCount(group2);
+        }
+    });
+
+    document.addEventListener('input', function (e) {
+        if (e.target.classList.contains('dhv-card-search')) {
+            applyCardSearch(e.target);
         }
     });
 }());

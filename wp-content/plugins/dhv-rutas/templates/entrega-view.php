@@ -38,6 +38,15 @@
             <!-- Contenido desplegable -->
             <div class="dhv-cliente-body" id="<?php echo esc_attr( $slug ); ?>">
 
+                <div class="dhv-card-search-wrap">
+                    <input
+                        type="text"
+                        class="dhv-card-search"
+                        data-group="<?php echo esc_attr( $slug ); ?>"
+                        placeholder="Buscar por tracking o telefono"
+                    >
+                </div>
+
                 <!-- Barra de acción masiva -->
                 <div class="dhv-bulk-bar">
                     <label class="dhv-check-label">
@@ -47,6 +56,7 @@
                     <div class="dhv-bulk-controls">
                         <select class="dhv-status-select dhv-bulk-status dhv-entrega-bulk-status" data-group="<?php echo esc_attr( $slug ); ?>">
                             <option value="">-- Estado masivo --</option>
+                            <option value="En espera">En espera</option>
                             <option value="En ruta">En ruta</option>
                             <option value="Entregado">Entregado</option>
                             <option value="Devuelto">Devuelto</option>
@@ -62,7 +72,10 @@
 
                 <!-- Lista de pedidos -->
                 <?php foreach ( $pedidos as $pedido ) : ?>
-                <div class="dhv-pedido-row" data-id="<?php echo esc_attr( $pedido['id'] ); ?>">
+                 <div class="dhv-pedido-row"
+                     data-id="<?php echo esc_attr( $pedido['id'] ); ?>"
+                     data-tracking="<?php echo esc_attr( $pedido['tracking'] ); ?>"
+                     data-telefono="<?php echo esc_attr( preg_replace( '/\D+/', '', (string) $pedido['telefono'] ) ); ?>">
                     <div class="dhv-pedido-left">
                         <input type="checkbox"
                                class="dhv-pedido-check"
@@ -93,6 +106,7 @@
                     <div class="dhv-pedido-right">
                         <select class="dhv-status-select dhv-single-status dhv-entrega-single-status"
                                 data-id="<?php echo esc_attr( $pedido['id'] ); ?>">
+                            <option value="En espera"   <?php selected( $pedido['estado'], 'En espera' ); ?>>En espera</option>
                             <option value="En ruta"      <?php selected( $pedido['estado'], 'En ruta' ); ?>>En ruta</option>
                             <option value="Entregado"    <?php selected( $pedido['estado'], 'Entregado' ); ?>>Entregado</option>
                             <option value="Devuelto"     <?php selected( $pedido['estado'], 'Devuelto' ); ?>>Devuelto</option>
@@ -109,6 +123,10 @@
                     </div>
                 </div>
                 <?php endforeach; ?>
+
+                <div class="dhv-card-search-empty" data-group="<?php echo esc_attr( $slug ); ?>" style="display:none;">
+                    No se encontraron pedidos para este filtro.
+                </div>
 
             </div><!-- /.dhv-cliente-body -->
         </div><!-- /.dhv-cliente-card -->
