@@ -995,8 +995,25 @@ add_action('init', 'allow_drivers_to_upload_files');
 add_action('init', 'blockusers_init');
 function blockusers_init()
 {
-	if (is_admin() && !current_user_can('administrator') && !(defined('DOING_AJAX') && DOING_AJAX)) {
-		wp_redirect(home_url());
+	if ( is_admin() && ! current_user_can( 'administrator' ) && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX ) ) {
+		// Registrar contexto para depuración y permitir admin-post.php
+		$script_name = isset( $_SERVER['SCRIPT_NAME'] ) ? wp_basename( (string) $_SERVER['SCRIPT_NAME'] ) : '';
+		$request_uri  = isset( $_SERVER['REQUEST_URI'] ) ? (string) $_SERVER['REQUEST_URI'] : '';
+
+		if ( defined('WP_DEBUG') && WP_DEBUG ) {
+			error_log(sprintf('[wpcpod] blockusers_init: user=%d script=%s uri=%s', (int) get_current_user_id(), $script_name, $request_uri));
+		}
+
+		// Allow admin-post.php requests to proceed so frontend admin-post handlers
+		// (forms that submit to admin-post.php) can run their permission checks.
+		if ( 'admin-post.php' === $script_name || false !== strpos( $request_uri, '/wp-admin/admin-post.php' ) ) {
+			if ( defined('WP_DEBUG') && WP_DEBUG ) {
+				error_log('[wpcpod] blockusers_init: allowing admin-post.php to proceed');
+			}
+			return;
+		}
+
+		wp_redirect( home_url() );
 		exit;
 	}
 }

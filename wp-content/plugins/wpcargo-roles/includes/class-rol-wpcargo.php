@@ -294,6 +294,18 @@ class WCROL_Rol_WPCargo {
         $request_uri = isset( $_SERVER['REQUEST_URI'] ) ? (string) $_SERVER['REQUEST_URI'] : '';
         $action = isset( $_REQUEST['action'] ) ? sanitize_key( (string) $_REQUEST['action'] ) : '';
 
+        // Trazas de depuración: registrar contexto cuando WP_DEBUG está activado
+        self::debug_log('bloquear_wp_admin called', [
+            'pagenow' => $script,
+            'script_name' => $script_name,
+            'request_uri' => $request_uri,
+            'action' => $action,
+            'user_id' => get_current_user_id(),
+        ]);
+
+        if ( defined('WP_DEBUG') && WP_DEBUG ) {
+            error_log(sprintf('[wcrol] bloquear_wp_admin: user=%d script=%s uri=%s action=%s', (int) get_current_user_id(), $script_name, $request_uri, $action));
+        }
         // Permitir cualquier flujo admin-post; cada handler ya valida nonce y permisos.
         $is_admin_post = (
             'admin-post.php' === $script ||

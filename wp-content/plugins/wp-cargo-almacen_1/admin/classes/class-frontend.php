@@ -264,6 +264,13 @@ class WPCA_Frontend {
 	}
 
 	public function handle_guardar_producto(): void {
+		if ( defined('WP_DEBUG') && WP_DEBUG ) {
+			$user_id = get_current_user_id();
+			$script_name = isset( $_SERVER['SCRIPT_NAME'] ) ? wp_basename( (string) $_SERVER['SCRIPT_NAME'] ) : '';
+			$request_uri = isset( $_SERVER['REQUEST_URI'] ) ? (string) $_SERVER['REQUEST_URI'] : '';
+			$post_action = isset($_POST['action']) ? sanitize_text_field($_POST['action']) : '';
+			error_log(sprintf('[wpca] handle_guardar_producto start: user=%d script=%s uri=%s post_action=%s', (int) $user_id, $script_name, $request_uri, $post_action));
+		}
 		if ( ! wpca_puede_gestionar_almacen() ) wp_die( 'Sin permisos.' );
 		check_admin_referer( 'wpca_prod_nonce' );
 		$id     = (int) ( $_POST['id'] ?? 0 );
