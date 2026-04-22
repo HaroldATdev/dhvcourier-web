@@ -3,6 +3,47 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 
 class WCFIN_Motor {
 
+    /**
+     * Mapea el campo condicion_pago del formulario de envíos al ID de condición de finanzas.
+     * 'paga_remitente'    → slug 'paga_remitente'
+     * 'paga_destinatario' → slug 'paga_destinatario'
+     * Fallback: busca la primera condición activa.
+     */
+    public static function condicion_id_desde_pago( string $condicion_pago ): int {
+        global $wpdb;
+        // Mapa directo formulario → slug financiero
+        $slug_map = [
+            'Paga el Remitente'    => 'paga_remitente',
+            'remitente'            => 'paga_remitente',
+            'paga_remitente'       => 'paga_remitente',
+            'Paga el Destinatario' => 'paga_destinatario',
+            'destinatario'         => 'paga_destinatario',
+            'paga_destinatario'    => 'paga_destinatario',
+        ];
+        $slug = $slug_map[ $condicion_pago ] ?? null;
+        if ( $slug ) {
+            $id = (int) $wpdb->get_var($wpdb->prepare(
+                "SELECT id FROM {$wpdb->prefix}wcfin_condiciones WHERE slug=%s AND activo=1", $slug
+            ));
+            if ( $id ) return $id;
+        }
+        // Fallback: primera condición activa
+        return (int) $wpdb->get_var("SELECT id FROM {$wpdb->prefix}wcfin_condiciones WHERE activo=1 ORDER BY orden LIMIT 1");
+    }
+
+    /**
+     * Aplicar automáticamente la condición de finanzas desde el campo condicion_pago del envío.
+     * Llamado via hook wpcargo_after_save_shipment.
+     */
+    public static function sincronizar_condicion_pago( int $shipment_id ): void {
+        $condicion_pago = get_post_meta( $shipment_id, 'condicion_pago', true );
+        if ( ! $condicion_pago ) return;
+        $condicion_id = self::condicion_id_desde_pago( $condicion_pago );
+        if ( $condicion_id ) {
+            update_post_meta( $shipment_id, 'wcfin_condicion_sugerida', $condicion_id );
+        }
+    }
+
     public static function calcular_total( int $condicion_id, array $variables ): array {
         global $wpdb;
         $comps = $wpdb->get_results($wpdb->prepare(

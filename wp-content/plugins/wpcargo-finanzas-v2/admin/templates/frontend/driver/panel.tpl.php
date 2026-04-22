@@ -1,6 +1,10 @@
 <?php if ( ! defined('ABSPATH') ) exit;
 $msg_map = [
-    'solicitud_enviada' => ['success', '✅ Se notificó al equipo de DHV. Te contactarán para coordinar la liquidación.'],
+    'solicitud_enviada'  => ['success', '✅ Se notificó al equipo de DHV. Te contactarán para coordinar la liquidación.'],
+    'comp_enviado'       => ['success', '✅ Comprobante enviado. DHV lo revisará y registrará tu liquidación.'],
+    'comp_error'         => ['danger',  '❌ Error al subir el comprobante. Intenta con JPG, PNG o PDF menor a 5 MB.'],
+    'comp_sin_archivo'   => ['warning', '⚠️ Debes seleccionar un comprobante (imagen o PDF) para continuar.'],
+    'comp_monto_invalido'=> ['danger',  '❌ El monto debe ser mayor a 0.'],
 ];
 $msg = sanitize_key($_GET['wcfin_msg'] ?? '');
 ?>
@@ -62,34 +66,96 @@ $msg = sanitize_key($_GET['wcfin_msg'] ?? '');
     </div>
 </div>
 
-<!-- Si tiene saldo pendiente: notificar al admin -->
+<!-- ─── SECCIÓN: Subir comprobante de liquidación ─────────────────────────── -->
 <?php if ($saldo > 0): ?>
-<div style="background:#fff;border:1px solid #f0c040;border-radius:8px;padding:16px 20px;margin-bottom:20px">
-    <div class="d-flex align-items-start" style="gap:12px">
-        <div style="background:#ffc107;color:#fff;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px">
-            <i class="fa fa-bell"></i>
+<div style="background:#fff;border:1px solid #2271b1;border-radius:8px;overflow:hidden;margin-bottom:20px">
+    <div style="padding:14px 18px;background:#e8f4fd;border-bottom:1px solid #c0dcf3;display:flex;align-items:center;gap:10px">
+        <div style="background:#2271b1;color:#fff;border-radius:50%;width:38px;height:38px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px">
+            <i class="fa fa-upload"></i>
         </div>
         <div style="flex:1">
-            <strong>Tienes S/ <?php echo number_format($saldo,2); ?> pendiente de entregar</strong>
-            <p class="text-muted small mb-2">Este dinero fue cobrado a destinatarios y debe ser entregado a DHV. Si ya lo entregaste o necesitas coordinarlo, notifica al equipo.</p>
-            <button type="button" class="btn btn-warning btn-sm" data-toggle="collapse" data-target="#wcfin-notif-form">
-                <i class="fa fa-paper-plane mr-1"></i>Notificar a DHV
-            </button>
-        </div>
-    </div>
-    <div id="wcfin-notif-form" class="collapse" style="margin-top:14px;padding-top:14px;border-top:1px solid #f0c040">
-        <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
-            <?php wp_nonce_field('wcfin_driver_solicita_nonce'); ?>
-            <input type="hidden" name="action" value="wcfin_driver_solicita">
-            <div class="form-group mb-2">
-                <label class="small font-weight-bold">Mensaje para DHV (opcional)</label>
-                <textarea name="notas" rows="2" class="form-control form-control-sm"
-                    placeholder="Ej: Puedo entregar el viernes, o ya lo deposité en tal cuenta..."></textarea>
+            <strong style="color:#1a6891">Enviar dinero a DHV — S/ <?php echo number_format($saldo,2); ?> pendiente</strong>
+            <div style="font-size:12px;color:#555;margin-top:2px">
+                Realiza la transferencia o depósito y sube tu comprobante aquí. DHV lo revisará y registrará la liquidación.
             </div>
-            <button type="submit" class="btn btn-primary btn-sm">
-                <i class="fa fa-send mr-1"></i>Enviar notificación
-            </button>
+        </div>
+        <button type="button" class="btn btn-primary btn-sm" data-toggle="collapse" data-target="#wcfin-driver-comp-form">
+            <i class="fa fa-camera mr-1"></i>Subir comprobante
+        </button>
+    </div>
+
+    <div id="wcfin-driver-comp-form" class="collapse">
+    <div style="padding:18px">
+        <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" enctype="multipart/form-data" id="wcfin-driver-form">
+            <?php wp_nonce_field('wcfin_driver_comp_nonce'); ?>
+            <input type="hidden" name="action" value="wcfin_driver_sube_comprobante">
+            <input type="hidden" name="_wcfin_redirect" value="<?php echo esc_attr(wcfin_driver_url()); ?>">
+
+            <div class="row" style="row-gap:12px">
+                <!-- Monto -->
+                <div class="col-sm-4 form-group mb-0">
+                    <label class="small font-weight-bold">
+                        Monto que entregas S/ <span class="text-danger">*</span>
+                    </label>
+                    <input name="monto" type="number" step="0.01" min="0.01"
+                           max="<?php echo esc_attr(number_format($saldo,2,'.','')); ?>"
+                           class="form-control form-control-sm" required
+                           value="<?php echo esc_attr(number_format($saldo,2,'.','')); ?>">
+                    <small class="text-muted">Puedes entregar parcialmente</small>
+                </div>
+                <!-- Método -->
+                <div class="col-sm-4 form-group mb-0">
+                    <label class="small font-weight-bold">Método <span class="text-danger">*</span></label>
+                    <select name="metodo" class="form-control form-control-sm browser-default">
+                        <option value="efectivo">💵 Efectivo en mano</option>
+                        <option value="transferencia">🏦 Transferencia bancaria</option>
+                        <option value="yape_plin">📱 YAPE / PLIN</option>
+                        <option value="deposito">🏧 Depósito en cuenta</option>
+                    </select>
+                </div>
+                <!-- Referencia -->
+                <div class="col-sm-4 form-group mb-0">
+                    <label class="small font-weight-bold">N° operación / referencia</label>
+                    <input name="referencia" type="text" class="form-control form-control-sm" placeholder="Código de transferencia...">
+                </div>
+                <!-- Comprobante -->
+                <div class="col-12 form-group mb-0">
+                    <label class="small font-weight-bold">
+                        Comprobante <span class="text-danger">*</span>
+                        <span class="text-muted font-weight-normal">(foto del depósito, captura de YAPE, etc. — JPG, PNG o PDF)</span>
+                    </label>
+                    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+                        <label class="btn btn-outline-primary btn-sm mb-0" for="wcfin-drv-file" style="cursor:pointer">
+                            <i class="fa fa-image mr-1"></i>Seleccionar archivo
+                        </label>
+                        <input type="file" id="wcfin-drv-file" name="comprobante"
+                               accept="image/jpeg,image/png,image/webp,application/pdf"
+                               required style="display:none">
+                        <span id="wcfin-drv-nombre" class="small text-muted">Ningún archivo seleccionado</span>
+                        <span id="wcfin-drv-size-warn" class="small text-danger" style="display:none">⚠️ Archivo demasiado grande (máx 5 MB)</span>
+                    </div>
+                    <!-- Preview imagen -->
+                    <div id="wcfin-drv-preview-wrap" style="display:none;margin-top:8px">
+                        <img id="wcfin-drv-preview" src="" alt="Preview"
+                             style="max-height:140px;max-width:100%;border-radius:6px;border:1px solid #dee2e6;box-shadow:0 2px 6px rgba(0,0,0,.1)">
+                    </div>
+                </div>
+                <!-- Notas -->
+                <div class="col-12 form-group mb-0">
+                    <label class="small font-weight-bold">Notas adicionales (opcional)</label>
+                    <textarea name="notas" rows="2" class="form-control form-control-sm"
+                        placeholder="Ej: Depósito realizado el lunes, referencia tal..."></textarea>
+                </div>
+            </div>
+
+            <div class="mt-3 d-flex align-items-center" style="gap:10px">
+                <button type="submit" class="btn btn-primary btn-sm px-4" id="wcfin-drv-submit">
+                    <i class="fa fa-paper-plane mr-1"></i>Enviar comprobante
+                </button>
+                <small class="text-muted">DHV lo revisará y marcará como liquidado.</small>
+            </div>
         </form>
+    </div>
     </div>
 </div>
 <?php endif; ?>
@@ -166,18 +232,32 @@ $msg = sanitize_key($_GET['wcfin_msg'] ?? '');
                 <th class="text-right">Monto</th>
                 <th>Método</th>
                 <th>Notas</th>
+                <th>Estado</th>
                 <th>Comprobante</th>
             </tr>
         </thead>
         <tbody>
-        <?php foreach ($liquidaciones as $l): ?>
+        <?php foreach ($liquidaciones as $l):
+            $est = $l->estado ?? 'aprobado';
+            $est_color = $est==='pendiente'?'#856404':($est==='rechazado'?'#8a1a1a':'#135d3e');
+            $est_bg    = $est==='pendiente'?'#fff3cd':($est==='rechazado'?'#fce9e9':'#d7f7c2');
+            $est_label = $est==='pendiente'?'⏳ Revisando':($est==='rechazado'?'❌ Rechazado':'✓ Aprobado');
+        ?>
         <tr>
             <td><?php echo esc_html(date_i18n('d/m/Y H:i',strtotime($l->fecha))); ?></td>
             <td class="text-right"><strong style="color:#00a32a">S/ <?php echo number_format(floatval($l->monto),2); ?></strong></td>
             <td><?php echo esc_html($l->metodo); ?></td>
             <td class="small text-muted"><?php echo esc_html($l->notas ?: '—'); ?></td>
             <td>
-                <?php if ($l->comprobante_url): ?>
+                <span style="padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;background:<?php echo esc_attr($est_bg); ?>;color:<?php echo esc_attr($est_color); ?>">
+                    <?php echo esc_html($est_label); ?>
+                </span>
+                <?php if (!empty($l->notas_admin) && $est === 'rechazado'): ?>
+                <div class="small text-danger mt-1"><?php echo esc_html($l->notas_admin); ?></div>
+                <?php endif; ?>
+            </td>
+            <td>
+                <?php if (!empty($l->comprobante_url)): ?>
                 <a href="<?php echo esc_url($l->comprobante_url); ?>" target="_blank" class="btn btn-outline-secondary btn-sm">
                     <i class="fa fa-download mr-1"></i>Ver
                 </a>
@@ -190,3 +270,44 @@ $msg = sanitize_key($_GET['wcfin_msg'] ?? '');
     </div>
     <?php endif; ?>
 </div>
+
+<script>
+(function(){
+    var fileInput = document.getElementById('wcfin-drv-file');
+    if (!fileInput) return;
+    fileInput.addEventListener('change', function(){
+        var file = this.files[0];
+        if (!file) return;
+        var maxBytes = 5 * 1024 * 1024;
+        var warn = document.getElementById('wcfin-drv-size-warn');
+        var submit = document.getElementById('wcfin-drv-submit');
+        if (file.size > maxBytes) {
+            if (warn) warn.style.display = 'inline';
+            if (submit) submit.disabled = true;
+            document.getElementById('wcfin-drv-nombre').textContent = file.name;
+            return;
+        }
+        if (warn) warn.style.display = 'none';
+        if (submit) submit.disabled = false;
+        document.getElementById('wcfin-drv-nombre').textContent = file.name;
+        document.getElementById('wcfin-drv-nombre').style.color = '#2271b1';
+        if (file.type.startsWith('image/')) {
+            var r = new FileReader();
+            r.onload = function(e) {
+                document.getElementById('wcfin-drv-preview').src = e.target.result;
+                document.getElementById('wcfin-drv-preview-wrap').style.display = '';
+            };
+            r.readAsDataURL(file);
+        } else {
+            document.getElementById('wcfin-drv-preview-wrap').style.display = 'none';
+        }
+    });
+
+    <?php if ($saldo > 0): ?>
+    // Auto-abrir form si hay saldo pendiente por primera vez
+    if (!document.cookie.match('wcfin_drv_seen')) {
+        // Solo mostrar el badge, no abrir automáticamente
+    }
+    <?php endif; ?>
+})();
+</script>

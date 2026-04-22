@@ -139,12 +139,15 @@ class WCFIN_Database {
             monto           DECIMAL(10,2) NOT NULL,
             metodo          VARCHAR(80)  NOT NULL DEFAULT 'efectivo',
             notas           TEXT,
+            notas_admin     TEXT,
             comprobante_url VARCHAR(500) NOT NULL DEFAULT '',
             registrado_por  INT UNSIGNED NOT NULL,
+            estado          VARCHAR(20)  NOT NULL DEFAULT 'aprobado',
             fecha           DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
             PRIMARY KEY (id),
             KEY driver_id (driver_id),
-            KEY fecha (fecha)
+            KEY fecha (fecha),
+            KEY estado (estado)
         ) $c;");
 
         // Pagos bilaterales cliente ↔ DHV
@@ -177,18 +180,34 @@ class WCFIN_Database {
         global $wpdb;
         if ( $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}wcfin_condiciones") > 0 ) return;
 
+        // Las dos condiciones principales mapeadas al campo condicion_pago del formulario:
+        // 'paga_destinatario' → destinatario paga (contraentrega / cobro en entrega)
+        // 'paga_remitente'    → remitente paga previamente (crédito / prepago)
         $conds = [
-            ['Contraentrega',       'contraentrega', 'destinatario', 1],
-            ['Cancelado (prepago)', 'cancelado',     'ninguno',      2],
-            ['Crédito',             'credito',       'remitente',    3],
-            ['Normal',              'normal',        'remitente',    4],
+            ['🚚 Paga el Destinatario', 'paga_destinatario', 'destinatario', 1,
+             'El conductor cobra al destinatario. DHV divide: servicio para DHV, producto para el remitente.'],
+            ['📦 Paga el Remitente',    'paga_remitente',    'remitente',    2,
+             'El remitente paga previamente. El conductor solo entrega, no cobra nada.'],
+            ['Contraentrega',            'contraentrega',     'destinatario', 3, ''],
+            ['Cancelado (prepago)',       'cancelado',         'ninguno',      4, ''],
+            ['Crédito',                  'credito',           'remitente',    5, ''],
+            ['Normal',                   'normal',            'remitente',    6, ''],
         ];
-        foreach ( $conds as [$n,$s,$c,$o] )
-            $wpdb->insert("{$wpdb->prefix}wcfin_condiciones", ['nombre'=>$n,'slug'=>$s,'cobrar_a'=>$c,'activo'=>1,'orden'=>$o]);
+        foreach ( $conds as [$n,$s,$c,$o,$desc] )
+            $wpdb->insert("{$wpdb->prefix}wcfin_condiciones", ['nombre'=>$n,'slug'=>$s,'cobrar_a'=>$c,'activo'=>1,'orden'=>$o,'descripcion'=>$desc]);
+
+        // Componentes para las condiciones principales
+        foreach (['paga_destinatario','contraentrega'] as $slug) {
+            $cid = $wpdb->get_var($wpdb->prepare("SELECT id FROM {$wpdb->prefix}wcfin_condiciones WHERE slug=%s",$slug));
+            foreach ([['monto_servicio','Costo del servicio',1,1],['monto_producto','Valor del producto',1,2],['monto_extras','Cargos adicionales',0,3]] as [$v,$l,$ob,$or])
+                $wpdb->insert("{$wpdb->prefix}wcfin_condicion_componentes", ['condicion_id'=>$cid,'variable'=>$v,'label'=>$l,'obligatorio'=>$ob,'orden'=>$or]);
+        }
+        // paga_remitente: solo necesita monto_servicio (el producto ya fue cobrado previamente)
+        $id_paga_rem = $wpdb->get_var("SELECT id FROM {$wpdb->prefix}wcfin_condiciones WHERE slug='paga_remitente'");
+        $wpdb->insert("{$wpdb->prefix}wcfin_condicion_componentes", ['condicion_id'=>$id_paga_rem,'variable'=>'monto_servicio','label'=>'Costo del servicio','obligatorio'=>1,'orden'=>1]);
+        $wpdb->insert("{$wpdb->prefix}wcfin_condicion_componentes", ['condicion_id'=>$id_paga_rem,'variable'=>'monto_producto','label'=>'Valor del producto (a devolver al remitente)','obligatorio'=>0,'orden'=>2]);
 
         $id_contra = $wpdb->get_var("SELECT id FROM {$wpdb->prefix}wcfin_condiciones WHERE slug='contraentrega'");
-        foreach ([['monto_servicio','Costo del servicio',1,1],['monto_producto','Valor del producto',1,2],['monto_extras','Cargos adicionales',0,3]] as [$v,$l,$ob,$or])
-            $wpdb->insert("{$wpdb->prefix}wcfin_condicion_componentes", ['condicion_id'=>$id_contra,'variable'=>$v,'label'=>$l,'obligatorio'=>$ob,'orden'=>$or]);
 
         foreach (['normal','credito','cancelado'] as $s) {
             $id = $wpdb->get_var($wpdb->prepare("SELECT id FROM {$wpdb->prefix}wcfin_condiciones WHERE slug=%s",$s));
