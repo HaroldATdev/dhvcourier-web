@@ -14,8 +14,14 @@ class WPCA_Producto {
             $codigo = 'DHV-' . $codigo; // Fallback por si acaso
         }
 
-        $existe = (int) $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$tabla} WHERE codigo = %s AND activo = 1", $codigo ) );
-        if ( $existe ) return new WP_Error( 'duplicado', "Ya existe un producto con el código {$codigo}." );
+        // Comprobar si existe un producto con el mismo código (activo o no).
+        $existing = $wpdb->get_row( $wpdb->prepare( "SELECT id, activo FROM {$tabla} WHERE codigo = %s LIMIT 1", $codigo ) );
+        if ( $existing ) {
+            if ( (int) $existing->activo === 1 ) {
+                return new WP_Error( 'duplicado', "Ya existe un producto con el código {$codigo}." );
+            }
+            return new WP_Error( 'duplicado_inactivo', "Existe un producto con el código {$codigo} pero está inactivo. Edita el producto existente o bórralo definitivamente antes de crear uno nuevo." );
+        }
 
         $imagen       = sanitize_text_field( $datos['imagen_url'] ?? '' );
         $stock_ini    = (int) ( $datos['stock_actual'] ?? 0 ); // "stock_actual" del form = stock inicial

@@ -278,9 +278,13 @@ class WPCA_Frontend {
 		if ( is_wp_error( $result ) ) {
 			$this->set_flash( 'prod', [ 'error' => $result->get_error_message(), 'prev' => $_POST ] );
 			$accion = $id ? [ 'wpca' => 'editar-producto', 'id' => $id ] : [ 'wpca' => 'nuevo-producto' ];
-			wp_safe_redirect( wpca_frontend_url( $accion ) );
+			$dest = wpca_frontend_url( $accion );
+			if ( defined('WP_DEBUG') && WP_DEBUG ) error_log(sprintf('[wpca] redirect (error): %s', $dest));
+			wp_safe_redirect( $dest );
 		} else {
-			wp_safe_redirect( wpca_frontend_url( [ 'wpca' => 'productos', 'msg' => $id ? 'actualizado' : 'creado' ] ) );
+			$dest2 = wpca_frontend_url( [ 'wpca' => 'productos', 'msg' => $id ? 'actualizado' : 'creado' ] );
+			if ( defined('WP_DEBUG') && WP_DEBUG ) error_log(sprintf('[wpca] redirect (ok): %s', $dest2));
+			wp_safe_redirect( $dest2 );
 		}
 		exit;
 	}
