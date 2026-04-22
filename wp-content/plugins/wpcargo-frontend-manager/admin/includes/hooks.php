@@ -7,7 +7,9 @@ add_action( 'plugins_loaded', 'wpcfe_initialize_hooks' );
 function wpcfe_initialize_hooks(){  
     // Frontend Manager Shipment Filter Hook
     add_action( 'wpcfe_after_shipment_filters', 'wpcfe_shipment_created_date_filter_callback', 100 );
+    add_action( 'wpcfe_after_shipment_filters', 'wpcfe_shipment_extra_filters_callback', 90 );
     add_filter( 'wpcfe_dashboard_arguments', 'wpcfe_shipment_created_date_query_args_callback' );
+    add_filter( 'wpcfe_dashboard_meta_query', 'wpcfe_shipment_extra_meta_query_callback', 15 );
     add_action( 'wpcfe_before_shipment_table', 'wpcfe_shipment_searched_callback' );
     add_action( 'wpcfe_before_dashboard_status_report_grid', 'wpcfe_shipment_searched_callback' );
     // Frontend Manager Sidebar Hook
@@ -225,7 +227,7 @@ function wpcfe_assign_driver_callback( $shipment_id ){
             <div class="select-no-margin">
                 <label><?php esc_html_e('Conductor Recojo','wpcargo-frontend-manager'); ?></label>
                 <select name="wpcargo_driver_recojo" class="mdb-select mt-0 form-control browser-default" id="wpcargo_driver_recojo" >
-                    <option value=""><?php esc_html_e('-- Select Driver --','wpcargo-frontend-manager'); ?></option>
+                    <option value=""><?php esc_html_e('-- Seleccione conductor --','wpcargo-frontend-manager'); ?></option>
                     <?php foreach( $wpcargo_driver as $driverID => $driverName ): ?>
                         <option value="<?php echo $driverID; ?>" <?php selected( get_post_meta( $shipment_id, 'wpcargo_driver_recojo', TRUE ), $driverID ); ?>><?php echo $driverName; ?></option>
                     <?php endforeach; ?>
@@ -237,7 +239,7 @@ function wpcfe_assign_driver_callback( $shipment_id ){
             <div class="select-no-margin">
                 <label><?php esc_html_e('Conductor Entrega','wpcargo-frontend-manager'); ?></label>
                 <select name="wpcargo_driver_entrega" class="mdb-select mt-0 form-control browser-default" id="wpcargo_driver_entrega" >
-                    <option value=""><?php esc_html_e('-- Select Driver --','wpcargo-frontend-manager'); ?></option>
+                    <option value=""><?php esc_html_e('-- Seleccione conductor --','wpcargo-frontend-manager'); ?></option>
                     <?php foreach( $wpcargo_driver as $driverID => $driverName ): ?>
                         <option value="<?php echo $driverID; ?>" <?php selected( get_post_meta( $shipment_id, 'wpcargo_driver_entrega', TRUE ), $driverID ); ?>><?php echo $driverName; ?></option>
                     <?php endforeach; ?>
@@ -264,6 +266,182 @@ function wpcfe_shipment_created_date_filter_callback(){
         </div>
     </div>
     <?php
+}
+function wpcfe_shipment_extra_filters_callback(){
+    if ( function_exists( 'is_wpcargo_client' ) && is_wpcargo_client() ) {
+        return;
+    }
+
+    $selected_branch        = isset( $_GET['shipment_branch'] ) ? sanitize_text_field( wp_unslash( $_GET['shipment_branch'] ) ) : '';
+    $selected_tipo_envio    = isset( $_GET['tipo_envio'] ) ? sanitize_text_field( wp_unslash( $_GET['tipo_envio'] ) ) : '';
+    $selected_lugar_origen  = isset( $_GET['lugar_origen'] ) ? sanitize_text_field( wp_unslash( $_GET['lugar_origen'] ) ) : '';
+    $selected_lugar_destino = isset( $_GET['lugar_destino'] ) ? sanitize_text_field( wp_unslash( $_GET['lugar_destino'] ) ) : '';
+    $selected_drv_recojo    = isset( $_GET['driver_recojo'] ) ? sanitize_text_field( wp_unslash( $_GET['driver_recojo'] ) ) : '';
+    $selected_drv_entrega   = isset( $_GET['driver_entrega'] ) ? sanitize_text_field( wp_unslash( $_GET['driver_entrega'] ) ) : '';
+
+    $tipos_envio = wpcfe_get_meta_values( 'tipo_envio', '' );
+    $tipos_envio = array_filter( array_unique( array_map( 'trim', (array) $tipos_envio ) ) );
+    natcasesort( $tipos_envio );
+
+    $origenes = wpcfe_get_meta_values( 'lugar_origen', '' );
+    $origenes = array_filter( array_unique( array_map( 'trim', (array) $origenes ) ) );
+    natcasesort( $origenes );
+
+    $destinos = wpcfe_get_meta_values( 'lugar_destino', '' );
+    $destinos = array_filter( array_unique( array_map( 'trim', (array) $destinos ) ) );
+    natcasesort( $destinos );
+
+    $drivers = function_exists( 'wpcfe_get_users' ) ? (array) wpcfe_get_users( 'wpcargo_driver' ) : array();
+    asort( $drivers );
+
+    $branches = array();
+    if ( function_exists( 'wpcbm_get_all_branch' ) ) {
+        $all_branches = wpcbm_get_all_branch( -1 );
+        if ( is_array( $all_branches ) ) {
+            foreach ( $all_branches as $branch ) {
+                if ( isset( $branch->id, $branch->name ) ) {
+                    $branches[ (string) $branch->id ] = $branch->name;
+                }
+            }
+        }
+    }
+    ?>
+    <div class="form-group wpcfe-filter p-0 mx-1">
+        <label class="sr-only" for="shipment_branch"><?php esc_html_e( 'Sucursal', 'wpcargo-frontend-manager' ); ?></label>
+        <select id="shipment_branch" name="shipment_branch" class="form-control md-form wpcfe-select">
+            <option value=""><?php esc_html_e( 'Todas las sucursales', 'wpcargo-frontend-manager' ); ?></option>
+            <?php foreach ( $branches as $branch_id => $branch_name ) : ?>
+                <option value="<?php echo esc_attr( $branch_id ); ?>" <?php selected( $selected_branch, $branch_id ); ?>><?php echo esc_html( $branch_name ); ?></option>
+            <?php endforeach; ?>
+        </select>
+    </div>
+    <div class="form-group wpcfe-filter p-0 mx-1">
+        <label class="sr-only" for="tipo_envio"><?php esc_html_e( 'Tipo de envio', 'wpcargo-frontend-manager' ); ?></label>
+        <select id="tipo_envio" name="tipo_envio" class="form-control md-form wpcfe-select">
+            <option value=""><?php esc_html_e( 'Todos los tipos', 'wpcargo-frontend-manager' ); ?></option>
+            <?php foreach ( $tipos_envio as $tipo_envio ) : ?>
+                <option value="<?php echo esc_attr( $tipo_envio ); ?>" <?php selected( $selected_tipo_envio, $tipo_envio ); ?>><?php echo esc_html( $tipo_envio ); ?></option>
+            <?php endforeach; ?>
+        </select>
+    </div>
+    <div class="form-group wpcfe-filter p-0 mx-1">
+        <label class="sr-only" for="lugar_origen"><?php esc_html_e( 'Lugar de origen', 'wpcargo-frontend-manager' ); ?></label>
+        <select id="lugar_origen" name="lugar_origen" class="form-control md-form wpcfe-select">
+            <option value=""><?php esc_html_e( 'Todos los origenes', 'wpcargo-frontend-manager' ); ?></option>
+            <?php foreach ( $origenes as $origen ) : ?>
+                <option value="<?php echo esc_attr( $origen ); ?>" <?php selected( $selected_lugar_origen, $origen ); ?>><?php echo esc_html( $origen ); ?></option>
+            <?php endforeach; ?>
+        </select>
+    </div>
+    <div class="form-group wpcfe-filter p-0 mx-1">
+        <label class="sr-only" for="lugar_destino"><?php esc_html_e( 'Lugar de destino', 'wpcargo-frontend-manager' ); ?></label>
+        <select id="lugar_destino" name="lugar_destino" class="form-control md-form wpcfe-select">
+            <option value=""><?php esc_html_e( 'Todos los destinos', 'wpcargo-frontend-manager' ); ?></option>
+            <?php foreach ( $destinos as $destino ) : ?>
+                <option value="<?php echo esc_attr( $destino ); ?>" <?php selected( $selected_lugar_destino, $destino ); ?>><?php echo esc_html( $destino ); ?></option>
+            <?php endforeach; ?>
+        </select>
+    </div>
+    <div class="form-group wpcfe-filter p-0 mx-1">
+        <label class="sr-only" for="driver_recojo"><?php esc_html_e( 'Conductor de recojo', 'wpcargo-frontend-manager' ); ?></label>
+        <select id="driver_recojo" name="driver_recojo" class="form-control md-form wpcfe-select">
+            <option value=""><?php esc_html_e( 'Todos los conductores de recojo', 'wpcargo-frontend-manager' ); ?></option>
+            <option value="__none__" <?php selected( $selected_drv_recojo, '__none__' ); ?>><?php esc_html_e( 'Sin conductor', 'wpcargo-frontend-manager' ); ?></option>
+            <?php foreach ( $drivers as $driver_id => $driver_name ) : ?>
+                <option value="<?php echo esc_attr( $driver_id ); ?>" <?php selected( $selected_drv_recojo, (string) $driver_id ); ?>><?php echo esc_html( $driver_name ); ?></option>
+            <?php endforeach; ?>
+        </select>
+    </div>
+    <div class="form-group wpcfe-filter p-0 mx-1">
+        <label class="sr-only" for="driver_entrega"><?php esc_html_e( 'Conductor de entrega', 'wpcargo-frontend-manager' ); ?></label>
+        <select id="driver_entrega" name="driver_entrega" class="form-control md-form wpcfe-select">
+            <option value=""><?php esc_html_e( 'Todos los conductores de entrega', 'wpcargo-frontend-manager' ); ?></option>
+            <option value="__none__" <?php selected( $selected_drv_entrega, '__none__' ); ?>><?php esc_html_e( 'Sin conductor', 'wpcargo-frontend-manager' ); ?></option>
+            <?php foreach ( $drivers as $driver_id => $driver_name ) : ?>
+                <option value="<?php echo esc_attr( $driver_id ); ?>" <?php selected( $selected_drv_entrega, (string) $driver_id ); ?>><?php echo esc_html( $driver_name ); ?></option>
+            <?php endforeach; ?>
+        </select>
+    </div>
+    <?php
+}
+function wpcfe_shipment_extra_meta_query_callback( $meta_query ) {
+    $is_client = function_exists( 'is_wpcargo_client' ) && is_wpcargo_client();
+
+    if ( $is_client && ! empty( $_GET['status'] ) ) {
+        $selected_status = sanitize_text_field( wp_unslash( $_GET['status'] ) );
+        foreach ( $meta_query as $meta_key => $meta_clause ) {
+            if ( is_array( $meta_clause ) && isset( $meta_clause['key'] ) && 'wpcargo_status' === $meta_clause['key'] ) {
+                unset( $meta_query[ $meta_key ] );
+            }
+        }
+        $meta_query[] = array(
+            'key'     => 'wpcargo_status',
+            'value'   => $selected_status,
+            'compare' => '=',
+        );
+        return $meta_query;
+    }
+
+    if ( $is_client ) {
+        return $meta_query;
+    }
+
+    $simple_filters = array(
+        'shipment_branch' => 'shipment_branch',
+        'tipo_envio'      => 'tipo_envio',
+        'lugar_origen'    => 'lugar_origen',
+        'lugar_destino'   => 'lugar_destino',
+    );
+
+    foreach ( $simple_filters as $query_key => $meta_key ) {
+        if ( empty( $_GET[ $query_key ] ) ) {
+            continue;
+        }
+        $meta_query[] = array(
+            'key'     => $meta_key,
+            'value'   => sanitize_text_field( wp_unslash( $_GET[ $query_key ] ) ),
+            'compare' => '=',
+        );
+    }
+
+    $driver_filters = array(
+        'driver_recojo'  => 'wpcargo_driver_recojo',
+        'driver_entrega' => 'wpcargo_driver_entrega',
+    );
+
+    foreach ( $driver_filters as $query_key => $meta_key ) {
+        if ( empty( $_GET[ $query_key ] ) ) {
+            continue;
+        }
+        $selected_value = sanitize_text_field( wp_unslash( $_GET[ $query_key ] ) );
+        if ( '__none__' === $selected_value ) {
+            $meta_query[] = array(
+                'relation' => 'OR',
+                array(
+                    'key'     => $meta_key,
+                    'compare' => 'NOT EXISTS',
+                ),
+                array(
+                    'key'     => $meta_key,
+                    'value'   => '',
+                    'compare' => '=',
+                ),
+                array(
+                    'key'     => $meta_key,
+                    'value'   => '0',
+                    'compare' => '=',
+                ),
+            );
+        } else {
+            $meta_query[] = array(
+                'key'     => $meta_key,
+                'value'   => $selected_value,
+                'compare' => '=',
+            );
+        }
+    }
+
+    return $meta_query;
 }
 function wpcfe_shipment_created_date_query_args_callback( $args ){
     $date_range = wpcfe_date_range_filter();
