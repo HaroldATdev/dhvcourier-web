@@ -120,8 +120,12 @@ class WPCA_Producto {
             $where[] = 'stock_minimo > 0 AND stock_actual <= stock_minimo';
         }
 
-        $where_sql = implode( ' AND ', $where );
-        $query = "SELECT * FROM {$tabla} WHERE {$where_sql} ORDER BY marca, codigo";
+        $where_sql = $where ? implode( ' AND ', $where ) : '';
+        if ( empty( $where_sql ) ) {
+            $query = "SELECT * FROM {$tabla} ORDER BY marca, codigo";
+        } else {
+            $query = "SELECT * FROM {$tabla} WHERE {$where_sql} ORDER BY marca, codigo";
+        }
         return $params
             ? $wpdb->get_results( $wpdb->prepare( $query, ...$params ) )
             : $wpdb->get_results( $query );
