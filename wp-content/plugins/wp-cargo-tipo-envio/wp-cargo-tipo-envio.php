@@ -2023,6 +2023,14 @@ function wpcte_guardar_meta( $post_id ) {
         update_post_meta( $post_id, 'tipo_envio', sanitize_key( $_POST['wpcte_tipo_envio'] ) );
     if ( ! empty( $_POST['wpcargo_driver_entrega'] ) )
         update_post_meta( $post_id, 'driver_entrega_id', absint( $_POST['wpcargo_driver_entrega'] ) );
+    // Si el tipo de envío es agencia o almacen, guardar también el conductor asignado
+    $posted_tipo = ! empty( $_POST['wpcte_tipo_envio'] ) ? sanitize_key( $_POST['wpcte_tipo_envio'] ) : ( get_post_meta( $post_id, 'tipo_envio', true ) ?: '' );
+    if ( in_array( $posted_tipo, array( 'agencia', 'almacen' ), true ) ) {
+        $drv_ent = isset( $_POST['wpcargo_driver_entrega'] ) ? absint( $_POST['wpcargo_driver_entrega'] ) : 0;
+        if ( $drv_ent > 0 ) {
+            update_post_meta( $post_id, 'wpcargo_driver', $drv_ent );
+        }
+    }
     if ( ! empty( $_POST['shipment_container_entrega'] ) )
         update_post_meta( $post_id, 'contenedor_entrega_id', sanitize_text_field( $_POST['shipment_container_entrega'] ) );
     if ( isset( $_POST['direccion_remitente'] ) )
@@ -2046,6 +2054,14 @@ function wpcte_guardar_meta_late( $post_id ) {
         update_post_meta( $post_id, 'tipo_envio', sanitize_key( $_POST['wpcte_tipo_envio'] ) );
     if ( isset( $_POST['direccion_remitente'] ) )
         update_post_meta( $post_id, 'direccion_remitente', sanitize_text_field( $_POST['direccion_remitente'] ) );
+    // Si es agencia/almacen y viene seleccionado conductor de entrega, sincronizar wpcargo_driver
+    $posted_tipo2 = ! empty( $_POST['wpcte_tipo_envio'] ) ? sanitize_key( $_POST['wpcte_tipo_envio'] ) : ( get_post_meta( $post_id, 'tipo_envio', true ) ?: '' );
+    if ( in_array( $posted_tipo2, array( 'agencia', 'almacen' ), true ) ) {
+        $drv_ent2 = isset( $_POST['wpcargo_driver_entrega'] ) ? absint( $_POST['wpcargo_driver_entrega'] ) : 0;
+        if ( $drv_ent2 > 0 ) {
+            update_post_meta( $post_id, 'wpcargo_driver', $drv_ent2 );
+        }
+    }
 
     $posted_shipper = isset( $_POST['registered_shipper'] ) ? absint( $_POST['registered_shipper'] ) : 0;
     if ( $posted_shipper > 0 ) {
