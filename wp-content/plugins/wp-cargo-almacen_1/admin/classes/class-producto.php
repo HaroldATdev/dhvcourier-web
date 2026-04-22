@@ -99,7 +99,11 @@ class WPCA_Producto {
     public static function obtener_todos( array $args = [] ): array {
         global $wpdb;
         $tabla  = $wpdb->prefix . 'wpca_productos';
-        $where  = [ 'activo = 1' ];
+        // Por defecto solo activos; si se pasa 'include_inactive' true, incluir todos
+        $where  = [];
+        if ( empty( $args['include_inactive'] ) ) {
+            $where[] = 'activo = 1';
+        }
         $params = [];
 
         if ( ! empty( $args['marca'] ) ) {
@@ -153,5 +157,26 @@ class WPCA_Producto {
         return $wpdb->get_results(
             "SELECT marca, SUM(stock_actual) AS total FROM {$wpdb->prefix}wpca_productos WHERE activo = 1 AND marca <> '' GROUP BY marca ORDER BY total DESC"
         );
+    }
+
+    /**
+     * Devuelve el siguiente número de código disponible (solo la parte numérica),
+     * formateado con ceros a la izquierda hasta $pad dígitos.
+     */
+    public static function siguiente_codigo_num( int $pad = 6 ): string {
+        global $wpdb;
+        $tabla = $wpdb->prefix . 'wpca_productos';
+        $rows = $wpdb->get_col( "SELECT codigo FROM {$tabla} WHERE codigo LIKE 'DHV-%'" );
+        $max = 0;
+        if ( is_array( $rows ) ) {
+            foreach ( $rows as $c ) {
+                if ( preg_match( '/^DHV-0*([0-9]+)$/i', trim( $c ), $m ) ) {
+                    $n = (int) $m[1];
+                    if ( $n > $max ) $max = $n;
+                }
+            }
+        }
+        $next = $max + 1;
+        return str_pad( (string) $next, $pad, '0', STR_PAD_LEFT );
     }
 }

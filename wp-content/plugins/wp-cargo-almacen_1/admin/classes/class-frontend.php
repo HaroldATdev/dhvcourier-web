@@ -10,6 +10,7 @@ class WPCA_Frontend {
 		add_action( 'admin_post_wpca_guardar_mov',  [ $this, 'handle_guardar_movimiento' ] );
 		add_action( 'admin_post_wpca_eliminar_mov', [ $this, 'handle_eliminar_movimiento' ] );
 		add_action( 'admin_post_wpca_guardar_prod', [ $this, 'handle_guardar_producto' ] );
+		add_action( 'admin_post_wpca_activar_prod', [ $this, 'handle_activar_producto' ] );
 		add_action( 'wp_ajax_wpca_upload_imagen',    [ $this, 'handle_upload_imagen' ] );
 		add_action( 'admin_post_wpca_eliminar_prod',[ $this, 'handle_eliminar_producto' ] );
 		add_action( 'admin_post_wpca_borrar_prod',  [ $this, 'handle_borrar_producto' ] );
@@ -160,10 +161,22 @@ class WPCA_Frontend {
 		$buscar    = sanitize_text_field( $_GET['buscar'] ?? '' );
 		$marca     = sanitize_text_field( $_GET['marca']  ?? '' );
 		$msg       = sanitize_key( $_GET['msg'] ?? '' );
-		$productos = WPCA_Producto::obtener_todos( compact( 'buscar', 'marca' ) );
+		$mostrar_inactivos = ! empty( $_GET['mostrar_inactivos'] );
+		$productos = WPCA_Producto::obtener_todos( array_merge( compact( 'buscar', 'marca' ), [ 'include_inactive' => $mostrar_inactivos ] ) );
 		$clientes  = wpca_obtener_clientes_wpcargo();
 		$page_url  = wpca_frontend_url();
-		wpca_include_template( 'frontend/productos.tpl.php', compact( 'productos', 'clientes', 'buscar', 'marca', 'msg', 'page_url' ) );
+		wpca_include_template( 'frontend/productos.tpl.php', compact( 'productos', 'clientes', 'buscar', 'marca', 'msg', 'page_url', 'mostrar_inactivos' ) );
+	}
+
+	public function handle_activar_producto(): void {
+		if ( ! wpca_puede_gestionar_almacen() ) wp_die( 'Sin permisos.' );
+		check_admin_referer( 'wpca_activate_prod_nonce' );
+		$id = (int) ( $_POST['id'] ?? 0 );
+		if ( $id <= 0 ) wp_safe_redirect( wpca_frontend_url( [ 'wpca' => 'productos' ] ) );
+		global $wpdb;
+		$wpdb->update( $wpdb->prefix . 'wpca_productos', [ 'activo' => 1 ], [ 'id' => $id ] );
+		wp_safe_redirect( wpca_frontend_url( [ 'wpca' => 'productos', 'msg' => 'activado' ] ) );
+		exit;
 	}
 
 	private function render_producto_form(): void {
@@ -174,7 +187,12 @@ class WPCA_Frontend {
 		$error    = $flash['error'] ?? '';
 		$prev     = $flash['prev']  ?? null;
 		$clientes = wpca_obtener_clientes_wpcargo();
-		wpca_include_template( 'frontend/producto-form.tpl.php', compact( 'id', 'producto', 'page_url', 'error', 'prev', 'clientes' ) );
+		// Si es creación nueva y no hay datos previos, calcular siguiente número de código
+		$codigo_num = '';
+		if ( ! $id && empty( $prev ) ) {
+			$codigo_num = WPCA_Producto::siguiente_codigo_num(6);
+		}
+		wpca_include_template( 'frontend/producto-form.tpl.php', compact( 'id', 'producto', 'page_url', 'error', 'prev', 'clientes', 'codigo_num' ) );
 	}
 
 	private function render_reportes(): void {

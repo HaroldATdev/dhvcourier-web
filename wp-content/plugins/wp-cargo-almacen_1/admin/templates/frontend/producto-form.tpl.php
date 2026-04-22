@@ -7,7 +7,13 @@
 <?php
 $v = fn( $f ) => esc_attr( $prev[ $f ] ?? ( $producto->$f ?? '' ) );
 $codigo_full  = $prev['codigo'] ?? ( $producto->codigo ?? '' );
-$codigo_num   = preg_match( '/^DHV-(.+)$/i', trim( $codigo_full ), $m ) ? $m[1] : '';
+// Si se pasó un `codigo_num` calculado desde el controlador y es creación nueva, usarlo.
+if ( empty( $codigo_full ) && isset( $codigo_num ) && $codigo_num ) {
+    $codigo_num = preg_replace('/[^0-9]/', '', (string) $codigo_num);
+    $codigo_full = 'DHV-' . $codigo_num;
+} else {
+    $codigo_num   = preg_match( '/^DHV-(.+)$/i', trim( $codigo_full ), $m ) ? $m[1] : '';
+}
 $imagen_actual = $prev['imagen_url'] ?? ( $producto->imagen ?? '' );
 $unidades_map  = [
     'UND' => 'UND — Unidad',   'KG'  => 'KG — Kilogramos',

@@ -25,9 +25,16 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h5 class="mb-0"><i class="fa fa-box mr-2"></i> Productos</h5>
-    <a href="<?php echo esc_url( add_query_arg( 'wpca', 'nuevo-producto', $page_url ) ); ?>" class="btn btn-primary btn-sm">
+    <div style="display:flex;gap:.5rem;align-items:center;">
+        <?php if ( empty( $mostrar_inactivos ) ) : ?>
+            <a href="<?php echo esc_url( add_query_arg( 'mostrar_inactivos', '1', $page_url ) ); ?>" class="btn btn-outline-secondary btn-sm">Ver inactivos</a>
+        <?php else : ?>
+            <a href="<?php echo esc_url( remove_query_arg( 'mostrar_inactivos', $page_url ) ); ?>" class="btn btn-outline-secondary btn-sm">Ver solo activos</a>
+        <?php endif; ?>
+        <a href="<?php echo esc_url( add_query_arg( 'wpca', 'nuevo-producto', $page_url ) ); ?>" class="btn btn-primary btn-sm">
         <i class="fa fa-plus mr-1"></i> Nuevo Producto
     </a>
+    </div>
 </div>
 
 <form method="get" class="form-inline mb-3 flex-wrap" style="gap:.5rem;">
@@ -83,19 +90,28 @@
                             <a href="<?php echo esc_url( add_query_arg( [ 'wpca' => 'editar-producto', 'id' => $p->id ], $page_url ) ); ?>" class="btn btn-outline-secondary btn-sm" title="Editar">
                                 <i class="fa fa-pencil"></i>
                             </a>
-                            <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" onsubmit="return confirm('¿Desactivar este producto?');" style="display:inline;">
-                                <?php wp_nonce_field( 'wpca_del_prod_nonce' ); ?>
-                                <input type="hidden" name="action" value="wpca_eliminar_prod">
-                                <input type="hidden" name="id" value="<?php echo (int) $p->id; ?>">
-                                <button type="submit" class="btn btn-outline-danger btn-sm" title="Desactivar"><i class="fa fa-ban"></i></button>
-                            </form>
-                            <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" onsubmit="return confirm('¿Borrar definitivamente este producto? Esta acción no se puede deshacer.');" style="display:inline;">
-                                <?php wp_nonce_field( 'wpca_borrar_prod_nonce' ); ?>
-                                <input type="hidden" name="action" value="wpca_borrar_prod">
-                                <input type="hidden" name="id" value="<?php echo (int) $p->id; ?>">
-                                <?php $can_delete = (int) $p->stock_actual <= 0; ?>
-                                <button type="submit" class="btn btn-outline-danger btn-sm" title="<?php echo $can_delete ? 'Borrar definitivamente' : 'Solo se puede borrar cuando el stock es 0'; ?>" <?php disabled( ! $can_delete ); ?>><i class="fa fa-trash"></i></button>
-                            </form>
+                            <?php if ( (int) $p->activo === 1 ) : ?>
+                                <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" onsubmit="return confirm('¿Desactivar este producto?');" style="display:inline;">
+                                    <?php wp_nonce_field( 'wpca_del_prod_nonce' ); ?>
+                                    <input type="hidden" name="action" value="wpca_eliminar_prod">
+                                    <input type="hidden" name="id" value="<?php echo (int) $p->id; ?>">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm" title="Desactivar"><i class="fa fa-ban"></i></button>
+                                </form>
+                                <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" onsubmit="return confirm('¿Borrar definitivamente este producto? Esta acción no se puede deshacer.');" style="display:inline;">
+                                    <?php wp_nonce_field( 'wpca_borrar_prod_nonce' ); ?>
+                                    <input type="hidden" name="action" value="wpca_borrar_prod">
+                                    <input type="hidden" name="id" value="<?php echo (int) $p->id; ?>">
+                                    <?php $can_delete = (int) $p->stock_actual <= 0; ?>
+                                    <button type="submit" class="btn btn-outline-danger btn-sm" title="<?php echo $can_delete ? 'Borrar definitivamente' : 'Solo se puede borrar cuando el stock es 0'; ?>" <?php disabled( ! $can_delete ); ?>><i class="fa fa-trash"></i></button>
+                                </form>
+                            <?php else : ?>
+                                <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" onsubmit="return confirm('¿Activar este producto?');" style="display:inline;">
+                                    <?php wp_nonce_field( 'wpca_activate_prod_nonce' ); ?>
+                                    <input type="hidden" name="action" value="wpca_activar_prod">
+                                    <input type="hidden" name="id" value="<?php echo (int) $p->id; ?>">
+                                    <button type="submit" class="btn btn-outline-success btn-sm" title="Activar"><i class="fa fa-check"></i></button>
+                                </form>
+                            <?php endif; ?>
                         </td>
                     </tr>
                 <?php endforeach; ?>
