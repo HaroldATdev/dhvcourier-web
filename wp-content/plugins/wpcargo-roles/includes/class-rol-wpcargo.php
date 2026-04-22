@@ -294,14 +294,14 @@ class WCROL_Rol_WPCargo {
         $request_uri = isset( $_SERVER['REQUEST_URI'] ) ? (string) $_SERVER['REQUEST_URI'] : '';
         $action = isset( $_REQUEST['action'] ) ? sanitize_key( (string) $_REQUEST['action'] ) : '';
 
-        // Permitir flujos admin-post de plugins frontend (almacén y gestión de roles).
+        // Permitir cualquier flujo admin-post; cada handler ya valida nonce y permisos.
         $is_admin_post = (
             'admin-post.php' === $script ||
             'admin-post.php' === $script_name ||
             false !== strpos( $request_uri, '/wp-admin/admin-post.php' )
         );
 
-        if ( $is_admin_post && ( 0 === strpos( $action, 'wpca_' ) || 0 === strpos( $action, 'wcrol_' ) ) ) {
+        if ( $is_admin_post ) {
             return;
         }
 
