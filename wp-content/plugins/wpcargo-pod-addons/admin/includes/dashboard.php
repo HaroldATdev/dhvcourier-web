@@ -555,7 +555,9 @@ function wpcargo_pod_signed_load_action()
 
 	// Save Custom Field data
 	foreach ($form_data as $data) {
-		$data_value = is_array($data['value']) ? $data_value : sanitize_text_field($data['value']);
+		$data_value = isset($data['value'])
+			? ( is_array($data['value']) ? wp_json_encode($data['value']) : sanitize_text_field($data['value']) )
+			: '';
 		$data_info 	= wpcpod_custom_fields_data($data['name']);
 		$data_info 	= apply_filters('wpcpod_custom_fields_data_results', $data_info, $data);
 		if (!$data_info) {
@@ -602,7 +604,7 @@ function wpcpod_delete_image()
 		'message' 	=> $message,
 		'shipmentID' => $shipmentID,
 		'attchID'	=> $attchID,
-		'$arr_images' => $$arr_images
+		'arr_images' => array_values( $arr_images )
 	));
 	die();
 }
