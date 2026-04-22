@@ -151,7 +151,9 @@ function wpcfe_status_transition_is_allowed( $shipment_id, $current_status, $new
 
 function wpcfe_shipment_table_data_status( $shipment_id  ){
     $status = get_post_meta( $shipment_id, 'wpcargo_status', true );
-    $options = wpcfe_status_transition_options( $shipment_id, $status );
+    $current_user = wp_get_current_user();
+    $is_client = $current_user instanceof WP_User && in_array( 'wpcargo_client', (array) $current_user->roles, true );
+    $options = $is_client ? [] : wpcfe_status_transition_options( $shipment_id, $status );
     ?>
     <td class="shipment-status <?php echo wpcfe_to_slug( $status ); ?>">
         <?php if ( ! empty( $options ) ): ?>
