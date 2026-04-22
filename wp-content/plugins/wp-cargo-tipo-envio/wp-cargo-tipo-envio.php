@@ -2044,7 +2044,7 @@ function wpcte_guardar_meta_late( $post_id ) {
 function wpcte_tiene_almacen() {
     if ( ! is_user_logged_in() ) return false;
     $user = wp_get_current_user();
-    if ( in_array('administrator', (array)$user->roles) ) return true;
+    if ( in_array('administrator', (array)$user->roles, true) || in_array('wpcargo_admin', (array)$user->roles, true) ) return true;
     global $wpdb;
     $tabla = $wpdb->prefix.'wpca_productos';
     if ( $wpdb->get_var("SHOW TABLES LIKE '{$tabla}'")<>$tabla ) return false;
