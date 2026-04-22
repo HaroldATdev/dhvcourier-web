@@ -99,9 +99,12 @@ class WPCA_Producto {
     public static function obtener_todos( array $args = [] ): array {
         global $wpdb;
         $tabla  = $wpdb->prefix . 'wpca_productos';
-        // Por defecto solo activos; si se pasa 'include_inactive' true, incluir todos
+        // Por defecto mostrar solo activos; si 'include_inactive' true, mostrar solo inactivos
         $where  = [];
-        if ( empty( $args['include_inactive'] ) ) {
+        $include_inactive = ! empty( $args['include_inactive'] );
+        if ( $include_inactive ) {
+            $where[] = 'activo = 0';
+        } else {
             $where[] = 'activo = 1';
         }
         $params = [];
