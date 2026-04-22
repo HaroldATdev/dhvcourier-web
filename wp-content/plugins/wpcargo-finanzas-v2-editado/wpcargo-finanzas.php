@@ -3,14 +3,14 @@
  * Plugin Name: WPCargo Finanzas
  * Plugin URI:  https://dhvcourier.com
  * Description: Módulo financiero completo para DHV Courier. Panel de cajas por motorizado y cliente, liquidaciones, comprobantes bilaterales, y vistas frontend para cada rol.
- * Version:     2.1.0
+ * Version:     2.0.0
  * Author:      DHV Courier
  * Text Domain: wpcargo-finanzas
  * Requires PHP: 8.1
  */
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-define( 'WCFIN_VERSION',  '2.1.0' );
+define( 'WCFIN_VERSION',  '2.0.0' );
 define( 'WCFIN_PATH',     plugin_dir_path( __FILE__ ) );
 define( 'WCFIN_URL',      plugin_dir_url( __FILE__ ) );
 define( 'WCFIN_BASENAME', plugin_basename( __FILE__ ) );
@@ -38,6 +38,14 @@ require_once WCFIN_PATH . 'admin/classes/class-frontend-cliente.php';
 register_activation_hook( __FILE__, 'wcfin_activar' );
 add_action( 'plugins_loaded', 'wcfin_maybe_upgrade' );
 
+// ── Sincronización automática condicion_pago → condición de finanzas ──────────
+// Se dispara al guardar cualquier post de tipo wpcargo_shipment
+add_action( 'save_post_wpcargo_shipment', [ 'WCFIN_Motor', 'sincronizar_condicion_desde_envio' ], 30 );
+// Compatibilidad con hook propio de WPCargo si existe
+add_action( 'wpcargo_after_save_shipment', function( $shipment_id ) {
+    WCFIN_Motor::sincronizar_condicion_desde_envio( is_object($shipment_id) ? $shipment_id->ID : (int)$shipment_id );
+}, 30 );
+
 function wcfin_activar(): void {
     WCFIN_Database::crear_tablas();
     // Crear las 3 páginas del dashboard al activar
@@ -49,14 +57,7 @@ function wcfin_activar(): void {
 function wcfin_maybe_upgrade(): void {
     if ( get_option('wcfin_db_version') !== WCFIN_VERSION ) {
         WCFIN_Database::crear_tablas();
+        WCFIN_Database::migrar();
         update_option('wcfin_db_version', WCFIN_VERSION);
     }
 }
-
-/**
- * Hook global: sincroniza condicion_pago del formulario WPCargo con finanzas
- * cuando se guarda un envío desde cualquier parte.
- */
-add_action( 'wpcargo_after_save_shipment', function( int $shipment_id ): void {
-    WCFIN_Motor::sincronizar_condicion_pago( $shipment_id );
-}, 10, 1 );

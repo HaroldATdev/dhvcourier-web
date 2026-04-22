@@ -40,14 +40,53 @@ class WCFIN_Caja {
     }
 
     /**
-     * Total liquidado por el driver a DHV.
+     * Total liquidado por el driver a DHV (solo liquidaciones confirmadas/aprobadas).
      */
     public static function liquidado_driver( int $driver_id ): float {
         global $wpdb;
         return (float) $wpdb->get_var($wpdb->prepare(
-            "SELECT COALESCE(SUM(monto), 0) FROM {$wpdb->prefix}wcfin_liquidaciones WHERE driver_id = %d",
+            "SELECT COALESCE(SUM(monto), 0) FROM {$wpdb->prefix}wcfin_liquidaciones
+             WHERE driver_id = %d AND (estado = 'aprobado' OR estado = '' OR estado IS NULL)",
             $driver_id
         ));
+    }
+
+    /**
+     * Total de liquidaciones pendientes subidas por el driver (aún no aprobadas).
+     */
+    public static function liquidado_pendiente_driver( int $driver_id ): float {
+        global $wpdb;
+        return (float) $wpdb->get_var($wpdb->prepare(
+            "SELECT COALESCE(SUM(monto), 0) FROM {$wpdb->prefix}wcfin_liquidaciones
+             WHERE driver_id = %d AND estado = 'pendiente'",
+            $driver_id
+        ));
+    }
+
+    /**
+     * El admin aprueba una liquidación subida por el driver.
+     */
+    public static function aprobar_liquidacion( int $liq_id ): void {
+        global $wpdb;
+        $wpdb->update(
+            "{$wpdb->prefix}wcfin_liquidaciones",
+            ['estado' => 'aprobado', 'registrado_por' => get_current_user_id()],
+            ['id' => $liq_id]
+        );
+        delete_option("wcfin_liq_{$liq_id}_estado");
+    }
+
+    /**
+     * El admin rechaza una liquidación subida por el driver.
+     */
+    public static function rechazar_liquidacion( int $liq_id ): void {
+        global $wpdb;
+        $wpdb->update(
+            "{$wpdb->prefix}wcfin_liquidaciones",
+            ['estado' => 'rechazado'],
+            ['id' => $liq_id]
+        );
+        delete_option("wcfin_liq_{$liq_id}_estado");
     }
 
     /**
@@ -263,7 +302,7 @@ class WCFIN_Caja {
 
     // ── LIQUIDACIONES (admin registra pago driver → DHV) ─────────────────────
 
-    public static function registrar_liquidacion( int $driver_id, float $monto, string $metodo, string $notas, string $comprobante_url, int $registrado_por = 0 ): int {
+    public static function registrar_liquidacion( int $driver_id, float $monto, string $metodo, string $notas, string $comprobante_url ): int {
         global $wpdb;
         $wpdb->insert("{$wpdb->prefix}wcfin_liquidaciones", [
             'driver_id'       => $driver_id,
@@ -271,89 +310,10 @@ class WCFIN_Caja {
             'metodo'          => sanitize_text_field($metodo),
             'notas'           => sanitize_textarea_field($notas),
             'comprobante_url' => esc_url_raw($comprobante_url),
-            'registrado_por'  => $registrado_por ?: get_current_user_id(),
+            'registrado_por'  => get_current_user_id(),
             'fecha'           => current_time('mysql'),
-            'estado'          => 'pendiente', // empieza pendiente cuando lo sube el driver
         ]);
         return $wpdb->insert_id;
-    }
-
-    /**
-     * El driver declara una liquidación enviando su comprobante.
-     * Queda como 'pendiente' hasta que el admin la apruebe.
-     */
-    public static function driver_declara_liquidacion( int $driver_id, float $monto, string $metodo, string $referencia, string $comprobante_url, string $notas ): int {
-        global $wpdb;
-        $wpdb->insert("{$wpdb->prefix}wcfin_liquidaciones", [
-            'driver_id'       => $driver_id,
-            'monto'           => $monto,
-            'metodo'          => sanitize_text_field($metodo) . ($referencia ? ' — '.$referencia : ''),
-            'notas'           => sanitize_textarea_field($notas),
-            'comprobante_url' => esc_url_raw($comprobante_url),
-            'registrado_por'  => $driver_id,
-            'estado'          => 'pendiente',
-            'fecha'           => current_time('mysql'),
-        ]);
-        $id = $wpdb->insert_id;
-
-        // Notificar al admin
-        $driver = get_userdata($driver_id);
-        $admins = get_users(['role' => 'administrator', 'number' => 3]);
-        foreach ($admins as $admin) {
-            wp_mail(
-                $admin->user_email,
-                '[DHV] Comprobante de liquidación enviado por ' . ($driver ? $driver->display_name : "Driver #$driver_id"),
-                "El motorizado " . ($driver ? $driver->display_name : "#$driver_id") . " subió un comprobante de liquidación por S/ " . number_format($monto, 2) . ".\n\n"
-                . "Método: $metodo\nNotas: $notas\nComprobante: $comprobante_url\n\n"
-                . "Revisa y aprueba en el panel de cajas."
-            );
-        }
-        return $id;
-    }
-
-    /**
-     * Aprobar o rechazar liquidación del driver.
-     */
-    public static function revisar_liquidacion( int $liquidacion_id, string $estado, string $notas_admin = '' ): void {
-        global $wpdb;
-        $wpdb->update("{$wpdb->prefix}wcfin_liquidaciones", [
-            'estado'         => $estado,
-            'notas'          => $notas_admin ?: $wpdb->get_var($wpdb->prepare(
-                "SELECT notas FROM {$wpdb->prefix}wcfin_liquidaciones WHERE id=%d", $liquidacion_id
-            )),
-        ], ['id' => $liquidacion_id]);
-
-        if ($estado === 'rechazado') {
-            // Notificar al driver
-            $liq = $wpdb->get_row($wpdb->prepare(
-                "SELECT * FROM {$wpdb->prefix}wcfin_liquidaciones WHERE id=%d", $liquidacion_id
-            ));
-            if ($liq) {
-                $driver = get_userdata((int)$liq->driver_id);
-                if ($driver && $driver->user_email) {
-                    wp_mail($driver->user_email,
-                        '⚠️ Comprobante de liquidación rechazado',
-                        "Hola {$driver->display_name},\n\nTu comprobante de liquidación por S/ " . number_format($liq->monto, 2) . " fue rechazado.\n"
-                        . ($notas_admin ? "Motivo: $notas_admin\n" : '')
-                        . "Por favor sube un nuevo comprobante desde tu panel."
-                    );
-                }
-            }
-        }
-    }
-
-    /**
-     * Liquidaciones pendientes de revisión (para el panel admin).
-     */
-    public static function liquidaciones_pendientes_revision(): array {
-        global $wpdb;
-        return $wpdb->get_results(
-            "SELECT l.*, u.display_name as driver_nombre
-             FROM {$wpdb->prefix}wcfin_liquidaciones l
-             LEFT JOIN {$wpdb->prefix}users u ON u.ID = l.driver_id
-             WHERE l.estado = 'pendiente'
-             ORDER BY l.fecha ASC"
-        ) ?: [];
     }
 
     // ── PAGOS BILATERALES CLIENTE ↔ DHV ───────────────────────────────────────

@@ -4,43 +4,39 @@ if ( ! defined( 'ABSPATH' ) ) exit;
 class WCFIN_Motor {
 
     /**
-     * Mapea el campo condicion_pago del formulario de envíos al ID de condición de finanzas.
-     * 'paga_remitente'    → slug 'paga_remitente'
-     * 'paga_destinatario' → slug 'paga_destinatario'
-     * Fallback: busca la primera condición activa.
+     * Resuelve el condicion_id de finanzas a partir del valor de condicion_pago
+     * guardado en el metadato del envío ("Paga el Remitente" / "Paga el Destinatario").
+     *
+     * @param string $condicion_pago  Valor del campo: 'remitente' | 'destinatario'
+     * @return int|null  ID de la condición de finanzas, o null si no se encuentra.
      */
-    public static function condicion_id_desde_pago( string $condicion_pago ): int {
+    public static function condicion_id_desde_form( string $condicion_pago ): ?int {
         global $wpdb;
-        // Mapa directo formulario → slug financiero
         $slug_map = [
-            'Paga el Remitente'    => 'paga_remitente',
-            'remitente'            => 'paga_remitente',
-            'paga_remitente'       => 'paga_remitente',
-            'Paga el Destinatario' => 'paga_destinatario',
-            'destinatario'         => 'paga_destinatario',
-            'paga_destinatario'    => 'paga_destinatario',
+            'remitente'    => WCFIN_Database::CONDICION_SLUG_REMITENTE,
+            'destinatario' => WCFIN_Database::CONDICION_SLUG_DESTINATARIO,
         ];
         $slug = $slug_map[ $condicion_pago ] ?? null;
-        if ( $slug ) {
-            $id = (int) $wpdb->get_var($wpdb->prepare(
-                "SELECT id FROM {$wpdb->prefix}wcfin_condiciones WHERE slug=%s AND activo=1", $slug
-            ));
-            if ( $id ) return $id;
-        }
-        // Fallback: primera condición activa
-        return (int) $wpdb->get_var("SELECT id FROM {$wpdb->prefix}wcfin_condiciones WHERE activo=1 ORDER BY orden LIMIT 1");
+        if ( ! $slug ) return null;
+        $id = $wpdb->get_var( $wpdb->prepare(
+            "SELECT id FROM {$wpdb->prefix}wcfin_condiciones WHERE slug=%s AND activo=1 LIMIT 1",
+            $slug
+        ));
+        return $id ? (int) $id : null;
     }
 
     /**
-     * Aplicar automáticamente la condición de finanzas desde el campo condicion_pago del envío.
-     * Llamado via hook wpcargo_after_save_shipment.
+     * Sincroniza automáticamente la condición de finanzas al guardar un envío.
+     * Se conecta al hook wpcargo_after_save_shipment (o save_post wpcargo_shipment).
+     * Solo actualiza el meta wcfin_condicion_id_sugerido; no crea transacción.
      */
-    public static function sincronizar_condicion_pago( int $shipment_id ): void {
-        $condicion_pago = get_post_meta( $shipment_id, 'condicion_pago', true );
+    public static function sincronizar_condicion_desde_envio( int $post_id ): void {
+        if ( get_post_type($post_id) !== 'wpcargo_shipment' ) return;
+        $condicion_pago = get_post_meta( $post_id, 'condicion_pago', true );
         if ( ! $condicion_pago ) return;
-        $condicion_id = self::condicion_id_desde_pago( $condicion_pago );
+        $condicion_id = self::condicion_id_desde_form( $condicion_pago );
         if ( $condicion_id ) {
-            update_post_meta( $shipment_id, 'wcfin_condicion_sugerida', $condicion_id );
+            update_post_meta( $post_id, 'wcfin_condicion_sugerida', $condicion_id );
         }
     }
 
@@ -52,12 +48,17 @@ class WCFIN_Motor {
         ));
         $total = 0;
         foreach ( $comps as $c ) $total += floatval( $variables[$c->variable] ?? 0 );
-        $servicio       = floatval( $variables['monto_servicio'] ?? 0 );
-        $contraentrega  = $total - $servicio;
+        $servicio  = floatval( $variables['monto_servicio'] ?? 0 );
+        $producto  = floatval( $variables['monto_producto']  ?? 0 );
+        $extras    = floatval( $variables['monto_extras']    ?? 0 );
+        // monto_contraentrega = todo lo que no es servicio (va al remitente)
+        $contraentrega = max(0, $total - $servicio);
         return array_merge( $variables, [
             'monto_total'         => $total,
             'monto_servicio'      => $servicio,
-            'monto_contraentrega' => max(0, $contraentrega),
+            'monto_producto'      => $producto,
+            'monto_extras'        => $extras,
+            'monto_contraentrega' => $contraentrega,
         ]);
     }
 
