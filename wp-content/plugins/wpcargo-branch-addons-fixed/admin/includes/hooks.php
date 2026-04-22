@@ -112,7 +112,7 @@ function wpcbm_assigned_branch_filter(){
 			$shipment_branch = isset( $_GET['shipment_branch'] ) ? $_GET['shipment_branch'] : 0 ;
 			?>
 			<select id="wpc-user-branch" name="shipment_branch">
-				<option value=""><?php esc_html_e( 'Select Branch', 'wpcargo-branches' ); ?></option>
+				<option value=""><?php esc_html_e( 'Seleccione Sucursal', 'wpcargo-branches' ); ?></option>
 				<?php
 					foreach ( $all_branch as $branch ) {
 						?><option value="<?php echo $branch->id; ?>" <?php selected( $shipment_branch, $branch->id ); ?>><?php echo $branch->name; ?></option><?php
