@@ -12,12 +12,15 @@ class WCFIN_Admin_Caja {
     public function __construct() {
         add_action('admin_menu',    [$this, 'registrar_menu']);
         add_action('admin_notices', [$this, 'mostrar_notice']);
-        add_action('admin_post_wcfin_liquidar',         [$this, 'handle_liquidar']);
-        add_action('admin_post_wcfin_pago_dhv_cliente', [$this, 'handle_pago_dhv_cliente']);
-        add_action('admin_post_wcfin_revisar_pago',     [$this, 'handle_revisar_pago']);
+        add_action('admin_post_wcfin_liquidar',           [$this, 'handle_liquidar']);
+        add_action('admin_post_wcfin_pago_dhv_cliente',   [$this, 'handle_pago_dhv_cliente']);
+        add_action('admin_post_wcfin_revisar_pago',       [$this, 'handle_revisar_pago']);
+        // Aprobar/rechazar liquidación subida por el driver
+        add_action('admin_post_wcfin_aprobar_liquidacion',  [$this, 'handle_aprobar_liquidacion']);
+        add_action('admin_post_wcfin_rechazar_liquidacion', [$this, 'handle_rechazar_liquidacion']);
 
         // AJAX para subida de comprobantes del admin
-        add_action('wp_ajax_wcfin_subir_comprobante',   [$this, 'ajax_subir_comprobante']);
+        add_action('wp_ajax_wcfin_subir_comprobante', [$this, 'ajax_subir_comprobante']);
     }
 
     public function registrar_menu(): void {
@@ -162,6 +165,54 @@ class WCFIN_Admin_Caja {
         ]);
     }
 
+    public function handle_aprobar_liquidacion(): void {
+        $liq_id    = intval($_POST['liq_id']  ?? $_GET['liq_id']  ?? 0);
+        $driver_id = intval($_POST['driver_id'] ?? $_GET['driver_id'] ?? 0);
+        check_admin_referer('wcfin_aprobar_liq_' . $liq_id);
+        if ( ! current_user_can('manage_options') ) wp_die('Sin permisos.');
+        WCFIN_Caja::aprobar_liquidacion($liq_id);
+
+        // Notificar al driver
+        $driver = get_userdata($driver_id);
+        if ($driver) {
+            wp_mail(
+                $driver->user_email,
+                '[DHV] Tu liquidación fue aprobada',
+                "Hola {$driver->display_name},\n\nTu comprobante de liquidación fue revisado y aprobado por DHV.\nTu saldo pendiente ha sido actualizado.\n\nGracias."
+            );
+        }
+
+        $redirect = $_POST['_wcfin_redirect'] ?? $_GET['_wcfin_redirect'] ?? '';
+        if ($redirect && strpos($redirect, home_url()) === 0) {
+            wp_safe_redirect(add_query_arg('wcfin_msg', 'liquidacion_aprobada', $redirect)); exit;
+        }
+        wcfin_redirect('wcfin-caja-drivers', 'liquidacion_aprobada', ['driver' => $driver_id]);
+    }
+
+    public function handle_rechazar_liquidacion(): void {
+        $liq_id    = intval($_POST['liq_id']  ?? $_GET['liq_id']  ?? 0);
+        $driver_id = intval($_POST['driver_id'] ?? $_GET['driver_id'] ?? 0);
+        check_admin_referer('wcfin_rechazar_liq_' . $liq_id);
+        if ( ! current_user_can('manage_options') ) wp_die('Sin permisos.');
+        WCFIN_Caja::rechazar_liquidacion($liq_id);
+
+        // Notificar al driver
+        $driver = get_userdata($driver_id);
+        if ($driver) {
+            wp_mail(
+                $driver->user_email,
+                '[DHV] Tu liquidación fue rechazada',
+                "Hola {$driver->display_name},\n\nTu comprobante de liquidación fue revisado pero no pudo ser aprobado.\nPor favor contacta a DHV para más información."
+            );
+        }
+
+        $redirect = $_POST['_wcfin_redirect'] ?? $_GET['_wcfin_redirect'] ?? '';
+        if ($redirect && strpos($redirect, home_url()) === 0) {
+            wp_safe_redirect(add_query_arg('wcfin_msg', 'liquidacion_rechazada', $redirect)); exit;
+        }
+        wcfin_redirect('wcfin-caja-drivers', 'liquidacion_rechazada', ['driver' => $driver_id]);
+    }
+
     /* ── Helpers ──────────────────────────────────────────────────────── */
 
     private function pagos_pendientes_revision(): array {
@@ -179,10 +230,12 @@ class WCFIN_Admin_Caja {
         $key = sanitize_key($_GET['wcfin_msg'] ?? '');
         if (!$key) return;
         $msgs = [
-            'liquidacion_ok' => ['success','✅ Liquidación registrada correctamente.'],
-            'pago_dhv_ok'    => ['success','✅ Pago registrado. El cliente puede verlo en su panel.'],
-            'revision_ok'    => ['success','✅ Revisión guardada.'],
-            'error_req'      => ['error',  '❌ Faltan campos obligatorios.'],
+            'liquidacion_ok'       => ['success','✅ Liquidación registrada correctamente.'],
+            'liquidacion_aprobada' => ['success','✅ Liquidación aprobada. El saldo del motorizado se actualizó.'],
+            'liquidacion_rechazada'=> ['warning','⚠️ Liquidación rechazada. El motorizado fue notificado.'],
+            'pago_dhv_ok'          => ['success','✅ Pago registrado. El cliente puede verlo en su panel.'],
+            'revision_ok'          => ['success','✅ Revisión guardada.'],
+            'error_req'            => ['error',  '❌ Faltan campos obligatorios.'],
         ];
         if (isset($msgs[$key])) {
             [$t,$m] = $msgs[$key];

@@ -19,17 +19,13 @@ class WCFIN_Frontend {
         // Handlers frontend cliente
         add_action('admin_post_wcfin_fe_cliente_paga',    [$this, 'handle_cliente_paga']);
 
-        // Handler: driver sube comprobante de liquidación
-        add_action('admin_post_wcfin_driver_sube_comprobante', [$this, 'handle_driver_sube_comprobante']);
-
         // AJAX subida de comprobante (cliente sube su propio)
         add_action('wp_ajax_wcfin_fe_subir_comp',         [$this, 'ajax_subir_comprobante']);
 
         // Redirigir al frontend después de acciones del panel de cajas (liquidar, pago dhv, revisar)
-        add_action('admin_post_wcfin_liquidar',              [$this, 'maybe_redirect_to_frontend'], 1);
-        add_action('admin_post_wcfin_pago_dhv_cliente',      [$this, 'maybe_redirect_to_frontend'], 1);
-        add_action('admin_post_wcfin_revisar_pago',          [$this, 'maybe_redirect_to_frontend'], 1);
-        add_action('admin_post_wcfin_revisar_liquidacion',   [$this, 'maybe_redirect_to_frontend'], 1);
+        add_action('admin_post_wcfin_liquidar',           [$this, 'maybe_redirect_to_frontend'], 1);
+        add_action('admin_post_wcfin_pago_dhv_cliente',   [$this, 'maybe_redirect_to_frontend'], 1);
+        add_action('admin_post_wcfin_revisar_pago',       [$this, 'maybe_redirect_to_frontend'], 1);
     }
 
     /**
@@ -232,12 +228,11 @@ class WCFIN_Frontend {
     // ── Panel de Cajas (frontend) ─────────────────────────────────────────────
 
     private function render_cajas_overview(): void {
-        $resumen         = WCFIN_Caja::resumen_global();
-        $drivers         = WCFIN_Caja::todos_los_drivers();
-        $clientes        = WCFIN_Caja::todos_los_clientes();
-        $pendientes      = $this->pagos_pendientes_revision();
-        $liqs_pendientes = WCFIN_Caja::liquidaciones_pendientes_revision();
-        wcfin_tpl('frontend/cajas/overview.tpl.php', compact('resumen', 'drivers', 'clientes', 'pendientes', 'liqs_pendientes'));
+        $resumen    = WCFIN_Caja::resumen_global();
+        $drivers    = WCFIN_Caja::todos_los_drivers();
+        $clientes   = WCFIN_Caja::todos_los_clientes();
+        $pendientes = $this->pagos_pendientes_revision();
+        wcfin_tpl('frontend/cajas/overview.tpl.php', compact('resumen', 'drivers', 'clientes', 'pendientes'));
     }
 
     private function render_caja_drivers(): void {

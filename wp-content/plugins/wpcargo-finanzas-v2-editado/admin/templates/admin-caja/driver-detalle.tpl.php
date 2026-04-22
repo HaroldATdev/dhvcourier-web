@@ -131,18 +131,61 @@
     <div class="postbox-header"><h2 class="hndle">💵 Historial de Liquidaciones</h2></div>
     <div class="inside" style="padding:0">
     <table class="wp-list-table widefat striped">
-        <thead><tr><th>Fecha</th><th>Monto</th><th>Método</th><th>Registrado por</th><th>Notas</th><th>Comprobante</th></tr></thead>
+        <thead><tr><th>Fecha</th><th>Monto</th><th>Método</th><th>Notas</th><th>Estado</th><th>Comprobante</th><th>Acción</th></tr></thead>
         <tbody>
         <?php if(empty($liquidaciones)): ?>
-            <tr><td colspan="6" style="text-align:center;padding:12px;color:#888">Sin liquidaciones registradas.</td></tr>
-        <?php else: foreach($liquidaciones as $l): ?>
-            <tr>
+            <tr><td colspan="7" style="text-align:center;padding:12px;color:#888">Sin liquidaciones registradas.</td></tr>
+        <?php else: foreach($liquidaciones as $l):
+            $est = $l->estado ?? 'aprobado';
+            $est_bg    = $est==='pendiente'?'#fff3cd':($est==='rechazado'?'#fce9e9':'#d7f7c2');
+            $est_color = $est==='pendiente'?'#856404':($est==='rechazado'?'#8a1a1a':'#135d3e');
+            $est_label = $est==='pendiente'?'⏳ Revisando':($est==='rechazado'?'❌ Rechazado':'✓ Confirmado');
+        ?>
+            <tr style="<?php echo $est==='pendiente'?'background:#fffef0;':'' ?>">
                 <td><?php echo esc_html(date_i18n('d/m/Y H:i',strtotime($l->fecha))); ?></td>
                 <td><strong style="color:#00a32a">S/ <?php echo number_format(floatval($l->monto),2); ?></strong></td>
                 <td><?php echo esc_html($l->metodo); ?></td>
-                <td><?php echo esc_html($l->admin_nombre ?: 'Admin'); ?></td>
-                <td><?php echo esc_html($l->notas ?: '—'); ?></td>
-                <td><?php if($l->comprobante_url): ?><a href="<?php echo esc_url($l->comprobante_url); ?>" target="_blank" class="button button-small">Ver 🖼</a><?php else: ?>—<?php endif; ?></td>
+                <td style="font-size:12px;color:#666"><?php echo esc_html($l->notas ?: '—'); ?></td>
+                <td>
+                    <span style="padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;background:<?php echo esc_attr($est_bg); ?>;color:<?php echo esc_attr($est_color); ?>">
+                        <?php echo esc_html($est_label); ?>
+                    </span>
+                    <?php if ($est==='pendiente'): ?>
+                    <br><small style="color:#856404;font-size:10px">Subido por el motorizado</small>
+                    <?php endif; ?>
+                </td>
+                <td>
+                    <?php if($l->comprobante_url): ?>
+                    <a href="<?php echo esc_url($l->comprobante_url); ?>" target="_blank" class="button button-small">Ver 🖼</a>
+                    <?php else: ?>—<?php endif; ?>
+                </td>
+                <td>
+                    <?php if ($est === 'pendiente'): ?>
+                    <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" style="display:inline">
+                        <?php wp_nonce_field('wcfin_aprobar_liq_' . $l->id); ?>
+                        <input type="hidden" name="action"    value="wcfin_aprobar_liquidacion">
+                        <input type="hidden" name="liq_id"    value="<?php echo intval($l->id); ?>">
+                        <input type="hidden" name="driver_id" value="<?php echo intval($driver->ID); ?>">
+                        <button type="submit" class="button button-primary button-small"
+                                onclick="return confirm('¿Aprobar esta liquidación de S/ <?php echo esc_js(number_format(floatval($l->monto),2)); ?>?')">
+                            ✅ Aprobar
+                        </button>
+                    </form>
+                    <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" style="display:inline;margin-left:4px">
+                        <?php wp_nonce_field('wcfin_rechazar_liq_' . $l->id); ?>
+                        <input type="hidden" name="action"    value="wcfin_rechazar_liquidacion">
+                        <input type="hidden" name="liq_id"    value="<?php echo intval($l->id); ?>">
+                        <input type="hidden" name="driver_id" value="<?php echo intval($driver->ID); ?>">
+                        <button type="submit" class="button button-small"
+                                onclick="return confirm('¿Rechazar esta liquidación?')"
+                                style="border-color:#d63638;color:#d63638">
+                            ❌ Rechazar
+                        </button>
+                    </form>
+                    <?php else: ?>
+                    <span style="color:#888;font-size:12px"><?php echo esc_html($l->admin_nombre ?: 'Admin'); ?></span>
+                    <?php endif; ?>
+                </td>
             </tr>
         <?php endforeach; endif; ?>
         </tbody>
