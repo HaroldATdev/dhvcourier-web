@@ -10,6 +10,7 @@ class WPCA_Frontend {
 		add_action( 'admin_post_wpca_guardar_mov',  [ $this, 'handle_guardar_movimiento' ] );
 		add_action( 'admin_post_wpca_eliminar_mov', [ $this, 'handle_eliminar_movimiento' ] );
 		add_action( 'admin_post_wpca_guardar_prod', [ $this, 'handle_guardar_producto' ] );
+		add_action( 'admin_post_wpca_bulk_action', [ $this, 'handle_bulk_action' ] );
 		add_action( 'admin_post_wpca_activar_prod', [ $this, 'handle_activar_producto' ] );
 		add_action( 'wp_ajax_wpca_upload_imagen',    [ $this, 'handle_upload_imagen' ] );
 		add_action( 'admin_post_wpca_eliminar_prod',[ $this, 'handle_eliminar_producto' ] );
@@ -312,6 +313,60 @@ class WPCA_Frontend {
 		check_admin_referer( 'wpca_del_prod_nonce' );
 		WPCA_Producto::eliminar( (int) ( $_POST['id'] ?? 0 ) );
 		wp_safe_redirect( wpca_frontend_url( [ 'wpca' => 'productos', 'msg' => 'eliminado' ] ) );
+		exit;
+	}
+
+	/**
+	 * Handler para acciones en lote: activar, desactivar, borrar.
+	 */
+	public function handle_bulk_action(): void {
+		if ( ! wpca_puede_gestionar_almacen() ) wp_die( 'Sin permisos.' );
+		check_admin_referer( 'wpca_bulk_prod_nonce' );
+
+		$ids = isset( $_POST['ids'] ) && is_array( $_POST['ids'] ) ? array_map( 'intval', $_POST['ids'] ) : [];
+		$action = sanitize_key( $_POST['bulk_action'] ?? '' );
+
+		if ( empty( $ids ) ) {
+			wp_safe_redirect( wpca_frontend_url( [ 'wpca' => 'productos', 'msg' => 'bulk_no_selection' ] ) );
+			exit;
+		}
+
+		switch ( $action ) {
+			case 'activar':
+				global $wpdb;
+				foreach ( $ids as $id ) {
+					$wpdb->update( $wpdb->prefix . 'wpca_productos', [ 'activo' => 1 ], [ 'id' => $id ] );
+				}
+				wp_safe_redirect( wpca_frontend_url( [ 'wpca' => 'productos', 'msg' => 'bulk_activado' ] ) );
+				break;
+
+			case 'desactivar':
+				global $wpdb;
+				foreach ( $ids as $id ) {
+					$wpdb->update( $wpdb->prefix . 'wpca_productos', [ 'activo' => 0 ], [ 'id' => $id ] );
+				}
+				wp_safe_redirect( wpca_frontend_url( [ 'wpca' => 'productos', 'msg' => 'bulk_desactivado' ] ) );
+				break;
+
+			case 'borrar':
+				$errors = [];
+				foreach ( $ids as $id ) {
+					$result = WPCA_Producto::borrar_definitivo( $id );
+					if ( is_wp_error( $result ) ) {
+						$errors[] = $result->get_error_message();
+					}
+				}
+				if ( empty( $errors ) ) {
+					wp_safe_redirect( wpca_frontend_url( [ 'wpca' => 'productos', 'msg' => 'bulk_borrado' ] ) );
+				} else {
+					// Pasar mensaje genérico; detalles en logs si WP_DEBUG
+					wp_safe_redirect( wpca_frontend_url( [ 'wpca' => 'productos', 'msg' => 'bulk_error' ] ) );
+				}
+				break;
+
+			default:
+				wp_safe_redirect( wpca_frontend_url( [ 'wpca' => 'productos', 'msg' => 'bulk_invalid' ] ) );
+		}
 		exit;
 	}
 

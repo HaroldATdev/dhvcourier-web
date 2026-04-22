@@ -58,9 +58,18 @@
 </form>
 
 <div class="table-responsive">
-    <table class="table table-hover table-sm">
+    <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" id="wpca-bulk-form">
+        <?php wp_nonce_field( 'wpca_bulk_prod_nonce' ); ?>
+        <input type="hidden" name="action" value="wpca_bulk_action">
+        <div class="mb-2 d-flex" style="gap:.5rem;">
+            <button type="submit" name="bulk_action" value="activar" class="btn btn-success btn-sm">Activar seleccionados</button>
+            <button type="submit" name="bulk_action" value="desactivar" class="btn btn-warning btn-sm">Desactivar seleccionados</button>
+            <button type="submit" name="bulk_action" value="borrar" class="btn btn-danger btn-sm" onclick="return confirm('¿Borrar definitivamente los seleccionados? Esta acción no se puede deshacer.');">Borrar seleccionados</button>
+        </div>
+        <table class="table table-hover table-sm">
         <thead class="thead-light">
             <tr>
+                <th style="width:40px;"><input type="checkbox" id="wpca-select-all"></th>
                 <th style="width:50px;"></th><th>Código</th><th>Descripción</th><th>Cliente</th><th>Unidad</th>
                 <th class="text-center">Stock</th><th class="text-center">Mín.</th>
                 <th class="text-center">Estado</th><th class="text-right">Acciones</th>
@@ -72,6 +81,9 @@
             <?php else : ?>
                 <?php foreach ( $productos as $p ) : ?>
                     <tr>
+                        <td>
+                            <input type="checkbox" class="wpca-row-check" name="ids[]" value="<?php echo (int) $p->id; ?>">
+                        </td>
                         <td>
                             <?php if ( ! empty( $p->imagen ) ) : ?>
                                 <img src="<?php echo esc_url( $p->imagen ); ?>" style="width:40px;height:40px;object-fit:contain;border-radius:4px;border:1px solid #dee2e6;">
@@ -118,4 +130,12 @@
             <?php endif; ?>
         </tbody>
     </table>
+    </form>
 </div>
+
+<script>
+document.getElementById('wpca-select-all')?.addEventListener('change', function(e){
+    var checked = e.target.checked;
+    document.querySelectorAll('.wpca-row-check').forEach(function(cb){ cb.checked = checked; });
+});
+</script>
