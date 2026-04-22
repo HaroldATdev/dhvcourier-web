@@ -211,7 +211,7 @@ class WPCA_Frontend {
 	/* ── Handlers admin-post ──────────────────────────── */
 
 	public function handle_guardar_movimiento(): void {
-		if ( ! current_user_can( 'manage_options' ) ) wp_die( 'Sin permisos.' );
+		if ( ! wpca_puede_gestionar_almacen() ) wp_die( 'Sin permisos.' );
 		check_admin_referer( 'wpca_mov_nonce' );
 		$tipo   = sanitize_key( $_POST['tipo'] ?? '' );
 		$result = WPCA_Movimiento::crear( $_POST );
@@ -225,7 +225,7 @@ class WPCA_Frontend {
 	}
 
 	public function handle_eliminar_movimiento(): void {
-		if ( ! current_user_can( 'manage_options' ) ) wp_die( 'Sin permisos.' );
+		if ( ! wpca_puede_gestionar_almacen() ) wp_die( 'Sin permisos.' );
 		check_admin_referer( 'wpca_del_mov_nonce' );
 		$mov  = WPCA_Movimiento::obtener_por_id( (int) ( $_POST['id'] ?? 0 ) );
 		$tipo = $mov->tipo ?? 'entrada';
