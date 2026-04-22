@@ -1643,10 +1643,18 @@ function wpcte_footer_crear() {
                 _updateHiddenDriver();
             }catch(e){}
         } else {
-            // Para tipos agencia/almacen: eliminar el select de recojo si existe,
+            // Para tipos agencia/almacen: eliminar el select de recojo si existe (tanto clon como original),
             // usar únicamente el select de entrega y sincronizar `wpcargo_driver` con él.
             try{
                 var recClone = document.getElementById('wpcte-drv-rec'); if(recClone) recClone.remove();
+                // Si existe el select renombrado/añadido en el DOM, eliminar su contenedor
+                var recoSel = formEl ? formEl.querySelector('select[name="wpcargo_driver_recojo"]') : null;
+                if ( recoSel ) {
+                    // buscar el contenedor hasta encontrar label
+                    var cont = recoSel.parentElement; while(cont && !cont.querySelector(':scope>label')){ cont = cont.parentElement; }
+                    if ( cont && cont.parentNode ) cont.parentNode.removeChild(cont);
+                    else if ( recoSel.parentNode ) recoSel.parentNode.removeChild(recoSel);
+                }
             }catch(e){}
             cambL('wpcargo_driver','Conductor de entrega');
             cambL('shipment_container','Contenedor de entrega');
