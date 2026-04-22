@@ -9,6 +9,7 @@ class WPCA_Admin {
         add_action( 'admin_post_wpca_admin_del_mov',    [ $this, 'handle_del_mov' ] );
         add_action( 'admin_post_wpca_admin_prod',       [ $this, 'handle_prod' ] );
         add_action( 'admin_post_wpca_admin_del_prod',   [ $this, 'handle_del_prod' ] );
+        add_action( 'admin_post_wpca_admin_borrar_prod',[ $this, 'handle_borrar_prod' ] );
     }
 
     public function registrar_menu(): void {
@@ -141,6 +142,22 @@ class WPCA_Admin {
         check_admin_referer( 'wpca_admin_del_prod_nonce' );
         WPCA_Producto::eliminar( (int)( $_POST['id'] ?? 0 ) );
         wp_safe_redirect( admin_url( "admin.php?page=wpca-productos&msg=eliminado" ) );
+        exit;
+    }
+
+    public function handle_borrar_prod(): void {
+        if ( ! current_user_can( 'manage_options' ) ) wp_die();
+        check_admin_referer( 'wpca_admin_borrar_prod_nonce' );
+
+        $id = (int) ( $_POST['id'] ?? 0 );
+        $result = WPCA_Producto::borrar_definitivo( $id );
+
+        if ( is_wp_error( $result ) ) {
+            set_transient( 'wpca_admin_flash_prod', $result->get_error_message(), 60 );
+            wp_safe_redirect( admin_url( 'admin.php?page=wpca-productos' ) );
+        } else {
+            wp_safe_redirect( admin_url( 'admin.php?page=wpca-productos&msg=borrado' ) );
+        }
         exit;
     }
 }

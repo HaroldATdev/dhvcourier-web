@@ -12,6 +12,7 @@ class WPCA_Frontend {
 		add_action( 'admin_post_wpca_guardar_prod', [ $this, 'handle_guardar_producto' ] );
 		add_action( 'wp_ajax_wpca_upload_imagen',    [ $this, 'handle_upload_imagen' ] );
 		add_action( 'admin_post_wpca_eliminar_prod',[ $this, 'handle_eliminar_producto' ] );
+		add_action( 'admin_post_wpca_borrar_prod',  [ $this, 'handle_borrar_producto' ] );
 	}
 
 	/* ── Sidebar (ítem simple, sin sub-menú) ─────────── */
@@ -282,6 +283,22 @@ class WPCA_Frontend {
 		check_admin_referer( 'wpca_del_prod_nonce' );
 		WPCA_Producto::eliminar( (int) ( $_POST['id'] ?? 0 ) );
 		wp_safe_redirect( wpca_frontend_url( [ 'wpca' => 'productos', 'msg' => 'eliminado' ] ) );
+		exit;
+	}
+
+	public function handle_borrar_producto(): void {
+		if ( ! wpca_puede_gestionar_almacen() ) wp_die( 'Sin permisos.' );
+		check_admin_referer( 'wpca_borrar_prod_nonce' );
+
+		$id = (int) ( $_POST['id'] ?? 0 );
+		$result = WPCA_Producto::borrar_definitivo( $id );
+
+		if ( is_wp_error( $result ) ) {
+			$this->set_flash( 'prod', [ 'error' => $result->get_error_message() ] );
+			wp_safe_redirect( wpca_frontend_url( [ 'wpca' => 'productos' ] ) );
+		} else {
+			wp_safe_redirect( wpca_frontend_url( [ 'wpca' => 'productos', 'msg' => 'borrado' ] ) );
+		}
 		exit;
 	}
 

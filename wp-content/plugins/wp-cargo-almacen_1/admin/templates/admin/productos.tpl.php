@@ -15,7 +15,16 @@
   <td><?php echo esc_html($p->unidad); ?></td>
   <td><?php echo wpca_num($p->stock_actual); ?></td>
   <td><?php echo wpca_num($p->stock_minimo); ?></td>
-  <td><a href="<?php echo esc_url(admin_url('admin.php?page=wpca-productos&action=edit&id='.(int)$p->id)); ?>" class="button button-small">Editar</a></td>
+  <td>
+    <a href="<?php echo esc_url(admin_url('admin.php?page=wpca-productos&action=edit&id='.(int)$p->id)); ?>" class="button button-small">Editar</a>
+    <?php $can_delete = (int) $p->stock_actual <= 0; ?>
+    <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>" style="display:inline;" onsubmit="return confirm('¿Borrar definitivamente este producto? Esta acción no se puede deshacer.');">
+      <?php wp_nonce_field('wpca_admin_borrar_prod_nonce'); ?>
+      <input type="hidden" name="action" value="wpca_admin_borrar_prod">
+      <input type="hidden" name="id" value="<?php echo (int)$p->id; ?>">
+      <button type="submit" class="button button-small" title="<?php echo $can_delete ? 'Borrar definitivamente' : 'Solo se puede borrar cuando el stock es 0'; ?>" <?php disabled( ! $can_delete ); ?>>Borrar</button>
+    </form>
+  </td>
 </tr>
 <?php endforeach; endif; ?>
 </tbody></table></div>

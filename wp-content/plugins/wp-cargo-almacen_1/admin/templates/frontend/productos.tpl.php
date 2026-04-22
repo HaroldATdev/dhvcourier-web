@@ -16,6 +16,11 @@
         Producto desactivado.
         <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
     </div>
+<?php elseif ( $msg === 'borrado' ) : ?>
+    <div class="alert alert-success alert-dismissible fade show">
+        Producto borrado correctamente.
+        <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
+    </div>
 <?php endif; ?>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -83,6 +88,13 @@
                                 <input type="hidden" name="action" value="wpca_eliminar_prod">
                                 <input type="hidden" name="id" value="<?php echo (int) $p->id; ?>">
                                 <button type="submit" class="btn btn-outline-danger btn-sm" title="Desactivar"><i class="fa fa-ban"></i></button>
+                            </form>
+                            <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" onsubmit="return confirm('¿Borrar definitivamente este producto? Esta acción no se puede deshacer.');" style="display:inline;">
+                                <?php wp_nonce_field( 'wpca_borrar_prod_nonce' ); ?>
+                                <input type="hidden" name="action" value="wpca_borrar_prod">
+                                <input type="hidden" name="id" value="<?php echo (int) $p->id; ?>">
+                                <?php $can_delete = (int) $p->stock_actual <= 0; ?>
+                                <button type="submit" class="btn btn-outline-danger btn-sm" title="<?php echo $can_delete ? 'Borrar definitivamente' : 'Solo se puede borrar cuando el stock es 0'; ?>" <?php disabled( ! $can_delete ); ?>><i class="fa fa-trash"></i></button>
                             </form>
                         </td>
                     </tr>

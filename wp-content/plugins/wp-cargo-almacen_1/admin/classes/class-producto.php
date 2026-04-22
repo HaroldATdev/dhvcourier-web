@@ -62,6 +62,27 @@ class WPCA_Producto {
         $wpdb->update( $wpdb->prefix . 'wpca_productos', [ 'activo' => 0 ], [ 'id' => $id ] );
     }
 
+    public static function borrar_definitivo( int $id ): true|WP_Error {
+        global $wpdb;
+        $tabla = $wpdb->prefix . 'wpca_productos';
+
+        $producto = self::obtener_por_id( $id );
+        if ( ! $producto ) {
+            return new WP_Error( 'not_found', 'Producto no encontrado.' );
+        }
+
+        if ( (int) $producto->stock_actual > 0 ) {
+            return new WP_Error( 'stock', 'No se puede borrar un producto con stock mayor a 0.' );
+        }
+
+        $deleted = $wpdb->delete( $tabla, [ 'id' => $id ], [ '%d' ] );
+        if ( false === $deleted ) {
+            return new WP_Error( 'db', 'Error al borrar el producto.' );
+        }
+
+        return true;
+    }
+
     public static function obtener_por_id( int $id ): ?object {
         global $wpdb;
         return $wpdb->get_row( $wpdb->prepare(
