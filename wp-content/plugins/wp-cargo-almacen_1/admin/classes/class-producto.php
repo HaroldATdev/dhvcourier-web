@@ -14,7 +14,7 @@ class WPCA_Producto {
             $codigo = 'DHV-' . $codigo; // Fallback por si acaso
         }
 
-        $existe = (int) $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$tabla} WHERE codigo = %s", $codigo ) );
+        $existe = (int) $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$tabla} WHERE codigo = %s AND activo = 1", $codigo ) );
         if ( $existe ) return new WP_Error( 'duplicado', "Ya existe un producto con el código {$codigo}." );
 
         $imagen       = sanitize_text_field( $datos['imagen_url'] ?? '' );
@@ -40,7 +40,7 @@ class WPCA_Producto {
         $codigo = strtoupper( trim( $datos['codigo'] ?? '' ) );
 
         $existe = (int) $wpdb->get_var( $wpdb->prepare(
-            "SELECT id FROM {$tabla} WHERE codigo = %s AND id <> %d", $codigo, $id
+            "SELECT id FROM {$tabla} WHERE codigo = %s AND id <> %d AND activo = 1", $codigo, $id
         ) );
         if ( $existe ) return new WP_Error( 'duplicado', "Ya existe otro producto con el código {$codigo}." );
 

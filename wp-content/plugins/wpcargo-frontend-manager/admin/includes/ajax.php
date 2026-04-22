@@ -38,16 +38,108 @@ function wpcfe_delete_shipment_callback(){
 }
 add_action( 'wp_ajax_bulk_assign_shipment', 'bulk_assign_shipment_callback' );
 // add_action( 'wp_ajax_nopriv_bulk_assign_shipment', 'bulk_assign_shipment_callback' );
+function wpcfe_bulk_assign_normalize_value( $value ) {
+	$value = is_scalar( $value ) ? (string) $value : '';
+	$value = remove_accents( $value );
+	$value = strtolower( trim( $value ) );
+	return str_replace( ' ', '_', $value );
+}
+
+function wpcfe_bulk_assign_extract_fields( $update_fields ) {
+	$fields = array();
+	if ( empty( $update_fields ) || ! is_array( $update_fields ) ) {
+		return $fields;
+	}
+
+	foreach ( $update_fields as $field ) {
+		if ( empty( $field['name'] ) ) {
+			continue;
+		}
+
+		$name = sanitize_text_field( $field['name'] );
+		$value = isset( $field['value'] ) ? sanitize_text_field( $field['value'] ) : '';
+		$fields[ $name ] = $value;
+	}
+
+	return $fields;
+}
+
+function wpcfe_bulk_assign_should_use_delivery_driver( $current_status, $next_status ) {
+	$allowed_statuses = array( 'pendiente', 'recogido' );
+	$statuses = array_filter(
+		array(
+			wpcfe_bulk_assign_normalize_value( $current_status ),
+			wpcfe_bulk_assign_normalize_value( $next_status ),
+		)
+	);
+
+	if ( empty( $statuses ) ) {
+		return false;
+	}
+
+	foreach ( $statuses as $status ) {
+		if ( ! in_array( $status, $allowed_statuses, true ) ) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+function wpcfe_bulk_assign_resolve_driver( $shipment_id, $current_status, $submitted_fields ) {
+	$tipo_envio = '';
+	if ( ! empty( $submitted_fields['wpcte_tipo_envio'] ) ) {
+		$tipo_envio = $submitted_fields['wpcte_tipo_envio'];
+	}
+	if ( '' === $tipo_envio ) {
+		$tipo_envio = get_post_meta( $shipment_id, 'tipo_envio', true );
+	}
+	if ( '' === $tipo_envio ) {
+		$tipo_envio = get_post_meta( $shipment_id, 'dhv_tipo_envio', true );
+	}
+
+	$tipo_normalized = wpcfe_bulk_assign_normalize_value( $tipo_envio );
+	$next_status = '';
+	if ( ! empty( $submitted_fields['wpcargo_status'] ) ) {
+		$next_status = $submitted_fields['wpcargo_status'];
+	} elseif ( ! empty( $submitted_fields['status'] ) ) {
+		$next_status = $submitted_fields['status'];
+	}
+
+	$driver_recojo = ! empty( $submitted_fields['wpcargo_driver_recojo'] )
+		? (int) $submitted_fields['wpcargo_driver_recojo']
+		: (int) get_post_meta( $shipment_id, 'wpcargo_driver_recojo', true );
+	$driver_entrega = ! empty( $submitted_fields['wpcargo_driver_entrega'] )
+		? (int) $submitted_fields['wpcargo_driver_entrega']
+		: (int) get_post_meta( $shipment_id, 'wpcargo_driver_entrega', true );
+
+	if ( in_array( $tipo_normalized, array( 'agencia', 'almacen' ), true ) ) {
+		return $driver_entrega;
+	}
+
+	if ( 'puerta_a_puerta' === $tipo_normalized || 'puerta_puerta' === $tipo_normalized ) {
+		if ( wpcfe_bulk_assign_should_use_delivery_driver( $current_status, $next_status ) ) {
+			return $driver_entrega;
+		}
+
+		return $driver_recojo;
+	}
+
+	return 0;
+}
+
 function bulk_assign_shipment_callback(){
 	global $wpdb;
 	$shipment_ids 	= $_POST['updateShipmentID'];
 	$updateFields 	= $_POST['updateFields'];
 	$shipments 		= array();
+	$submitted_fields = wpcfe_bulk_assign_extract_fields( $updateFields );
 	if( !empty( $shipment_ids ) ){
 		foreach ($shipment_ids as $shipment_id ) {
 			if( empty( $updateFields ) ){
 				break;
 			}
+			$current_status = get_post_meta( $shipment_id, 'wpcargo_status', true );
 			foreach ( $updateFields as $field ) {
 				if( empty( $field['value'] ) || empty( $field['name'] ) ){
 					continue;
@@ -56,6 +148,11 @@ function bulk_assign_shipment_callback(){
 				$metakey 	= sanitize_text_field( $field['name'] );
 				update_post_meta( $shipment_id, $metakey, $value );
 				$shipments[] = get_the_title( $shipment_id );
+			}
+
+			$resolved_driver = wpcfe_bulk_assign_resolve_driver( $shipment_id, $current_status, $submitted_fields );
+			if ( $resolved_driver > 0 ) {
+				update_post_meta( $shipment_id, 'wpcargo_driver', $resolved_driver );
 			}
 		}
 	}
