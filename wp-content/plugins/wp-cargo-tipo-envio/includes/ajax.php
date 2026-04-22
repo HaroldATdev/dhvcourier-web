@@ -31,6 +31,9 @@ function wpcte_ajax_get_user_data() {
     $dir2   = get_user_meta( $uid, 'billing_address_2', true );
     $dir    = $dir2 ? $dir1 . ', ' . $dir2 : $dir1;
     $telefono = get_user_meta( $uid, 'billing_phone', true );
+    if ( '' === $telefono ) {
+        $telefono = get_user_meta( $uid, 'phone', true );
+    }
     $dni = get_user_meta( $uid, 'dni_remitente', true );
     $ciudad = get_user_meta( $uid, 'billing_city', true );
     wp_send_json_success( array(

@@ -145,6 +145,9 @@ function wpcte_ajax_get_user_data() {
     $dir2   = get_user_meta( $uid, 'billing_address_2', true );
     $dir    = $dir2 ? $dir1 . ', ' . $dir2 : $dir1;
     $telefono = get_user_meta( $uid, 'billing_phone', true );
+    if ( '' === $telefono ) {
+        $telefono = get_user_meta( $uid, 'phone', true );
+    }
     $dni = get_user_meta( $uid, 'dni_remitente', true );
     $ciudad = get_user_meta( $uid, 'billing_city', true );
     wp_send_json_success( array(
@@ -1466,7 +1469,11 @@ function wpcte_footer_crear() {
         $dir1   = get_user_meta( $u->ID, 'billing_address_1', true );
         $dir2   = get_user_meta( $u->ID, 'billing_address_2', true );
         $dir    = $dir2 ? $dir1.', '.$dir2 : $dir1;
-        $datos_js = wp_json_encode( array( 'nombre'=>$nombre,'telefono'=>get_user_meta($u->ID,'billing_phone',true),'direccion'=>$dir,'ciudad'=>get_user_meta($u->ID,'billing_city',true) ) );
+        $telefono = get_user_meta($u->ID,'billing_phone',true);
+        if ( '' === $telefono ) {
+            $telefono = get_user_meta($u->ID,'phone',true);
+        }
+        $datos_js = wp_json_encode( array( 'nombre'=>$nombre,'telefono'=>$telefono,'direccion'=>$dir,'ciudad'=>get_user_meta($u->ID,'billing_city',true) ) );
     } else {
         $datos_js = 'null';
     }
