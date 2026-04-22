@@ -45,6 +45,13 @@ function wpca_es_admin(): bool {
 	return current_user_can( 'manage_options' );
 }
 
+function wpca_puede_gestionar_almacen(): bool {
+	if ( current_user_can( 'manage_options' ) ) return true;
+	$user = wp_get_current_user();
+	$roles = (array) ( $user->roles ?? [] );
+	return in_array( 'wpcargo_admin', $roles, true ) || in_array( 'wpcargo_branch_manager', $roles, true );
+}
+
 function wpca_es_cliente(): bool {
 	$user = wp_get_current_user();
 	return in_array( 'wpcargo_client', (array) $user->roles, true );

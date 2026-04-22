@@ -289,6 +289,12 @@ class WCROL_Rol_WPCargo {
         if ( ! is_user_logged_in() ) return;
         if ( ! wcrol_es_wpcargo_admin() ) return;
 
+        $script = isset( $GLOBALS['pagenow'] ) ? (string) $GLOBALS['pagenow'] : '';
+        $action = isset( $_REQUEST['action'] ) ? sanitize_key( (string) $_REQUEST['action'] ) : '';
+        if ( 'admin-post.php' === $script && 0 === strpos( $action, 'wpca_' ) ) {
+            return;
+        }
+
         // Redirigir al dashboard frontend de WPCargo
         $destino = wcrol_frontend_url();
         if ( ! $destino ) $destino = home_url('/');

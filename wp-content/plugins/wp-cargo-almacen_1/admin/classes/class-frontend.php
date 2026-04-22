@@ -17,7 +17,7 @@ class WPCA_Frontend {
 	/* ── Sidebar (ítem simple, sin sub-menú) ─────────── */
 
 	public function sidebar_item( array $menu ): array {
-		if ( ! current_user_can( 'manage_options' ) && ! wpca_es_cliente() ) return $menu;
+		if ( ! wpca_puede_gestionar_almacen() && ! wpca_es_cliente() ) return $menu;
 		$menu['wpca-menu'] = [
 			'page-id'   => wpca_get_frontend_page_id(),
 			'label'     => __( 'Almacén', 'wp-cargo-almacen' ),
@@ -36,7 +36,7 @@ class WPCA_Frontend {
 	/* ── Shortcode principal ──────────────────────────── */
 
 	public function render_shortcode(): string {
-		$es_admin  = current_user_can( 'manage_options' );
+		$es_admin  = wpca_puede_gestionar_almacen();
 		$es_client = wpca_es_cliente();
 
 		if ( ! $es_admin && ! $es_client ) {
@@ -234,7 +234,7 @@ class WPCA_Frontend {
 	}
 
 	public function handle_upload_imagen(): void {
-		if ( ! current_user_can( 'manage_options' ) ) wp_die();
+		if ( ! wpca_puede_gestionar_almacen() ) wp_die();
 		check_ajax_referer( 'wpca_upload_imagen' );
 
 		if ( empty( $_FILES['imagen'] ) ) {
@@ -263,7 +263,7 @@ class WPCA_Frontend {
 	}
 
 	public function handle_guardar_producto(): void {
-		if ( ! current_user_can( 'manage_options' ) ) wp_die( 'Sin permisos.' );
+		if ( ! wpca_puede_gestionar_almacen() ) wp_die( 'Sin permisos.' );
 		check_admin_referer( 'wpca_prod_nonce' );
 		$id     = (int) ( $_POST['id'] ?? 0 );
 		$result = $id ? WPCA_Producto::actualizar( $id, $_POST ) : WPCA_Producto::crear( $_POST );
@@ -278,7 +278,7 @@ class WPCA_Frontend {
 	}
 
 	public function handle_eliminar_producto(): void {
-		if ( ! current_user_can( 'manage_options' ) ) wp_die( 'Sin permisos.' );
+		if ( ! wpca_puede_gestionar_almacen() ) wp_die( 'Sin permisos.' );
 		check_admin_referer( 'wpca_del_prod_nonce' );
 		WPCA_Producto::eliminar( (int) ( $_POST['id'] ?? 0 ) );
 		wp_safe_redirect( wpca_frontend_url( [ 'wpca' => 'productos', 'msg' => 'eliminado' ] ) );
