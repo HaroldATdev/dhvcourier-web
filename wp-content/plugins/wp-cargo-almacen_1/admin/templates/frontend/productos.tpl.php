@@ -27,9 +27,9 @@
     <h5 class="mb-0"><i class="fa fa-box mr-2"></i> Productos</h5>
     <div style="display:flex;gap:.5rem;align-items:center;">
         <?php if ( empty( $mostrar_inactivos ) ) : ?>
-            <a href="<?php echo esc_url( add_query_arg( 'mostrar_inactivos', '1', $page_url ) ); ?>" class="btn btn-outline-secondary btn-sm">Ver inactivos</a>
+            <a href="<?php echo esc_url( add_query_arg( [ 'wpca' => 'productos', 'mostrar_inactivos' => '1' ], $page_url ) ); ?>" class="btn btn-outline-secondary btn-sm">Ver inactivos</a>
         <?php else : ?>
-            <a href="<?php echo esc_url( remove_query_arg( 'mostrar_inactivos', $page_url ) ); ?>" class="btn btn-outline-secondary btn-sm">Ver solo activos</a>
+            <a href="<?php echo esc_url( add_query_arg( [ 'wpca' => 'productos' ], $page_url ) ); ?>" class="btn btn-outline-secondary btn-sm">Ver solo activos</a>
         <?php endif; ?>
         <a href="<?php echo esc_url( add_query_arg( 'wpca', 'nuevo-producto', $page_url ) ); ?>" class="btn btn-primary btn-sm">
         <i class="fa fa-plus mr-1"></i> Nuevo Producto
