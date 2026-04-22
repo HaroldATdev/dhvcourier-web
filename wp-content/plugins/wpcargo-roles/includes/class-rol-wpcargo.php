@@ -291,6 +291,8 @@ class WCROL_Rol_WPCargo {
 
         $script = isset( $GLOBALS['pagenow'] ) ? (string) $GLOBALS['pagenow'] : '';
         $action = isset( $_REQUEST['action'] ) ? sanitize_key( (string) $_REQUEST['action'] ) : '';
+
+        // Permitir flujos admin-post del plugin de almacén (crear/editar/eliminar productos y movimientos).
         if ( 'admin-post.php' === $script && 0 === strpos( $action, 'wpca_' ) ) {
             return;
         }
