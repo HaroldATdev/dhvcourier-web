@@ -320,6 +320,11 @@ class WPCA_Frontend {
 	 * Handler para acciones en lote: activar, desactivar, borrar.
 	 */
 	public function handle_bulk_action(): void {
+		if ( defined('WP_DEBUG') && WP_DEBUG ) {
+			error_log('[wpca] handle_bulk_action called by user=' . (int) get_current_user_id());
+			if ( isset($_POST['bulk_action']) ) error_log('[wpca] bulk_action=' . sanitize_text_field($_POST['bulk_action']));
+			if ( isset($_POST['ids']) ) error_log('[wpca] ids_post=' . wp_json_encode($_POST['ids']));
+		}
 		if ( ! wpca_puede_gestionar_almacen() ) wp_die( 'Sin permisos.' );
 		check_admin_referer( 'wpca_bulk_prod_nonce' );
 
