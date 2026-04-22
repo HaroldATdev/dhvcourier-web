@@ -62,9 +62,9 @@
         <?php wp_nonce_field( 'wpca_bulk_prod_nonce' ); ?>
         <input type="hidden" name="action" value="wpca_bulk_action">
         <div class="mb-2 d-flex" style="gap:.5rem;">
-            <button type="submit" name="bulk_action" value="activar" class="btn btn-success btn-sm">Activar seleccionados</button>
-            <button type="submit" name="bulk_action" value="desactivar" class="btn btn-warning btn-sm">Desactivar seleccionados</button>
-            <button type="submit" name="bulk_action" value="borrar" class="btn btn-danger btn-sm" onclick="return confirm('¿Borrar definitivamente los seleccionados? Esta acción no se puede deshacer.');">Borrar seleccionados</button>
+            <button type="button" data-action="activar" class="wpca-bulk-btn btn btn-success btn-sm">Activar seleccionados</button>
+            <button type="button" data-action="desactivar" class="wpca-bulk-btn btn btn-warning btn-sm">Desactivar seleccionados</button>
+            <button type="button" data-action="borrar" class="wpca-bulk-btn btn btn-danger btn-sm" id="wpca-bulk-borrar">Borrar seleccionados</button>
         </div>
         <style>
             /* Forzar visibilidad de los checkboxes en caso de que el tema los oculte */
@@ -154,5 +154,28 @@
 document.getElementById('wpca-select-all')?.addEventListener('change', function(e){
     var checked = e.target.checked;
     document.querySelectorAll('.wpca-row-check').forEach(function(cb){ cb.checked = checked; });
+});
+
+// Bulk action handler: collect selected ids and submit form programmatically
+document.querySelectorAll('.wpca-bulk-btn').forEach(function(btn){
+    btn.addEventListener('click', function(e){
+        var action = btn.getAttribute('data-action');
+        if ( action === 'borrar' ) {
+            if ( ! confirm('¿Borrar definitivamente los seleccionados? Esta acción no se puede deshacer.') ) return;
+        }
+        var form = document.getElementById('wpca-bulk-form');
+        if ( ! form ) return;
+        // collect checked ids
+        var ids = Array.from(document.querySelectorAll('.wpca-row-check:checked')).map(function(cb){ return cb.value; });
+        if ( ids.length === 0 ) { alert('Selecciona al menos un producto.'); return; }
+        // remove any previous hidden inputs named ids[]
+        Array.from(form.querySelectorAll('input[name="ids[]"]')).forEach(function(n){ n.remove(); });
+        // create hidden inputs
+        ids.forEach(function(id){ var inp = document.createElement('input'); inp.type='hidden'; inp.name='ids[]'; inp.value = id; form.appendChild(inp); });
+        // set or create hidden bulk_action input
+        var bulkInput = form.querySelector('input[name="bulk_action"]');
+        if ( bulkInput ) { bulkInput.value = action; } else { var h = document.createElement('input'); h.type='hidden'; h.name='bulk_action'; h.value=action; form.appendChild(h); }
+        form.submit();
+    });
 });
 </script>
