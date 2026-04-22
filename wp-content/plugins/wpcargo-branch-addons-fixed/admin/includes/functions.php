@@ -293,10 +293,10 @@ function wpcdm_transfer_shipment_label(){
 	return esc_html__( 'Transfer Shipment', 'wpcargo-branches' );
 }
 function wpcdm_select_branch_label(){
-	return esc_html__( 'Select Branch', 'wpcargo-branches' );
+	return esc_html__( 'Seleccione Sucursal', 'wpcargo-branches' );
 }
 function wpcdm_select_branch_option_label(){
-	return esc_html__( '--Select Branch--', 'wpcargo-branches' );
+	return esc_html__( '--Seleccione Sucursal--', 'wpcargo-branches' );
 }
 function wpcdm_updated_by_label(){
 	return esc_html__('Updated By:', 'wpcargo-branches');
