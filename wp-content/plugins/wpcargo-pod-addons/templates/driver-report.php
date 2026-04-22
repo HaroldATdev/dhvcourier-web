@@ -6,7 +6,7 @@
             <section class="form-group">
                 <label for="assign_driver" class=""><?php esc_html_e('Driver', 'wpcargo-pod'); ?></label>
                 <select name="assign_driver" class="form-control browser-default custom-select" id="assign_driver" required>
-                    <option value=""><?php esc_html_e('-- Select Driver --', 'wpcargo-pod'); ?></option>
+                    <option value=""><?php esc_html_e('-- Seleccione Conductor --', 'wpcargo-pod'); ?></option>
                     <?php foreach( wpcargo_pod_get_drivers() as $driverID => $driver_name ): ?>
                         <option value="<?php echo $driverID; ?>"><?php echo $driver_name; ?></option>
                     <?php endforeach; ?>   

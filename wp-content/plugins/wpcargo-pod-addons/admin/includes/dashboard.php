@@ -700,7 +700,7 @@ function wpcargo_pod_assign_driver_dropdown($shipment_id)
 		<div class="select-no-margin">
 			<label><?php esc_html_e('Driver', 'wpcargo-pod'); ?></label>
 			<select id="wpcargo_driver" name="wpcargo_driver" class="form-control browser-default mdb-select">
-				<option value=""><?php echo apply_filters('pod_assign_vehicle_label', __('-- Select Driver --', 'wpcargo-pod')); ?></option>
+				<option value=""><?php echo apply_filters('pod_assign_vehicle_label', __('-- Seleccione conductor --', 'wpcargo-pod')); ?></option>
 				<?php foreach (wpcargo_pod_get_drivers() as $driverID => $driver_name): ?>
 					<option value="<?php echo $driverID; ?>" <?php selected(get_post_meta($shipment_id, 'wpcargo_driver', true), $driverID); ?>><?php echo $driver_name; ?></option>
 				<?php endforeach; ?>
@@ -716,7 +716,7 @@ function wpcargo_pod_wpcfe_bulk_update_form_fields()
 		<div class="select-no-margin">
 			<label><?php _e('Driver', 'wpcargo-pod'); ?></label>
 			<select id="wpcargo_driver" name="wpcargo_driver" class="form-control browser-default mdb-select">
-				<option value=""><?php echo apply_filters('pod_assign_vehicle_label', __('-- Select Driver --', 'wpcargo-pod')); ?></option>
+				<option value=""><?php echo apply_filters('pod_assign_vehicle_label', __('-- Seleccione conductor --', 'wpcargo-pod')); ?></option>
 				<?php foreach (wpcargo_pod_get_drivers() as $driverID => $driver_name): ?>
 					<option value="<?php echo $driverID; ?>"><?php echo $driver_name; ?></option>
 				<?php endforeach; ?>

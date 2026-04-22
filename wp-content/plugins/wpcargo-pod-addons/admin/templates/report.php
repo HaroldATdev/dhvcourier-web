@@ -5,7 +5,7 @@
             <th><?php esc_html_e('Driver', 'wpcargo-pod'); ?></th>
             <td>
                 <select name="assign_driver" class="form-control browser-default custom-select" id="assign_driver" required>
-                    <option value=""><?php esc_html_e('-- Select Driver --', 'wpcargo-pod'); ?></option>
+                    <option value=""><?php esc_html_e('-- Seleccione Conductor --', 'wpcargo-pod'); ?></option>
                     <?php foreach( wpcargo_pod_get_drivers() as $driverID => $driver_name ): ?>
                         <option value="<?php echo $driverID; ?>"><?php echo $driver_name; ?></option>
                     <?php endforeach; ?>   
@@ -16,7 +16,7 @@
             <th><?php esc_html_e('Status', 'wpcargo-pod'); ?></th>
             <td>
                 <select name="shipment_status" class="form-control browser-default custom-select" id="shipment_status">
-                    <option value=""><?php esc_html_e('-- Select Status --', 'wpcargo-pod'); ?></option>
+                    <option value=""><?php esc_html_e('-- Seleccione Estado --', 'wpcargo-pod'); ?></option>
                     <?php foreach( $wpcargo->status as $status ): ?>
                         <option value="<?php  echo $status; ?>" ><?php echo $status; ?></option>
                     <?php endforeach; ?>      

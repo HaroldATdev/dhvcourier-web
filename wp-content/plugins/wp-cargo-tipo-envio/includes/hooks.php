@@ -1043,6 +1043,16 @@ function wpcte_footer_crear() {
         var currentUserId=<?php echo $current_uid_js; ?>;
         var f=document.querySelector('form.add-shipment');
         if(!f)return;
+        function wpcteOcultarAgenteEmpleado(form){
+            ['agent_fields','wpcargo_employee'].forEach(function(id){
+                var el=form.querySelector('#'+id+', select[name="'+id+'"]');
+                if(!el) return;
+                el.value='';
+                el.setAttribute('disabled','disabled');
+                var grp=el.closest('.form-group')||el.parentElement;
+                if(grp) grp.style.display='none';
+            });
+        }
         function fillClientFields(data){
             var rem=document.getElementById('remitente');if(rem)rem.value=data.nombre||'';
             var tel=document.getElementById('telefono_remitente');if(tel)tel.value=data.telefono||'';
@@ -1089,6 +1099,9 @@ function wpcte_footer_crear() {
         var pkg=document.getElementById('package_id');if(pkg)pkg.style.display='none';
         wpcte_insertDir('');
         wpcte_ajustarDrivers(tipo,f,null,null);
+        wpcteOcultarAgenteEmpleado(f);
+        setTimeout(function(){ wpcteOcultarAgenteEmpleado(f); }, 300);
+        setTimeout(function(){ wpcteOcultarAgenteEmpleado(f); }, 1000);
         if(isClient&&currentUserId){
             ensureClientShipmentField(currentUserId);
             loadClientData(currentUserId);
@@ -1304,10 +1317,24 @@ function wpcte_footer_editar() {
         var ajaxUrl=<?php echo $aj; ?>;
         var nonce=<?php echo $nj; ?>;
         var formEl=$('form').filter(function(){return $(this).find('[name=shipment_id],[name=update_shipment]').length>0;}).get(0)||document.querySelector('form');
+        function wpcteOcultarAgenteEmpleado(form){
+            if(!form) return;
+            ['agent_fields','wpcargo_employee'].forEach(function(id){
+                var el=form.querySelector('#'+id+', select[name="'+id+'"]');
+                if(!el) return;
+                el.value='';
+                el.setAttribute('disabled','disabled');
+                var grp=el.closest('.form-group')||el.parentElement;
+                if(grp) grp.style.display='none';
+            });
+        }
 
         // Inicializar dirección y drivers
         wpcte_insertDir(<?php echo $dr_js; ?>);
         wpcte_ajustarDrivers(tipo,formEl,<?php echo $dv_js; ?>,<?php echo $ce_js; ?>);
+        wpcteOcultarAgenteEmpleado(formEl);
+        setTimeout(function(){ wpcteOcultarAgenteEmpleado(formEl); }, 300);
+        setTimeout(function(){ wpcteOcultarAgenteEmpleado(formEl); }, 1000);
         if(isAdmin) wpcte_listenCliente(ajaxUrl,nonce);
 
         // Toggle verificar
