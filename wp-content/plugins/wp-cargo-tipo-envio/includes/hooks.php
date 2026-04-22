@@ -1354,6 +1354,16 @@ function wpcte_guardar_meta( $post_id ) {
         update_post_meta( $post_id, 'contenedor_entrega_id', sanitize_text_field( $_POST['shipment_container_entrega'] ) );
     if ( isset( $_POST['direccion_remitente'] ) )
         update_post_meta( $post_id, 'direccion_remitente', sanitize_text_field( $_POST['direccion_remitente'] ) );
+
+    $posted_shipper = isset( $_POST['registered_shipper'] ) ? absint( $_POST['registered_shipper'] ) : 0;
+    if ( $posted_shipper > 0 ) {
+        update_post_meta( $post_id, 'registered_shipper', $posted_shipper );
+    } else {
+        $current_user = wp_get_current_user();
+        if ( $current_user instanceof WP_User && in_array( 'wpcargo_client', (array) $current_user->roles, true ) ) {
+            update_post_meta( $post_id, 'registered_shipper', (int) $current_user->ID );
+        }
+    }
 }
 
 function wpcte_guardar_meta_late( $post_id ) {
@@ -1363,6 +1373,16 @@ function wpcte_guardar_meta_late( $post_id ) {
         update_post_meta( $post_id, 'tipo_envio', sanitize_key( $_POST['wpcte_tipo_envio'] ) );
     if ( isset( $_POST['direccion_remitente'] ) )
         update_post_meta( $post_id, 'direccion_remitente', sanitize_text_field( $_POST['direccion_remitente'] ) );
+
+    $posted_shipper = isset( $_POST['registered_shipper'] ) ? absint( $_POST['registered_shipper'] ) : 0;
+    if ( $posted_shipper > 0 ) {
+        update_post_meta( $post_id, 'registered_shipper', $posted_shipper );
+    } else {
+        $current_user = wp_get_current_user();
+        if ( $current_user instanceof WP_User && in_array( 'wpcargo_client', (array) $current_user->roles, true ) ) {
+            update_post_meta( $post_id, 'registered_shipper', (int) $current_user->ID );
+        }
+    }
 }
 
 /* ======================================================================
