@@ -290,10 +290,18 @@ class WCROL_Rol_WPCargo {
         if ( ! wcrol_es_wpcargo_admin() ) return;
 
         $script = isset( $GLOBALS['pagenow'] ) ? (string) $GLOBALS['pagenow'] : '';
+        $script_name = isset( $_SERVER['SCRIPT_NAME'] ) ? wp_basename( (string) $_SERVER['SCRIPT_NAME'] ) : '';
+        $request_uri = isset( $_SERVER['REQUEST_URI'] ) ? (string) $_SERVER['REQUEST_URI'] : '';
         $action = isset( $_REQUEST['action'] ) ? sanitize_key( (string) $_REQUEST['action'] ) : '';
 
-        // Permitir flujos admin-post del plugin de almacén (crear/editar/eliminar productos y movimientos).
-        if ( 'admin-post.php' === $script && 0 === strpos( $action, 'wpca_' ) ) {
+        // Permitir flujos admin-post de plugins frontend (almacén y gestión de roles).
+        $is_admin_post = (
+            'admin-post.php' === $script ||
+            'admin-post.php' === $script_name ||
+            false !== strpos( $request_uri, '/wp-admin/admin-post.php' )
+        );
+
+        if ( $is_admin_post && ( 0 === strpos( $action, 'wpca_' ) || 0 === strpos( $action, 'wcrol_' ) ) ) {
             return;
         }
 
