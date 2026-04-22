@@ -263,34 +263,34 @@ function wpcdm_branch_manager_label(){
 	return esc_html__('Colaborador de Sucursal', 'wpcargo-branches' );
 }
 function wpcdm_shipment_branch_label(){
-	return esc_html__( 'Shipment Branch', 'wpcargo-branches' );
+	return esc_html__( 'Sucursal de Envío', 'wpcargo-branches' );
 }
 function wpcdm_branch_history_label(){
-	return esc_html__( 'Branch History', 'wpcargo-branches' );
+	return esc_html__( 'Historial de Sucursal', 'wpcargo-branches' );
 }
 function wpcdm_branch_transfer_label(){
-	return esc_html__('Branch Transfer', 'wpcargo-branches');
+	return esc_html__('Transferir Sucursal', 'wpcargo-branches');
 }
 function wpcdm_branch_manager_settings_label(){
 	return esc_html__( 'Configuración de Colaborador de Sucursal', 'wpcargo-branches' );
 }
 function wpcdm_assign_branch_label(){
-	return esc_html__( 'Assigned Branch', 'wpcargo-branches' );
+	return esc_html__( 'Asignar Sucursal', 'wpcargo-branches' );
 }
 function wpcdm_unable_assign_branch_label(){
-	return esc_html__( 'Unable to Assign Branch', 'wpcargo-branches' );
+	return esc_html__( 'No se puede asignar la sucursal', 'wpcargo-branches' );
 }
 function wpcdm_manage_branches_label(){
-	return esc_html__( 'Manage Branches', 'wpcargo-branches' );
+	return esc_html__( 'Administrar Sucursales', 'wpcargo-branches' );
 }
 function wpcdm_manage_branch_label(){
-	return esc_html__( 'Manage Branch', 'wpcargo-branches' );
+	return esc_html__( 'Administrar Sucursal', 'wpcargo-branches' );
 }
 function wpcdm_add_new_branch_label(){
-	return esc_html__( 'Add New Branch', 'wpcargo-branches' );
+	return esc_html__( 'Agregar Nueva Sucursal', 'wpcargo-branches' );
 }
 function wpcdm_transfer_shipment_label(){
-	return esc_html__( 'Transfer Shipment', 'wpcargo-branches' );
+	return esc_html__( 'Transferir Envío', 'wpcargo-branches' );
 }
 function wpcdm_select_branch_label(){
 	return esc_html__( 'Seleccione Sucursal', 'wpcargo-branches' );
@@ -299,22 +299,22 @@ function wpcdm_select_branch_option_label(){
 	return esc_html__( '--Seleccione Sucursal--', 'wpcargo-branches' );
 }
 function wpcdm_updated_by_label(){
-	return esc_html__('Updated By:', 'wpcargo-branches');
+	return esc_html__('Actualizado Por:', 'wpcargo-branches');
 }
 function wpcdm_from_label(){
-	return esc_html__('From:', 'wpcargo-branches');
+	return esc_html__('De:', 'wpcargo-branches');
 }
 function wpcdm_to_label(){
-	return esc_html__('To:', 'wpcargo-branches');
+	return esc_html__('A:', 'wpcargo-branches');
 }
 function wpcdm_on_label(){
-	return esc_html__('on', 'wpcargo-branches');
+	return esc_html__('en', 'wpcargo-branches');
 }
 function wpcdm_branch_code_label(){
-	return esc_html__('Branch Code', 'wpcargo-branches');
+	return esc_html__('Código de Sucursal', 'wpcargo-branches');
 }
 function wpcdm_phone_label(){
-	return esc_html__('Phone', 'wpcargo-branches');
+	return esc_html__('Teléfono', 'wpcargo-branches');
 }
 function wpcdm_can_send_email_branch_manager(){
 	$gen_settings = get_option( 'wpcargo_option_settings' );
