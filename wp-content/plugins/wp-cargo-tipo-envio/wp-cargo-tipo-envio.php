@@ -1643,8 +1643,31 @@ function wpcte_footer_crear() {
                 _updateHiddenDriver();
             }catch(e){}
         } else {
+            // Para tipos agencia/almacen: eliminar el select de recojo si existe,
+            // usar únicamente el select de entrega y sincronizar `wpcargo_driver` con él.
+            try{
+                var recClone = document.getElementById('wpcte-drv-rec'); if(recClone) recClone.remove();
+            }catch(e){}
             cambL('wpcargo_driver','Conductor de entrega');
             cambL('shipment_container','Contenedor de entrega');
+            try{
+                if(formEl && !formEl.querySelector('[name="wpcargo_driver"]')){
+                    var _h=document.createElement('input');_h.type='hidden';_h.name='wpcargo_driver';_h.value='';formEl.appendChild(_h);
+                }
+                var _updateHiddenDriver2 = function(){
+                    var hidden = formEl.querySelector('[name="wpcargo_driver"]'); if(!hidden) return;
+                    var ent = formEl.querySelector('select[name="wpcargo_driver_entrega"]') || formEl.querySelector('select[name="wpcargo_driver"]');
+                    hidden.value = ent && ent.value ? ent.value : '';
+                };
+                var _entSel2 = formEl.querySelector('select[name="wpcargo_driver_entrega"]') || formEl.querySelector('select[name="wpcargo_driver"]');
+                if(_entSel2) _entSel2.addEventListener('change', _updateHiddenDriver2);
+                _updateHiddenDriver2();
+                // Asegurar que el select original esté visible (si fue ocultado previamente)
+                try{
+                    var orig = formEl?formEl.querySelector('select[name="wpcargo_driver"]'):null;
+                    if(orig){ var container = orig.parentElement; while(container && !container.querySelector(':scope>label')){ container = container.parentElement; } if(container) container.style.display = ''; }
+                }catch(e){}
+            }catch(e){}
         }
     }
     function wpcte_listenCliente(ajaxUrl,nonce){
