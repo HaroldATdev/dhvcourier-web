@@ -66,6 +66,23 @@
             <button type="submit" name="bulk_action" value="desactivar" class="btn btn-warning btn-sm">Desactivar seleccionados</button>
             <button type="submit" name="bulk_action" value="borrar" class="btn btn-danger btn-sm" onclick="return confirm('¿Borrar definitivamente los seleccionados? Esta acción no se puede deshacer.');">Borrar seleccionados</button>
         </div>
+        <style>
+            /* Forzar visibilidad de los checkboxes en caso de que el tema los oculte */
+            #wpca-bulk-form input[type="checkbox"].wpca-row-check,
+            #wpca-bulk-form input[type="checkbox"]#wpca-select-all {
+                opacity: 1 !important;
+                visibility: visible !important;
+                height: 18px !important;
+                width: 18px !important;
+                position: relative !important;
+                left: auto !important;
+                top: auto !important;
+                margin: 0 !important;
+                display: inline-block !important;
+            }
+            /* Asegurar que el checkbox no quede fuera del flujo por estilos absolutos */
+            #wpca-bulk-form .wpca-row-check { pointer-events: auto !important; }
+        </style>
         <table class="table table-hover table-sm">
         <thead class="thead-light">
             <tr>
