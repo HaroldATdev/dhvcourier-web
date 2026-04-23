@@ -1363,7 +1363,15 @@ function wpcte_footer_editar() {
 
         $('[name=location],[name=remarks]').removeAttr('required');
         $('.card-header').filter(function(){return $(this).text().trim()==='Paquetes';}).closest('.card').parent().hide();
-        $('#package_id').closest('.form-group,.mb-4').hide();
+        var $packageField = $('#package_id').closest('.form-group');
+        if(!$packageField.length){
+            $packageField = $('#package_id').closest('.md-form');
+        }
+        if($packageField.length){
+            $packageField.hide();
+        }else{
+            $('#package_id').hide();
+        }
 
         // Mover badge y cotizador al inicio
         setTimeout(function(){
