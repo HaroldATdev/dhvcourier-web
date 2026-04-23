@@ -100,7 +100,7 @@ function wpcbranch_get_user_list( $user_role ){
 }
 
 function wpcfe_assign_branch_manager( ){
-	return apply_filters( 'wpcfe_assign_branch_manager', array('wpcargo_employee', 'wpcargo_admin', 'administrator') );
+	return apply_filters( 'wpcfe_assign_branch_manager', array('wpcargo_employee', 'wpcargo_branch_manager', 'wpcargo_admin', 'administrator') );
 }
 function can_wpcfe_assign_branch_manager( ){
 	$user_roles     = wpcbranch_current_user_role();
