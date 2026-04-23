@@ -276,8 +276,20 @@ function wpcfe_shipment_extra_filters_callback(){
     $current_roles               = $current_user instanceof WP_User ? (array) $current_user->roles : array();
     $disable_branch_filter       = in_array( 'wpcargo_admin', $current_roles, true );
     $branch_filter_disabled_attr = $disable_branch_filter ? ' disabled="disabled"' : '';
+    $current_user_branch         = 0;
+
+    if ( function_exists( 'wpcbranch_compat_find_user_branch_id' ) ) {
+        $current_user_branch = (int) wpcbranch_compat_find_user_branch_id();
+    }
+
+    if ( ! $current_user_branch ) {
+        $current_user_branch = (int) get_user_meta( get_current_user_id(), 'wpc_user_branch', true );
+    }
 
     $selected_branch        = isset( $_GET['shipment_branch'] ) ? sanitize_text_field( wp_unslash( $_GET['shipment_branch'] ) ) : '';
+    if ( '' === $selected_branch && $current_user_branch ) {
+        $selected_branch = (string) $current_user_branch;
+    }
     $selected_tipo_envio    = isset( $_GET['tipo_envio'] ) ? sanitize_text_field( wp_unslash( $_GET['tipo_envio'] ) ) : '';
     $selected_lugar_origen  = isset( $_GET['lugar_origen'] ) ? sanitize_text_field( wp_unslash( $_GET['lugar_origen'] ) ) : '';
     $selected_lugar_destino = isset( $_GET['lugar_destino'] ) ? sanitize_text_field( wp_unslash( $_GET['lugar_destino'] ) ) : '';
