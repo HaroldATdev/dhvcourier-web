@@ -235,7 +235,9 @@ function wpcbm_assigned_branch( $shipment_id ){
 	$all_branch		= wpcbm_get_all_branch( -1 );
 	$shipment_branch = get_post_meta( $shipment_id, 'shipment_branch', true ) ? get_post_meta( $shipment_id, 'shipment_branch', true ) : '';
 	$current_roles = (array) wp_get_current_user()->roles;
-	$can_render_branch = can_wpcfe_assign_branch_manager() || !empty( array_intersect( array( 'wpcargo_admin', 'wpcargo_branch_manager', 'administrator' ), $current_roles ) );
+	$can_render_branch = can_wpcfe_assign_branch_manager() || !empty( array_intersect( array( 'wpcargo_client', 'wpcargo_admin', 'wpcargo_branch_manager', 'administrator' ), $current_roles ) );
+	$disable_branch_select = !empty( array_intersect( array( 'wpcargo_admin', 'wpcargo_branch_manager' ), $current_roles ) );
+	$disable_branch_attr = $disable_branch_select ? ' disabled="disabled"' : '';
 	if( !$can_render_branch ){
 		return false;
 	}
@@ -248,12 +250,15 @@ function wpcbm_assigned_branch( $shipment_id ){
 			<div class="form-row">
 				<p>
 					<?php if( !empty( $all_branch ) ): ?>
-						<select id="wpc-user-branch" name="shipment_branch" class="mdb-select mt-0 form-control browser-default">
+						<select id="wpc-user-branch" name="shipment_branch" class="mdb-select mt-0 form-control browser-default"<?php echo $disable_branch_attr; ?>>
 							<option value=""><?php echo wpcdm_select_branch_label(); ?></option>
 							<?php foreach ( $all_branch as $branch ): ?>
 								<option value="<?php echo $branch->id; ?>" <?php selected( $shipment_branch, $branch->id ); ?>><?php echo $branch->name; ?></option>
 							<?php endforeach; ?>
 						</select>
+						<?php if ( $disable_branch_select && !empty( $shipment_branch ) ) : ?>
+							<input type="hidden" name="shipment_branch" value="<?php echo esc_attr( $shipment_branch ); ?>">
+						<?php endif; ?>
 					<?php else: ?>
 						<i><?php esc_html_e('No available branches.', 'wpcargo-branches' ).' * '; ?></i>
 					<?php endif; ?>
