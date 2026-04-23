@@ -234,7 +234,9 @@ function wpcbm_assigned_branch( $shipment_id ){
 	$shipment       = new stdClass();
 	$all_branch		= wpcbm_get_all_branch( -1 );
 	$shipment_branch = get_post_meta( $shipment_id, 'shipment_branch', true ) ? get_post_meta( $shipment_id, 'shipment_branch', true ) : '';
-	if( !can_wpcfe_assign_branch_manager() ){
+	$current_roles = (array) wp_get_current_user()->roles;
+	$can_render_branch = can_wpcfe_assign_branch_manager() || !empty( array_intersect( array( 'wpcargo_admin', 'wpcargo_branch_manager', 'administrator' ), $current_roles ) );
+	if( !$can_render_branch ){
 		return false;
 	}
 	?>
