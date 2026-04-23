@@ -1893,15 +1893,10 @@ function wpcte_listenCliente(ajaxUrl,nonce){
 
         $('[name=location],[name=remarks]').removeAttr('required');
         $('.card-header').filter(function(){return $(this).text().trim()==='Paquetes';}).closest('.card').parent().hide();
-        var $packageField = $('#package_id').closest('.form-group');
-        if(!$packageField.length){
-            $packageField = $('#package_id').closest('.md-form');
-        }
-        if($packageField.length){
-            $packageField.hide();
-        }else{
-            $('#package_id').hide();
-        }
+        var $package = $('#package_id');
+        $package.closest('.form-group,.md-form').hide();
+        $package.filter('div').hide();
+        $package.closest('.after-shipments-info').show();
 
         // Mover badge y cotizador al inicio
         setTimeout(function(){
