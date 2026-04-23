@@ -234,6 +234,10 @@ function wpcbm_assigned_branch( $shipment_id ){
 	$shipment       = new stdClass();
 	$all_branch		= wpcbm_get_all_branch( -1 );
 	$shipment_branch = get_post_meta( $shipment_id, 'shipment_branch', true ) ? get_post_meta( $shipment_id, 'shipment_branch', true ) : '';
+	$current_user_branch = function_exists( 'wpcbranch_compat_find_user_branch_id' ) ? (int) wpcbranch_compat_find_user_branch_id() : 0;
+	if ( empty( $shipment_branch ) && $current_user_branch ) {
+		$shipment_branch = $current_user_branch;
+	}
 	$current_roles = (array) wp_get_current_user()->roles;
 	$can_render_branch = can_wpcfe_assign_branch_manager() || !empty( array_intersect( array( 'wpcargo_client', 'wpcargo_admin', 'wpcargo_branch_manager', 'administrator' ), $current_roles ) );
 	$disable_branch_select = !empty( array_intersect( array( 'wpcargo_admin', 'wpcargo_branch_manager' ), $current_roles ) );
