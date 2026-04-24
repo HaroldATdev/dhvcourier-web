@@ -15,8 +15,10 @@ class WPC_POD_Scripts {
 			//** Styles
 			wp_enqueue_style('wpcargo-pod-dashboard-style', WPCARGO_POD_URL . 'assets/css/pod-dashboard.css');
         }
+	    $is_route_planner_page = function_exists('wpcpod_route_page') && wpcpod_route_page() && $post->ID == wpcpod_route_page();
 	    if ( is_a( $post, 'WP_Post' ) && ( 
 	    		has_shortcode( $post->post_content, 'wpc_driver_accounts') || 
+	    		$is_route_planner_page ||
 	    		( 
 	    			(  get_page_template_slug( $post->ID ) == 'dashboard.php' || 
 	    				( function_exists( 'wpcfe_admin_page' ) && $post->ID == wpcfe_admin_page() ) 
