@@ -22,31 +22,80 @@ class WPC_Facturacion_Ajax {
 
 		// Buscar usuarios (rol wpcargo_client o por nombre)
 		$args = array(
+			'role'   => 'wpcargo_client',
+			'number' => 15,
+			'meta_query' => array(
+				'relation' => 'OR',
+				array(
+					'key'     => 'first_name',
+					'value'   => $query,
+					'compare' => 'LIKE'
+				),
+				array(
+					'key'     => 'last_name',
+					'value'   => $query,
+					'compare' => 'LIKE'
+				),
+				array(
+					'key'     => 'wpcfact_doc_num',
+					'value'   => $query,
+					'compare' => 'LIKE'
+				),
+				array(
+					'key'     => 'dni_remitente',
+					'value'   => $query,
+					'compare' => 'LIKE'
+				)
+			)
+		);
+		
+		// También buscar por email o display_name (por defecto de WP)
+		$users_by_meta = get_users( $args );
+		
+		$users_by_standard = get_users( array(
 			'search'         => '*' . $query . '*',
 			'search_columns' => array( 'user_login', 'user_nicename', 'user_email', 'display_name' ),
-			'number'         => 10,
-		);
+			'role'           => 'wpcargo_client',
+			'number'         => 15,
+		) );
 
-		$users = get_users( $args );
-		$results = array();
+		// Combinar resultados únicos
+		$all_users = array();
+		$seen = array();
+		foreach ( array_merge($users_by_meta, $users_by_standard) as $u ) {
+			if ( ! isset($seen[$u->ID]) ) {
+				$seen[$u->ID] = true;
+				$all_users[] = $u;
+			}
+		}
 
-		foreach ( $users as $user ) {
-			// Intentar obtener doc_num previo si existe
+		$resultados = array();
+		foreach ( $all_users as $user ) {
 			$doc_num = get_user_meta( $user->ID, 'wpcfact_doc_num', true );
-			$razon_social = get_user_meta( $user->ID, 'wpcfact_razon_social', true );
-			$direccion = get_user_meta( $user->ID, 'wpcfact_direccion', true );
+			if ( empty( $doc_num ) ) {
+				$doc_num = get_user_meta( $user->ID, 'dni_remitente', true );
+			}
 
-			$results[] = array(
+			$razon = get_user_meta( $user->ID, 'wpcfact_razon_social', true );
+			if ( empty( $razon ) ) {
+				// Intentar buscar nombre completo si no hay razon social
+				$first = get_user_meta( $user->ID, 'first_name', true );
+				$last = get_user_meta( $user->ID, 'last_name', true );
+				$razon = trim( $first . ' ' . $last );
+			}
+
+			$dir = get_user_meta( $user->ID, 'wpcfact_direccion', true );
+
+			$resultados[] = array(
 				'id'           => $user->ID,
-				'name'         => $user->display_name,
 				'email'        => $user->user_email,
+				'razon_social' => ! empty( $razon ) ? $razon : $user->display_name,
 				'doc_num'      => $doc_num,
-				'razon_social' => $razon_social ?: $user->display_name,
-				'direccion'    => $direccion,
+				'direccion'    => $dir,
 			);
 		}
 
-		wp_send_json_success( $results );
+		wp_send_json_success( $resultados );
 	}
 
 	public function obtener_envios() {
