@@ -14,10 +14,13 @@ class WPC_Facturacion_Frontend_Cliente {
 
 	public function add_sidebar_menu_cliente( $menus ) {
 		if ( current_user_can( 'wpcargo_client' ) ) {
-			// Idealmente el admin crea una página con [wpcfact-mis-comprobantes]
+			$page = get_page_by_path( 'mis-comprobantes' );
+			$page_id = $page ? $page->ID : 0;
+			
 			$menus['wpcfact-mis-comprobantes'] = array(
+				'page-id'   => $page_id,
 				'label'     => 'Mis Comprobantes',
-				'permalink' => home_url( '/mis-comprobantes/' ),
+				'permalink' => $page ? get_permalink( $page_id ) : home_url( '/mis-comprobantes/' ),
 				'icon'      => 'fa-file-pdf-o',
 			);
 		}

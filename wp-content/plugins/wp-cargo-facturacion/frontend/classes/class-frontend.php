@@ -49,13 +49,24 @@ class WPC_Facturacion_Frontend {
 
 	public function add_sidebar_menu( $menus ) {
 		if ( current_user_can( 'manage_options' ) || current_user_can( 'wpc_shipment_manager' ) ) {
-			// Encontrar la página que tenga el shortcode (esto asume que el admin creó la página)
-			// Por defecto pondremos un permalink "#" o uno estático si se conoce.
-			// Idealmente el admin crea una página con [wpcfact-admin-dashboard]
+			$page_dash = get_page_by_path( 'facturacion-sunat' );
+			$page_dash_id = $page_dash ? $page_dash->ID : 0;
+			
 			$menus['wpcfact-facturacion'] = array(
+				'page-id'   => $page_dash_id,
 				'label'     => 'Facturación SUNAT',
-				'permalink' => home_url( '/facturacion-sunat/' ), // URL recomendada para la página
+				'permalink' => $page_dash ? get_permalink( $page_dash_id ) : home_url( '/facturacion-sunat/' ),
 				'icon'      => 'fa-file-text-o',
+			);
+
+			$page_emitir = get_page_by_path( 'emitir-comprobante' );
+			$page_emitir_id = $page_emitir ? $page_emitir->ID : 0;
+			
+			$menus['wpcfact-emitir'] = array(
+				'page-id'   => $page_emitir_id,
+				'label'     => 'Emitir Comprobante',
+				'permalink' => $page_emitir ? get_permalink( $page_emitir_id ) : home_url( '/emitir-comprobante/' ),
+				'icon'      => 'fa-plus',
 			);
 		}
 		return $menus;
