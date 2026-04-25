@@ -17,6 +17,14 @@
         </div>
     <?php else : ?>
 
+        <div class="dhv-global-search-wrap">
+            <input
+                type="text"
+                class="dhv-global-search"
+                placeholder="Buscar en todos los recojos por cliente, tracking o telefono"
+            >
+        </div>
+
         <?php foreach ( $grouped as $cliente => $pedidos ) :
             $slug = 'dhv-cliente-' . sanitize_title( $cliente );
             $total = count( $pedidos );

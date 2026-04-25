@@ -72,6 +72,22 @@
     border-bottom: 1px solid #e2e8f0;
     background: #fff;
 }
+.dhv-global-search-wrap {
+    margin: 0 0 12px;
+}
+.dhv-global-search {
+    width: 100%;
+    border: 1px solid #cbd5e0;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: .88rem;
+    color: #2d3748;
+    background: #fff;
+}
+.dhv-global-search:focus {
+    outline: 2px solid #1a6fc4;
+    outline-offset: 1px;
+}
 .dhv-card-search {
     width: 100%;
     border: 1px solid #e2e8f0;
@@ -93,6 +109,9 @@
     font-size: .82rem;
 }
 .dhv-row-hidden {
+    display: none !important;
+}
+.dhv-card-hidden-global {
     display: none !important;
 }
 
@@ -155,6 +174,20 @@
 .dhv-tracking-dot { width: 7px; height: 7px; border-radius: 50%; background: #1a6fc4; flex-shrink: 0; }
 .dhv-tracking-num { font-size: .88rem; font-weight: 600; letter-spacing: .2px; white-space: nowrap; }
 .dhv-pedido-right { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.dhv-status-readonly {
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: .82rem;
+    font-weight: 600;
+    color: #2d3748;
+    background: #edf2f7;
+    white-space: nowrap;
+}
+.dhv-pedido-check.is-locked {
+    opacity: .45;
+    cursor: not-allowed;
+}
 
 /* Badges estado */
 .dhv-status-badge { font-size: .7rem; font-weight: 700; padding: 3px 9px; border-radius: 20px; text-transform: uppercase; letter-spacing: .4px; white-space: nowrap; }
@@ -182,6 +215,7 @@
 /* ── RESPONSIVE MÓVIL ── */
 @media (max-width: 640px) {
     .dhv-recojo-title { font-size: 1.15rem; }
+    .dhv-global-search-wrap { margin: 0 0 10px; }
     .dhv-card-search-wrap { padding: 10px 12px; }
     .dhv-bulk-bar { flex-direction: column; align-items: flex-start; padding: 10px 12px; }
     .dhv-bulk-controls { margin-left: 0; width: 100%; flex-direction: column; align-items: stretch; }
@@ -254,6 +288,7 @@
 /* Responsive entrega */
 @media (max-width: 640px) {
     .dhv-entrega-title { font-size: 1.15rem; }
+    .dhv-entrega-wrap .dhv-global-search-wrap { margin: 0 0 10px; }
     .dhv-entrega-wrap .dhv-card-search-wrap { padding: 10px 12px; }
     .dhv-entrega-wrap .dhv-bulk-bar { flex-direction: column; align-items: flex-start; padding: 10px 12px; }
     .dhv-entrega-wrap .dhv-bulk-controls { margin-left: 0; width: 100%; flex-direction: column; align-items: stretch; }

@@ -27,12 +27,67 @@
         return (value || '').toString().replace(/\D+/g, '');
     }
 
+    function rowMatchesTerm(row, termText, termDigits) {
+        if (!row) return false;
+        if (!termText && !termDigits) return true;
+
+        var card = row.closest('.dhv-cliente-card');
+        var cardName = normalizeText(card ? (card.dataset.cliente || card.dataset.dest || '') : '');
+        var tracking = normalizeText(row.dataset.tracking || (row.querySelector('.dhv-tracking-num') ? row.querySelector('.dhv-tracking-num').textContent : ''));
+        var direccion = normalizeText(row.querySelector('.dhv-pedido-direccion') ? row.querySelector('.dhv-pedido-direccion').textContent : '');
+        var phoneDigits = onlyDigits(row.dataset.telefono || (row.querySelector('.dhv-tel-link') ? row.querySelector('.dhv-tel-link').textContent : ''));
+        var phoneText = normalizeText(phoneDigits);
+
+        var match = !termText;
+        if (!match) {
+            match = tracking.indexOf(termText) !== -1 || cardName.indexOf(termText) !== -1 || direccion.indexOf(termText) !== -1;
+        }
+        if (!match && termDigits) {
+            match = phoneDigits.indexOf(termDigits) !== -1;
+        }
+        if (!match && termText) {
+            match = phoneText.indexOf(termText) !== -1;
+        }
+
+        return match;
+    }
+
+    function updateGlobalCardVisibility(wrap) {
+        if (!wrap) return;
+        var globalInput = wrap.querySelector('.dhv-global-search');
+        var hasGlobal = !!(globalInput && normalizeText(globalInput.value));
+
+        wrap.querySelectorAll('.dhv-cliente-card').forEach(function (card) {
+            if (!hasGlobal) {
+                card.classList.remove('dhv-card-hidden-global');
+                return;
+            }
+            var hasVisibleRows = !!card.querySelector('.dhv-pedido-row:not(.dhv-row-hidden)');
+            card.classList.toggle('dhv-card-hidden-global', !hasVisibleRows);
+        });
+    }
+
+    function applyGlobalSearch(input) {
+        var wrap = input.closest('.dhv-recojo-wrap, .dhv-entrega-wrap');
+        if (!wrap) return;
+
+        wrap.querySelectorAll('.dhv-card-search').forEach(function (cardSearchInput) {
+            applyCardSearch(cardSearchInput);
+        });
+
+        updateGlobalCardVisibility(wrap);
+    }
+
     function applyCardSearch(input) {
         var group = input.dataset.group;
         if (!group) return;
 
+        var wrap = input.closest('.dhv-recojo-wrap, .dhv-entrega-wrap');
+        var globalInput = wrap ? wrap.querySelector('.dhv-global-search') : null;
         var termText = normalizeText(input.value);
         var termDigits = onlyDigits(input.value);
+        var globalTermText = normalizeText(globalInput ? globalInput.value : '');
+        var globalTermDigits = onlyDigits(globalInput ? globalInput.value : '');
         var rows = document.querySelectorAll('.dhv-pedido-check[data-group="' + group + '"]');
         var visible = 0;
 
@@ -40,20 +95,7 @@
             var row = cb.closest('.dhv-pedido-row');
             if (!row) return;
 
-            var tracking = normalizeText(row.dataset.tracking || (row.querySelector('.dhv-tracking-num') ? row.querySelector('.dhv-tracking-num').textContent : ''));
-            var phoneDigits = onlyDigits(row.dataset.telefono || (row.querySelector('.dhv-tel-link') ? row.querySelector('.dhv-tel-link').textContent : ''));
-            var phoneText = normalizeText(phoneDigits);
-
-            var match = !termText;
-            if (!match) {
-                match = tracking.indexOf(termText) !== -1;
-            }
-            if (!match && termDigits) {
-                match = phoneDigits.indexOf(termDigits) !== -1;
-            }
-            if (!match && termText) {
-                match = phoneText.indexOf(termText) !== -1;
-            }
+            var match = rowMatchesTerm(row, termText, termDigits) && rowMatchesTerm(row, globalTermText, globalTermDigits);
 
             if (match) {
                 row.classList.remove('dhv-row-hidden');
@@ -80,6 +122,7 @@
             empty.style.display = visible === 0 ? 'block' : 'none';
         }
 
+        updateGlobalCardVisibility(wrap);
         updateCount(group);
     }
 
@@ -170,14 +213,49 @@
     function applyDeliveredBadge(row) {
         var slug = 'entregado';
         var badge = row.querySelector('.dhv-status-badge');
-        var select = row.querySelector('.dhv-single-status');
+
         if (badge) {
             badge.textContent = 'Entregado';
             badge.className = 'dhv-status-badge dhv-estado-' + slug;
         }
-        if (select) {
-            select.value = 'Entregado';
+
+        if (row) {
+            row.dataset.estado = 'Entregado';
         }
+
+        lockDeliveredRow(row);
+    }
+
+    function lockDeliveredRow(row) {
+        if (!row) return;
+
+        var right = row.querySelector('.dhv-pedido-right');
+        if (!right) return;
+
+        var select = right.querySelector('.dhv-single-status');
+        var readonly = right.querySelector('.dhv-status-readonly');
+        if (select) {
+            if (!readonly) {
+                readonly = document.createElement('span');
+                readonly.className = 'dhv-status-readonly';
+                readonly.textContent = 'Entregado';
+                right.insertBefore(readonly, select);
+            }
+            select.remove();
+        }
+
+        var btn = right.querySelector('.dhv-single-apply');
+        if (btn) {
+            btn.remove();
+        }
+
+        var cb = row.querySelector('.dhv-pedido-check');
+        if (cb) {
+            cb.checked = false;
+            cb.disabled = true;
+            cb.classList.add('is-locked');
+        }
+        row.classList.remove('is-selected');
     }
 
     function openPodModalForEntrega(shipmentId, row, sBtn) {
@@ -294,7 +372,13 @@
         if (sBtn) {
             var id     = sBtn.dataset.id;
             var row    = sBtn.closest('.dhv-pedido-row');
-            var status = row.querySelector('.dhv-single-status').value;
+            var statusSelect = row.querySelector('.dhv-single-status');
+            if (!statusSelect) {
+                showToast('Este pedido ya esta en estado entregado.', 'error');
+                return;
+            }
+
+            var status = statusSelect.value;
             if (!status) { showToast('Selecciona un estado.', 'error'); return; }
 
             // Entrega + Entregado => abrir modal POD y no guardar estado directo
@@ -358,7 +442,11 @@
                         var b = r.querySelector('.dhv-status-badge');
                         var s = r.querySelector('.dhv-single-status');
                         if (b) { b.textContent = status2; b.className = 'dhv-status-badge dhv-estado-' + slug2; }
-                        if (s) s.value = status2;
+                        if (normalizeText(status2) === 'entregado') {
+                            lockDeliveredRow(r);
+                        } else if (s) {
+                            s.value = status2;
+                        }
                     });
                     showToast(res.data.message, 'success');
                 } else {
@@ -398,6 +486,11 @@
     document.addEventListener('input', function (e) {
         if (e.target.classList.contains('dhv-card-search')) {
             applyCardSearch(e.target);
+            return;
+        }
+
+        if (e.target.classList.contains('dhv-global-search')) {
+            applyGlobalSearch(e.target);
         }
     });
 }());
