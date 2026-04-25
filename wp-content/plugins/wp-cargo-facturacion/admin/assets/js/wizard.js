@@ -52,8 +52,8 @@ jQuery(document).ready(function($) {
 
 	// Seleccionar Cliente
 	$(document).on('click', '.wpcfact-user-row', function() {
-		$('.wpcfact-user-row').css('border-color', '#ccc').css('background', '#fff');
-		$(this).css('border-color', '#2271b1').css('background', '#f0f6fc');
+		$('.wpcfact-user-row').removeClass('selected');
+		$(this).addClass('selected');
 		
 		selectedUser = {
 			id: $(this).data('id'),
@@ -186,14 +186,20 @@ jQuery(document).ready(function($) {
 			
 			if (res.success) {
 				$('#wpcfact-resultado-box').html(`
-					<h3 style="color:green;">¡Comprobante Emitido!</h3>
-					<p>Se emitió el comprobante <strong>${res.data.serie}-${res.data.correlativo}</strong> correctamente.</p>
-					<p>Estado SUNAT: <strong>${res.data.estado}</strong></p>
+					<div class="wpcfact-result-success">
+						<i class="dashicons dashicons-yes-alt"></i>
+						<h3>¡Comprobante Emitido Exitosamente!</h3>
+						<p style="font-size:18px;">Documento: <strong>${res.data.serie}-${res.data.correlativo}</strong></p>
+						<p style="color:#64748b; margin-top:10px;">El comprobante ha sido procesado por APISUNAT y su estado actual es <strong>${res.data.estado}</strong>.</p>
+					</div>
 				`);
 			} else {
 				$('#wpcfact-resultado-box').html(`
-					<h3 style="color:red;">Error al emitir</h3>
-					<p>${res.data}</p>
+					<div class="wpcfact-result-success" style="color:#ef4444;">
+						<i class="dashicons dashicons-dismiss" style="color:#ef4444;"></i>
+						<h3 style="color:#ef4444;">Error al emitir</h3>
+						<p>${res.data}</p>
+					</div>
 				`);
 			}
 			

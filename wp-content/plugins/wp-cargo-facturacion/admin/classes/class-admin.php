@@ -50,27 +50,16 @@ class WPC_Facturacion_Admin {
 	}
 
 	public function enqueue_scripts( $hook ) {
-		if ( strpos( $hook, 'wpcfact-emitir' ) !== false ) {
-			wp_enqueue_script( 'wpcfact-wizard-js', WPC_FACTURACION_URL . 'admin/assets/js/wizard.js', array( 'jquery' ), WPC_FACTURACION_VERSION, true );
-			wp_localize_script( 'wpcfact-wizard-js', 'wpcfact_ajax', array(
-				'url'   => admin_url( 'admin-ajax.php' ),
-				'nonce' => wp_create_nonce( 'wpcfact_wizard_nonce' ),
-			) );
-			
-			// Simple inline CSS for the wizard
-			wp_add_inline_style( 'wp-admin', '
-				.wpcfact-wizard-step { display: none; background: #fff; padding: 20px; border: 1px solid #ccd0d4; box-shadow: 0 1px 1px rgba(0,0,0,.04); max-width: 800px; margin-top: 20px; }
-				.wpcfact-wizard-step.active { display: block; }
-				.wpcfact-step-nav { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
-				.wpcfact-step-indicator { padding: 5px 15px; background: #eee; border-radius: 4px; color: #666; font-weight: bold; }
-				.wpcfact-step-indicator.active { background: #2271b1; color: #fff; }
-				.wpcfact-shipment-list table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-				.wpcfact-shipment-list th, .wpcfact-shipment-list td { text-align: left; padding: 8px; border-bottom: 1px solid #ddd; }
-				.wpcfact-summary-box { background: #f8f9fa; padding: 15px; border-left: 4px solid #2271b1; margin-top: 20px; }
-				.wpcfact-summary-box p { margin: 5px 0; font-size: 14px; }
-				.wpcfact-summary-box strong { font-size: 16px; }
-			' );
+		if ( strpos( $hook, 'wpcfact' ) === false ) {
+			return;
 		}
+
+		wp_enqueue_style( 'wpcfact-wizard-css', WPC_FACTURACION_URL . 'admin/assets/css/wizard.css', array(), WPC_FACTURACION_VERSION );
+		wp_enqueue_script( 'wpcfact-wizard-js', WPC_FACTURACION_URL . 'admin/assets/js/wizard.js', array( 'jquery' ), WPC_FACTURACION_VERSION, true );
+		wp_localize_script( 'wpcfact-wizard-js', 'wpcfact_ajax', array(
+			'url'   => admin_url( 'admin-ajax.php' ),
+			'nonce' => wp_create_nonce( 'wpcfact_wizard_nonce' ),
+		) );
 	}
 
 	public function render_comprobantes_page() {

@@ -1,134 +1,141 @@
-<div class="wrap">
-	<h1>Emitir Comprobante (Factura / Boleta / Guía)</h1>
-
+<div class="wpcfact-wizard-container">
+	
 	<div class="wpcfact-step-nav">
-		<div class="wpcfact-step-indicator active" data-step="1">1. Seleccionar Cliente</div>
-		<div class="wpcfact-step-indicator" data-step="2">2. Seleccionar Envíos</div>
-		<div class="wpcfact-step-indicator" data-step="3">3. Confirmar Datos</div>
-		<div class="wpcfact-step-indicator" data-step="4">4. Resultado</div>
+		<div class="wpcfact-step-indicator active" data-step="1"><span class="step-num">1</span> Cliente</div>
+		<div class="wpcfact-step-indicator" data-step="2"><span class="step-num">2</span> Envíos</div>
+		<div class="wpcfact-step-indicator" data-step="3"><span class="step-num">3</span> Confirmar</div>
+		<div class="wpcfact-step-indicator" data-step="4"><span class="step-num">4</span> Emisión</div>
 	</div>
 
-	<!-- PASO 1: CLIENTE -->
-	<div id="step-1" class="wpcfact-wizard-step active">
-		<h3>Seleccione el tipo de comprobante y el cliente</h3>
-		<table class="form-table">
-			<tr>
-				<th>Tipo de Comprobante</th>
-				<td>
-					<select id="wpcfact-tipo-doc">
-						<option value="01">Factura Electrónica (RUC)</option>
-						<option value="03">Boleta de Venta Electrónica (DNI/CE)</option>
-						<option value="09">Guía de Remisión Remitente</option>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<th>Buscar Cliente</th>
-				<td>
-					<input type="text" id="wpcfact-buscar-cliente" class="regular-text" placeholder="Escriba nombre o documento..." autocomplete="off">
-					<button type="button" id="btn-buscar-cliente" class="button">Buscar</button>
-					<p class="description">Busca usuarios registrados en el sistema (rol: cliente).</p>
-				</td>
-			</tr>
-		</table>
+	<!-- Paso 1: Seleccionar Cliente -->
+	<div class="wpcfact-wizard-step active" id="step-1">
+		<h2>1. Iniciar Comprobante</h2>
 		
-		<div id="wpcfact-resultados-cliente" style="margin-top: 15px;"></div>
+		<div class="wpcfact-input-group">
+			<label>Tipo de Comprobante</label>
+			<select id="wpcfact-tipo-doc" class="wpcfact-select">
+				<option value="01">Factura Electrónica (RUC)</option>
+				<option value="03">Boleta Electrónica (DNI)</option>
+			</select>
+		</div>
 
-		<p class="submit">
-			<button type="button" class="button button-primary" id="btn-next-2" disabled>Siguiente Paso &raquo;</button>
-		</p>
+		<div class="wpcfact-input-group">
+			<label>Buscar Cliente (Remitente)</label>
+			<div style="display:flex; gap:10px;">
+				<input type="text" id="wpcfact-buscar-cliente" class="wpcfact-input" placeholder="Escriba nombre o documento..." style="flex:1;">
+				<button type="button" id="btn-buscar-cliente" class="wpcfact-btn">
+					<span class="dashicons dashicons-search" style="margin-top:4px;"></span> Buscar
+				</button>
+			</div>
+			<small style="color:#64748b; margin-top:5px; display:block;">Busca usuarios registrados en el sistema con rol de cliente.</small>
+		</div>
+
+		<div id="wpcfact-resultados-cliente" style="margin-top: 15px; max-height: 300px; overflow-y: auto;"></div>
+
+		<div class="wpcfact-actions" style="justify-content: flex-end;">
+			<button type="button" id="btn-next-2" class="wpcfact-btn" disabled>Continuar a Envíos &rarr;</button>
+		</div>
 	</div>
 
-	<!-- PASO 2: ENVÍOS -->
-	<div id="step-2" class="wpcfact-wizard-step">
-		<h3>Seleccione los envíos a facturar</h3>
-		<p>Mostrando envíos pendientes (sin comprobante) para el cliente seleccionado.</p>
+	<!-- Paso 2: Seleccionar Envios -->
+	<div class="wpcfact-wizard-step" id="step-2">
+		<h2>2. Seleccione los envíos a facturar</h2>
+		<p style="color:#475569; margin-bottom:20px;">Mostrando envíos pendientes (sin comprobante) para el cliente seleccionado.</p>
 		
-		<div class="wpcfact-shipment-list">
-			<table id="table-envios-pendientes">
+		<div class="wpcfact-table-container">
+			<table class="wpcfact-shipment-list" id="table-envios-pendientes">
 				<thead>
 					<tr>
-						<th><input type="checkbox" id="check-all-envios"></th>
+						<th style="width: 40px;"><input type="checkbox" id="check-all-envios" class="wpcfact-check-custom"></th>
 						<th>Tracking</th>
 						<th>Origen &rarr; Destino</th>
 						<th>Fecha</th>
-						<th>Monto (S/.)</th>
+						<th style="text-align:right;">Monto</th>
 					</tr>
 				</thead>
 				<tbody>
-					<!-- Generado por JS -->
+					<!-- Cargado por AJAX -->
 				</tbody>
 			</table>
 		</div>
 
 		<div class="wpcfact-summary-box">
-			<p>Subtotal (Base): <span id="summary-base">S/. 0.00</span></p>
-			<p>IGV (18%): <span id="summary-igv">S/. 0.00</span></p>
-			<p><strong>Total a Pagar: <span id="summary-total">S/. 0.00</span></strong></p>
+			<div class="row">
+				<span>Subtotal (Base Imponible):</span>
+				<span id="summary-base">S/. 0.00</span>
+			</div>
+			<div class="row">
+				<span>IGV (18%):</span>
+				<span id="summary-igv">S/. 0.00</span>
+			</div>
+			<div class="row total">
+				<span>Total a Pagar:</span>
+				<span id="summary-total">S/. 0.00</span>
+			</div>
 		</div>
 
-		<p class="submit">
-			<button type="button" class="button" id="btn-prev-1">&laquo; Atrás</button>
-			<button type="button" class="button button-primary" id="btn-next-3" disabled>Siguiente Paso &raquo;</button>
-		</p>
+		<div class="wpcfact-actions">
+			<button type="button" id="btn-prev-1" class="wpcfact-btn wpcfact-btn-outline">&larr; Volver</button>
+			<button type="button" id="btn-next-3" class="wpcfact-btn" disabled>Confirmar Datos &rarr;</button>
+		</div>
 	</div>
 
-	<!-- PASO 3: CONFIRMACIÓN -->
-	<div id="step-3" class="wpcfact-wizard-step">
-		<h3>Verifique y complete los datos del comprobante</h3>
+	<!-- Paso 3: Confirmar Datos -->
+	<div class="wpcfact-wizard-step" id="step-3">
+		<h2>3. Verifique y complete los datos fiscales</h2>
 		
-		<table class="form-table">
-			<tr>
-				<th>Documento Receptor</th>
-				<td>
-					<input type="text" id="wpcfact-receptor-doc" class="regular-text" placeholder="RUC o DNI">
-					<span class="description" id="wpcfact-tipo-detectado">Detectando tipo...</span>
-				</td>
-			</tr>
-			<tr>
-				<th>Razón Social / Nombre</th>
-				<td>
-					<input type="text" id="wpcfact-receptor-nombre" class="regular-text" style="width: 100%;">
-				</td>
-			</tr>
-			<tr>
-				<th>Dirección</th>
-				<td>
-					<input type="text" id="wpcfact-receptor-direccion" class="regular-text" style="width: 100%;">
-				</td>
-			</tr>
-			<tr>
-				<th>Forma de Pago</th>
-				<td>
-					<select id="wpcfact-forma-pago">
-						<option value="Contado">Contado</option>
-						<option value="Credito">Crédito</option>
-					</select>
-				</td>
-			</tr>
-			<tr>
-				<th>Descripción del Servicio (Líneas)</th>
-				<td>
-					<p class="description">Las descripciones se autogenerarán como: "Servicio de courier - Tracking: {Número}".</p>
-				</td>
-			</tr>
-		</table>
+		<div style="display:flex; gap:20px; flex-wrap:wrap;">
+			<div class="wpcfact-input-group" style="flex:1; min-width:250px;">
+				<label>Documento Receptor (RUC / DNI) <span style="color:red;">*</span></label>
+				<input type="text" id="wpcfact-receptor-doc" class="wpcfact-input">
+				<small id="wpcfact-tipo-detectado" style="display:block; margin-top:5px; font-weight:600;"></small>
+			</div>
 
-		<p class="submit">
-			<button type="button" class="button" id="btn-prev-2">&laquo; Atrás</button>
-			<button type="button" class="button button-primary button-hero" id="btn-emitir">Emitir Comprobante</button>
-		</p>
+			<div class="wpcfact-input-group" style="flex:2; min-width:300px;">
+				<label>Razón Social / Nombres <span style="color:red;">*</span></label>
+				<input type="text" id="wpcfact-receptor-nombre" class="wpcfact-input">
+			</div>
+		</div>
+
+		<div class="wpcfact-input-group">
+			<label>Dirección Fiscal</label>
+			<input type="text" id="wpcfact-receptor-direccion" class="wpcfact-input">
+		</div>
+
+		<div class="wpcfact-input-group" style="width:250px;">
+			<label>Forma de Pago</label>
+			<select id="wpcfact-forma-pago" class="wpcfact-select">
+				<option value="Contado">Contado</option>
+				<option value="Credito">Crédito</option>
+			</select>
+		</div>
+
+		<div style="background:#fffbeb; border:1px solid #fef3c7; border-left:4px solid #f59e0b; padding:15px; border-radius:6px; margin-top:20px; color:#b45309;">
+			<strong>Nota:</strong> Las líneas del comprobante se autogenerarán indicando el servicio de courier y el número de tracking de cada envío seleccionado.
+		</div>
+
+		<div class="wpcfact-actions">
+			<button type="button" id="btn-prev-2" class="wpcfact-btn wpcfact-btn-outline">&larr; Volver a envíos</button>
+			<button type="button" id="btn-emitir" class="wpcfact-btn" style="background: linear-gradient(to right, #10b981, #059669);">Emitir a la SUNAT &rarr;</button>
+		</div>
 	</div>
 
-	<!-- PASO 4: RESULTADO -->
-	<div id="step-4" class="wpcfact-wizard-step">
-		<div id="wpcfact-resultado-box">
-			<h3>Procesando...</h3>
-			<span class="spinner is-active" style="float:none;"></span>
+	<!-- Paso 4: Resultado -->
+	<div class="wpcfact-wizard-step" id="step-4">
+		<div id="wpcfact-resultado-box" style="text-align:center; padding: 40px 20px;">
+			<h2>Procesando...</h2>
+			<p>Enviando documento a la SUNAT, por favor no cierre esta ventana.</p>
+			<div class="spinner is-active" style="float:none; width:auto; height:auto; background:none;">
+				<svg width="40" height="40" viewBox="0 0 50 50" style="animation: spin 1s linear infinite;">
+					<circle cx="25" cy="25" r="20" fill="none" stroke="#3b82f6" stroke-width="4" stroke-dasharray="90 150"></circle>
+				</svg>
+				<style>@keyframes spin { 100% { transform: rotate(360deg); } }</style>
+			</div>
 		</div>
-		<p class="submit" style="display:none;" id="box-acciones-finales">
-			<a href="admin.php?page=wpcfact-emitir" class="button">Nuevo Comprobante</a>
-			<a href="admin.php?page=wpcfact-comprobantes" class="button button-primary">Ir a Comprobantes</a>
-		</p>
+		
+		<div class="wpcfact-actions" style="display:none; justify-content:center; gap:20px;" id="box-acciones-finales">
+			<a href="admin.php?page=wpcfact-emitir" class="wpcfact-btn wpcfact-btn-outline">Crear Nuevo</a>
+			<a href="admin.php?page=wpcfact-comprobantes" class="wpcfact-btn">Ir a Mis Comprobantes</a>
+		</div>
 	</div>
 </div>
