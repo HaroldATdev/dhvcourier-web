@@ -20,6 +20,16 @@ require_once DHV_RUTAS_PATH . 'includes/class-shortcode.php';
 
 add_action( 'wp_enqueue_scripts', 'dhv_rutas_enqueue_assets' );
 function dhv_rutas_enqueue_assets() {
+    if ( defined( 'WPCARGO_POD_URL' ) ) {
+        wp_enqueue_script(
+            'wpcargo-pod-signature-scripts',
+            WPCARGO_POD_URL . 'assets/js/signature_pad.umd.js',
+            array( 'jquery' ),
+            null,
+            true
+        );
+    }
+
     wp_enqueue_style(
         'dhv-rutas-css',
         DHV_RUTAS_URL . 'assets/css/dhv-rutas.css',
@@ -36,5 +46,6 @@ function dhv_rutas_enqueue_assets() {
     wp_localize_script( 'dhv-rutas-js', 'dhvRutas', array(
         'ajax_url' => admin_url('admin-ajax.php'),
         'nonce'    => wp_create_nonce('dhv_rutas_nonce'),
+        'pod_sign_nonce' => wp_create_nonce('wpcpod_signature-nonce'),
     ));
 }

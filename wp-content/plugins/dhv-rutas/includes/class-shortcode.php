@@ -17,12 +17,14 @@ class DHV_Rutas_Shortcode {
     private function inject_js() {
         $ajax_url = admin_url( 'admin-ajax.php' );
         $nonce    = wp_create_nonce( 'dhv_rutas_nonce' );
+        $pod_sign_nonce = wp_create_nonce( 'wpcpod_signature-nonce' );
         $js_file  = DHV_RUTAS_PATH . 'assets/js/dhv-rutas.js';
         if ( file_exists( $js_file ) ) {
             echo '<script id="dhv-rutas-inline-js">'
                 . 'window.dhvRutas = {'
                 .     '"ajax_url":' . wp_json_encode( $ajax_url ) . ','
-                .     '"nonce":'    . wp_json_encode( $nonce )
+                .     '"nonce":'    . wp_json_encode( $nonce ) . ','
+                .     '"pod_sign_nonce":' . wp_json_encode( $pod_sign_nonce )
                 . '};'
                 . file_get_contents( $js_file )
                 . '</script>';
