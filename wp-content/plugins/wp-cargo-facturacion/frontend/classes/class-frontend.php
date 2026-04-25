@@ -16,17 +16,7 @@ class WPC_Facturacion_Frontend {
 	}
 
 	public function enqueue_scripts() {
-		global $post;
-		if ( is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'wpcfact-emitir-dashboard' ) ) {
-			wp_enqueue_style( 'wpcfact-wizard-css', WPC_FACTURACION_URL . 'admin/assets/css/wizard.css', array(), WPC_FACTURACION_VERSION );
-			wp_enqueue_script( 'wpcfact-wizard-js', WPC_FACTURACION_URL . 'admin/assets/js/wizard.js', array( 'jquery' ), WPC_FACTURACION_VERSION, true );
-			wp_localize_script( 'wpcfact-wizard-js', 'wpcfact_ajax', array(
-				'url'         => admin_url( 'admin-ajax.php' ),
-				'nonce'       => wp_create_nonce( 'wpcfact_wizard_nonce' ),
-				'url_emitir'  => home_url( '/emitir-comprobante/' ),
-				'url_listado' => home_url( '/facturacion-sunat/' )
-			) );
-		}
+		// Enqueue scripts solo en el frontend, se llamará directamente desde el shortcode
 	}
 
 	public function add_sidebar_menu( $menus ) {
@@ -79,6 +69,15 @@ class WPC_Facturacion_Frontend {
 		if ( ! current_user_can( 'manage_options' ) && ! current_user_can( 'wpc_shipment_manager' ) ) {
 			return '<div class="wpcargo-container"><p class="alert alert-danger">No tienes permisos para emitir comprobantes.</p></div>';
 		}
+
+		wp_enqueue_style( 'wpcfact-wizard-css', WPC_FACTURACION_URL . 'admin/assets/css/wizard.css', array(), WPC_FACTURACION_VERSION );
+		wp_enqueue_script( 'wpcfact-wizard-js', WPC_FACTURACION_URL . 'admin/assets/js/wizard.js', array( 'jquery' ), WPC_FACTURACION_VERSION, true );
+		wp_localize_script( 'wpcfact-wizard-js', 'wpcfact_ajax', array(
+			'url'         => admin_url( 'admin-ajax.php' ),
+			'nonce'       => wp_create_nonce( 'wpcfact_wizard_nonce' ),
+			'url_emitir'  => home_url( '/emitir-comprobante/' ),
+			'url_listado' => home_url( '/facturacion-sunat/' )
+		) );
 
 		ob_start();
 		echo '<div class="wpcargo-container wpcfact-dashboard">';
