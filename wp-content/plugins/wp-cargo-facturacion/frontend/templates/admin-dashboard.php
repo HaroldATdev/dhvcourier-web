@@ -22,7 +22,7 @@
 
 	<div style="margin-bottom:20px; text-align:right;">
 		<!-- Enlazar al WP-Admin para crear -->
-		<a href="<?php echo admin_url('admin.php?page=wpcfact-emitir'); ?>" target="_blank" class="wpcargo-btn wpcargo-btn-primary" style="background:#2271b1; color:#fff; padding:10px 15px; text-decoration:none; border-radius:3px;">+ Emitir Nuevo Comprobante (Admin)</a>
+		<a href="<?php echo home_url('/emitir-comprobante/'); ?>" class="wpcargo-btn wpcargo-btn-primary" style="background:#2271b1; color:#fff; padding:10px 15px; text-decoration:none; border-radius:3px;">+ Emitir Nuevo Comprobante</a>
 	</div>
 
 	<table class="wpcargo-table table table-striped table-bordered" style="width:100%; background:#fff;">

@@ -197,10 +197,19 @@ jQuery(document).ready(function($) {
 				`);
 			}
 			
+			if (typeof wpcfact_ajax.url_emitir !== 'undefined') {
+				$('#box-acciones-finales a').eq(0).attr('href', wpcfact_ajax.url_emitir);
+				$('#box-acciones-finales a').eq(1).attr('href', wpcfact_ajax.url_listado);
+			}
 			$('#box-acciones-finales').show();
 		}).fail(function() {
 			$('#wpcfact-resultado-box .spinner').removeClass('is-active');
 			$('#wpcfact-resultado-box').html(`<h3 style="color:red;">Error de conexión. Intente nuevamente.</h3>`);
+			
+			if (typeof wpcfact_ajax.url_emitir !== 'undefined') {
+				$('#box-acciones-finales a').eq(0).attr('href', wpcfact_ajax.url_emitir);
+				$('#box-acciones-finales a').eq(1).attr('href', wpcfact_ajax.url_listado);
+			}
 			$('#box-acciones-finales').show();
 		});
 	});

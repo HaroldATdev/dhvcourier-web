@@ -8,8 +8,43 @@ class WPC_Facturacion_Frontend {
 	public function __construct() {
 		// Shortcode para la vista admin/manager en el dashboard frontend
 		add_shortcode( 'wpcfact-admin-dashboard', array( $this, 'render_dashboard' ) );
-		// Hook para agregar al menú de WPCargo Frontend (si usa wpcfe_after_sidebar_menus como otros plugins)
+		add_shortcode( 'wpcfact-emitir-dashboard', array( $this, 'render_emitir' ) );
+		
+		// Hook para agregar al menú de WPCargo Frontend
 		add_filter( 'wpcfe_after_sidebar_menus', array( $this, 'add_sidebar_menu' ), 40, 1 );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+	}
+
+	public function enqueue_scripts() {
+		global $post;
+		if ( is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, 'wpcfact-emitir-dashboard' ) ) {
+			wp_enqueue_script( 'wpcfact-wizard-js', WPC_FACTURACION_URL . 'admin/assets/js/wizard.js', array( 'jquery' ), WPC_FACTURACION_VERSION, true );
+			wp_localize_script( 'wpcfact-wizard-js', 'wpcfact_ajax', array(
+				'url'         => admin_url( 'admin-ajax.php' ),
+				'nonce'       => wp_create_nonce( 'wpcfact_wizard_nonce' ),
+				'url_emitir'  => home_url( '/emitir-comprobante/' ),
+				'url_listado' => home_url( '/facturacion-sunat/' )
+			) );
+			
+			// CSS adaptado para el frontend
+			wp_add_inline_style( 'wpcfact-wizard-js', '
+				.wpcfact-wizard-step { display: none; background: #fff; padding: 20px; border: 1px solid #ccd0d4; border-radius:4px; margin-top: 20px; }
+				.wpcfact-wizard-step.active { display: block; }
+				.wpcfact-step-nav { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #ddd; padding-bottom: 10px; overflow-x: auto; }
+				.wpcfact-step-indicator { padding: 5px 15px; background: #eee; border-radius: 4px; color: #666; font-weight: bold; white-space: nowrap; }
+				.wpcfact-step-indicator.active { background: #2271b1; color: #fff; }
+				.wpcfact-shipment-list table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+				.wpcfact-shipment-list th, .wpcfact-shipment-list td { text-align: left; padding: 8px; border-bottom: 1px solid #ddd; }
+				.wpcfact-summary-box { background: #f8f9fa; padding: 15px; border-left: 4px solid #2271b1; margin-top: 20px; }
+				.wpcfact-summary-box p { margin: 5px 0; font-size: 14px; }
+				.wpcfact-summary-box strong { font-size: 16px; }
+				.form-table th { text-align: left; padding-right: 15px; vertical-align: middle; }
+				.form-table td { padding: 10px 0; }
+				.regular-text { padding: 8px; border: 1px solid #ccc; border-radius: 3px; max-width: 100%; width: 300px; }
+				.button { padding: 8px 15px; border: 1px solid #ccc; background: #f7f7f7; cursor: pointer; border-radius: 3px; }
+				.button-primary { background: #2271b1; color: white; border-color: #2271b1; }
+			' );
+		}
 	}
 
 	public function add_sidebar_menu( $menus ) {
@@ -44,6 +79,18 @@ class WPC_Facturacion_Frontend {
 
 		ob_start();
 		include WPC_FACTURACION_PATH . 'frontend/templates/admin-dashboard.php';
+		return ob_get_clean();
+	}
+
+	public function render_emitir() {
+		if ( ! current_user_can( 'manage_options' ) && ! current_user_can( 'wpc_shipment_manager' ) ) {
+			return '<div class="wpcargo-container"><p class="alert alert-danger">No tienes permisos para emitir comprobantes.</p></div>';
+		}
+
+		ob_start();
+		echo '<div class="wpcargo-container wpcfact-dashboard">';
+		include WPC_FACTURACION_PATH . 'admin/templates/wizard.php';
+		echo '</div>';
 		return ob_get_clean();
 	}
 }

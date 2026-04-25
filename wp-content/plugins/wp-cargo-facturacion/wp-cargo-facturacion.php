@@ -61,6 +61,13 @@ function wpc_facturacion_activate() {
 			'post_status'  => 'publish',
 			'post_type'    => 'page',
 			'post_name'    => 'mis-comprobantes'
+		),
+		array(
+			'post_title'   => 'Emitir Comprobante',
+			'post_content' => '[wpcfact-emitir-dashboard]',
+			'post_status'  => 'publish',
+			'post_type'    => 'page',
+			'post_name'    => 'emitir-comprobante'
 		)
 	);
 
