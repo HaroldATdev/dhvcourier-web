@@ -74,7 +74,13 @@ function wpc_facturacion_activate() {
 	foreach ( $paginas as $pagina ) {
 		$page_exists = get_page_by_path( $pagina['post_name'] );
 		if ( ! $page_exists ) {
-			wp_insert_post( $pagina );
+			$page_id = wp_insert_post( $pagina );
+			if ( $page_id ) {
+				update_post_meta( $page_id, '_wp_page_template', 'dashboard.php' );
+			}
+		} else {
+			// Update meta for existing pages just in case
+			update_post_meta( $page_exists->ID, '_wp_page_template', 'dashboard.php' );
 		}
 	}
 }
