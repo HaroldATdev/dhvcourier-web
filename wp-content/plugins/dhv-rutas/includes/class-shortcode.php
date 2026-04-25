@@ -18,6 +18,15 @@ class DHV_Rutas_Shortcode {
         $ajax_url = admin_url( 'admin-ajax.php' );
         $nonce    = wp_create_nonce( 'dhv_rutas_nonce' );
         $pod_sign_nonce = wp_create_nonce( 'wpcpod_signature-nonce' );
+
+        // Inyectar librería de firma si no está ya cargada
+        if ( defined( 'WPCARGO_POD_PATH' ) ) {
+            $sig_file = WPCARGO_POD_PATH . 'assets/js/signature_pad.umd.js';
+            if ( file_exists( $sig_file ) ) {
+                echo '<script id="dhv-signature-pad-lib">' . file_get_contents( $sig_file ) . '</script>';
+            }
+        }
+
         $js_file  = DHV_RUTAS_PATH . 'assets/js/dhv-rutas.js';
         if ( file_exists( $js_file ) ) {
             echo '<script id="dhv-rutas-inline-js">'

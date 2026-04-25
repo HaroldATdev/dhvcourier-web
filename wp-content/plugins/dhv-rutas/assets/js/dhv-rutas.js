@@ -205,6 +205,22 @@
                 lockDeliveredStatusInForm($form);
                 showPodModal($modal);
 
+                // El canvas se inicializa con dimensiones 0 porque el modal estaba oculto.
+                // Disparar resize después de que el modal sea visible para que SignaturePad
+                // redimensione correctamente el canvas.
+                setTimeout(function () {
+                    var canvas = modalEl.querySelector('#pod-canvas');
+                    if (canvas) {
+                        var ratio = Math.max(window.devicePixelRatio || 1, 1);
+                        canvas.width  = canvas.offsetWidth  * ratio;
+                        canvas.height = canvas.offsetHeight * ratio;
+                        if (canvas.getContext) {
+                            canvas.getContext('2d').scale(ratio, ratio);
+                        }
+                    }
+                    window.dispatchEvent(new Event('resize'));
+                }, 350);
+
                 $form.off('submit.dhvPod').on('submit.dhvPod', function (e) {
                     e.preventDefault();
                     e.stopImmediatePropagation();
