@@ -6,11 +6,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 class WPC_Facturacion_APISunat {
 
 	private static function get_api_url() {
-		$ambiente = get_option( 'wpcfact_ambiente', 'DEV' );
-		if ( $ambiente === 'PROD' ) {
-			return 'https://back.apisunat.com'; // Replace with actual production URL if different
+		// Misma URL para DEV y PROD en APISUNAT, se diferencia por las credenciales
+		return 'https://back.apisunat.com';
+	}
+
+	public static function get_serie( string $tipo ): string {
+		if ( $tipo === '01' ) {
+			return get_option( 'wpcfact_serie_factura', 'F001' );
 		}
-		return 'https://back.apisunat.com'; // Replace with actual DEV URL
+		return get_option( 'wpcfact_serie_boleta', 'B001' );
 	}
 
 	private static function get_credentials() {

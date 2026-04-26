@@ -71,7 +71,7 @@ class WPC_Facturacion_Admin {
 	}
 
 	public function render_config_page() {
-		echo '<div class="wrap"><h1>Configuración SUNAT</h1><p>Configuración en construcción...</p></div>';
+		include WPC_FACTURACION_PATH . 'admin/templates/config.php';
 	}
 }
 
