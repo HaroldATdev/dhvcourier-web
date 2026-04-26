@@ -22,12 +22,22 @@ function wpcfe_shipment_delete_action_row( $rows, $shipment_id ){
     return $rows;
 }
 // Shipment table Callback
+function wpcfe_shipment_sucursal_header_callback(){
+    ?><th class="no-space"><?php esc_html_e( 'Sucursal', 'wpcargo-frontend-manager' ); ?></th><?php
+}
+function wpcfe_shipment_sucursal_data_callback( $shipment_id ){
+    $branch_id   = get_post_meta( $shipment_id, 'shipment_branch', true );
+    $branch_name = $branch_id && function_exists( 'wpcdm_get_branch_info' ) ? wpcdm_get_branch_info( (int) $branch_id ) : '';
+    ?><td class="no-space"><?php echo esc_html( $branch_name ); ?></td><?php
+}
 function wpcfe_shipper_receiver_shipment_header_callback(){
     $shipper_data   = wpcfe_table_header('shipper');
     $receiver_data  = wpcfe_table_header('receiver');
     ?>
     <th class="no-space"><?php echo apply_filters( 'wpcfe_shipper_table_header_label', $shipper_data['label'] ); ?></th>
+    <th class="no-space"><?php esc_html_e( 'Lugar Origen', 'wpcargo-frontend-manager' ); ?></th>
 	<th class="no-space"><?php echo apply_filters( 'wpcfe_receiver_table_header_label', $receiver_data['label'] ); ?></th>
+    <th class="no-space"><?php esc_html_e( 'Lugar Destino', 'wpcargo-frontend-manager' ); ?></th>
     <?php
 }
 function wpcfe_shipper_receiver_shipment_data_callback( $shipment_id ){
@@ -35,9 +45,13 @@ function wpcfe_shipper_receiver_shipment_data_callback( $shipment_id ){
     $receiver_data  = wpcfe_table_header('receiver');
     $shipper_meta 	= apply_filters( 'wpcfe_shipper_table_cell_data', get_post_meta( $shipment_id, $shipper_data['field_key'], true ), $shipment_id );
 	$receiver_meta 	= apply_filters( 'wpcfe_receiver_table_cell_data', get_post_meta( $shipment_id, $receiver_data['field_key'], true ), $shipment_id );
+    $lugar_origen   = get_post_meta( $shipment_id, 'lugar_origen', true );
+    $lugar_destino  = get_post_meta( $shipment_id, 'lugar_destino', true );
     ?>
-    <td class="no-space"><?php echo $shipper_meta; ?></td>
-	<td class="no-space"><?php echo $receiver_meta; ?></td>
+    <td class="no-space"><?php echo esc_html( $shipper_meta ); ?></td>
+    <td class="no-space"><?php echo esc_html( $lugar_origen ); ?></td>
+	<td class="no-space"><?php echo esc_html( $receiver_meta ); ?></td>
+    <td class="no-space"><?php echo esc_html( $lugar_destino ); ?></td>
     <?php
 }
 function wpcfe_shipment_number_header_callback(){
@@ -337,7 +351,10 @@ function wpcfe_initialize_table_hooks(){
     // Shipment table Hook
     add_action( 'wpcfe_shipment_before_tracking_number_header', 'wpcfe_shipment_number_header_callback', 25 );
     add_action( 'wpcfe_shipment_before_tracking_number_data', 'wpcfe_shipment_number_data_callback', 25 );
-    // Shipment Shipper / Receiver Column
+    // Sucursal Column (after tracking number, before shipper)
+    add_action( 'wpcfe_shipment_after_tracking_number_header', 'wpcfe_shipment_sucursal_header_callback', 20 );
+    add_action( 'wpcfe_shipment_after_tracking_number_data', 'wpcfe_shipment_sucursal_data_callback', 20 );
+    // Shipment Shipper / Receiver Column (with lugar_origen and lugar_destino)
     add_action( 'wpcfe_shipment_after_tracking_number_header', 'wpcfe_shipper_receiver_shipment_header_callback', 25 );
     add_action( 'wpcfe_shipment_after_tracking_number_data', 'wpcfe_shipper_receiver_shipment_data_callback', 25 );
     // Shipment Type Column

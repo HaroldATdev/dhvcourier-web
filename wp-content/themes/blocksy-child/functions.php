@@ -130,6 +130,8 @@ add_filter( 'wpcfe_billing_address_fields', 'dhv_custom_wpcargo_fields' );
  * =========================================
  */
 function dhv_departamento_ciudad_script() {
+    $saved_dep  = is_user_logged_in() ? (string) get_user_meta( get_current_user_id(), 'departamento', true ) : '';
+    $saved_city = is_user_logged_in() ? (string) get_user_meta( get_current_user_id(), 'billing_city', true ) : '';
 ?>
 <script>
 document.addEventListener("DOMContentLoaded", function() {
@@ -162,28 +164,35 @@ document.addEventListener("DOMContentLoaded", function() {
         "Ucayali": ["Coronel Portillo", "Atalaya", "Padre Abad", "Purús"]
     };
 
-    const dep = document.querySelector('[name="departamento"]');
+    const dep  = document.querySelector('[name="departamento"]');
     const city = document.querySelector('[name="billing_city"]');
 
     if (!dep || !city) return;
 
-    dep.addEventListener("change", function() {
-
-        const selected = this.value;
+    function populateCities(department, selectedCity) {
         city.innerHTML = '';
-
-        if (!data[selected]) {
+        if (!data[department]) {
             city.innerHTML = '<option value="">Seleccione</option>';
             return;
         }
-
-        data[selected].forEach(function(item){
-            const option = document.createElement("option");
+        data[department].forEach(function(item) {
+            const option = document.createElement('option');
             option.value = item;
             option.textContent = item;
+            if (selectedCity && item === selectedCity) option.selected = true;
             city.appendChild(option);
         });
+    }
 
+    // Pre-poblar ciudades al cargar si hay departamento guardado
+    var savedDep  = <?php echo wp_json_encode( $saved_dep ); ?>;
+    var savedCity = <?php echo wp_json_encode( $saved_city ); ?>;
+    if (savedDep && dep.value === savedDep) {
+        populateCities(savedDep, savedCity);
+    }
+
+    dep.addEventListener("change", function() {
+        populateCities(this.value, '');
     });
 
 });

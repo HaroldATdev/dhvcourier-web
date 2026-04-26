@@ -1060,7 +1060,7 @@ function wpcte_footer_crear() {
             wpcte_insertDir(data.direccion||'');window._clienteCiudad=data.ciudad||'';
         }
         function ensureClientShipmentField(uid){
-            var select=document.getElementById('registered_client')||f.querySelector('[name="registered_shipper"]');
+            var select=document.getElementById('registered_client')||f.querySelector('select[name="registered_shipper"]');
             if(select){
                 var optionExists=select.querySelector('option[value="'+uid+'"]');
                 if(!optionExists){
@@ -1068,7 +1068,7 @@ function wpcte_footer_crear() {
                 }
                 select.value=String(uid);
                 select.setAttribute('disabled','disabled');
-                var group=select.closest('.form-group')||select.parentElement;
+                var group=select.closest('.form-group,.md-form,.card')||select.parentElement;
                 if(group)group.style.display='none';
             }
             var hidden=f.querySelector('input[name="registered_shipper"][type="hidden"]');
@@ -1078,6 +1078,7 @@ function wpcte_footer_crear() {
                 hidden.name='registered_shipper';
                 f.appendChild(hidden);
             }
+            hidden.removeAttribute('disabled');
             hidden.value=uid;
         }
         function loadClientData(uid){
@@ -1363,7 +1364,10 @@ function wpcte_footer_editar() {
 
         $('[name=location],[name=remarks]').removeAttr('required');
         $('.card-header').filter(function(){return $(this).text().trim()==='Paquetes';}).closest('.card').parent().hide();
-        $('#package_id').closest('.form-group,.mb-4').hide();
+        var $package = $('#package_id');
+        $package.closest('.form-group,.md-form').hide();
+        $package.filter('div').hide();
+        $package.closest('.after-shipments-info').show();
 
         // Mover badge y cotizador al inicio
         setTimeout(function(){

@@ -17,6 +17,14 @@
         </div>
     <?php else : ?>
 
+        <div class="dhv-global-search-wrap">
+            <input
+                type="text"
+                class="dhv-global-search"
+                placeholder="Buscar en todas las entregas por destinatario, tracking o telefono"
+            >
+        </div>
+
         <?php foreach ( $grouped as $destinatario => $pedidos ) :
             $slug  = 'dhv-dest-' . sanitize_title( $destinatario );
             $total = count( $pedidos );
@@ -71,15 +79,22 @@
                 </div>
 
                 <!-- Lista de pedidos -->
-                <?php foreach ( $pedidos as $pedido ) : ?>
+                <?php foreach ( $pedidos as $pedido ) :
+                    $estado_norm  = function_exists( 'remove_accents' )
+                        ? strtolower( remove_accents( (string) $pedido['estado'] ) )
+                        : strtolower( (string) $pedido['estado'] );
+                    $is_entregado = ( $estado_norm === 'entregado' );
+                ?>
                  <div class="dhv-pedido-row"
                      data-id="<?php echo esc_attr( $pedido['id'] ); ?>"
                      data-tracking="<?php echo esc_attr( $pedido['tracking'] ); ?>"
+                     data-estado="<?php echo esc_attr( $pedido['estado'] ); ?>"
                      data-telefono="<?php echo esc_attr( preg_replace( '/\D+/', '', (string) $pedido['telefono'] ) ); ?>">
                     <div class="dhv-pedido-left">
                         <input type="checkbox"
                                class="dhv-pedido-check"
                                data-group="<?php echo esc_attr( $slug ); ?>"
+                               <?php disabled( $is_entregado ); ?>
                                data-id="<?php echo esc_attr( $pedido['id'] ); ?>">
                         <div class="dhv-pedido-info">
                             <span class="dhv-tracking-dot dhv-entrega-dot"></span>
@@ -104,19 +119,23 @@
                         </div>
                     </div>
                     <div class="dhv-pedido-right">
-                        <select class="dhv-status-select dhv-single-status dhv-entrega-single-status"
-                                data-id="<?php echo esc_attr( $pedido['id'] ); ?>">
-                            <option value="En espera"   <?php selected( $pedido['estado'], 'En espera' ); ?>>En espera</option>
-                            <option value="En ruta"      <?php selected( $pedido['estado'], 'En ruta' ); ?>>En ruta</option>
-                            <option value="Entregado"    <?php selected( $pedido['estado'], 'Entregado' ); ?>>Entregado</option>
-                            <option value="Devuelto"     <?php selected( $pedido['estado'], 'Devuelto' ); ?>>Devuelto</option>
-                            <option value="Reprogramado" <?php selected( $pedido['estado'], 'Reprogramado' ); ?>>Reprogramado</option>
-                            <option value="Anulado"      <?php selected( $pedido['estado'], 'Anulado' ); ?>>Anulado</option>
-                        </select>
-                        <button class="dhv-btn dhv-btn-apply dhv-single-apply dhv-entrega-single-apply"
-                                data-id="<?php echo esc_attr( $pedido['id'] ); ?>">
-                            Aplicar
-                        </button>
+                        <?php if ( $is_entregado ) : ?>
+                            <span class="dhv-status-readonly">Entregado</span>
+                        <?php else : ?>
+                            <select class="dhv-status-select dhv-single-status dhv-entrega-single-status"
+                                    data-id="<?php echo esc_attr( $pedido['id'] ); ?>">
+                                <option value="En espera"   <?php selected( $pedido['estado'], 'En espera' ); ?>>En espera</option>
+                                <option value="En ruta"      <?php selected( $pedido['estado'], 'En ruta' ); ?>>En ruta</option>
+                                <option value="Entregado"    <?php selected( $pedido['estado'], 'Entregado' ); ?>>Entregado</option>
+                                <option value="Devuelto"     <?php selected( $pedido['estado'], 'Devuelto' ); ?>>Devuelto</option>
+                                <option value="Reprogramado" <?php selected( $pedido['estado'], 'Reprogramado' ); ?>>Reprogramado</option>
+                                <option value="Anulado"      <?php selected( $pedido['estado'], 'Anulado' ); ?>>Anulado</option>
+                            </select>
+                            <button class="dhv-btn dhv-btn-apply dhv-single-apply dhv-entrega-single-apply"
+                                    data-id="<?php echo esc_attr( $pedido['id'] ); ?>">
+                                Aplicar
+                            </button>
+                        <?php endif; ?>
                         <span class="dhv-status-badge dhv-estado-<?php echo esc_attr( sanitize_title( $pedido['estado'] ) ); ?>">
                             <?php echo esc_html( $pedido['estado'] ); ?>
                         </span>

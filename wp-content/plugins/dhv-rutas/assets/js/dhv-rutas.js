@@ -27,12 +27,67 @@
         return (value || '').toString().replace(/\D+/g, '');
     }
 
+    function rowMatchesTerm(row, termText, termDigits) {
+        if (!row) return false;
+        if (!termText && !termDigits) return true;
+
+        var card = row.closest('.dhv-cliente-card');
+        var cardName = normalizeText(card ? (card.dataset.cliente || card.dataset.dest || '') : '');
+        var tracking = normalizeText(row.dataset.tracking || (row.querySelector('.dhv-tracking-num') ? row.querySelector('.dhv-tracking-num').textContent : ''));
+        var direccion = normalizeText(row.querySelector('.dhv-pedido-direccion') ? row.querySelector('.dhv-pedido-direccion').textContent : '');
+        var phoneDigits = onlyDigits(row.dataset.telefono || (row.querySelector('.dhv-tel-link') ? row.querySelector('.dhv-tel-link').textContent : ''));
+        var phoneText = normalizeText(phoneDigits);
+
+        var match = !termText;
+        if (!match) {
+            match = tracking.indexOf(termText) !== -1 || cardName.indexOf(termText) !== -1 || direccion.indexOf(termText) !== -1;
+        }
+        if (!match && termDigits) {
+            match = phoneDigits.indexOf(termDigits) !== -1;
+        }
+        if (!match && termText) {
+            match = phoneText.indexOf(termText) !== -1;
+        }
+
+        return match;
+    }
+
+    function updateGlobalCardVisibility(wrap) {
+        if (!wrap) return;
+        var globalInput = wrap.querySelector('.dhv-global-search');
+        var hasGlobal = !!(globalInput && normalizeText(globalInput.value));
+
+        wrap.querySelectorAll('.dhv-cliente-card').forEach(function (card) {
+            if (!hasGlobal) {
+                card.classList.remove('dhv-card-hidden-global');
+                return;
+            }
+            var hasVisibleRows = !!card.querySelector('.dhv-pedido-row:not(.dhv-row-hidden)');
+            card.classList.toggle('dhv-card-hidden-global', !hasVisibleRows);
+        });
+    }
+
+    function applyGlobalSearch(input) {
+        var wrap = input.closest('.dhv-recojo-wrap, .dhv-entrega-wrap');
+        if (!wrap) return;
+
+        wrap.querySelectorAll('.dhv-card-search').forEach(function (cardSearchInput) {
+            applyCardSearch(cardSearchInput);
+        });
+
+        updateGlobalCardVisibility(wrap);
+    }
+
     function applyCardSearch(input) {
         var group = input.dataset.group;
         if (!group) return;
 
+        var wrap = input.closest('.dhv-recojo-wrap, .dhv-entrega-wrap');
+        var globalInput = wrap ? wrap.querySelector('.dhv-global-search') : null;
         var termText = normalizeText(input.value);
         var termDigits = onlyDigits(input.value);
+        var globalTermText = normalizeText(globalInput ? globalInput.value : '');
+        var globalTermDigits = onlyDigits(globalInput ? globalInput.value : '');
         var rows = document.querySelectorAll('.dhv-pedido-check[data-group="' + group + '"]');
         var visible = 0;
 
@@ -40,20 +95,7 @@
             var row = cb.closest('.dhv-pedido-row');
             if (!row) return;
 
-            var tracking = normalizeText(row.dataset.tracking || (row.querySelector('.dhv-tracking-num') ? row.querySelector('.dhv-tracking-num').textContent : ''));
-            var phoneDigits = onlyDigits(row.dataset.telefono || (row.querySelector('.dhv-tel-link') ? row.querySelector('.dhv-tel-link').textContent : ''));
-            var phoneText = normalizeText(phoneDigits);
-
-            var match = !termText;
-            if (!match) {
-                match = tracking.indexOf(termText) !== -1;
-            }
-            if (!match && termDigits) {
-                match = phoneDigits.indexOf(termDigits) !== -1;
-            }
-            if (!match && termText) {
-                match = phoneText.indexOf(termText) !== -1;
-            }
+            var match = rowMatchesTerm(row, termText, termDigits) && rowMatchesTerm(row, globalTermText, globalTermDigits);
 
             if (match) {
                 row.classList.remove('dhv-row-hidden');
@@ -80,6 +122,7 @@
             empty.style.display = visible === 0 ? 'block' : 'none';
         }
 
+        updateGlobalCardVisibility(wrap);
         updateCount(group);
     }
 
@@ -101,6 +144,215 @@
             .catch(function () { showToast('Error de conexión.', 'error'); });
     }
 
+    function ensurePodModal() {
+        var modal = document.getElementById('wpc_pod_signature-modal');
+        if (modal) return modal;
+
+        var html = '' +
+            '<div class="modal fade top" id="wpc_pod_signature-modal" tabindex="-1" role="dialog" aria-labelledby="podModalPreview" aria-hidden="true">' +
+                '<div class="modal-dialog modal-lg modal-frame modal-top" role="document">' +
+                    '<div class="modal-content">' +
+                        '<div class="modal-header">' +
+                            '<h5 class="modal-title" id="podModalPreview">Proof of Delivery</h5>' +
+                            '<button type="button" class="close" data-dismiss="modal" aria-label="Close">' +
+                                '<span aria-hidden="true">&times;</span>' +
+                            '</button>' +
+                        '</div>' +
+                        '<div class="modal-body my-4">Loading...</div>' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
+
+        document.body.insertAdjacentHTML('beforeend', html);
+        return document.getElementById('wpc_pod_signature-modal');
+    }
+
+    function showPodModal($modal) {
+        if ($modal && typeof $modal.modal === 'function') {
+            $modal.modal('show');
+            return;
+        }
+        if ($modal && $modal.length) {
+            $modal.css('display', 'block').addClass('show');
+        }
+    }
+
+    function hidePodModal($modal) {
+        if ($modal && typeof $modal.modal === 'function') {
+            $modal.modal('hide');
+            return;
+        }
+        if ($modal && $modal.length) {
+            $modal.css('display', 'none').removeClass('show');
+        }
+    }
+
+    function lockDeliveredStatusInForm($form) {
+        if (!$form || !$form.length) return;
+
+        var $status = $form.find('#status');
+        if ($status.length) {
+            $status.val('Entregado').trigger('change');
+            $status.prop('disabled', true).addClass('disabled');
+        }
+
+        var $hiddenStatus = $form.find('input[name="status"][data-autogenerated="1"]');
+        if (!$hiddenStatus.length) {
+            $hiddenStatus = jQuery('<input>', {
+                type: 'hidden',
+                name: 'status',
+                value: 'Entregado',
+                'data-autogenerated': '1'
+            });
+            $form.append($hiddenStatus);
+        } else {
+            $hiddenStatus.val('Entregado');
+        }
+    }
+
+    function applyDeliveredBadge(row) {
+        var slug = 'entregado';
+        var badge = row.querySelector('.dhv-status-badge');
+
+        if (badge) {
+            badge.textContent = 'Entregado';
+            badge.className = 'dhv-status-badge dhv-estado-' + slug;
+        }
+
+        if (row) {
+            row.dataset.estado = 'Entregado';
+        }
+
+        lockDeliveredRow(row);
+    }
+
+    function lockDeliveredRow(row) {
+        if (!row) return;
+
+        var right = row.querySelector('.dhv-pedido-right');
+        if (!right) return;
+
+        var select = right.querySelector('.dhv-single-status');
+        var readonly = right.querySelector('.dhv-status-readonly');
+        if (select) {
+            if (!readonly) {
+                readonly = document.createElement('span');
+                readonly.className = 'dhv-status-readonly';
+                readonly.textContent = 'Entregado';
+                right.insertBefore(readonly, select);
+            }
+            select.remove();
+        }
+
+        var btn = right.querySelector('.dhv-single-apply');
+        if (btn) {
+            btn.remove();
+        }
+
+        var cb = row.querySelector('.dhv-pedido-check');
+        if (cb) {
+            cb.checked = false;
+            cb.disabled = true;
+            cb.classList.add('is-locked');
+        }
+        row.classList.remove('is-selected');
+    }
+
+    function openPodModalForEntrega(shipmentId, row, sBtn) {
+        var modalEl = ensurePodModal();
+        var $modal = jQuery(modalEl);
+        var $modalBody = $modal.find('.modal-body');
+
+        jQuery.ajax({
+            type: 'POST',
+            url: dhvRutas.ajax_url,
+            data: {
+                action: 'show_signaturepad',
+                sid: shipmentId
+            },
+            beforeSend: function () {
+                sBtn.classList.add('loading');
+                sBtn.textContent = '...';
+                jQuery('body').append('<div class="wpcargo-loading">Cargando formulario de firma...</div>');
+            },
+            success: function (response) {
+                jQuery('body .wpcargo-loading').remove();
+                $modalBody.html(response);
+
+                var $form = $modal.find('#wpc_pod_signature-form');
+                lockDeliveredStatusInForm($form);
+                showPodModal($modal);
+
+                // El canvas se inicializa con dimensiones 0 porque el modal estaba oculto.
+                // Disparar resize después de que el modal sea visible para que SignaturePad
+                // redimensione correctamente el canvas.
+                setTimeout(function () {
+                    var canvas = modalEl.querySelector('#pod-canvas');
+                    if (canvas) {
+                        var ratio = Math.max(window.devicePixelRatio || 1, 1);
+                        canvas.width  = canvas.offsetWidth  * ratio;
+                        canvas.height = canvas.offsetHeight * ratio;
+                        if (canvas.getContext) {
+                            canvas.getContext('2d').scale(ratio, ratio);
+                        }
+                    }
+                    window.dispatchEvent(new Event('resize'));
+                }, 350);
+
+                $form.off('submit.dhvPod').on('submit.dhvPod', function (e) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    e.stopPropagation();
+
+                    var podNonce = (window.dhvRutas && window.dhvRutas.pod_sign_nonce) ? window.dhvRutas.pod_sign_nonce : '';
+                    if (!podNonce) {
+                        showToast('No se encontró nonce de firma POD.', 'error');
+                        return;
+                    }
+
+                    var formData = jQuery(this).serializeArray();
+
+                    jQuery.ajax({
+                        type: 'POST',
+                        url: dhvRutas.ajax_url,
+                        dataType: 'json',
+                        data: {
+                            action: 'pod_signed',
+                            nonce: podNonce,
+                            formData: formData
+                        },
+                        beforeSend: function () {
+                            jQuery('body').append('<div class="wpcargo-loading">Guardando POD...</div>');
+                        },
+                        success: function (res) {
+                            jQuery('body .wpcargo-loading').remove();
+                            if (res && res.status === 'error') {
+                                showToast(res.message || 'Error al guardar POD.', 'error');
+                                return;
+                            }
+
+                            applyDeliveredBadge(row);
+                            showToast('Actualizado: Entregado', 'success');
+                            hidePodModal($modal);
+                        },
+                        error: function () {
+                            jQuery('body .wpcargo-loading').remove();
+                            showToast('Error al guardar POD.', 'error');
+                        }
+                    });
+                });
+            },
+            error: function () {
+                jQuery('body .wpcargo-loading').remove();
+                showToast('Error al cargar el formulario de firma.', 'error');
+            },
+            complete: function () {
+                sBtn.classList.remove('loading');
+                sBtn.textContent = 'Aplicar';
+            }
+        });
+    }
+
     /** Detecta si un elemento pertenece a la sección de entrega */
     function isEntrega(el) {
         return !!el.closest('.dhv-entrega-wrap');
@@ -120,8 +372,20 @@
         if (sBtn) {
             var id     = sBtn.dataset.id;
             var row    = sBtn.closest('.dhv-pedido-row');
-            var status = row.querySelector('.dhv-single-status').value;
+            var statusSelect = row.querySelector('.dhv-single-status');
+            if (!statusSelect) {
+                showToast('Este pedido ya esta en estado entregado.', 'error');
+                return;
+            }
+
+            var status = statusSelect.value;
             if (!status) { showToast('Selecciona un estado.', 'error'); return; }
+
+            // Entrega + Entregado => abrir modal POD y no guardar estado directo
+            if (isEntrega(sBtn) && normalizeText(status) === 'entregado') {
+                openPodModalForEntrega(id, row, sBtn);
+                return;
+            }
 
             var action = isEntrega(sBtn)
                 ? 'dhv_update_entrega_status'
@@ -178,7 +442,11 @@
                         var b = r.querySelector('.dhv-status-badge');
                         var s = r.querySelector('.dhv-single-status');
                         if (b) { b.textContent = status2; b.className = 'dhv-status-badge dhv-estado-' + slug2; }
-                        if (s) s.value = status2;
+                        if (normalizeText(status2) === 'entregado') {
+                            lockDeliveredRow(r);
+                        } else if (s) {
+                            s.value = status2;
+                        }
                     });
                     showToast(res.data.message, 'success');
                 } else {
@@ -218,6 +486,11 @@
     document.addEventListener('input', function (e) {
         if (e.target.classList.contains('dhv-card-search')) {
             applyCardSearch(e.target);
+            return;
+        }
+
+        if (e.target.classList.contains('dhv-global-search')) {
+            applyGlobalSearch(e.target);
         }
     });
 }());
