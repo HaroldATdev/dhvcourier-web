@@ -127,45 +127,34 @@ class WPC_Facturacion_Ajax {
 
 		$envios = $wpdb->get_results( $sql );
 
-		// DEBUG TEMPORAL: si no hay resultados, enviar info de diagnóstico
-		if ( empty( $envios ) ) {
-			// Buscar cualquier envio de este user sin filtro de meta_key
-			$debug_all = $wpdb->get_results( $wpdb->prepare(
-				"SELECT p.ID, p.post_title, pm.meta_key, pm.meta_value 
-				FROM {$wpdb->posts} p
-				INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id
-				WHERE p.post_type = 'wpcargo_shipment'
-				AND p.post_status = 'publish'
-				AND pm.meta_key IN ('registered_shipper', 'wpcargo_cliente', 'wpcargo_client')
-				LIMIT 10",
-			) );
-			wp_send_json_success( array(
-				'debug' => true,
-				'user_id_buscado' => $user_id,
-				'tipo_user_id' => gettype( $user_id ),
-				'muestra_envios_sistema' => $debug_all,
-				'last_sql_error' => $wpdb->last_error,
-			) );
-		}
 		$resultados = array();
 
 		foreach ( $envios as $envio ) {
-			$freight_raw = get_post_meta( $envio->ID, 'wpcargo_total_freight', true );
-			// Limpiar formato numérico (ej: $20,000.00 -> 20000.00)
+			// DHV Courier guarda el monto en 'monto'; wpcargo_total_freight como fallback
+			$freight_raw = get_post_meta( $envio->ID, 'monto', true );
+			if ( empty( $freight_raw ) ) {
+				$freight_raw = get_post_meta( $envio->ID, 'wpcargo_total_freight', true );
+			}
 			$freight = floatval( preg_replace( '/[^0-9.]/', '', $freight_raw ) );
 
 			if ( $freight <= 0 ) {
-				continue; // Solo envíos con monto
+				continue;
 			}
 
-			$origen  = get_post_meta( $envio->ID, 'wpcargo_origin_field', true );
-			$destino = get_post_meta( $envio->ID, 'wpcargo_destination', true );
+			$origen  = get_post_meta( $envio->ID, 'lugar_origen', true );
+			if ( empty( $origen ) ) $origen = get_post_meta( $envio->ID, 'wpcargo_origin_field', true );
+
+			$destino = get_post_meta( $envio->ID, 'lugar_destino', true );
+			if ( empty( $destino ) ) $destino = get_post_meta( $envio->ID, 'wpcargo_destination', true );
+
+			$tracking = get_post_meta( $envio->ID, 'remitente', true );
+			if ( empty( $tracking ) ) $tracking = $envio->post_title;
 
 			$resultados[] = array(
 				'id'      => $envio->ID,
-				'title'   => $envio->post_title,
+				'title'   => $envio->post_title,  // Número de tracking (ej: DHV-0000051)
 				'date'    => gmdate( 'd/m/Y', strtotime( $envio->post_date ) ),
-				'ruta'    => $origen . ' &rarr; ' . $destino,
+				'ruta'    => $origen . ' → ' . $destino,
 				'monto'   => $freight,
 			);
 		}
