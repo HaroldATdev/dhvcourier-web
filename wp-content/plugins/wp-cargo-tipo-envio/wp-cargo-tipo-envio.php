@@ -589,48 +589,41 @@ function wpcte_get_label_modalidad( $mod ) {
 }
 
 /* ======================================================================
-   CSS FRONT-END (PRUEBA DE CANDADO Y COLOR NOTORIO)
+   CSS FRONT-END - CON FUNCIÓN CANDADO Y TEST NARANJA
    ====================================================================== */
 function wpcte_inline_css() {
-    // 1. EL CANDADO: Si es el administrador (Panel de Harold), cortamos aquí.
+    // 1. EL CANDADO: Si es admin, detenemos la función aquí.
     if ( is_admin() ) {
         return;
     }
 
-    // 2. CONDICIÓN DE CARGA: Aseguramos que cargue en el frontend correcto.
+    // 2. LA CONDICIÓN ORIGINAL
     $wpcfe = $_GET['wpcfe'] ?? '';
-    global $post;
-    $has_shortcode = is_a( $post, 'WP_Post' ) && 
-        ( has_shortcode( $post->post_content, 'wpcte_selector_tipo' ) || 
-          has_shortcode( $post->post_content, 'tarifario_dhv' ) );
-          
-    if ( $wpcfe !== 'add' && $wpcfe !== 'update' && ! $has_shortcode ) {
-        return;
-    }
-
-    // 3. EL CSS NOTORIO: Solo debe verse en la web general
+    if ( $wpcfe !== 'add' && $wpcfe !== 'update' ) return;
     ?>
-    <style id="wpcte-css-prueba">
-    /* TEST VISUAL: Naranja brillante con borde negro */
+    <style id="wpcte-css">
+    /* TEST VISUAL: Si ves esto NARANJA en la web pública, funciona */
     #wpcte-cotizador {
         background: #ff9800 !important; 
         border: 10px solid #000 !important; 
         padding: 40px !important;
         border-radius: 20px !important;
         margin-bottom: 1.5rem !important;
-        box-shadow: 0 10px 30px rgba(255, 152, 0, 0.6) !important;
     }
-    
+
     #wpcte-cotizador h5 { 
         font-weight: 700 !important; 
         color: #fff !important; 
         font-size: 1.5rem !important;
     }
-    
-    .wpcte-cot-row { 
-        display: flex; 
-        flex-wrap: wrap; 
-        gap: .75rem; 
+
+    /* Forzamos visibilidad en web pública */
+    #wpcte-cotizador select, #wpcte-cotizador input {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        height: 40px !important;
+        border: 1px solid #ccc !important;
     }
     </style>
     <?php
