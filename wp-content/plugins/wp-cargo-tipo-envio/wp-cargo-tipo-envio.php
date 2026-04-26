@@ -589,56 +589,50 @@ function wpcte_get_label_modalidad( $mod ) {
 }
 
 /* ======================================================================
-   CSS FRONT-END
+   CSS FRONT-END (PRUEBA DE CANDADO Y COLOR NOTORIO)
    ====================================================================== */
 function wpcte_inline_css() {
+    // 1. EL CANDADO: Si es el administrador (Panel de Harold), cortamos aquí.
+    if ( is_admin() ) {
+        return;
+    }
+
+    // 2. CONDICIÓN DE CARGA: Aseguramos que cargue en el frontend correcto.
     $wpcfe = $_GET['wpcfe'] ?? '';
-    if ( $wpcfe !== 'add' && $wpcfe !== 'update' ) return;
+    global $post;
+    $has_shortcode = is_a( $post, 'WP_Post' ) && 
+        ( has_shortcode( $post->post_content, 'wpcte_selector_tipo' ) || 
+          has_shortcode( $post->post_content, 'tarifario_dhv' ) );
+          
+    if ( $wpcfe !== 'add' && $wpcfe !== 'update' && ! $has_shortcode ) {
+        return;
+    }
+
+    // 3. EL CSS NOTORIO: Solo debe verse en la web general
     ?>
-<style id="wpcte-css">
-/* ── Selector tipo ─────────────────────────────────────────── */
-#wpcte-selector{padding:2rem 0;text-align:center;}
-.wpcte-title{font-size:1.3rem;font-weight:700;color:#222;margin-bottom:1.5rem;}
-.wpcte-grid{display:flex;gap:1.25rem;justify-content:center;flex-wrap:wrap;}
-.wpcte-card{display:flex;flex-direction:column;align-items:center;gap:.6rem;background:#fff;border:2px solid #e4e4e4;border-radius:16px;padding:2rem 1.5rem;min-width:160px;max-width:210px;flex:1;text-decoration:none!important;color:#333!important;transition:border-color .2s,box-shadow .2s,transform .15s;box-shadow:0 2px 12px rgba(0,0,0,.07);cursor:pointer;}
-.wpcte-card:hover{border-color:#00a8e8;box-shadow:0 8px 28px rgba(0,168,232,.2);transform:translateY(-4px);color:#00a8e8!important;}
-.wpcte-card .fa{font-size:2.5rem;color:#00a8e8;}
-/* ── Badge ─────────────────────────────────────────────────── */
-.wpcte-badge{display:inline-flex;align-items:center;gap:.6rem;background:#e8f5fd;border:1px solid #b3ddf5;color:#0077b6;border-radius:8px;padding:.5rem 1rem;font-size:.92rem;margin-bottom:1rem;}
-/* ── Pantallas ─────────────────────────────────────────────── */
-#wpcte-pantalla-cotizador{padding:1rem 0;}
-#wpcte-pantalla-cotizador .wpcte-back-btn{background:none;border:1px solid #b3ddf5;color:#0077b6;padding:.35rem .9rem;border-radius:8px;cursor:pointer;font-size:.85rem;margin-bottom:1rem;display:inline-flex;align-items:center;gap:.4rem;}
-#wpcte-pantalla-cotizador .wpcte-back-btn:hover{background:#e8f5fd;}
-/* ── Cotizador box ─────────────────────────────────────────── */
-#wpcte-cotizador{background:#fff;border:1.5px solid #d0e8f5;border-radius:14px;padding:1.5rem 1.75rem;margin-bottom:1.5rem;box-shadow:0 2px 12px rgba(0,120,200,.07);}
-#wpcte-cotizador h5{font-weight:700;color:#0077b6;margin-bottom:1rem;font-size:1.05rem;}
-.wpcte-cot-row{display:flex;flex-wrap:wrap;gap:.75rem;align-items:flex-end;margin-bottom:.75rem;}
-.wpcte-cot-group{display:flex;flex-direction:column;flex:1;min-width:160px;}
-.wpcte-cot-group label{font-size:.8rem;font-weight:600;color:#555;margin-bottom:3px;}
-#wpcte-cotizador select,#wpcte-cotizador input[type=number],#wpcte-cotizador input[type=text]{display:block!important;visibility:visible!important;opacity:1!important;height:34px!important;width:100%!important;padding:4px 8px!important;border:1px solid #ccc!important;border-radius:8px!important;font-size:.9rem!important;background:#fff!important;box-sizing:border-box!important;}
-#wpcte-cotizador select{appearance:auto!important;-webkit-appearance:menulist!important;}
-#wpcte-cotizador input[type=number]{-webkit-appearance:textfield!important;}
-#wpcte-cotizador input[readonly]{background:#f0f9ff!important;font-weight:600;color:#0077b6;}
-#wpcte-cot-btn{background:#0077b6;color:#fff;border:none;padding:.5rem 1.4rem;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;margin-top:4px;}
-#wpcte-cot-btn:hover{background:#005f99;}
-#wpcte-cot-resultado{margin-top:.75rem;padding:.75rem 1rem;border-radius:8px;background:#f0f9ff;border:1px solid #b3ddf5;font-size:.9rem;line-height:1.8;display:none;}
-#wpcte-cot-resultado.ok{display:block;}
-#wpcte-cot-resultado strong{color:#0077b6;}
-.wpcte-desglose{margin-top:.5rem;border-top:1px solid #d0e8f5;padding-top:.5rem;font-size:.85rem;color:#555;}
-.wpcte-desglose-row{display:flex;justify-content:space-between;padding:1px 0;}
-.wpcte-total-row{display:flex;justify-content:space-between;font-weight:700;color:#0077b6;font-size:.95rem;border-top:1px solid #b3ddf5;margin-top:3px;padding-top:3px;}
-/* ── Botón continuar ──────────────────────────────────────── */
-#wpcte-btn-continuar{background:#2a9d8f;color:#fff;border:none;padding:.55rem 1.6rem;border-radius:8px;font-size:.95rem;font-weight:600;cursor:pointer;margin-top:.5rem;display:none;}
-#wpcte-btn-continuar.visible{display:inline-block;}
-#wpcte-btn-continuar:hover{background:#21867a;}
-/* ── Editar: verificar ─────────────────────────────────────── */
-#wpcte-cot-edit-wrap{background:#f8fbff;border:1.5px solid #d0e8f5;border-radius:12px;padding:1.2rem 1.5rem;margin-bottom:1.2rem;}
-#wpcte-verificar-btn{background:#0077b6;color:#fff;border:none;padding:.5rem 1.4rem;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:.5rem;margin-bottom:.75rem;}
-#wpcte-verificar-btn:hover{background:#005f99;}
-#wpcte-cot-body{display:none;padding-top:.5rem;}
-#wpcte-cot-body.open{display:block;}
-#package_id{display:none!important;}
-</style>
+    <style id="wpcte-css-prueba">
+    /* TEST VISUAL: Naranja brillante con borde negro */
+    #wpcte-cotizador {
+        background: #ff9800 !important; 
+        border: 10px solid #000 !important; 
+        padding: 40px !important;
+        border-radius: 20px !important;
+        margin-bottom: 1.5rem !important;
+        box-shadow: 0 10px 30px rgba(255, 152, 0, 0.6) !important;
+    }
+    
+    #wpcte-cotizador h5 { 
+        font-weight: 700 !important; 
+        color: #fff !important; 
+        font-size: 1.5rem !important;
+    }
+    
+    .wpcte-cot-row { 
+        display: flex; 
+        flex-wrap: wrap; 
+        gap: .75rem; 
+    }
+    </style>
     <?php
 }
 
