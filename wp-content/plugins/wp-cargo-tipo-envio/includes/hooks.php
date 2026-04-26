@@ -204,13 +204,7 @@ function wpcte_inline_css() {
 #wpcte-pantalla-cotizador .wpcte-back-btn{background:none;border:1px solid #b3ddf5;color:#0077b6;padding:.35rem .9rem;border-radius:8px;cursor:pointer;font-size:.85rem;margin-bottom:1rem;display:inline-flex;align-items:center;gap:.4rem;}
 #wpcte-pantalla-cotizador .wpcte-back-btn:hover{background:#e8f5fd;}
 /* ── Cotizador box ─────────────────────────────────────────── */
-#wpcte-cotizador {
-    background: #ff0000 !important; /* Rojo puro */
-    border: 10px solid #ffff00 !important; /* Borde amarillo grueso */
-    padding: 3rem !important; /* Mucho espacio para que se note el cambio */
-    margin-bottom: 1.5rem;
-    box-shadow: 0 0 50px rgba(255,0,0,0.8); /* Sombra roja brillante */
-}
+#wpcte-cotizador{background:#fff;border:1.5px solid #d0e8f5;border-radius:14px;padding:1.5rem 1.75rem;margin-bottom:1.5rem;box-shadow:0 2px 12px rgba(0,120,200,.07);}
 #wpcte-cotizador h5{font-weight:700;color:#0077b6;margin-bottom:1rem;font-size:1.05rem;}
 .wpcte-cot-row{display:flex;flex-wrap:wrap;gap:.75rem;align-items:flex-end;margin-bottom:.75rem;}
 .wpcte-cot-group{display:flex;flex-direction:column;flex:1;min-width:160px;}
