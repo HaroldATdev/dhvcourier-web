@@ -9,6 +9,7 @@ class WPC_Facturacion_Frontend {
 		// Shortcode para la vista admin/manager en el dashboard frontend
 		add_shortcode( 'wpcfact-admin-dashboard', array( $this, 'render_dashboard' ) );
 		add_shortcode( 'wpcfact-emitir-dashboard', array( $this, 'render_emitir' ) );
+		add_shortcode( 'wpcfact-configuracion-dashboard', array( $this, 'render_configuracion' ) );
 		
 		// Hook para agregar al menú de WPCargo Frontend
 		add_filter( 'wpcfe_after_sidebar_menus', array( $this, 'add_sidebar_menu' ), 40, 1 );
@@ -31,14 +32,26 @@ class WPC_Facturacion_Frontend {
 				'icon'      => 'fa-file-text-o',
 			);
 
-			$page_emitir = get_page_by_path( 'emitir-comprobante' );
+			$page_emitir = get_page_by_path( 'facturacion-sunat/emitir-comprobante' );
+			if ( ! $page_emitir ) $page_emitir = get_page_by_path( 'emitir-comprobante' );
 			$page_emitir_id = $page_emitir ? $page_emitir->ID : 0;
 			
 			$menus['wpcfact-emitir'] = array(
 				'page-id'   => $page_emitir_id,
 				'label'     => 'Emitir Comprobante',
-				'permalink' => $page_emitir ? get_permalink( $page_emitir_id ) : home_url( '/emitir-comprobante/' ),
+				'permalink' => $page_emitir ? get_permalink( $page_emitir_id ) : home_url( '/facturacion-sunat/emitir-comprobante/' ),
 				'icon'      => 'fa-plus',
+			);
+
+			$page_config = get_page_by_path( 'facturacion-sunat/configuracion-sunat' );
+			if ( ! $page_config ) $page_config = get_page_by_path( 'configuracion-sunat' );
+			$page_config_id = $page_config ? $page_config->ID : 0;
+
+			$menus['wpcfact-config'] = array(
+				'page-id'   => $page_config_id,
+				'label'     => 'Configuración SUNAT',
+				'permalink' => $page_config ? get_permalink( $page_config_id ) : home_url( '/facturacion-sunat/configuracion-sunat/' ),
+				'icon'      => 'fa-cog',
 			);
 		}
 		return $menus;
@@ -82,6 +95,18 @@ class WPC_Facturacion_Frontend {
 		ob_start();
 		echo '<div class="wpcargo-container wpcfact-dashboard">';
 		include WPC_FACTURACION_PATH . 'admin/templates/wizard.php';
+		echo '</div>';
+		return ob_get_clean();
+	}
+
+	public function render_configuracion() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return '<div class="wpcargo-container"><p class="alert alert-danger">No tienes permisos para acceder a la configuración.</p></div>';
+		}
+
+		ob_start();
+		echo '<div class="wpcargo-container wpcfact-dashboard">';
+		include WPC_FACTURACION_PATH . 'admin/templates/config.php';
 		echo '</div>';
 		return ob_get_clean();
 	}
