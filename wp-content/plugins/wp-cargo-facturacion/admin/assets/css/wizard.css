@@ -290,3 +290,45 @@
 	font-size: 24px;
 	margin-bottom: 10px;
 }
+
+/* ─── Override MDB CSS que oculta selects nativos ──────────────────────────── */
+.wpcfact-wizard-container select,
+.wpcfact-wizard-container select.wpcfact-select,
+.wpcfact-wizard-container #wpcfact-tipo-doc,
+.wpcfact-wizard-container #wpcfact-forma-pago,
+.wpcfact-wizard-container #wpcfact_ambiente,
+.wpcfact-wizard-container #wpcfact_serie_factura,
+.wpcfact-wizard-container #wpcfact_serie_boleta {
+	display: block !important;
+	visibility: visible !important;
+	opacity: 1 !important;
+	position: static !important;
+	pointer-events: auto !important;
+	width: 100%;
+	padding: 10px 14px;
+	border: 1px solid #cbd5e1;
+	border-radius: 8px;
+	font-size: 15px;
+	background: #f8fafc;
+	box-sizing: border-box;
+	-webkit-appearance: auto;
+	appearance: auto;
+}
+
+/* Override para selects dentro del config template (fuera del wizard-container) */
+.wpcfact-dashboard select {
+	display: block !important;
+	visibility: visible !important;
+	opacity: 1 !important;
+	position: static !important;
+	pointer-events: auto !important;
+	-webkit-appearance: auto;
+	appearance: auto;
+}
+
+/* Ocultar los selects MDB personalizados que se generan dentro de nuestro contenedor */
+.wpcfact-wizard-container .select-wrapper,
+.wpcfact-wizard-container .select-dropdown,
+.wpcfact-dashboard .select-wrapper input.select-dropdown {
+	display: none !important;
+}

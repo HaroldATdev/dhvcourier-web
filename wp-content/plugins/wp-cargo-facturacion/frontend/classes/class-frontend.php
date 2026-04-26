@@ -104,6 +104,8 @@ class WPC_Facturacion_Frontend {
 			return '<div class="wpcargo-container"><p class="alert alert-danger">No tienes permisos para acceder a la configuración.</p></div>';
 		}
 
+		wp_enqueue_style( 'wpcfact-wizard-css', WPC_FACTURACION_URL . 'admin/assets/css/wizard.css', array(), WPC_FACTURACION_VERSION );
+
 		ob_start();
 		echo '<div class="wpcargo-container wpcfact-dashboard">';
 		include WPC_FACTURACION_PATH . 'admin/templates/config.php';
