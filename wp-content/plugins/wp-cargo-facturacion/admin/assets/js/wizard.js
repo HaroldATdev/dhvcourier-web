@@ -83,8 +83,16 @@ jQuery(document).ready(function($) {
 				
 				res.data.forEach(envio => {
 					enviosData[envio.id] = parseFloat(envio.monto) || 0;
-					html += `<tr>
-						<td><input type="checkbox" class="wpcfact-check-envio wpcfact-check-custom" value="${envio.id}" style="cursor:pointer; pointer-events:auto;"></td>
+					html += `<tr class="wpcfact-envio-row" data-id="${envio.id}" data-monto="${envio.monto}" style="cursor:pointer;">
+						<td>
+							<span class="wpcfact-row-check" style="
+								display:inline-flex; align-items:center; justify-content:center;
+								width:24px; height:24px; border-radius:50%;
+								border:2px solid #cbd5e1; background:#fff;
+								color:#fff; font-size:14px; font-weight:bold;
+								transition:all 0.2s;
+							">&#10003;</span>
+						</td>
 						<td><strong>${envio.title}</strong></td>
 						<td>${envio.ruta}</td>
 						<td>${envio.date}</td>
@@ -101,13 +109,34 @@ jQuery(document).ready(function($) {
 		showStep(2);
 	});
 
-	// Paso 2: Seleccionar Envíos
-	$(document).on('change', '.wpcfact-check-envio', function() {
+	// Paso 2: Click en fila para seleccionar
+	$(document).on('click', '.wpcfact-envio-row', function() {
+		$(this).toggleClass('wpcfact-row-selected');
+		const check = $(this).find('.wpcfact-row-check');
+		if ($(this).hasClass('wpcfact-row-selected')) {
+			check.css({ 'background': '#3b82f6', 'border-color': '#3b82f6', 'color': '#fff' });
+			$(this).css('background', '#eff6ff');
+		} else {
+			check.css({ 'background': '#fff', 'border-color': '#cbd5e1', 'color': '#fff' });
+			$(this).css('background', '');
+		}
 		calcularTotales();
 	});
 
-	$(document).on('change', '#check-all-envios', function() {
-		$('.wpcfact-check-envio').prop('checked', $(this).is(':checked'));
+	// Seleccionar todos
+	$(document).on('click', '#check-all-envios', function() {
+		const selectAll = $(this).hasClass('wpcfact-all-selected') ? false : true;
+		$(this).toggleClass('wpcfact-all-selected');
+		$('.wpcfact-envio-row').each(function() {
+			const check = $(this).find('.wpcfact-row-check');
+			if (selectAll) {
+				$(this).addClass('wpcfact-row-selected').css('background', '#eff6ff');
+				check.css({ 'background': '#3b82f6', 'border-color': '#3b82f6', 'color': '#fff' });
+			} else {
+				$(this).removeClass('wpcfact-row-selected').css('background', '');
+				check.css({ 'background': '#fff', 'border-color': '#cbd5e1', 'color': '#fff' });
+			}
+		});
 		calcularTotales();
 	});
 
@@ -115,10 +144,10 @@ jQuery(document).ready(function($) {
 		selectedEnvios = [];
 		let total = 0;
 		
-		$('.wpcfact-check-envio:checked').each(function() {
-			const id = $(this).val();
+		$('.wpcfact-envio-row.wpcfact-row-selected').each(function() {
+			const id = $(this).data('id');
 			selectedEnvios.push(id);
-			total += enviosData[id];
+			total += enviosData[id] || 0;
 		});
 
 		// Base + IGV
