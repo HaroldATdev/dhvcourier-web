@@ -589,25 +589,23 @@ function wpcte_get_label_modalidad( $mod ) {
 }
 
 /* ======================================================================
-   CSS FRONT-END
+   CSS FRONT-END - AISLAMIENTO FINAL
    ====================================================================== */
 function wpcte_inline_css() {
     // 1. OBTENER EL CONTEXTO
     $wpcfe = $_GET['wpcfe'] ?? '';
     
-    // 2. EL NUEVO CANDADO: 
-    // Solo se ejecuta si NO estamos en el panel de control real de WordPress.
-    // Usamos check_admin_referer o simplemente validamos que sea la vista de 'add' o 'update' del frontend.
-    
-    // Si la URL NO tiene wpcfe, o si estamos en la pantalla real de edición de envíos del Dashboard, NO cargues el CSS.
-    if ( is_admin() && !defined( 'DOING_AJAX' ) && $wpcfe == '' ) {
+    // 2. EL CANDADO ULTRA-SEGURO: 
+    // Solo se ejecuta si estamos en una página de "añadir" o "actualizar" envio,
+    // o si específicamente estamos en la página pública del cotizador.
+    // SI ESTÁ VACÍO (como en el Dashboard de Harold), NO CARGA NADA.
+    if ( empty($wpcfe) && !is_page('cotizador') ) {
         return;
     }
 
     ?>
     <style id="wpcte-css-final">
-    /* TEST VISUAL VERDE (Para diferenciar del anterior) */
-    /* Si ves esto VERDE en la web pública y el admin NORMAL, ganamos */
+    /* TEST VISUAL VERDE: Si ves esto en la web pública, funciona */
     #wpcte-cotizador {
         background: #2ecc71 !important; /* Verde Esmeralda */
         border: 5px solid #27ae60 !important;
@@ -617,7 +615,7 @@ function wpcte_inline_css() {
 
     #wpcte-cotizador h5 { color: #fff !important; font-weight: bold; }
     
-    /* Forzar visibilidad en la web general */
+    /* Forzar visibilidad de los campos en la web */
     #wpcte-cotizador select, 
     #wpcte-cotizador input {
         display: block !important;
@@ -625,6 +623,8 @@ function wpcte_inline_css() {
         opacity: 1 !important;
         background: white !important;
         color: black !important;
+        height: 40px !important;
+        border: 1px solid #ccc !important;
     }
     </style>
     <?php
@@ -1524,7 +1524,7 @@ function wpcte_footer_crear() {
             wpcte_insertDir(data.direccion||'');window._clienteCiudad=data.ciudad||'';
         }
         function ensureClientShipmentField(uid){
-            var select=document.getElementById('registered_client')||f.querySelector('[name="registered_shipper"]');
+            var select=document.getElementById('registered_client')||f.querySelector('select[name="registered_shipper"]');
             if(select){
                 var optionExists=select.querySelector('option[value="'+uid+'"]');
                 if(!optionExists){
@@ -1532,7 +1532,7 @@ function wpcte_footer_crear() {
                 }
                 select.value=String(uid);
                 select.setAttribute('disabled','disabled');
-                var group=select.closest('.form-group')||select.parentElement;
+                var group=select.closest('.form-group,.md-form,.card')||select.parentElement;
                 if(group)group.style.display='none';
             }
             var hidden=f.querySelector('input[name="registered_shipper"][type="hidden"]');
@@ -1542,6 +1542,7 @@ function wpcte_footer_crear() {
                 hidden.name='registered_shipper';
                 f.appendChild(hidden);
             }
+            hidden.removeAttribute('disabled');
             hidden.value=uid;
         }
         function loadClientData(uid){
@@ -1881,7 +1882,10 @@ function wpcte_listenCliente(ajaxUrl,nonce){
 
         $('[name=location],[name=remarks]').removeAttr('required');
         $('.card-header').filter(function(){return $(this).text().trim()==='Paquetes';}).closest('.card').parent().hide();
-        $('#package_id').closest('.form-group,.mb-4').hide();
+        var $package = $('#package_id');
+        $package.closest('.form-group,.md-form').hide();
+        $package.filter('div').hide();
+        $package.closest('.after-shipments-info').show();
 
         // Mover badge y cotizador al inicio
         setTimeout(function(){
