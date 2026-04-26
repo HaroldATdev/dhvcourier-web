@@ -82,18 +82,18 @@ jQuery(document).ready(function($) {
 				enviosData = {};
 				
 				res.data.forEach(envio => {
-					enviosData[envio.id] = envio.monto;
+					enviosData[envio.id] = parseFloat(envio.monto) || 0;
 					html += `<tr>
-						<td><input type="checkbox" class="wpcfact-check-envio" value="${envio.id}"></td>
-						<td>${envio.title}</td>
+						<td><input type="checkbox" class="wpcfact-check-envio wpcfact-check-custom" value="${envio.id}" style="cursor:pointer; pointer-events:auto;"></td>
+						<td><strong>${envio.title}</strong></td>
 						<td>${envio.ruta}</td>
 						<td>${envio.date}</td>
-						<td>S/. ${envio.monto.toFixed(2)}</td>
+						<td style="text-align:right;"><strong>S/. ${parseFloat(envio.monto).toFixed(2)}</strong></td>
 					</tr>`;
 				});
 				$('#table-envios-pendientes tbody').html(html);
 			} else {
-				$('#table-envios-pendientes tbody').html('<tr><td colspan="5" style="color:red;">No hay envíos pendientes facturables para este cliente.</td></tr>');
+				$('#table-envios-pendientes tbody').html('<tr><td colspan="5" style="text-align:center; padding:20px; color:#64748b;">No hay envíos pendientes facturables para este cliente.</td></tr>');
 			}
 			calcularTotales();
 		});
@@ -106,7 +106,7 @@ jQuery(document).ready(function($) {
 		calcularTotales();
 	});
 
-	$('#check-all-envios').change(function() {
+	$(document).on('change', '#check-all-envios', function() {
 		$('.wpcfact-check-envio').prop('checked', $(this).is(':checked'));
 		calcularTotales();
 	});

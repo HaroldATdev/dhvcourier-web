@@ -235,6 +235,9 @@
 	width: 18px;
 	height: 18px;
 	cursor: pointer;
+	pointer-events: auto;
+	position: relative;
+	z-index: 1;
 }
 
 .wpcfact-summary-box {
