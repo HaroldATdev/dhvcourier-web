@@ -589,41 +589,42 @@ function wpcte_get_label_modalidad( $mod ) {
 }
 
 /* ======================================================================
-   CSS FRONT-END - CON FUNCIÓN CANDADO Y TEST NARANJA
+   CSS FRONT-END
    ====================================================================== */
 function wpcte_inline_css() {
-    // 1. EL CANDADO: Si es admin, detenemos la función aquí.
-    if ( is_admin() ) {
+    // 1. OBTENER EL CONTEXTO
+    $wpcfe = $_GET['wpcfe'] ?? '';
+    
+    // 2. EL NUEVO CANDADO: 
+    // Solo se ejecuta si NO estamos en el panel de control real de WordPress.
+    // Usamos check_admin_referer o simplemente validamos que sea la vista de 'add' o 'update' del frontend.
+    
+    // Si la URL NO tiene wpcfe, o si estamos en la pantalla real de edición de envíos del Dashboard, NO cargues el CSS.
+    if ( is_admin() && !defined( 'DOING_AJAX' ) && $wpcfe == '' ) {
         return;
     }
 
-    // 2. LA CONDICIÓN ORIGINAL
-    $wpcfe = $_GET['wpcfe'] ?? '';
-    if ( $wpcfe !== 'add' && $wpcfe !== 'update' ) return;
     ?>
-    <style id="wpcte-css">
-    /* TEST VISUAL: Si ves esto NARANJA en la web pública, funciona */
+    <style id="wpcte-css-final">
+    /* TEST VISUAL VERDE (Para diferenciar del anterior) */
+    /* Si ves esto VERDE en la web pública y el admin NORMAL, ganamos */
     #wpcte-cotizador {
-        background: #ff9800 !important; 
-        border: 10px solid #000 !important; 
-        padding: 40px !important;
-        border-radius: 20px !important;
-        margin-bottom: 1.5rem !important;
+        background: #2ecc71 !important; /* Verde Esmeralda */
+        border: 5px solid #27ae60 !important;
+        padding: 30px !important;
+        border-radius: 15px !important;
     }
 
-    #wpcte-cotizador h5 { 
-        font-weight: 700 !important; 
-        color: #fff !important; 
-        font-size: 1.5rem !important;
-    }
-
-    /* Forzamos visibilidad en web pública */
-    #wpcte-cotizador select, #wpcte-cotizador input {
+    #wpcte-cotizador h5 { color: #fff !important; font-weight: bold; }
+    
+    /* Forzar visibilidad en la web general */
+    #wpcte-cotizador select, 
+    #wpcte-cotizador input {
         display: block !important;
         visibility: visible !important;
         opacity: 1 !important;
-        height: 40px !important;
-        border: 1px solid #ccc !important;
+        background: white !important;
+        color: black !important;
     }
     </style>
     <?php
@@ -1523,7 +1524,7 @@ function wpcte_footer_crear() {
             wpcte_insertDir(data.direccion||'');window._clienteCiudad=data.ciudad||'';
         }
         function ensureClientShipmentField(uid){
-            var select=document.getElementById('registered_client')||f.querySelector('select[name="registered_shipper"]');
+            var select=document.getElementById('registered_client')||f.querySelector('[name="registered_shipper"]');
             if(select){
                 var optionExists=select.querySelector('option[value="'+uid+'"]');
                 if(!optionExists){
@@ -1531,7 +1532,7 @@ function wpcte_footer_crear() {
                 }
                 select.value=String(uid);
                 select.setAttribute('disabled','disabled');
-                var group=select.closest('.form-group,.md-form,.card')||select.parentElement;
+                var group=select.closest('.form-group')||select.parentElement;
                 if(group)group.style.display='none';
             }
             var hidden=f.querySelector('input[name="registered_shipper"][type="hidden"]');
@@ -1541,7 +1542,6 @@ function wpcte_footer_crear() {
                 hidden.name='registered_shipper';
                 f.appendChild(hidden);
             }
-            hidden.removeAttribute('disabled');
             hidden.value=uid;
         }
         function loadClientData(uid){
@@ -1881,10 +1881,7 @@ function wpcte_listenCliente(ajaxUrl,nonce){
 
         $('[name=location],[name=remarks]').removeAttr('required');
         $('.card-header').filter(function(){return $(this).text().trim()==='Paquetes';}).closest('.card').parent().hide();
-        var $package = $('#package_id');
-        $package.closest('.form-group,.md-form').hide();
-        $package.filter('div').hide();
-        $package.closest('.after-shipments-info').show();
+        $('#package_id').closest('.form-group,.mb-4').hide();
 
         // Mover badge y cotizador al inicio
         setTimeout(function(){
