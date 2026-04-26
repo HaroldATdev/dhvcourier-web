@@ -115,15 +115,15 @@ class WPC_Facturacion_Ajax {
 		$sql = $wpdb->prepare( "
 			SELECT p.ID, p.post_title, p.post_date
 			FROM {$wpdb->posts} p
-			INNER JOIN {$wpdb->postmeta} pm ON (p.ID = pm.post_id AND pm.meta_key = 'registered_shipper' AND pm.meta_value = %d)
+			INNER JOIN {$wpdb->postmeta} pm ON (p.ID = pm.post_id AND pm.meta_key IN ('registered_shipper', 'wpcargo_cliente') AND pm.meta_value = %s)
 			WHERE p.post_type = 'wpcargo_shipment'
 			AND p.post_status = 'publish'
 			AND p.ID NOT IN (
 				SELECT shipment_id FROM {$wpdb->prefix}facturacion_comprobante_envios
 			)
 			ORDER BY p.post_date DESC
-			LIMIT 50
-		", $user_id );
+			LIMIT 100
+		", strval( $user_id ) );
 
 		$envios = $wpdb->get_results( $sql );
 		$resultados = array();
