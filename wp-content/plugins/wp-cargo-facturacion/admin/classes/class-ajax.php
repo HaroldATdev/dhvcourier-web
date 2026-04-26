@@ -126,6 +126,27 @@ class WPC_Facturacion_Ajax {
 		", strval( $user_id ) );
 
 		$envios = $wpdb->get_results( $sql );
+
+		// DEBUG TEMPORAL: si no hay resultados, enviar info de diagnóstico
+		if ( empty( $envios ) ) {
+			// Buscar cualquier envio de este user sin filtro de meta_key
+			$debug_all = $wpdb->get_results( $wpdb->prepare(
+				"SELECT p.ID, p.post_title, pm.meta_key, pm.meta_value 
+				FROM {$wpdb->posts} p
+				INNER JOIN {$wpdb->postmeta} pm ON p.ID = pm.post_id
+				WHERE p.post_type = 'wpcargo_shipment'
+				AND p.post_status = 'publish'
+				AND pm.meta_key IN ('registered_shipper', 'wpcargo_cliente', 'wpcargo_client')
+				LIMIT 10",
+			) );
+			wp_send_json_success( array(
+				'debug' => true,
+				'user_id_buscado' => $user_id,
+				'tipo_user_id' => gettype( $user_id ),
+				'muestra_envios_sistema' => $debug_all,
+				'last_sql_error' => $wpdb->last_error,
+			) );
+		}
 		$resultados = array();
 
 		foreach ( $envios as $envio ) {

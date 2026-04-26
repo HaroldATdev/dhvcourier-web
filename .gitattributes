@@ -1,0 +1,6 @@
+# Tratar los archivos encriptados de ionCube como binarios para evitar que Git corrompa los saltos de línea (CRLF)
+wp-content/plugins/wpcargo-custom-field-addons/**/*.php binary
+wp-content/plugins/wpcargo-frontend-manager/**/*.php binary
+wp-content/plugins/wpcargo-receiving/**/*.php binary
+wp-content/plugins/wpcargo-address-book/**/*.php binary
+wp-content/plugins/wpcargo-api/**/*.php binary
