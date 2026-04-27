@@ -36,7 +36,12 @@ class WPC_Facturacion_Constructor {
 			$post = get_post( $envio_id );
 			if ( ! $post ) continue;
 
-			$freight_raw = get_post_meta( $envio_id, 'wpcargo_total_freight', true );
+			$freight_raw = get_post_meta( $envio_id, 'monto', true );
+			// 👇 DEBUG TEMPORAL — quitar después
+			error_log( '[WPCFACT] Envio ID ' . $envio_id . ' | freight_raw=' . var_export($freight_raw, true) );
+			$all_meta = get_post_meta( $envio_id );
+			error_log( '[WPCFACT] Todas las metas: ' . print_r( array_map(function($v){ return $v[0]; }, $all_meta), true ) );
+			// 👆 FIN DEBUG
 			$monto = floatval( preg_replace( '/[^0-9.]/', '', $freight_raw ) );
 			
 			if ( $monto <= 0 ) continue;
