@@ -121,18 +121,23 @@ class WPC_Facturacion_Constructor {
 							'_text' => $ruc_emisor
 						)
 					),
-					// cac:PostalAddress es OBLIGATORIO en SUNAT — contiene el código de local anexo (error 4198)
-					'cac:PostalAddress' => array(
-						'cbc:AddressTypeCode' => array( '_text' => $codigo_local ),
-						'cac:AddressLine'    => array(
-							'cbc:Line' => array( '_text' => $direccion_emisor )
-						),
-						'cac:Country' => array(
-							'cbc:IdentificationCode' => array( '_text' => 'PE' )
-						)
-					),
 					'cac:PartyLegalEntity' => array(
-						'cbc:RegistrationName' => array( '_text' => $razon_social_emisor )
+						'cbc:RegistrationName' => array( '_text' => $razon_social_emisor ),
+						'cac:RegistrationAddress' => array(
+							'cbc:AddressTypeCode' => array(
+								'_attributes' => array( 'listAgencyName' => 'PE:SUNAT', 'listName' => 'Establecimientos anexos' ),
+								'_text' => $codigo_local
+							),
+							'cac:AddressLine' => array(
+								'cbc:Line' => array( '_text' => $direccion_emisor )
+							),
+							'cac:Country' => array(
+								'cbc:IdentificationCode' => array(
+									'_attributes' => array( 'listID' => 'ISO 3166-1', 'listAgencyName' => 'United Nations Economic Commission for Europe', 'listName' => 'Country' ),
+									'_text' => 'PE'
+								)
+							)
+						)
 					)
 				)
 			),
