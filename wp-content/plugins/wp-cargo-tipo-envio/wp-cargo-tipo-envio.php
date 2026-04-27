@@ -596,9 +596,6 @@ function wpcte_inline_css() {
     $wpcfe = $_GET['wpcfe'] ?? '';
     
     // 2. EL CANDADO ULTRA-SEGURO: 
-    // Solo se ejecuta si estamos en una página de "añadir" o "actualizar" envio,
-    // o si específicamente estamos en la página pública del cotizador.
-    // SI ESTÁ VACÍO (como en el Dashboard de Harold), NO CARGA NADA.
     if ( empty($wpcfe) && !is_page('cotizador') ) {
         return;
     }
