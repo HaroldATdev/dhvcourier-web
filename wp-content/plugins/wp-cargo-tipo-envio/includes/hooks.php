@@ -1447,24 +1447,6 @@ function wpcte_guardar_meta_wpcfe( $post_id, $data ) {
         update_post_meta( $post_id, 'costo_envio', sanitize_text_field( $data['costo_envio'] ) );
     }
 }
-    if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ) return;
-    if ( ! empty( $_POST['wpcte_tipo_envio'] ) )
-        update_post_meta( $post_id, 'tipo_envio', sanitize_key( $_POST['wpcte_tipo_envio'] ) );
-    if ( isset( $_POST['direccion_remitente'] ) )
-        update_post_meta( $post_id, 'direccion_remitente', sanitize_text_field( $_POST['direccion_remitente'] ) );
-    if ( isset( $_POST['costo_envio'] ) )
-        update_post_meta( $post_id, 'costo_envio', sanitize_text_field( $_POST['costo_envio'] ) );
-
-    $posted_shipper = isset( $_POST['registered_shipper'] ) ? absint( $_POST['registered_shipper'] ) : 0;
-    if ( $posted_shipper > 0 ) {
-        update_post_meta( $post_id, 'registered_shipper', $posted_shipper );
-    } else {
-        $current_user = wp_get_current_user();
-        if ( $current_user instanceof WP_User && in_array( 'wpcargo_client', (array) $current_user->roles, true ) ) {
-            update_post_meta( $post_id, 'registered_shipper', (int) $current_user->ID );
-        }
-    }
-}
 
 /* ======================================================================
    HELPERS
