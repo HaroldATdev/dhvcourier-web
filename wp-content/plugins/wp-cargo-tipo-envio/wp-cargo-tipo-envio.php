@@ -589,45 +589,91 @@ function wpcte_get_label_modalidad( $mod ) {
 }
 
 /* ======================================================================
-   CSS FRONT-END - AISLAMIENTO FINAL
+   CSS FRONT-END - SEPARACIÓN DEFINITIVA POR URL
    ====================================================================== */
 function wpcte_inline_css() {
-    // 1. OBTENER EL CONTEXTO
+    // 1. LEER LA URL EXACTA DEL NAVEGADOR
+    $uri = $_SERVER['REQUEST_URI'] ?? '';
     $wpcfe = $_GET['wpcfe'] ?? '';
-    
-    // 2. EL CANDADO ULTRA-SEGURO: 
-    // Solo se ejecuta si estamos en una página de "añadir" o "actualizar" envio,
-    // o si específicamente estamos en la página pública del cotizador.
-    // SI ESTÁ VACÍO (como en el Dashboard de Harold), NO CARGA NADA.
-    if ( empty($wpcfe) && !is_page('cotizador') ) {
+
+    // 2. IDENTIFICAR EN QUÉ ENTORNO ESTAMOS
+    $es_admin_harold = ( strpos($uri, '/dashboard/') !== false || !empty($wpcfe) );
+    $es_web_publica  = ( strpos($uri, '/cotizador/') !== false || is_page('cotizador') );
+
+    // Si no estamos en ninguna de las dos, no cargamos nada para no ensuciar otras páginas.
+    if ( !$es_admin_harold && !$es_web_publica ) {
         return;
     }
 
+    // 3. CSS BASE ESTRUCTURAL (SE CARGA PARA AMBOS: Mantiene el formulario sin romperse)
     ?>
-    <style id="wpcte-css-final">
-    /* TEST VISUAL VERDE: Si ves esto en la web pública, funciona */
-    #wpcte-cotizador {
-        background: #2ecc71 !important; /* Verde Esmeralda */
-        border: 5px solid #27ae60 !important;
-        padding: 30px !important;
-        border-radius: 15px !important;
-    }
-
-    #wpcte-cotizador h5 { color: #fff !important; font-weight: bold; }
-    
-    /* Forzar visibilidad de los campos en la web */
-    #wpcte-cotizador select, 
-    #wpcte-cotizador input {
-        display: block !important;
-        visibility: visible !important;
-        opacity: 1 !important;
-        background: white !important;
-        color: black !important;
-        height: 40px !important;
-        border: 1px solid #ccc !important;
-    }
+    <style id="wpcte-css-base">
+    #wpcte-selector{padding:2rem 0;text-align:center;}
+    .wpcte-title{font-size:1.3rem;font-weight:700;color:#222;margin-bottom:1.5rem;}
+    .wpcte-grid{display:flex;gap:1.25rem;justify-content:center;flex-wrap:wrap;}
+    .wpcte-card{display:flex;flex-direction:column;align-items:center;gap:.6rem;background:#fff;border:2px solid #e4e4e4;border-radius:16px;padding:2rem 1.5rem;min-width:160px;max-width:210px;flex:1;text-decoration:none!important;color:#333!important;transition:border-color .2s,box-shadow .2s,transform .15s;box-shadow:0 2px 12px rgba(0,0,0,.07);cursor:pointer;}
+    .wpcte-card:hover{border-color:#00a8e8;box-shadow:0 8px 28px rgba(0,168,232,.2);transform:translateY(-4px);color:#00a8e8!important;}
+    .wpcte-card .fa{font-size:2.5rem;color:#00a8e8;}
+    .wpcte-badge{display:inline-flex;align-items:center;gap:.6rem;background:#e8f5fd;border:1px solid #b3ddf5;color:#0077b6;border-radius:8px;padding:.5rem 1rem;font-size:.92rem;margin-bottom:1rem;}
+    #wpcte-pantalla-cotizador{padding:1rem 0;}
+    #wpcte-pantalla-cotizador .wpcte-back-btn{background:none;border:1px solid #b3ddf5;color:#0077b6;padding:.35rem .9rem;border-radius:8px;cursor:pointer;font-size:.85rem;margin-bottom:1rem;display:inline-flex;align-items:center;gap:.4rem;}
+    #wpcte-pantalla-cotizador .wpcte-back-btn:hover{background:#e8f5fd;}
+    #wpcte-cotizador{background:#fff;border:1.5px solid #d0e8f5;border-radius:14px;padding:1.5rem 1.75rem;margin-bottom:1.5rem;box-shadow:0 2px 12px rgba(0,120,200,.07);}
+    #wpcte-cotizador h5{font-weight:700;color:#0077b6;margin-bottom:1rem;font-size:1.05rem;}
+    .wpcte-cot-row{display:flex;flex-wrap:wrap;gap:.75rem;align-items:flex-end;margin-bottom:.75rem;}
+    .wpcte-cot-group{display:flex;flex-direction:column;flex:1;min-width:160px;}
+    .wpcte-cot-group label{font-size:.8rem;font-weight:600;color:#555;margin-bottom:3px;}
+    #wpcte-cotizador select,#wpcte-cotizador input[type=number],#wpcte-cotizador input[type=text]{display:block!important;visibility:visible!important;opacity:1!important;height:34px!important;width:100%!important;padding:4px 8px!important;border:1px solid #ccc!important;border-radius:8px!important;font-size:.9rem!important;background:#fff!important;box-sizing:border-box!important;}
+    #wpcte-cotizador select{appearance:auto!important;-webkit-appearance:menulist!important;}
+    #wpcte-cotizador input[type=number]{-webkit-appearance:textfield!important;}
+    #wpcte-cotizador input[readonly]{background:#f0f9ff!important;font-weight:600;color:#0077b6;}
+    #wpcte-cot-btn{background:#0077b6;color:#fff;border:none;padding:.5rem 1.4rem;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;margin-top:4px;}
+    #wpcte-cot-btn:hover{background:#005f99;}
+    #wpcte-cot-resultado{margin-top:.75rem;padding:.75rem 1rem;border-radius:8px;background:#f0f9ff;border:1px solid #b3ddf5;font-size:.9rem;line-height:1.8;display:none;}
+    #wpcte-cot-resultado.ok{display:block;}
+    #wpcte-cot-resultado strong{color:#0077b6;}
+    .wpcte-desglose{margin-top:.5rem;border-top:1px solid #d0e8f5;padding-top:.5rem;font-size:.85rem;color:#555;}
+    .wpcte-desglose-row{display:flex;justify-content:space-between;padding:1px 0;}
+    .wpcte-total-row{display:flex;justify-content:space-between;font-weight:700;color:#0077b6;font-size:.95rem;border-top:1px solid #b3ddf5;margin-top:3px;padding-top:3px;}
+    #wpcte-btn-continuar{background:#2a9d8f;color:#fff;border:none;padding:.55rem 1.6rem;border-radius:8px;font-size:.95rem;font-weight:600;cursor:pointer;margin-top:.5rem;display:none;}
+    #wpcte-btn-continuar.visible{display:inline-block;}
+    #wpcte-btn-continuar:hover{background:#21867a;}
+    #wpcte-cot-edit-wrap{background:#f8fbff;border:1.5px solid #d0e8f5;border-radius:12px;padding:1.2rem 1.5rem;margin-bottom:1.2rem;}
+    #wpcte-verificar-btn{background:#0077b6;color:#fff;border:none;padding:.5rem 1.4rem;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;gap:.5rem;margin-bottom:.75rem;}
+    #wpcte-verificar-btn:hover{background:#005f99;}
+    #wpcte-cot-body{display:none;padding-top:.5rem;}
+    #wpcte-cot-body.open{display:block;}
+    #package_id{display:none!important;}
     </style>
     <?php
+
+    // 4. CSS DE DISEÑO VISUAL (EL CANDADO: SÓLO PARA LA WEB PÚBLICA, SE BLOQUEA EN EL ADMIN DE HAROLD)
+    if ( $es_web_publica && !$es_admin_harold ) {
+        ?>
+        <style id="wpcte-css-cliente">
+        /* TEST VISUAL VERDE EXCLUSIVO PARA CLIENTES */
+        #wpcte-cotizador {
+            background: #2ecc71 !important; 
+            border: 5px solid #27ae60 !important;
+            padding: 30px !important;
+            border-radius: 15px !important;
+        }
+
+        #wpcte-cotizador h5 { color: #fff !important; font-weight: bold; font-size: 1.4rem !important; }
+        
+        #wpcte-cotizador select, 
+        #wpcte-cotizador input {
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            background: white !important;
+            color: black !important;
+            height: 40px !important;
+            border: 1px solid #ccc !important;
+        }
+        </style>
+        <?php
+    }
 }
 
 /* ======================================================================
@@ -1524,7 +1570,7 @@ function wpcte_footer_crear() {
             wpcte_insertDir(data.direccion||'');window._clienteCiudad=data.ciudad||'';
         }
         function ensureClientShipmentField(uid){
-            var select=document.getElementById('registered_client')||f.querySelector('select[name="registered_shipper"]');
+            var select=document.getElementById('registered_client')||f.querySelector('[name="registered_shipper"]');
             if(select){
                 var optionExists=select.querySelector('option[value="'+uid+'"]');
                 if(!optionExists){
@@ -1532,7 +1578,7 @@ function wpcte_footer_crear() {
                 }
                 select.value=String(uid);
                 select.setAttribute('disabled','disabled');
-                var group=select.closest('.form-group,.md-form,.card')||select.parentElement;
+                var group=select.closest('.form-group')||select.parentElement;
                 if(group)group.style.display='none';
             }
             var hidden=f.querySelector('input[name="registered_shipper"][type="hidden"]');
@@ -1542,7 +1588,6 @@ function wpcte_footer_crear() {
                 hidden.name='registered_shipper';
                 f.appendChild(hidden);
             }
-            hidden.removeAttribute('disabled');
             hidden.value=uid;
         }
         function loadClientData(uid){
@@ -1882,10 +1927,7 @@ function wpcte_listenCliente(ajaxUrl,nonce){
 
         $('[name=location],[name=remarks]').removeAttr('required');
         $('.card-header').filter(function(){return $(this).text().trim()==='Paquetes';}).closest('.card').parent().hide();
-        var $package = $('#package_id');
-        $package.closest('.form-group,.md-form').hide();
-        $package.filter('div').hide();
-        $package.closest('.after-shipments-info').show();
+        $('#package_id').closest('.form-group,.mb-4').hide();
 
         // Mover badge y cotizador al inicio
         setTimeout(function(){
