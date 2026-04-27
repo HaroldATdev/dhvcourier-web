@@ -191,12 +191,12 @@ class WPC_Facturacion_Ajax {
 
 		if ( $tipo === '00' ) {
 			if ( ! class_exists( 'WPC_Facturacion_Constructor_NotaVenta' ) ) {
-				require_once dirname( __FILE__ ) . '/../includes/class-constructor-notaventa.php';
+				require_once dirname( __FILE__ ) . '/../../includes/class-constructor-notaventa.php';
 			}
 			$resultado = WPC_Facturacion_Constructor_NotaVenta::emitir( $user_id, $envios, $doc_num, $nombre, $direccion, $forma_pago );
 		} elseif ( $tipo === '09' || $tipo === '31' ) {
 			if ( ! class_exists( 'WPC_Facturacion_Constructor_Guia' ) ) {
-				require_once dirname( __FILE__ ) . '/../includes/class-constructor-guia.php';
+				require_once dirname( __FILE__ ) . '/../../includes/class-constructor-guia.php';
 			}
 			$resultado = WPC_Facturacion_Constructor_Guia::emitir( $user_id, $envios, $tipo, $doc_num, $nombre, $direccion, $guia_peso, $guia_motivo, $guia_modalidad );
 		} else {
@@ -271,7 +271,7 @@ class WPC_Facturacion_Ajax {
 
 		// Requeriríamos cargar la clase WPC_Facturacion_Constructor_NotaCredito
 		if ( ! class_exists( 'WPC_Facturacion_Constructor_NotaCredito' ) ) {
-			require_once dirname( __FILE__ ) . '/../includes/class-constructor-notacredito.php';
+			require_once dirname( __FILE__ ) . '/../../includes/class-constructor-notacredito.php';
 		}
 
 		$resultado = WPC_Facturacion_Constructor_NotaCredito::emitir( $comprobante, $motivo, $codigo_motivo );
