@@ -55,7 +55,7 @@ $configured = ! empty( $persona_id ) && ! empty( $persona_token ) && ! empty( $r
 
 		<table class="form-table" style="margin:0;">
 			<tr>
-				<th style="width:220px;"><label for="wpcfact_ruc_emisor">RUC del Emisor <span style="color:red;">*</span></label></th>
+				<th style="width:220px; vertical-align:top; padding-top:15px;"><label for="wpcfact_ruc_emisor">RUC del Emisor <span style="color:red;">*</span></label></th>
 				<td>
 					<input type="text" id="wpcfact_ruc_emisor" name="wpcfact_ruc_emisor"
 						value="<?php echo esc_attr( $ruc ); ?>"
@@ -65,7 +65,7 @@ $configured = ! empty( $persona_id ) && ! empty( $persona_token ) && ! empty( $r
 				</td>
 			</tr>
 			<tr>
-				<th><label for="wpcfact_razon_social_emisor">Razón Social <span style="color:red;">*</span></label></th>
+				<th style="vertical-align:top; padding-top:15px;"><label for="wpcfact_razon_social_emisor">Razón Social <span style="color:red;">*</span></label></th>
 				<td>
 					<input type="text" id="wpcfact_razon_social_emisor" name="wpcfact_razon_social_emisor"
 						value="<?php echo esc_attr( $razon_social ); ?>"
@@ -74,7 +74,7 @@ $configured = ! empty( $persona_id ) && ! empty( $persona_token ) && ! empty( $r
 				</td>
 			</tr>
 			<tr>
-				<th style="width:220px;"><label for="wpcfact_direccion_emisor">Dirección Fiscal</label></th>
+				<th style="width:220px; vertical-align:top; padding-top:15px;"><label for="wpcfact_direccion_emisor">Dirección Fiscal</label></th>
 				<td>
 					<input type="text" id="wpcfact_direccion_emisor" name="wpcfact_direccion_emisor"
 						value="<?php echo esc_attr( $direccion ); ?>"
@@ -83,7 +83,7 @@ $configured = ! empty( $persona_id ) && ! empty( $persona_token ) && ! empty( $r
 				</td>
 			</tr>
 			<tr>
-				<th><label for="wpcfact_codigo_local">Código de Local Anexo <span style="color:red;">*</span></label></th>
+				<th style="vertical-align:top; padding-top:15px;"><label for="wpcfact_codigo_local">Código de Local Anexo <span style="color:red;">*</span></label></th>
 				<td>
 					<input type="text" id="wpcfact_codigo_local" name="wpcfact_codigo_local"
 						value="<?php echo esc_attr( $codigo_local ); ?>"
@@ -101,7 +101,7 @@ $configured = ! empty( $persona_id ) && ! empty( $persona_token ) && ! empty( $r
 		</h2>
 		<table class="form-table" style="margin:0;">
 			<tr>
-				<th style="width:220px;"><label for="wpcfact_serie_factura">Serie Factura Electrónica</label></th>
+				<th style="width:220px; vertical-align:top; padding-top:15px;"><label for="wpcfact_serie_factura">Serie Factura Electrónica</label></th>
 				<td>
 					<input type="text" id="wpcfact_serie_factura" name="wpcfact_serie_factura"
 						value="<?php echo esc_attr( $serie_factura ); ?>"
@@ -110,7 +110,7 @@ $configured = ! empty( $persona_id ) && ! empty( $persona_token ) && ! empty( $r
 				</td>
 			</tr>
 			<tr>
-				<th><label for="wpcfact_serie_boleta">Serie Boleta Electrónica</label></th>
+				<th style="vertical-align:top; padding-top:15px;"><label for="wpcfact_serie_boleta">Serie Boleta Electrónica</label></th>
 				<td>
 					<input type="text" id="wpcfact_serie_boleta" name="wpcfact_serie_boleta"
 						value="<?php echo esc_attr( $serie_boleta ); ?>"
@@ -132,7 +132,7 @@ $configured = ! empty( $persona_id ) && ! empty( $persona_token ) && ! empty( $r
 		</p>
 		<table class="form-table" style="margin:0;">
 			<tr>
-				<th style="width:220px;"><label for="wpcfact_persona_id">Persona ID <span style="color:red;">*</span></label></th>
+				<th style="width:220px; vertical-align:top; padding-top:15px;"><label for="wpcfact_persona_id">Persona ID <span style="color:red;">*</span></label></th>
 				<td>
 					<input type="text" id="wpcfact_persona_id" name="wpcfact_persona_id"
 						value="<?php echo esc_attr( $persona_id ); ?>"
@@ -141,7 +141,7 @@ $configured = ! empty( $persona_id ) && ! empty( $persona_token ) && ! empty( $r
 				</td>
 			</tr>
 			<tr>
-				<th><label for="wpcfact_persona_token">Persona Token <span style="color:red;">*</span></label></th>
+				<th style="vertical-align:top; padding-top:15px;"><label for="wpcfact_persona_token">Persona Token <span style="color:red;">*</span></label></th>
 				<td>
 					<input type="password" id="wpcfact_persona_token" name="wpcfact_persona_token"
 						value="<?php echo esc_attr( $persona_token ); ?>"
