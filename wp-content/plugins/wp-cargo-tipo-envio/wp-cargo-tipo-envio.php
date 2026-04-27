@@ -647,20 +647,11 @@ function wpcte_inline_css() {
     </style>
     <?php
 
-    // 4. CSS DE DISEÑO VISUAL (EL CANDADO: SÓLO PARA LA WEB PÚBLICA, SE BLOQUEA EN EL ADMIN DE HAROLD)
+    // 4. CSS EXCLUSIVO WEB PÚBLICA (Solo correcciones para que el tema no rompa el form)
     if ( $es_web_publica && !$es_admin_harold ) {
         ?>
         <style id="wpcte-css-cliente">
-        /* TEST VISUAL VERDE EXCLUSIVO PARA CLIENTES */
-        #wpcte-cotizador {
-            background: #2ecc71 !important; 
-            border: 5px solid #27ae60 !important;
-            padding: 30px !important;
-            border-radius: 15px !important;
-        }
-
-        #wpcte-cotizador h5 { color: #fff !important; font-weight: bold; font-size: 1.4rem !important; }
-        
+        /* Forzamos visibilidad para evitar que el tema de la web oculte los selectores */
         #wpcte-cotizador select, 
         #wpcte-cotizador input {
             display: block !important;
@@ -670,6 +661,7 @@ function wpcte_inline_css() {
             color: black !important;
             height: 40px !important;
             border: 1px solid #ccc !important;
+            border-radius: 8px !important;
         }
         </style>
         <?php
