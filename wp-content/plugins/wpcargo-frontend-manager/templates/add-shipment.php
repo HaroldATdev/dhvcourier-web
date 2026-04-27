@@ -83,6 +83,7 @@
 			</section>
 		</div>
 	</div>
+	<input type="hidden" name="costo_envio" id="costo_envio" value="" />
 	<div class="clearfix"></div>
 </form>
 <script type="text/javascript">
@@ -147,6 +148,7 @@ jQuery(function($){
 
 	function wpcteUpdateCostBreakdown(){
 		var serviceCost = wpcteGetServiceCost();
+		$('#costo_envio').val(isNaN(serviceCost) ? '' : serviceCost);
 		var $card = $('#wpcte-cost-breakdown-card');
 		if(isNaN(serviceCost) || serviceCost <= 0){
 			$card.hide();
