@@ -948,6 +948,8 @@ if(btnCont2){
         if(pantallaCot) pantallaCot.style.display='none';
         function _fillCampos(){
             if(typeof window.wpcteSetMontoCotizado==='function'){window.wpcteSetMontoCotizado(_pc);}else{var me=document.getElementById('monto');if(me)me.value=_pc.toFixed(2);} 
+            var formEl=document.querySelector('form.add-shipment')||document.querySelector('form');
+            var ce=document.getElementById('costo_envio');if(!ce){ce=document.createElement('input');ce.type='hidden';ce.name='costo_envio';ce.id='costo_envio';if(formEl)formEl.appendChild(ce);}if(ce)ce.value=_pc.toFixed(2);
             function s2(id,val){
                 if(!val)return;
                 var $s=typeof jQuery!=='undefined'?jQuery('#'+id):null;
