@@ -54,6 +54,7 @@ class WPC_Facturacion_Admin {
 			return;
 		}
 
+		wp_enqueue_script( 'sweetalert2', 'https://cdn.jsdelivr.net/npm/sweetalert2@11', array(), '11', true );
 		wp_enqueue_style( 'wpcfact-wizard-css', WPC_FACTURACION_URL . 'admin/assets/css/wizard.css', array(), WPC_FACTURACION_VERSION );
 		wp_enqueue_script( 'wpcfact-wizard-js', WPC_FACTURACION_URL . 'admin/assets/js/wizard.js', array( 'jquery' ), WPC_FACTURACION_VERSION, true );
 		wp_localize_script( 'wpcfact-wizard-js', 'wpcfact_ajax', array(

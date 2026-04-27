@@ -145,11 +145,11 @@ $total_pages = ceil( $total_items / $limit );
 				motivo: motivo
 			}, function(res) {
 				if (res.success) {
-					location.reload();
+					Swal.fire('Éxito', 'Comprobante anulado correctamente.', 'success').then(() => location.reload());
 				} else {
 					$('#wpcfact-anular-spinner').removeClass('is-active');
 					$('#wpcfact-confirmar-anular').prop('disabled', false);
-					alert(res.data);
+					Swal.fire('Error', res.data, 'error');
 					$('#wpcfact-anular-error').text(res.data);
 				}
 			});
@@ -187,12 +187,11 @@ $total_pages = ceil( $total_items / $limit );
 				codigo_motivo: codigo_motivo
 			}, function(res) {
 				if (res.success) {
-					alert("Nota de Crédito generada exitosamente.");
-					location.reload();
+					Swal.fire('Éxito', 'Nota de Crédito generada exitosamente.', 'success').then(() => location.reload());
 				} else {
 					$('#wpcfact-ncredito-spinner').removeClass('is-active');
 					$('#wpcfact-confirmar-ncredito').prop('disabled', false);
-					alert("Error: " + res.data);
+					Swal.fire('Error', res.data, 'error');
 					$('#wpcfact-ncredito-error').text(res.data);
 				}
 			});

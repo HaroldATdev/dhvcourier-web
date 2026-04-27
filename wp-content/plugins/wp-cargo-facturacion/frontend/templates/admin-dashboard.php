@@ -148,10 +148,10 @@
 				motivo: motivo
 			}, function(res) {
 				if (res.success) {
-					location.reload();
+					Swal.fire('Éxito', 'Comprobante anulado correctamente.', 'success').then(() => location.reload());
 				} else {
 					$('#wpcfact-confirmar-anular').prop('disabled', false).text('Confirmar Anulación');
-					alert(res.data);
+					Swal.fire('Error', res.data, 'error');
 					$('#wpcfact-anular-error').text(res.data);
 				}
 			});
@@ -189,11 +189,10 @@
 				codigo_motivo: codigo_motivo
 			}, function(res) {
 				if (res.success) {
-					alert("Nota de Crédito generada exitosamente.");
-					location.reload();
+					Swal.fire('Éxito', 'Nota de Crédito generada exitosamente.', 'success').then(() => location.reload());
 				} else {
 					$('#wpcfact-confirmar-ncredito').prop('disabled', false).text('Emitir N. Crédito');
-					alert("Error: " + res.data);
+					Swal.fire('Error', res.data, 'error');
 					$('#wpcfact-ncredito-error').text(res.data);
 				}
 			});

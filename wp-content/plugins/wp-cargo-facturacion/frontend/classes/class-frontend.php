@@ -17,7 +17,7 @@ class WPC_Facturacion_Frontend {
 	}
 
 	public function enqueue_scripts() {
-		// Enqueue scripts solo en el frontend, se llamará directamente desde el shortcode
+		wp_enqueue_script( 'sweetalert2', 'https://cdn.jsdelivr.net/npm/sweetalert2@11', array(), '11', true );
 	}
 
 	public function add_sidebar_menu( $menus ) {
