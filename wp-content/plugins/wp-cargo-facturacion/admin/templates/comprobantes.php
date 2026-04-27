@@ -59,6 +59,7 @@ $total_pages = ceil( $total_items / $limit );
 								<a href="<?php echo esc_url( WPC_Facturacion_APISunat::get_pdf_url( $comp->document_id, $comp->file_name, 'A4' ) ); ?>" target="_blank" class="button button-small">PDF (A4)</a>
 								<a href="<?php echo esc_url( WPC_Facturacion_APISunat::get_pdf_url( $comp->document_id, $comp->file_name, 'ticket80mm' ) ); ?>" target="_blank" class="button button-small">Ticket</a>
 								<button class="button button-small button-link-delete wpcfact-btn-anular" data-id="<?php echo esc_attr( $comp->id ); ?>">Anular</button>
+								<button class="button button-small wpcfact-btn-ncredito" data-id="<?php echo esc_attr( $comp->id ); ?>">N. Crédito</button>
 							<?php endif; ?>
 							<?php if ( $comp->estado === 'PENDIENTE' ) : ?>
 								<button class="button button-small" disabled title="Esperando a SUNAT">Procesando...</button>
@@ -83,6 +84,34 @@ $total_pages = ceil( $total_items / $limit );
 			</p>
 			<div id="wpcfact-anular-spinner" class="spinner" style="float:none;"></div>
 			<div id="wpcfact-anular-error" style="color:red; margin-top:10px;"></div>
+		</div>
+	</div>
+
+	<!-- Modal Nota Crédito -->
+	<div id="wpcfact-modal-ncredito" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:99999;">
+		<div style="background:#fff; width:400px; margin: 100px auto; padding:20px; border-radius:4px; box-shadow:0 4px 8px rgba(0,0,0,0.2);">
+			<h3>Emitir Nota de Crédito</h3>
+			<p>Tipo de Nota de Crédito:</p>
+			<select id="wpcfact-ncredito-codigo" class="regular-text" style="width:100%; margin-bottom: 10px;">
+				<option value="01">Anulación de la operación</option>
+				<option value="02">Anulación por error en el RUC</option>
+				<option value="03">Corrección por error en la descripción</option>
+				<option value="04">Descuento global</option>
+				<option value="05">Descuento por ítem</option>
+				<option value="06">Devolución total</option>
+				<option value="07">Devolución por ítem</option>
+				<option value="08">Bonificación</option>
+				<option value="09">Disminución en el valor</option>
+			</select>
+			<p>Motivo/Sustento:</p>
+			<input type="text" id="wpcfact-motivo-ncredito" class="regular-text" style="width:100%;" placeholder="Ej: Anulación de la operación">
+			<input type="hidden" id="wpcfact-ncredito-id">
+			<p class="submit">
+				<button class="button" id="wpcfact-cancelar-ncredito">Cancelar</button>
+				<button class="button button-primary" id="wpcfact-confirmar-ncredito">Emitir N. Crédito</button>
+			</p>
+			<div id="wpcfact-ncredito-spinner" class="spinner" style="float:none;"></div>
+			<div id="wpcfact-ncredito-error" style="color:red; margin-top:10px;"></div>
 		</div>
 	</div>
 
@@ -120,7 +149,51 @@ $total_pages = ceil( $total_items / $limit );
 				} else {
 					$('#wpcfact-anular-spinner').removeClass('is-active');
 					$('#wpcfact-confirmar-anular').prop('disabled', false);
+					alert(res.data);
 					$('#wpcfact-anular-error').text(res.data);
+				}
+			});
+		});
+
+		// Nota de Credito Logic
+		$('.wpcfact-btn-ncredito').click(function() {
+			$('#wpcfact-ncredito-id').val($(this).data('id'));
+			$('#wpcfact-motivo-ncredito').val('Anulación de la operación');
+			$('#wpcfact-ncredito-codigo').val('01');
+			$('#wpcfact-ncredito-error').text('');
+			$('#wpcfact-modal-ncredito').show();
+		});
+
+		$('#wpcfact-cancelar-ncredito').click(function() {
+			$('#wpcfact-modal-ncredito').hide();
+		});
+
+		$('#wpcfact-confirmar-ncredito').click(function() {
+			var motivo = $('#wpcfact-motivo-ncredito').val();
+			var codigo_motivo = $('#wpcfact-ncredito-codigo').val();
+			if (!motivo) {
+				$('#wpcfact-ncredito-error').text('Debe ingresar un motivo.');
+				return;
+			}
+
+			$('#wpcfact-ncredito-spinner').addClass('is-active');
+			$(this).prop('disabled', true);
+
+			$.post(ajaxurl, {
+				action: 'wpcfact_emitir_nota_credito',
+				nonce: '<?php echo wp_create_nonce("wpcfact_wizard_nonce"); ?>',
+				comprobante_id: $('#wpcfact-ncredito-id').val(),
+				motivo: motivo,
+				codigo_motivo: codigo_motivo
+			}, function(res) {
+				if (res.success) {
+					alert("Nota de Crédito generada exitosamente.");
+					location.reload();
+				} else {
+					$('#wpcfact-ncredito-spinner').removeClass('is-active');
+					$('#wpcfact-confirmar-ncredito').prop('disabled', false);
+					alert("Error: " + res.data);
+					$('#wpcfact-ncredito-error').text(res.data);
 				}
 			});
 		});

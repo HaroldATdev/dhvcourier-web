@@ -12,6 +12,11 @@ if ( isset( $_POST['wpcfact_save_config'] ) && check_admin_referer( 'wpcfact_con
 	update_option( 'wpcfact_ambiente',             sanitize_text_field( $_POST['wpcfact_ambiente'] ?? 'DEV' ) );
 	update_option( 'wpcfact_serie_factura',        sanitize_text_field( $_POST['wpcfact_serie_factura'] ?? 'F001' ) );
 	update_option( 'wpcfact_serie_boleta',         sanitize_text_field( $_POST['wpcfact_serie_boleta'] ?? 'B001' ) );
+	update_option( 'wpcfact_serie_nota_venta',     sanitize_text_field( $_POST['wpcfact_serie_nota_venta'] ?? 'NV01' ) );
+	update_option( 'wpcfact_serie_nc_factura',     sanitize_text_field( $_POST['wpcfact_serie_nc_factura'] ?? 'FC01' ) );
+	update_option( 'wpcfact_serie_nc_boleta',      sanitize_text_field( $_POST['wpcfact_serie_nc_boleta'] ?? 'BC01' ) );
+	update_option( 'wpcfact_serie_guia_remision',  sanitize_text_field( $_POST['wpcfact_serie_guia_remision'] ?? 'T001' ) );
+	update_option( 'wpcfact_serie_guia_transp',    sanitize_text_field( $_POST['wpcfact_serie_guia_transp'] ?? 'V001' ) );
 	echo '<div class="notice notice-success is-dismissible"><p><strong>✅ Configuración guardada correctamente.</strong></p></div>';
 }
 
@@ -22,8 +27,13 @@ $codigo_local   = get_option( 'wpcfact_codigo_local', '0000' );
 $persona_id     = get_option( 'wpcfact_persona_id', '' );
 $persona_token  = get_option( 'wpcfact_persona_token', '' );
 $ambiente       = get_option( 'wpcfact_ambiente', 'DEV' );
-$serie_factura  = get_option( 'wpcfact_serie_factura', 'F001' );
-$serie_boleta   = get_option( 'wpcfact_serie_boleta', 'B001' );
+$serie_factura       = get_option( 'wpcfact_serie_factura', 'F001' );
+$serie_boleta        = get_option( 'wpcfact_serie_boleta', 'B001' );
+$serie_nota_venta    = get_option( 'wpcfact_serie_nota_venta', 'NV01' );
+$serie_nc_factura    = get_option( 'wpcfact_serie_nc_factura', 'FC01' );
+$serie_nc_boleta     = get_option( 'wpcfact_serie_nc_boleta', 'BC01' );
+$serie_guia_remision = get_option( 'wpcfact_serie_guia_remision', 'T001' );
+$serie_guia_transp   = get_option( 'wpcfact_serie_guia_transp', 'V001' );
 
 $configured = ! empty( $persona_id ) && ! empty( $persona_token ) && ! empty( $ruc );
 ?>
@@ -116,6 +126,51 @@ $configured = ! empty( $persona_id ) && ! empty( $persona_token ) && ! empty( $r
 						value="<?php echo esc_attr( $serie_boleta ); ?>"
 						style="width:100px; font-size:15px; padding:8px;" maxlength="4" placeholder="B001">
 					<p class="description">Debe empezar con "B". Ejemplo: B001</p>
+				</td>
+			</tr>
+			<tr>
+				<th style="vertical-align:top; padding-top:15px;"><label for="wpcfact_serie_nota_venta">Serie Nota de Venta</label></th>
+				<td>
+					<input type="text" id="wpcfact_serie_nota_venta" name="wpcfact_serie_nota_venta"
+						value="<?php echo esc_attr( $serie_nota_venta ); ?>"
+						style="width:100px; font-size:15px; padding:8px;" maxlength="4" placeholder="NV01">
+					<p class="description">Para tickets internos. Ejemplo: NV01</p>
+				</td>
+			</tr>
+			<tr>
+				<th style="vertical-align:top; padding-top:15px;"><label for="wpcfact_serie_nc_factura">Serie N. Crédito (Factura)</label></th>
+				<td>
+					<input type="text" id="wpcfact_serie_nc_factura" name="wpcfact_serie_nc_factura"
+						value="<?php echo esc_attr( $serie_nc_factura ); ?>"
+						style="width:100px; font-size:15px; padding:8px;" maxlength="4" placeholder="FC01">
+					<p class="description">Debe empezar con "FC". Ejemplo: FC01</p>
+				</td>
+			</tr>
+			<tr>
+				<th style="vertical-align:top; padding-top:15px;"><label for="wpcfact_serie_nc_boleta">Serie N. Crédito (Boleta)</label></th>
+				<td>
+					<input type="text" id="wpcfact_serie_nc_boleta" name="wpcfact_serie_nc_boleta"
+						value="<?php echo esc_attr( $serie_nc_boleta ); ?>"
+						style="width:100px; font-size:15px; padding:8px;" maxlength="4" placeholder="BC01">
+					<p class="description">Debe empezar con "BC". Ejemplo: BC01</p>
+				</td>
+			</tr>
+			<tr>
+				<th style="vertical-align:top; padding-top:15px;"><label for="wpcfact_serie_guia_remision">Serie Guía de Remisión</label></th>
+				<td>
+					<input type="text" id="wpcfact_serie_guia_remision" name="wpcfact_serie_guia_remision"
+						value="<?php echo esc_attr( $serie_guia_remision ); ?>"
+						style="width:100px; font-size:15px; padding:8px;" maxlength="4" placeholder="T001">
+					<p class="description">Debe empezar con "T". Ejemplo: T001</p>
+				</td>
+			</tr>
+			<tr>
+				<th style="vertical-align:top; padding-top:15px;"><label for="wpcfact_serie_guia_transp">Serie Guía Transportista</label></th>
+				<td>
+					<input type="text" id="wpcfact_serie_guia_transp" name="wpcfact_serie_guia_transp"
+						value="<?php echo esc_attr( $serie_guia_transp ); ?>"
+						style="width:100px; font-size:15px; padding:8px;" maxlength="4" placeholder="V001">
+					<p class="description">Debe empezar con "V". Ejemplo: V001</p>
 				</td>
 			</tr>
 		</table>

@@ -10,6 +10,7 @@ class WPC_Facturacion_Ajax {
 		add_action( 'wp_ajax_wpcfact_obtener_envios', array( $this, 'obtener_envios' ) );
 		add_action( 'wp_ajax_wpcfact_emitir_comprobante', array( $this, 'emitir_comprobante' ) );
 		add_action( 'wp_ajax_wpcfact_anular_comprobante', array( $this, 'anular_comprobante' ) );
+		add_action( 'wp_ajax_wpcfact_emitir_nota_credito', array( $this, 'emitir_nota_credito' ) );
 	}
 
 	public function buscar_cliente() {
@@ -175,6 +176,9 @@ class WPC_Facturacion_Ajax {
 		$nombre     = sanitize_text_field( $_POST['nombre'] ?? '' );
 		$direccion  = sanitize_text_field( $_POST['direccion'] ?? '' );
 		$forma_pago = sanitize_text_field( $_POST['forma_pago'] ?? 'Contado' );
+		$guia_peso      = sanitize_text_field( $_POST['guia_peso'] ?? '1.00' );
+		$guia_motivo    = sanitize_text_field( $_POST['guia_motivo'] ?? '01' );
+		$guia_modalidad = sanitize_text_field( $_POST['guia_modalidad'] ?? '01' );
 
 		if ( ! $user_id || empty( $envios ) || empty( $doc_num ) || empty( $nombre ) ) {
 			wp_send_json_error( 'Faltan datos requeridos.' );
@@ -185,7 +189,19 @@ class WPC_Facturacion_Ajax {
 		update_user_meta( $user_id, 'wpcfact_razon_social', $nombre );
 		update_user_meta( $user_id, 'wpcfact_direccion', $direccion );
 
-		$resultado = WPC_Facturacion_Constructor::emitir( $user_id, $envios, $tipo, $doc_num, $nombre, $direccion, $forma_pago );
+		if ( $tipo === '00' ) {
+			if ( ! class_exists( 'WPC_Facturacion_Constructor_NotaVenta' ) ) {
+				require_once dirname( __FILE__ ) . '/../includes/class-constructor-notaventa.php';
+			}
+			$resultado = WPC_Facturacion_Constructor_NotaVenta::emitir( $user_id, $envios, $doc_num, $nombre, $direccion, $forma_pago );
+		} elseif ( $tipo === '09' || $tipo === '31' ) {
+			if ( ! class_exists( 'WPC_Facturacion_Constructor_Guia' ) ) {
+				require_once dirname( __FILE__ ) . '/../includes/class-constructor-guia.php';
+			}
+			$resultado = WPC_Facturacion_Constructor_Guia::emitir( $user_id, $envios, $tipo, $doc_num, $nombre, $direccion, $guia_peso, $guia_motivo, $guia_modalidad );
+		} else {
+			$resultado = WPC_Facturacion_Constructor::emitir( $user_id, $envios, $tipo, $doc_num, $nombre, $direccion, $forma_pago );
+		}
 
 		if ( is_wp_error( $resultado ) ) {
 			wp_send_json_error( $resultado->get_error_message() );
@@ -213,6 +229,15 @@ class WPC_Facturacion_Ajax {
 			wp_send_json_error( 'Solo se pueden anular comprobantes ACEPTADOS.' );
 		}
 
+		// Validar regla de los 7 días para Facturas (01)
+		if ( $comprobante->tipo === '01' ) {
+			$emitido_en = strtotime( $comprobante->emitido_en );
+			$dias_pasados = floor( ( time() - $emitido_en ) / ( 60 * 60 * 24 ) );
+			if ( $dias_pasados > 7 ) {
+				wp_send_json_error( 'Han pasado más de 7 días. Debe generar una Nota de Crédito para esta factura.' );
+			}
+		}
+
 		$api_response = WPC_Facturacion_APISunat::void_bill( $comprobante->document_id, $motivo );
 
 		if ( is_wp_error( $api_response ) ) {
@@ -222,6 +247,40 @@ class WPC_Facturacion_Ajax {
 		WPC_Facturacion_Comprobante::actualizar( $comprobante_id, array( 'estado' => 'ANULADO' ) );
 
 		wp_send_json_success( 'Comprobante anulado correctamente.' );
+	}
+
+	public function emitir_nota_credito() {
+		check_ajax_referer( 'wpcfact_wizard_nonce', 'nonce' );
+
+		$comprobante_id = intval( $_POST['comprobante_id'] ?? 0 );
+		$motivo         = sanitize_text_field( $_POST['motivo'] ?? '' );
+		$codigo_motivo  = sanitize_text_field( $_POST['codigo_motivo'] ?? '01' );
+
+		if ( ! $comprobante_id || empty( $motivo ) ) {
+			wp_send_json_error( 'ID de comprobante y motivo son requeridos.' );
+		}
+
+		$comprobante = WPC_Facturacion_Comprobante::obtener( $comprobante_id );
+		if ( ! $comprobante ) {
+			wp_send_json_error( 'Comprobante no encontrado.' );
+		}
+
+		if ( $comprobante->estado !== 'ACEPTADO' ) {
+			wp_send_json_error( 'Solo se puede emitir Nota de Crédito a comprobantes ACEPTADOS.' );
+		}
+
+		// Requeriríamos cargar la clase WPC_Facturacion_Constructor_NotaCredito
+		if ( ! class_exists( 'WPC_Facturacion_Constructor_NotaCredito' ) ) {
+			require_once dirname( __FILE__ ) . '/../includes/class-constructor-notacredito.php';
+		}
+
+		$resultado = WPC_Facturacion_Constructor_NotaCredito::emitir( $comprobante, $motivo, $codigo_motivo );
+
+		if ( is_wp_error( $resultado ) ) {
+			wp_send_json_error( $resultado->get_error_message() );
+		}
+
+		wp_send_json_success( $resultado );
 	}
 }
 

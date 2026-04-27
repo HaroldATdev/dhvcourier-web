@@ -205,7 +205,10 @@ jQuery(document).ready(function($) {
 			doc_num: $('#wpcfact-receptor-doc').val(),
 			nombre: $('#wpcfact-receptor-nombre').val(),
 			direccion: $('#wpcfact-receptor-direccion').val(),
-			forma_pago: $('#wpcfact-forma-pago').val()
+			forma_pago: $('#wpcfact-forma-pago').val(),
+			guia_peso: $('#wpcfact-guia-peso').val(),
+			guia_motivo: $('#wpcfact-guia-motivo').val(),
+			guia_modalidad: $('#wpcfact-guia-modalidad').val()
 		};
 
 		showStep(4);

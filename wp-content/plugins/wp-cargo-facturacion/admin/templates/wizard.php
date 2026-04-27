@@ -16,6 +16,9 @@
 			<select id="wpcfact-tipo-doc" class="wpcfact-select">
 				<option value="01">Factura Electrónica (RUC)</option>
 				<option value="03">Boleta Electrónica (DNI)</option>
+				<option value="00">Nota de Venta (Interna)</option>
+				<option value="09">Guía de Remisión Remitente</option>
+				<option value="31">Guía de Transportista</option>
 			</select>
 		</div>
 
@@ -110,9 +113,53 @@
 			</select>
 		</div>
 
-		<div style="background:#fffbeb; border:1px solid #fef3c7; border-left:4px solid #f59e0b; padding:15px; border-radius:6px; margin-top:20px; color:#b45309;">
-			<strong>Nota:</strong> Las líneas del comprobante se autogenerarán indicando el servicio de courier y el número de tracking de cada envío seleccionado.
+		<div id="wpcfact-campos-guia" style="display:none; margin-top:20px; padding:15px; border:1px solid #cbd5e1; border-radius:6px; background:#f8fafc;">
+			<h3 style="margin-top:0;">Datos Adicionales para Guía</h3>
+			<div style="display:flex; gap:20px; flex-wrap:wrap;">
+				<div class="wpcfact-input-group" style="flex:1;">
+					<label>Peso Bruto Total (KGM)</label>
+					<input type="number" step="0.01" id="wpcfact-guia-peso" class="wpcfact-input" value="1.00">
+				</div>
+				<div class="wpcfact-input-group" style="flex:1;">
+					<label>Motivo de Traslado</label>
+					<select id="wpcfact-guia-motivo" class="wpcfact-select">
+						<option value="01">Venta</option>
+						<option value="14">Venta sujeta a confirmación del comprador</option>
+						<option value="02">Compra</option>
+						<option value="04">Traslado entre establecimientos de la misma empresa</option>
+						<option value="13">Otros</option>
+					</select>
+				</div>
+			</div>
+			<div style="display:flex; gap:20px; flex-wrap:wrap; margin-top:15px;">
+				<div class="wpcfact-input-group" style="flex:1;">
+					<label>Modalidad de Traslado</label>
+					<select id="wpcfact-guia-modalidad" class="wpcfact-select">
+						<option value="01">Transporte Público</option>
+						<option value="02">Transporte Privado</option>
+					</select>
+				</div>
+			</div>
+			<small style="color:#64748b; margin-top:10px; display:block;">(El sistema usará la dirección fiscal como punto de partida y la dirección del cliente como punto de llegada por defecto).</small>
 		</div>
+
+		<div style="background:#fffbeb; border:1px solid #fef3c7; border-left:4px solid #f59e0b; padding:15px; border-radius:6px; margin-top:20px; color:#b45309;">
+			<strong>Nota:</strong> Las líneas del comprobante/guía se autogenerarán indicando el servicio y el número de tracking de cada envío seleccionado.
+		</div>
+
+		<script>
+			// Mostrar/Ocultar campos de Guía según tipo de documento
+			jQuery('#wpcfact-tipo-doc').on('change', function() {
+				var val = jQuery(this).val();
+				if(val === '09' || val === '31') {
+					jQuery('#wpcfact-campos-guia').show();
+					jQuery('#wpcfact-forma-pago').parent().hide();
+				} else {
+					jQuery('#wpcfact-campos-guia').hide();
+					jQuery('#wpcfact-forma-pago').parent().show();
+				}
+			});
+		</script>
 
 		<div class="wpcfact-actions">
 			<button type="button" id="btn-prev-2" class="wpcfact-btn wpcfact-btn-outline">&larr; Volver a envíos</button>
