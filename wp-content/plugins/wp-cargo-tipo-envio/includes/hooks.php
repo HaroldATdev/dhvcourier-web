@@ -1431,7 +1431,17 @@ function wpcte_guardar_meta( $post_id ) {
 }
 
 function wpcte_guardar_meta_late( $post_id ) {
-    if ( get_post_type($post_id) !== 'wpcargo' ) return;
+    if ( get_post_type($post_id) !== 'wpcargo_shipment' && get_post_type($post_id) !== 'wpcargo' ) return;
+    if ( isset( $_POST['wpcte_tipo_envio'] ) )
+        update_post_meta( $post_id, 'tipo_envio', sanitize_key( $_POST['wpcte_tipo_envio'] ) );
+}
+
+add_action( 'after_wpcfe_save_shipment', 'wpcte_guardar_meta_wpcfe', 10, 2 );
+function wpcte_guardar_meta_wpcfe( $post_id, $data ) {
+    if ( isset( $data['costo_envio'] ) && $data['costo_envio'] !== '' ) {
+        update_post_meta( $post_id, 'costo_envio', sanitize_text_field( $data['costo_envio'] ) );
+    }
+}
     if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ) return;
     if ( ! empty( $_POST['wpcte_tipo_envio'] ) )
         update_post_meta( $post_id, 'tipo_envio', sanitize_key( $_POST['wpcte_tipo_envio'] ) );
