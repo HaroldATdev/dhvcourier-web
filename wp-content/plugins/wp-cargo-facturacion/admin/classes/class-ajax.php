@@ -130,8 +130,8 @@ class WPC_Facturacion_Ajax {
 		$resultados = array();
 
 		foreach ( $envios as $envio ) {
-			// DHV Courier guarda el monto en 'monto'; wpcargo_total_freight como fallback
-			$freight_raw = get_post_meta( $envio->ID, 'monto', true );
+			// DHV Courier guarda el monto de cotización en 'wpcte-total-row'
+			$freight_raw = get_post_meta( $envio->ID, 'wpcte-total-row', true );
 			if ( empty( $freight_raw ) ) {
 				$freight_raw = get_post_meta( $envio->ID, 'wpcargo_total_freight', true );
 			}

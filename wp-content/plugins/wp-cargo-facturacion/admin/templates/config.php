@@ -6,6 +6,7 @@ if ( isset( $_POST['wpcfact_save_config'] ) && check_admin_referer( 'wpcfact_con
 	update_option( 'wpcfact_ruc_emisor',          sanitize_text_field( $_POST['wpcfact_ruc_emisor'] ?? '' ) );
 	update_option( 'wpcfact_razon_social_emisor',  sanitize_text_field( $_POST['wpcfact_razon_social_emisor'] ?? '' ) );
 	update_option( 'wpcfact_direccion_emisor',     sanitize_text_field( $_POST['wpcfact_direccion_emisor'] ?? '' ) );
+	update_option( 'wpcfact_codigo_local',         sanitize_text_field( $_POST['wpcfact_codigo_local'] ?? '0000' ) );
 	update_option( 'wpcfact_persona_id',           sanitize_text_field( $_POST['wpcfact_persona_id'] ?? '' ) );
 	update_option( 'wpcfact_persona_token',        sanitize_text_field( $_POST['wpcfact_persona_token'] ?? '' ) );
 	update_option( 'wpcfact_ambiente',             sanitize_text_field( $_POST['wpcfact_ambiente'] ?? 'DEV' ) );
@@ -17,6 +18,7 @@ if ( isset( $_POST['wpcfact_save_config'] ) && check_admin_referer( 'wpcfact_con
 $ruc            = get_option( 'wpcfact_ruc_emisor', '' );
 $razon_social   = get_option( 'wpcfact_razon_social_emisor', '' );
 $direccion      = get_option( 'wpcfact_direccion_emisor', '' );
+$codigo_local   = get_option( 'wpcfact_codigo_local', '0000' );
 $persona_id     = get_option( 'wpcfact_persona_id', '' );
 $persona_token  = get_option( 'wpcfact_persona_token', '' );
 $ambiente       = get_option( 'wpcfact_ambiente', 'DEV' );
@@ -72,12 +74,21 @@ $configured = ! empty( $persona_id ) && ! empty( $persona_token ) && ! empty( $r
 				</td>
 			</tr>
 			<tr>
-				<th><label for="wpcfact_direccion_emisor">Dirección Fiscal</label></th>
+				<th style="width:220px;"><label for="wpcfact_direccion_emisor">Dirección Fiscal</label></th>
 				<td>
 					<input type="text" id="wpcfact_direccion_emisor" name="wpcfact_direccion_emisor"
 						value="<?php echo esc_attr( $direccion ); ?>"
 						class="large-text" placeholder="Av. Ejemplo 123, Lima, Lima"
 						style="font-size:15px; padding:8px;">
+				</td>
+			</tr>
+			<tr>
+				<th><label for="wpcfact_codigo_local">Código de Local Anexo <span style="color:red;">*</span></label></th>
+				<td>
+					<input type="text" id="wpcfact_codigo_local" name="wpcfact_codigo_local"
+						value="<?php echo esc_attr( $codigo_local ); ?>"
+						style="width:100px; font-size:15px; padding:8px;" maxlength="4" placeholder="0000">
+					<p class="description">Código de 4 dígitos del local registrado en SUNAT. Usa <strong>0000</strong> para la sede principal. Si tienes locales adicionales, usa el código asignado por SUNAT (ej: 0001).</p>
 				</td>
 			</tr>
 		</table>

@@ -9,8 +9,10 @@ class WPC_Facturacion_Constructor {
 		global $wpdb;
 
 		// 1. Obtener RUC emisor de settings
-		$ruc_emisor = get_option( 'wpcfact_ruc_emisor' );
+		$ruc_emisor          = get_option( 'wpcfact_ruc_emisor' );
 		$razon_social_emisor = get_option( 'wpcfact_razon_social_emisor' );
+		$direccion_emisor    = get_option( 'wpcfact_direccion_emisor', '' );
+		$codigo_local        = get_option( 'wpcfact_codigo_local', '0000' ); // Código de local anexo SUNAT
 		if ( empty( $ruc_emisor ) ) {
 			return new WP_Error( 'config_error', 'Falta configurar el RUC emisor.' );
 		}
@@ -36,12 +38,11 @@ class WPC_Facturacion_Constructor {
 			$post = get_post( $envio_id );
 			if ( ! $post ) continue;
 
-			$freight_raw = get_post_meta( $envio_id, 'monto', true );
-			// 👇 DEBUG TEMPORAL — quitar después
-			error_log( '[WPCFACT] Envio ID ' . $envio_id . ' | freight_raw=' . var_export($freight_raw, true) );
-			$all_meta = get_post_meta( $envio_id );
-			error_log( '[WPCFACT] Todas las metas: ' . print_r( array_map(function($v){ return $v[0]; }, $all_meta), true ) );
-			// 👆 FIN DEBUG
+			// Leer monto desde la cotización de DHV Courier
+			$freight_raw = get_post_meta( $envio_id, 'wpcte-total-row', true );
+			if ( empty( $freight_raw ) ) {
+				$freight_raw = get_post_meta( $envio_id, 'wpcargo_total_freight', true );
+			}
 			$monto = floatval( preg_replace( '/[^0-9.]/', '', $freight_raw ) );
 			
 			if ( $monto <= 0 ) continue;
@@ -109,6 +110,16 @@ class WPC_Facturacion_Constructor {
 						'cbc:ID' => array(
 							'_attributes' => array( 'schemeID' => '6' ),
 							'_text' => $ruc_emisor
+						)
+					),
+					// cac:PostalAddress es OBLIGATORIO en SUNAT — contiene el código de local anexo (error 4198)
+					'cac:PostalAddress' => array(
+						'cbc:AddressTypeCode' => array( '_text' => $codigo_local ),
+						'cac:AddressLine'    => array(
+							'cbc:Line' => array( '_text' => $direccion_emisor )
+						),
+						'cac:Country' => array(
+							'cbc:IdentificationCode' => array( '_text' => 'PE' )
 						)
 					),
 					'cac:PartyLegalEntity' => array(
