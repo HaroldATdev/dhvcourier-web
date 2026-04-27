@@ -1355,6 +1355,7 @@ function wpcte_footer_editar() {
                 setTimeout(function(){
                     var p=window._wpcte_precio;if(p===null||p===undefined)return;
                     if(typeof window.wpcteSetMontoCotizado==='function'){window.wpcteSetMontoCotizado(p);}else{var me=document.getElementById('monto');if(me)me.value=p.toFixed(2);} 
+                    var ce=document.getElementById('costo_envio');if(!ce){ce=document.createElement('input');ce.type='hidden';ce.name='costo_envio';ce.id='costo_envio';if(formEl)formEl.appendChild(ce);}if(ce)ce.value=p.toFixed(2);
                     function s2(id,val){if(!val)return;var $s=$('#'+id);if(!$s.length)return;if($s.find('option[value="'+val+'"]').length){$s.val(val).trigger('change');}else{$s.append(new Option(val,val,true,true)).trigger('change');}}
                     function _fE(){var o=window._wpcte_orig,d=window._wpcte_dest;if(o)s2('lugar_origen',o);if(d)s2('lugar_destino',d);}
                     _fE();setTimeout(_fE,400);setTimeout(_fE,900);
@@ -1413,6 +1414,8 @@ function wpcte_guardar_meta( $post_id ) {
         update_post_meta( $post_id, 'contenedor_entrega_id', sanitize_text_field( $_POST['shipment_container_entrega'] ) );
     if ( isset( $_POST['direccion_remitente'] ) )
         update_post_meta( $post_id, 'direccion_remitente', sanitize_text_field( $_POST['direccion_remitente'] ) );
+    if ( isset( $_POST['costo_envio'] ) )
+        update_post_meta( $post_id, 'costo_envio', sanitize_text_field( $_POST['costo_envio'] ) );
 
     $posted_shipper = isset( $_POST['registered_shipper'] ) ? absint( $_POST['registered_shipper'] ) : 0;
     if ( $posted_shipper > 0 ) {
@@ -1432,6 +1435,8 @@ function wpcte_guardar_meta_late( $post_id ) {
         update_post_meta( $post_id, 'tipo_envio', sanitize_key( $_POST['wpcte_tipo_envio'] ) );
     if ( isset( $_POST['direccion_remitente'] ) )
         update_post_meta( $post_id, 'direccion_remitente', sanitize_text_field( $_POST['direccion_remitente'] ) );
+    if ( isset( $_POST['costo_envio'] ) )
+        update_post_meta( $post_id, 'costo_envio', sanitize_text_field( $_POST['costo_envio'] ) );
 
     $posted_shipper = isset( $_POST['registered_shipper'] ) ? absint( $_POST['registered_shipper'] ) : 0;
     if ( $posted_shipper > 0 ) {

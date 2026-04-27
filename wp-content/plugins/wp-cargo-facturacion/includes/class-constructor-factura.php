@@ -38,8 +38,11 @@ class WPC_Facturacion_Constructor {
 			$post = get_post( $envio_id );
 			if ( ! $post ) continue;
 
-			// Leer monto desde la cotización de DHV Courier
-			$freight_raw = get_post_meta( $envio_id, 'wpcte-total-row', true );
+			// Leer monto desde costo_envio (cotización original), fallback a monto y luego wpcargo_total_freight
+			$freight_raw = get_post_meta( $envio_id, 'costo_envio', true );
+			if ( empty( $freight_raw ) ) {
+				$freight_raw = get_post_meta( $envio_id, 'monto', true );
+			}
 			if ( empty( $freight_raw ) ) {
 				$freight_raw = get_post_meta( $envio_id, 'wpcargo_total_freight', true );
 			}
