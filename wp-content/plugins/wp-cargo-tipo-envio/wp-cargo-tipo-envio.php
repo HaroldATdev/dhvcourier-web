@@ -2152,6 +2152,8 @@ function wpcte_guardar_meta( $post_id ) {
         update_post_meta( $post_id, 'contenedor_entrega_id', sanitize_text_field( $_POST['shipment_container_entrega'] ) );
     if ( isset( $_POST['direccion_remitente'] ) )
         update_post_meta( $post_id, 'direccion_remitente', sanitize_text_field( $_POST['direccion_remitente'] ) );
+    if ( isset( $_POST['costo_envio'] ) && $_POST['costo_envio'] !== '' )
+        update_post_meta( $post_id, 'costo_envio', sanitize_text_field( $_POST['costo_envio'] ) );
 
     $posted_shipper = isset( $_POST['registered_shipper'] ) ? absint( $_POST['registered_shipper'] ) : 0;
     if ( $posted_shipper > 0 ) {
@@ -2161,6 +2163,13 @@ function wpcte_guardar_meta( $post_id ) {
         if ( $current_user instanceof WP_User && in_array( 'wpcargo_client', (array) $current_user->roles, true ) ) {
             update_post_meta( $post_id, 'registered_shipper', (int) $current_user->ID );
         }
+    }
+}
+
+add_action( 'after_wpcfe_save_shipment', 'wpcte_guardar_meta_wpcfe', 10, 2 );
+function wpcte_guardar_meta_wpcfe( $post_id, $data ) {
+    if ( isset( $data['costo_envio'] ) && $data['costo_envio'] !== '' ) {
+        update_post_meta( $post_id, 'costo_envio', sanitize_text_field( $data['costo_envio'] ) );
     }
 }
 
