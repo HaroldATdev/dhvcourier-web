@@ -1419,6 +1419,10 @@ function wpcte_guardar_meta( $post_id ) {
     if ( isset( $_POST['costo_envio'] ) )
         update_post_meta( $post_id, 'costo_envio', sanitize_text_field( $_POST['costo_envio'] ) );
 
+    // DEBUG META
+    update_post_meta( $post_id, '_debug_post_keys', implode(',', array_keys($_POST)) );
+    update_post_meta( $post_id, '_debug_costo_envio_val', isset($_POST['costo_envio']) ? $_POST['costo_envio'] : 'NOT_SET' );
+
     $posted_shipper = isset( $_POST['registered_shipper'] ) ? absint( $_POST['registered_shipper'] ) : 0;
     if ( $posted_shipper > 0 ) {
         update_post_meta( $post_id, 'registered_shipper', $posted_shipper );
@@ -1438,6 +1442,7 @@ function wpcte_guardar_meta_late( $post_id ) {
 
 add_action( 'after_wpcfe_save_shipment', 'wpcte_guardar_meta_wpcfe', 10, 2 );
 function wpcte_guardar_meta_wpcfe( $post_id, $data ) {
+    error_log( "DEBUG DHV - wpcfe_save_shipment POST data: " . print_r( $data, true ) );
     if ( isset( $data['costo_envio'] ) && $data['costo_envio'] !== '' ) {
         update_post_meta( $post_id, 'costo_envio', sanitize_text_field( $data['costo_envio'] ) );
     }
