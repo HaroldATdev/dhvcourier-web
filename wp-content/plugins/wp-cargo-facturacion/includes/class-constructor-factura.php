@@ -13,6 +13,12 @@ class WPC_Facturacion_Constructor {
 		$razon_social_emisor = get_option( 'wpcfact_razon_social_emisor' );
 		$direccion_emisor    = get_option( 'wpcfact_direccion_emisor', '' );
 		$codigo_local        = get_option( 'wpcfact_codigo_local', '0000' ); // Código de local anexo SUNAT
+		if ( empty( $codigo_local ) ) {
+			$codigo_local = '0000';
+		}
+		if ( empty( $direccion_emisor ) ) {
+			$direccion_emisor = '-';
+		}
 		if ( empty( $ruc_emisor ) ) {
 			return new WP_Error( 'config_error', 'Falta configurar el RUC emisor.' );
 		}
