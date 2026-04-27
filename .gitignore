@@ -25,3 +25,5 @@ wp-content/plugins/wpcargo-frontend-manager/admin/includes/file-container/*.pdf
 
 # Ignorar traducciones generadas automáticamente
 wp-content/languages/
+# Seguridad y Logs
+wp-content/wflogs/

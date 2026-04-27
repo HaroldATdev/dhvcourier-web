@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+sitemap: https://dhvcourier.com/sitemap221.xml
+sitemap: https://dhvcourier.com/sitemap500.xml
+sitemap: https://dhvcourier.com/sitemap619.xml
+sitemap: https://dhvcourier.com/sitemap944.xml
+sitemap: https://dhvcourier.com/sitemap4.xml
