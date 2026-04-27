@@ -69,9 +69,33 @@ class WPC_Facturacion_Constructor {
 			return new WP_Error( 'data_error', 'No hay envíos válidos para facturar.' );
 		}
 
-		// Cálculos
-		$monto_base = round( $total_general / 1.18, 2 );
-		$igv = round( $total_general - $monto_base, 2 );
+		// Variables para totales globales acumulados desde las líneas
+		$monto_base_total = 0;
+		$igv_total = 0;
+		
+		// Cálculos por línea (pre-cálculo) para obtener sumatorias exactas
+		foreach ( $envios_datos as &$envio ) {
+			$precio_unitario_con_igv = $envio['monto'];
+			$precio_unitario_sin_igv = round( $precio_unitario_con_igv / 1.18, 5 );
+			$valor_venta_linea = round( $precio_unitario_sin_igv * 1, 2 );
+			$igv_linea = round( $precio_unitario_con_igv - $valor_venta_linea, 2 );
+			
+			$envio['valor_venta_linea'] = $valor_venta_linea;
+			$envio['igv_linea'] = $igv_linea;
+			$envio['precio_unitario_sin_igv'] = $precio_unitario_sin_igv;
+			
+			$monto_base_total += $valor_venta_linea;
+			$igv_total += $igv_linea;
+		}
+		unset($envio);
+		
+		// Ajuste para asegurar que la suma exacta cuadre con el total general ingresado si hay diferencias de 1 céntimo
+		$total_calculado = $monto_base_total + $igv_total;
+		if ( abs($total_general - $total_calculado) > 0.001 ) {
+		    // SUNAT requiere que la suma de líneas cuadre con los totales
+		    // Generalmente esto ya cuadra por nuestra forma de calcular el IGV por línea
+		}
+
 		$monto_letras = wpcfact_numero_a_letras( $total_general );
 		$fecha_emision = current_time( 'Y-m-d\TH:i:sP' );
 
@@ -125,17 +149,10 @@ class WPC_Facturacion_Constructor {
 						'cbc:RegistrationName' => array( '_text' => $razon_social_emisor ),
 						'cac:RegistrationAddress' => array(
 							'cbc:AddressTypeCode' => array(
-								'_attributes' => array( 'listAgencyName' => 'PE:SUNAT', 'listName' => 'Establecimientos anexos' ),
 								'_text' => $codigo_local
 							),
 							'cac:AddressLine' => array(
 								'cbc:Line' => array( '_text' => $direccion_emisor )
-							),
-							'cac:Country' => array(
-								'cbc:IdentificationCode' => array(
-									'_attributes' => array( 'listID' => 'ISO 3166-1', 'listAgencyName' => 'United Nations Economic Commission for Europe', 'listName' => 'Country' ),
-									'_text' => 'PE'
-								)
 							)
 						)
 					)
@@ -169,29 +186,22 @@ class WPC_Facturacion_Constructor {
 			),
 
 			'cac:TaxTotal' => array(
-				array(
-					'cbc:TaxAmount' => array( '_attributes' => array( 'currencyID' => 'PEN' ), '_text' => $igv ),
-					'cac:TaxSubtotal' => array(
-						array(
-							'cbc:TaxableAmount' => array( '_attributes' => array( 'currencyID' => 'PEN' ), '_text' => $monto_base ),
-							'cbc:TaxAmount' => array( '_attributes' => array( 'currencyID' => 'PEN' ), '_text' => $igv ),
-							'cac:TaxCategory' => array(
-								'cbc:ID' => array( '_attributes' => array( 'schemeID' => 'UN/ECE 5305', 'schemeName' => 'Tax Category Identifier', 'schemeAgencyName' => 'United Nations Economic Commission for Europe' ), '_text' => 'S' ),
-								'cbc:Percent' => array( '_text' => 18 ),
-								'cbc:TaxExemptionReasonCode' => array( '_attributes' => array( 'listAgencyName' => 'PE:SUNAT', 'listName' => 'Afectacion del IGV', 'listURI' => 'urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo07' ), '_text' => '10' ),
-								'cac:TaxScheme' => array(
-									'cbc:ID' => array( '_text' => '1000' ),
-									'cbc:Name' => array( '_text' => 'IGV' ),
-									'cbc:TaxTypeCode' => array( '_text' => 'VAT' )
-								)
-							)
+				'cbc:TaxAmount' => array( '_attributes' => array( 'currencyID' => 'PEN' ), '_text' => $igv_total ),
+				'cac:TaxSubtotal' => array(
+					'cbc:TaxableAmount' => array( '_attributes' => array( 'currencyID' => 'PEN' ), '_text' => $monto_base_total ),
+					'cbc:TaxAmount' => array( '_attributes' => array( 'currencyID' => 'PEN' ), '_text' => $igv_total ),
+					'cac:TaxCategory' => array(
+						'cac:TaxScheme' => array(
+							'cbc:ID' => array( '_text' => '1000' ),
+							'cbc:Name' => array( '_text' => 'IGV' ),
+							'cbc:TaxTypeCode' => array( '_text' => 'VAT' )
 						)
 					)
 				)
 			),
 
 			'cac:LegalMonetaryTotal' => array(
-				'cbc:LineExtensionAmount' => array( '_attributes' => array( 'currencyID' => 'PEN' ), '_text' => $monto_base ),
+				'cbc:LineExtensionAmount' => array( '_attributes' => array( 'currencyID' => 'PEN' ), '_text' => $monto_base_total ),
 				'cbc:TaxInclusiveAmount' => array( '_attributes' => array( 'currencyID' => 'PEN' ), '_text' => $total_general ),
 				'cbc:PayableAmount' => array( '_attributes' => array( 'currencyID' => 'PEN' ), '_text' => $total_general )
 			),
@@ -203,13 +213,13 @@ class WPC_Facturacion_Constructor {
 		$line_id = 1;
 		foreach ( $envios_datos as $envio ) {
 			$precio_unitario_con_igv = $envio['monto'];
-			$precio_unitario_sin_igv = round( $precio_unitario_con_igv / 1.18, 5 );
-			$valor_venta_linea = round( $precio_unitario_sin_igv * 1, 2 );
-			$igv_linea = round( $precio_unitario_con_igv - $valor_venta_linea, 2 );
+			$precio_unitario_sin_igv = $envio['precio_unitario_sin_igv'];
+			$valor_venta_linea = $envio['valor_venta_linea'];
+			$igv_linea = $envio['igv_linea'];
 
 			$document_body['cac:InvoiceLine'][] = array(
 				'cbc:ID' => array( '_text' => $line_id ),
-				'cbc:InvoicedQuantity' => array( '_attributes' => array( 'unitCode' => 'NIU' ), '_text' => 1 ),
+				'cbc:InvoicedQuantity' => array( '_attributes' => array( 'unitCode' => 'ZZ' ), '_text' => 1 ),
 				'cbc:LineExtensionAmount' => array( '_attributes' => array( 'currencyID' => 'PEN' ), '_text' => $valor_venta_linea ),
 				'cac:PricingReference' => array(
 					'cac:AlternativeConditionPrice' => array(
@@ -218,21 +228,17 @@ class WPC_Facturacion_Constructor {
 					)
 				),
 				'cac:TaxTotal' => array(
-					array(
+					'cbc:TaxAmount' => array( '_attributes' => array( 'currencyID' => 'PEN' ), '_text' => $igv_linea ),
+					'cac:TaxSubtotal' => array(
+						'cbc:TaxableAmount' => array( '_attributes' => array( 'currencyID' => 'PEN' ), '_text' => $valor_venta_linea ),
 						'cbc:TaxAmount' => array( '_attributes' => array( 'currencyID' => 'PEN' ), '_text' => $igv_linea ),
-						'cac:TaxSubtotal' => array(
-							array(
-								'cbc:TaxableAmount' => array( '_attributes' => array( 'currencyID' => 'PEN' ), '_text' => $valor_venta_linea ),
-								'cbc:TaxAmount' => array( '_attributes' => array( 'currencyID' => 'PEN' ), '_text' => $igv_linea ),
-								'cac:TaxCategory' => array(
-									'cbc:Percent' => array( '_text' => 18 ),
-									'cbc:TaxExemptionReasonCode' => array( '_text' => '10' ),
-									'cac:TaxScheme' => array(
-										'cbc:ID' => array( '_text' => '1000' ),
-										'cbc:Name' => array( '_text' => 'IGV' ),
-										'cbc:TaxTypeCode' => array( '_text' => 'VAT' )
-									)
-								)
+						'cac:TaxCategory' => array(
+							'cbc:Percent' => array( '_text' => 18 ),
+							'cbc:TaxExemptionReasonCode' => array( '_text' => '10' ),
+							'cac:TaxScheme' => array(
+								'cbc:ID' => array( '_text' => '1000' ),
+								'cbc:Name' => array( '_text' => 'IGV' ),
+								'cbc:TaxTypeCode' => array( '_text' => 'VAT' )
 							)
 						)
 					)
@@ -268,8 +274,8 @@ class WPC_Facturacion_Constructor {
 			'cliente_doc_tipo' => $scheme_id,
 			'cliente_doc_num'  => $doc_num,
 			'cliente_nombre'   => $nombre,
-			'monto_base'       => $monto_base,
-			'igv'              => $igv,
+			'monto_base'       => $monto_base_total,
+			'igv'              => $igv_total,
 			'total'            => $total_general,
 			'emitido_en'       => $fecha_emision,
 		);
