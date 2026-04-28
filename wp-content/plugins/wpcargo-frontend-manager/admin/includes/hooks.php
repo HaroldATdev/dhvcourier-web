@@ -103,7 +103,13 @@ add_action( 'wp_head', 'wpcfe_plugin_compatibility_hooks' );
 // Bulk Print Template Hook Callback
 function wpcfe_after_bulkprint_template_callback( $counter, $shipment_num, $print_type ){
     if( $counter != $shipment_num ){
-        ?><div class="page_break"></div><?php
+        if ( $print_type === 'waybill' ) {
+            if ( $counter % 4 === 0 ) {
+                ?><div class="page_break"></div><?php
+            }
+        } else {
+            ?><div class="page_break"></div><?php
+        }
     }
 }
 // Users Table Callback

@@ -59,8 +59,8 @@ body {
   bottom: 0;
   left: 0;
   width: 148mm;
-  height: 7mm;
-  padding: 0 3mm 1.5mm 3mm;
+  height: 8.5mm;
+  padding: 0 4mm 2mm 4mm;
   border-top: 0.5px solid #ddd;
 }
 .footer-label table {
@@ -69,22 +69,22 @@ body {
 }
 .footer-label td {
   vertical-align: middle;
-  font-size: 4.5px;
+  font-size: 5.5px;
   color: #333;
   padding: 0 2.5mm 0 0;
   white-space: nowrap;
 }
 .ficon {
-  width: 5.5px; height: 5.5px;
+  width: 7px; height: 7px;
   vertical-align: middle;
-  margin-right: 1px;
+  margin-right: 1.5px;
 }
 .phone {
   background: #f26522;
   color: #fff;
-  padding: 1.5px 4px;
+  padding: 2px 5px;
   border-radius: 2px;
-  font-size: 4.75px;
+  font-size: 5.5px;
   font-weight: 900;
   display: inline-block;
   margin-right: 1mm;
@@ -93,21 +93,21 @@ body {
 /* ══ QR FIJO ESQUINA INFERIOR DERECHA ══ */
 .qr-label-box {
   position: absolute;
-  bottom: 1.5mm;
-  right: 2.5mm;
-  width: 17mm;
+  bottom: 2mm;
+  right: 3mm;
+  width: 20mm;
   text-align: center;
 }
 .qr-label-box img {
-  width: 16mm;
-  height: 16mm;
+  width: 19mm;
+  height: 19mm;
   display: block;
   border: 0.5px solid #ddd;
   border-radius: 1.5px;
   padding: 0.5mm;
 }
 .qr-text {
-  font-size: 3px;
+  font-size: 4px;
   color: #999;
   margin-top: 0.5px;
   display: block;
@@ -116,7 +116,7 @@ body {
 
 /* ══ CONTENIDO PRINCIPAL ══ */
 .main-content {
-  padding: 2.5mm 3mm 9mm 3mm; /* bottom deja espacio al footer fijo */
+  padding: 4mm 4mm 10mm 4mm; /* bottom deja espacio al footer fijo */
   width: 148mm;
 }
 
@@ -124,53 +124,53 @@ body {
 table.tbl-header {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 2mm;
+  margin-bottom: 3mm;
 }
 table.tbl-header > tbody > tr > td {
   vertical-align: top;
   padding: 0;
 }
 td.cell-logo {
-  width: 22mm;
+  width: 28mm;
   text-align: center;
   padding-right: 2.5mm;
 }
 td.cell-logo img.logo {
-  width: 21mm;
+  width: 25mm;
   display: block;
   margin: 0 auto;
 }
 .ruc {
-  font-size: 4px;
+  font-size: 5.5px;
   font-weight: bold;
   color: #333;
-  margin-top: 1.5px;
+  margin-top: 2px;
 }
 
 td.cell-slogan {
-  width: 35mm;
+  width: 42mm;
   padding-right: 2.5mm;
 }
 .slogan {
-  font-size: 12.5px;
+  font-size: 14.5px;
   font-weight: 900;
   color: #1e73be;
   line-height: 1.05;
   text-transform: uppercase;
-  margin-bottom: 2mm;
+  margin-bottom: 2.5mm;
 }
 .barcode-wrap img.bc {
-  width: 32mm;
-  height: 8mm;
+  width: 36mm;
+  height: 10mm;
   display: block;
 }
 .guia-num {
-  font-size: 5px;
+  font-size: 6.5px;
   font-weight: bold;
   letter-spacing: 1px;
   color: #111;
   display: block;
-  margin-top: 1mm;
+  margin-top: 1.5mm;
   text-align: center;
 }
 
@@ -178,12 +178,12 @@ td.cell-cities {
   padding-left: 1mm;
 }
 .envios-title {
-  font-size: 5.5px;
+  font-size: 6.5px;
   font-weight: 900;
   color: #1e73be;
   text-transform: uppercase;
   letter-spacing: 0.25px;
-  margin-bottom: 1.5mm;
+  margin-bottom: 2mm;
 }
 table.tbl-cities {
   width: 100%;
@@ -191,45 +191,45 @@ table.tbl-cities {
 }
 table.tbl-cities td {
   vertical-align: top;
-  padding: 0.6mm 1mm 0.6mm 0;
+  padding: 1mm 1.5mm 1mm 0;
 }
 .city-name {
-  font-size: 4.5px;
+  font-size: 5.5px;
   font-weight: 700;
   color: #111;
   white-space: nowrap;
 }
 .city-name-wrap {
-  font-size: 4.5px;
+  font-size: 5.5px;
   font-weight: 700;
   color: #111;
   white-space: normal;
 }
 .city-addr {
-  font-size: 3.5px;
+  font-size: 4px;
   color: #555;
-  padding-left: 6px;
+  padding-left: 8px;
   line-height: 1.3;
   display: block;
 }
 .pin-o {
   display: inline-block;
-  width: 4px; height: 4px;
+  width: 5px; height: 5px;
   background: #f26522;
   border-radius: 50% 50% 50% 0;
   -webkit-transform: rotate(-45deg);
   transform: rotate(-45deg);
-  margin-right: 1.5px;
+  margin-right: 2px;
   vertical-align: middle;
 }
 .pin-b {
   display: inline-block;
-  width: 4px; height: 4px;
+  width: 5px; height: 5px;
   background: #1e73be;
   border-radius: 50% 50% 50% 0;
   -webkit-transform: rotate(-45deg);
   transform: rotate(-45deg);
-  margin-right: 1.5px;
+  margin-right: 2px;
   vertical-align: middle;
 }
 
@@ -237,34 +237,34 @@ table.tbl-cities td {
 .sep {
   border: none;
   border-top: 0.5px solid #bbb;
-  margin: 0 0 2mm 0;
+  margin: 0 0 2.5mm 0;
   width: 100%;
 }
 
 /* ══ FORMULARIO ══ */
 table.tbl-form {
-  width: 128.5mm; /* deja espacio al QR */
+  width: 125mm; /* deja espacio al QR */
   border-collapse: collapse;
 }
 table.tbl-form td {
   vertical-align: bottom;
-  padding: 0 0 0 0;
+  padding: 0;
 }
 td.flabel {
-  width: 18mm;
-  font-size: 9px;
+  width: 22mm;
+  font-size: 12px;
   font-weight: 900;
   color: #111;
   text-transform: uppercase;
   white-space: nowrap;
-  padding: 2.5mm 1.5mm 1.5mm 0;
+  padding: 4.5mm 2mm 3.5mm 0;
   line-height: 1;
 }
 td.fline {
   border-bottom: 0.75px dotted #555;
-  font-size: 6.5px;
+  font-size: 10px;
   color: #111;
-  padding: 2.5mm 1mm 1.5mm 1mm;
+  padding: 4.5mm 2mm 3.5mm 2mm;
 }
 </style>
 <?php endif; ?>
