@@ -23,6 +23,11 @@ if ( ! function_exists( 'dhv_meta' ) ) {
     return (!empty($v)) ? esc_html($v) : $fb;
   }
 }
+
+// Variables for Grid Layout
+$is_bulk     = isset($counter) && isset($shipment_num);
+$current_idx = $is_bulk ? $counter : 1;
+$total_items = $is_bulk ? $shipment_num : 1;
 ?>
 
 <?php if (!defined('WAYBILL_STYLE_ADDED')): define('WAYBILL_STYLE_ADDED', true); ?>
@@ -40,17 +45,29 @@ body {
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+table.grid-table {
+  width: 296mm;
+  border-collapse: collapse;
+  margin: 0;
+  padding: 0;
+}
+table.grid-table > tbody > tr > td.grid-cell {
+  width: 148mm;
+  height: 104mm;
+  vertical-align: top;
+  padding: 0;
+  border-right: 1px dashed #ccc;
+  border-bottom: 1px dashed #ccc;
+}
+
 .label-container {
   font-family: Arial, Helvetica, sans-serif;
   width: 148mm;
   height: 104mm;
-  float: left;
   position: relative;
   background: #fff;
   color: #111;
   overflow: hidden;
-  border-right: 1px dashed #ccc;
-  border-bottom: 1px dashed #ccc;
 }
 
 /* ══ FOOTER AL FONDO DE LA ETIQUETA ══ */
@@ -269,127 +286,145 @@ td.fline {
 </style>
 <?php endif; ?>
 
-<?php foreach ($copies as $key => $label) : ?>
-<div class="label-container" id="<?php echo esc_attr($key); ?>">
+<?php if ($current_idx % 4 == 1): ?>
+<table class="grid-table">
+<?php endif; ?>
 
-  <!-- ══ FOOTER FIJO RELATIVO ══ -->
-  <div class="footer-label">
-    <table>
-    <tr>
-      <td>
-        <img class="ficon" src="https://cdn-icons-png.flaticon.com/512/561/561127.png" alt="">
-        courier@grupodhv.com
-      </td>
-      <td>
-        <img class="ficon" src="https://cdn-icons-png.flaticon.com/512/841/841364.png" alt="">
-        www.grupodhv.com
-      </td>
-      <td>
-        <span class="phone">934 072 960</span>
-        <span class="phone">919 291 859</span>
-        <span class="phone">936 340 139</span>
-      </td>
-    </tr>
-    </table>
-  </div>
+<?php if ($current_idx % 2 == 1): ?>
+  <tr>
+<?php endif; ?>
 
-  <!-- ══ QR FIJO RELATIVO ══ -->
-  <div class="qr-label-box">
-    <img src="<?php echo esc_url($qr_url); ?>" alt="QR Tracking">
-    <span class="qr-text">Escanea para rastrear</span>
-  </div>
+  <td class="grid-cell">
+    <?php foreach ($copies as $key => $label) : ?>
+    <div class="label-container" id="<?php echo esc_attr($key); ?>">
 
-  <!-- ══ CONTENIDO ══ -->
-  <div class="main-content">
+      <!-- ══ FOOTER FIJO RELATIVO ══ -->
+      <div class="footer-label">
+        <table>
+        <tr>
+          <td>
+            <img class="ficon" src="https://cdn-icons-png.flaticon.com/512/561/561127.png" alt="">
+            courier@grupodhv.com
+          </td>
+          <td>
+            <img class="ficon" src="https://cdn-icons-png.flaticon.com/512/841/841364.png" alt="">
+            www.grupodhv.com
+          </td>
+          <td>
+            <span class="phone">934 072 960</span>
+            <span class="phone">919 291 859</span>
+            <span class="phone">936 340 139</span>
+          </td>
+        </tr>
+        </table>
+      </div>
 
-    <!-- CABECERA -->
-    <table class="tbl-header">
-    <tr>
-      <td class="cell-logo">
-        <img class="logo" src="https://grupodhv.com/wp-content/uploads/2025/03/6-1.png" alt="DHV Courier">
-        <div class="ruc">RUC: 20611135786</div>
-      </td>
-      <td class="cell-slogan">
-        <div class="slogan">EFICIENCIA,<br>RAPIDEZ Y<br>CONFIANZA</div>
-        <div class="barcode-wrap">
-          <img class="bc"
-               src="<?php echo esc_url($shipmentDetails['barcode']); ?>"
-               alt="<?php echo esc_attr($guia); ?>">
-          <span class="guia-num"><?php echo esc_html($guia); ?></span>
-        </div>
-      </td>
-      <td class="cell-cities">
-        <div class="envios-title">ENVÍOS A LIMA Y PROVINCIA</div>
-        <table class="tbl-cities">
-          <colgroup>
-            <col style="width:31%">
-            <col style="width:17%">
-            <col style="width:21%">
-            <col style="width:31%">
-          </colgroup>
+      <!-- ══ QR FIJO RELATIVO ══ -->
+      <div class="qr-label-box">
+        <img src="<?php echo esc_url($qr_url); ?>" alt="QR Tracking">
+        <span class="qr-text">Escanea para rastrear</span>
+      </div>
+
+      <!-- ══ CONTENIDO ══ -->
+      <div class="main-content">
+
+        <!-- CABECERA -->
+        <table class="tbl-header">
+        <tr>
+          <td class="cell-logo">
+            <img class="logo" src="https://grupodhv.com/wp-content/uploads/2025/03/6-1.png" alt="DHV Courier">
+            <div class="ruc">RUC: 20611135786</div>
+          </td>
+          <td class="cell-slogan">
+            <div class="slogan">EFICIENCIA,<br>RAPIDEZ Y<br>CONFIANZA</div>
+            <div class="barcode-wrap">
+              <img class="bc"
+                   src="<?php echo esc_url($shipmentDetails['barcode']); ?>"
+                   alt="<?php echo esc_attr($guia); ?>">
+              <span class="guia-num"><?php echo esc_html($guia); ?></span>
+            </div>
+          </td>
+          <td class="cell-cities">
+            <div class="envios-title">ENVÍOS A LIMA Y PROVINCIA</div>
+            <table class="tbl-cities">
+              <colgroup>
+                <col style="width:31%">
+                <col style="width:17%">
+                <col style="width:21%">
+                <col style="width:31%">
+              </colgroup>
+              <tr>
+                <td><span class="city-name"><span class="pin-o"></span>Villa el Salvador</span><span class="city-addr">Av. Mariano Pastor Sevilla S/N</span></td>
+                <td><span class="city-name"><span class="pin-b"></span>Ica</span></td>
+                <td><span class="city-name"><span class="pin-b"></span>Tarapoto</span></td>
+                <td><span class="city-name"><span class="pin-b"></span>Piura</span></td>
+              </tr>
+              <tr>
+                <td><span class="city-name"><span class="pin-o"></span>Santa Anita</span><span class="city-addr">Av. Rosales con Cascanueces</span></td>
+                <td><span class="city-name"><span class="pin-b"></span>Trujillo</span></td>
+                <td><span class="city-name"><span class="pin-b"></span>Moyobamba</span></td>
+                <td><span class="city-name"><span class="pin-b"></span>Tumbes</span></td>
+              </tr>
+              <tr>
+                <td><span class="city-name"><span class="pin-o"></span>Callao</span><span class="city-addr">Av. Elmer Faucett 4615</span></td>
+                <td><span class="city-name"><span class="pin-b"></span>Chiclayo</span></td>
+                <td><span class="city-name"><span class="pin-b"></span>Rioja</span></td>
+                <td><span class="city-name"><span class="pin-b"></span>Chachapoyas</span></td>
+              </tr>
+              <tr>
+                <td><span class="city-name"><span class="pin-o"></span>SJL</span><span class="city-addr">Jr. Mejoranas 763</span></td>
+                <td><span class="city-name"><span class="pin-b"></span>Bagua</span></td>
+                <td><span class="city-name"><span class="pin-b"></span>Pedro Ruiz</span></td>
+                <td><span class="city-name-wrap"><span class="pin-b"></span>Rodríguez de Mendoza</span></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td><span class="city-name"><span class="pin-b"></span>Jaén</span></td>
+                <td><span class="city-name"><span class="pin-b"></span>Arequipa</span></td>
+                <td><span class="city-name"><span class="pin-b"></span>Huambo</span></td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+        </table>
+
+        <hr class="sep">
+
+        <!-- FORMULARIO -->
+        <table class="tbl-form">
           <tr>
-            <td><span class="city-name"><span class="pin-o"></span>Villa el Salvador</span><span class="city-addr">Av. Mariano Pastor Sevilla S/N</span></td>
-            <td><span class="city-name"><span class="pin-b"></span>Ica</span></td>
-            <td><span class="city-name"><span class="pin-b"></span>Tarapoto</span></td>
-            <td><span class="city-name"><span class="pin-b"></span>Piura</span></td>
+            <td class="flabel">NOMBRE</td>
+            <td class="fline"><?php echo dhv_meta($shipment_id, 'destinatario'); ?></td>
           </tr>
           <tr>
-            <td><span class="city-name"><span class="pin-o"></span>Santa Anita</span><span class="city-addr">Av. Rosales con Cascanueces</span></td>
-            <td><span class="city-name"><span class="pin-b"></span>Trujillo</span></td>
-            <td><span class="city-name"><span class="pin-b"></span>Moyobamba</span></td>
-            <td><span class="city-name"><span class="pin-b"></span>Tumbes</span></td>
+            <td class="flabel">TELÉFONO</td>
+            <td class="fline"><?php echo dhv_meta($shipment_id, 'telefono_destinatario'); ?></td>
           </tr>
           <tr>
-            <td><span class="city-name"><span class="pin-o"></span>Callao</span><span class="city-addr">Av. Elmer Faucett 4615</span></td>
-            <td><span class="city-name"><span class="pin-b"></span>Chiclayo</span></td>
-            <td><span class="city-name"><span class="pin-b"></span>Rioja</span></td>
-            <td><span class="city-name"><span class="pin-b"></span>Chachapoyas</span></td>
+            <td class="flabel">DIRECCIÓN</td>
+            <td class="fline"><?php echo dhv_meta($shipment_id, 'direccion_destinatario'); ?></td>
           </tr>
           <tr>
-            <td><span class="city-name"><span class="pin-o"></span>SJL</span><span class="city-addr">Jr. Mejoranas 763</span></td>
-            <td><span class="city-name"><span class="pin-b"></span>Bagua</span></td>
-            <td><span class="city-name"><span class="pin-b"></span>Pedro Ruiz</span></td>
-            <td><span class="city-name-wrap"><span class="pin-b"></span>Rodríguez de Mendoza</span></td>
+            <td class="flabel">CIUDAD</td>
+            <td class="fline"><?php echo dhv_meta($shipment_id, 'lugar_destino'); ?></td>
           </tr>
           <tr>
-            <td></td>
-            <td><span class="city-name"><span class="pin-b"></span>Jaén</span></td>
-            <td><span class="city-name"><span class="pin-b"></span>Arequipa</span></td>
-            <td><span class="city-name"><span class="pin-b"></span>Huambo</span></td>
+            <td class="flabel">REFERENCIA</td>
+            <td class="fline"><?php echo dhv_meta($shipment_id, 'referencia_destinatario'); ?></td>
           </tr>
         </table>
-      </td>
-    </tr>
-    </table>
 
-    <hr class="sep">
+      </div><!-- /main-content -->
 
-    <!-- FORMULARIO -->
-    <table class="tbl-form">
-      <tr>
-        <td class="flabel">NOMBRE</td>
-        <td class="fline"><?php echo dhv_meta($shipment_id, 'destinatario'); ?></td>
-      </tr>
-      <tr>
-        <td class="flabel">TELÉFONO</td>
-        <td class="fline"><?php echo dhv_meta($shipment_id, 'telefono_destinatario'); ?></td>
-      </tr>
-      <tr>
-        <td class="flabel">DIRECCIÓN</td>
-        <td class="fline"><?php echo dhv_meta($shipment_id, 'direccion_destinatario'); ?></td>
-      </tr>
-      <tr>
-        <td class="flabel">CIUDAD</td>
-        <td class="fline"><?php echo dhv_meta($shipment_id, 'lugar_destino'); ?></td>
-      </tr>
-      <tr>
-        <td class="flabel">REFERENCIA</td>
-        <td class="fline"><?php echo dhv_meta($shipment_id, 'referencia_destinatario'); ?></td>
-      </tr>
-    </table>
+    </div>
+    <?php endforeach; ?>
+  </td>
 
-  </div><!-- /main-content -->
+<?php if ($current_idx % 2 == 0 || $current_idx == $total_items): ?>
+  </tr>
+<?php endif; ?>
 
-</div>
-<?php endforeach; ?>
+<?php if ($current_idx % 4 == 0 || $current_idx == $total_items): ?>
+</table>
+<?php endif; ?>
 
