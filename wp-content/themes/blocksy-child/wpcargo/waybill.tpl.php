@@ -182,12 +182,12 @@ td.cell-slogan {
   display: block;
 }
 .guia-num {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: bold;
   letter-spacing: 1.5px;
   color: #111;
   display: block;
-  margin-top: 2mm;
+  margin-top: 2.5mm;
   text-align: center;
 }
 
@@ -195,7 +195,7 @@ td.cell-cities {
   padding-left: 1mm;
 }
 .envios-title {
-  font-size: 8px;
+  font-size: 9px;
   font-weight: 900;
   color: #1e73be;
   text-transform: uppercase;
@@ -208,22 +208,22 @@ table.tbl-cities {
 }
 table.tbl-cities td {
   vertical-align: top;
-  padding: 1.2mm 1.5mm 1.2mm 0;
+  padding: 1.5mm 1.5mm 1.5mm 0;
 }
 .city-name {
-  font-size: 7px;
+  font-size: 8px;
   font-weight: 700;
   color: #111;
   white-space: nowrap;
 }
 .city-name-wrap {
-  font-size: 7px;
+  font-size: 8px;
   font-weight: 700;
   color: #111;
   white-space: normal;
 }
 .city-addr {
-  font-size: 5px;
+  font-size: 6px;
   color: #555;
   padding-left: 9px;
   line-height: 1.3;
@@ -263,6 +263,9 @@ table.tbl-form {
   width: 125mm; /* deja espacio al QR */
   border-collapse: collapse;
 }
+table.tbl-form tr {
+  height: 9.5mm; /* Fuerza altura estricta por fila para garantizar separación */
+}
 table.tbl-form td {
   vertical-align: bottom;
   padding: 0;
@@ -274,14 +277,14 @@ td.flabel {
   color: #111;
   text-transform: uppercase;
   white-space: nowrap;
-  padding: 6.5mm 2mm 4.5mm 0;
+  padding: 0 2mm 1mm 0;
   line-height: 1;
 }
 td.fline {
   border-bottom: 0.75px dotted #555;
   font-size: 11px;
   color: #111;
-  padding: 6.5mm 2mm 4.5mm 2mm;
+  padding: 0 2mm 1mm 2mm;
 }
 </style>
 <?php endif; ?>
