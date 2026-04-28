@@ -182,12 +182,12 @@ td.cell-slogan {
   display: block;
 }
 .guia-num {
-  font-size: 6.5px;
+  font-size: 10px;
   font-weight: bold;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
   color: #111;
   display: block;
-  margin-top: 1.5mm;
+  margin-top: 2mm;
   text-align: center;
 }
 
@@ -195,7 +195,7 @@ td.cell-cities {
   padding-left: 1mm;
 }
 .envios-title {
-  font-size: 6.5px;
+  font-size: 8px;
   font-weight: 900;
   color: #1e73be;
   text-transform: uppercase;
@@ -208,24 +208,24 @@ table.tbl-cities {
 }
 table.tbl-cities td {
   vertical-align: top;
-  padding: 1mm 1.5mm 1mm 0;
+  padding: 1.2mm 1.5mm 1.2mm 0;
 }
 .city-name {
-  font-size: 5.5px;
+  font-size: 7px;
   font-weight: 700;
   color: #111;
   white-space: nowrap;
 }
 .city-name-wrap {
-  font-size: 5.5px;
+  font-size: 7px;
   font-weight: 700;
   color: #111;
   white-space: normal;
 }
 .city-addr {
-  font-size: 4px;
+  font-size: 5px;
   color: #555;
-  padding-left: 8px;
+  padding-left: 9px;
   line-height: 1.3;
   display: block;
 }
@@ -268,20 +268,20 @@ table.tbl-form td {
   padding: 0;
 }
 td.flabel {
-  width: 22mm;
-  font-size: 12px;
+  width: 25mm;
+  font-size: 13px;
   font-weight: 900;
   color: #111;
   text-transform: uppercase;
   white-space: nowrap;
-  padding: 4.5mm 2mm 3.5mm 0;
+  padding: 6.5mm 2mm 4.5mm 0;
   line-height: 1;
 }
 td.fline {
   border-bottom: 0.75px dotted #555;
-  font-size: 10px;
+  font-size: 11px;
   color: #111;
-  padding: 4.5mm 2mm 3.5mm 2mm;
+  padding: 6.5mm 2mm 4.5mm 2mm;
 }
 </style>
 <?php endif; ?>
