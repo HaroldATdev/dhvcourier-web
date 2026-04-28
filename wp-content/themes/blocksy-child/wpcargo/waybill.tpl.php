@@ -208,22 +208,22 @@ table.tbl-cities {
 }
 table.tbl-cities td {
   vertical-align: top;
-  padding: 0.5mm 1mm 0.5mm 0 !important;
+  padding: 1.5mm 1.5mm 1.5mm 0;
 }
 .city-name {
-  font-size: 9.5px !important;
+  font-size: 8px;
   font-weight: 700;
   color: #111;
   white-space: nowrap;
 }
 .city-name-wrap {
-  font-size: 9.5px !important;
+  font-size: 8px;
   font-weight: 700;
   color: #111;
   white-space: normal;
 }
 .city-addr {
-  font-size: 7.5px !important;
+  font-size: 6px;
   color: #555;
   padding-left: 9px;
   line-height: 1.3;
@@ -263,24 +263,28 @@ table.tbl-form {
   width: 125mm; /* deja espacio al QR */
   border-collapse: collapse;
 }
+table.tbl-form tr {
+  height: 9.5mm; /* Fuerza altura estricta por fila para garantizar separación */
+}
 table.tbl-form td {
   vertical-align: bottom;
+  padding: 0;
 }
 td.flabel {
   width: 25mm;
-  font-size: 13px !important;
+  font-size: 13px;
   font-weight: 900;
   color: #111;
   text-transform: uppercase;
   white-space: nowrap;
-  padding: 5mm 2mm 5mm 0 !important;
+  padding: 0 2mm 1mm 0;
   line-height: 1;
 }
 td.fline {
   border-bottom: 0.75px dotted #555;
-  font-size: 11px !important;
+  font-size: 11px;
   color: #111;
-  padding: 5mm 2mm 5mm 2mm !important;
+  padding: 0 2mm 1mm 2mm;
 }
 </style>
 <?php endif; ?>
