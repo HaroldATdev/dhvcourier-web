@@ -17,6 +17,7 @@ $guia         = get_the_title($shipment_id);
 $tracking_url = 'https://dhvcourier.com/track-form/?tracking_number=' . urlencode($guia);
 $qr_url       = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' . urlencode($tracking_url);
 $barcode_url  = isset($shipmentDetails['barcode_url']) ? $shipmentDetails['barcode_url'] : '';
+$barcode_src  = (is_string($barcode_url) && strpos($barcode_url, 'data:image') === 0) ? $barcode_url : esc_url($barcode_url);
 
 if ( ! function_exists( 'dhv_meta' ) ) {
   function dhv_meta($id, $key, $fb = '') {
@@ -170,7 +171,7 @@ td.cell-slogan {
   padding-right: 2.5mm;
 }
 .slogan {
-  font-family: "Arial Narrow", Helvetica, Arial, sans-serif;
+  font-family: "DejaVu Sans Condensed", "DejaVu Sans", Helvetica, Arial, sans-serif;
   font-size: 20px;
   font-weight: 900;
   color: #1e73be;
@@ -198,7 +199,7 @@ td.cell-cities {
   padding-left: 1mm;
 }
 .envios-title {
-  font-family: "Arial Narrow", Helvetica, Arial, sans-serif;
+  font-family: "DejaVu Sans Condensed", "DejaVu Sans", Helvetica, Arial, sans-serif;
   font-size: 15px;
   font-weight: 900;
   color: #1e73be;
@@ -276,9 +277,9 @@ table.tbl-form td {
   padding: 0;
 }
 td.flabel {
-  font-family: "Arial Narrow", Helvetica, Arial, sans-serif;
+  font-family: "DejaVu Sans Condensed", "DejaVu Sans", Helvetica, Arial, sans-serif;
   width: 25mm;
-  font-size: 18px;
+  font-size: 15px;
   font-weight: 900;
   color: #111;
   text-transform: uppercase;
@@ -352,7 +353,7 @@ td.fline {
             <div class="barcode-wrap">
               <?php if ( ! empty( $barcode_url ) ) : ?>
               <img class="bc"
-                   src="<?php echo esc_url( $barcode_url ); ?>"
+                    src="<?php echo esc_attr( $barcode_src ); ?>"
                    alt="<?php echo esc_attr($guia); ?>">
               <?php endif; ?>
               <span class="guia-num"><?php echo esc_html($guia); ?></span>
