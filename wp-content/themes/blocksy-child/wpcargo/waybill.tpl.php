@@ -261,10 +261,11 @@ table.tbl-cities td {
 /* ══ FORMULARIO ══ */
 table.tbl-form {
   width: 125mm; /* deja espacio al QR */
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0 1.8mm; /* separación real entre filas */
 }
 table.tbl-form tr {
-  height: 11.2mm; /* Mayor separación entre NOMBRE / TELÉFONO / DIRECCIÓN / CIUDAD / REFERENCIA */
+  height: 10.8mm;
 }
 table.tbl-form td {
   vertical-align: bottom;
@@ -277,14 +278,15 @@ td.flabel {
   color: #111;
   text-transform: uppercase;
   white-space: nowrap;
-  padding: 0 2mm 1.4mm 0;
-  line-height: 1.05;
+  padding: 0 2mm 1.1mm 0;
+  line-height: 1.15;
 }
 td.fline {
   border-bottom: 0.75px dotted #555;
   font-size: 11px;
   color: #111;
-  padding: 0 2mm 1.4mm 2mm;
+  padding: 0 2mm 1.1mm 2mm;
+  line-height: 1.2;
 }
 </style>
 <?php endif; ?>
