@@ -70,6 +70,11 @@ table.grid-table > tbody > tr > td.grid-cell {
   overflow: hidden;
 }
 
+:root {
+  --dhv-title-font: "Arial Narrow", "HelveticaNeue-CondensedBold", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --dhv-field-font: "Arial Narrow", "Franklin Gothic Medium", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
 /* ══ FOOTER AL FONDO DE LA ETIQUETA ══ */
 .footer-label {
   position: absolute;
@@ -169,11 +174,13 @@ td.cell-slogan {
   padding-right: 2.5mm;
 }
 .slogan {
+  font-family: var(--dhv-title-font);
   font-size: 14.5px;
   font-weight: 900;
   color: #1e73be;
   line-height: 1.05;
   text-transform: uppercase;
+  letter-spacing: 0.15px;
   margin-bottom: 2.5mm;
 }
 .barcode-wrap img.bc {
@@ -195,11 +202,12 @@ td.cell-cities {
   padding-left: 1mm;
 }
 .envios-title {
+  font-family: var(--dhv-title-font);
   font-size: 9px;
   font-weight: 900;
   color: #1e73be;
   text-transform: uppercase;
-  letter-spacing: 0.25px;
+  letter-spacing: 0.4px;
   margin-bottom: 1.2mm;
 }
 table.tbl-cities {
@@ -272,16 +280,19 @@ table.tbl-form td {
   padding: 0;
 }
 td.flabel {
+  font-family: var(--dhv-field-font);
   width: 25mm;
   font-size: 13px;
   font-weight: 900;
   color: #111;
   text-transform: uppercase;
   white-space: nowrap;
+  letter-spacing: 0.35px;
   padding: 0 2mm 1.1mm 0;
   line-height: 1.15;
 }
 td.fline {
+  font-family: var(--dhv-field-font);
   border-bottom: 0.75px dotted #555;
   font-size: 11px;
   color: #111;
