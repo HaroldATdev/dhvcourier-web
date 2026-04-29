@@ -171,7 +171,7 @@ td.cell-slogan {
   padding-right: 2.5mm;
 }
 .slogan {
-  font-family: "DejaVu Sans Condensed", "DejaVu Sans", Helvetica, Arial, sans-serif;
+  font-family: "DejaVu Serif", "Times New Roman", Times, serif !important;
   font-size: 20px;
   font-weight: 900;
   color: #1e73be;
@@ -199,7 +199,7 @@ td.cell-cities {
   padding-left: 1mm;
 }
 .envios-title {
-  font-family: "DejaVu Sans Condensed", "DejaVu Sans", Helvetica, Arial, sans-serif;
+  font-family: "DejaVu Serif", "Times New Roman", Times, serif !important;
   font-size: 15px;
   font-weight: 900;
   color: #1e73be;
@@ -277,7 +277,7 @@ table.tbl-form td {
   padding: 0;
 }
 td.flabel {
-  font-family: "DejaVu Sans Condensed", "DejaVu Sans", Helvetica, Arial, sans-serif;
+  font-family: "DejaVu Serif", "Times New Roman", Times, serif !important;
   width: 25mm;
   font-size: 15px;
   font-weight: 900;
