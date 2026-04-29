@@ -1515,6 +1515,10 @@ function wpcte_footer_crear() {
     $esadmin_js = $es_admin ? 'true' : 'false';
     $escliente_js = $es_cliente ? 'true' : 'false';
     $current_uid_js = wp_json_encode( $current_uid );
+    $roles_actuales = $usuario_actual instanceof WP_User ? (array) $usuario_actual->roles : array();
+    $lock_branch = ! in_array( 'administrator', $roles_actuales, true )
+        && ( in_array( 'wpcargo_admin', $roles_actuales, true ) || in_array( 'wpcargo_branch_manager', $roles_actuales, true ) );
+    $lock_branch_js = $lock_branch ? 'true' : 'false';
     ?>
     <div id="wpcte-pantalla-cotizador" style="display:none">
         <button type="button" class="wpcte-back-btn" onclick="wpcteIrSelector()">&larr; Cambiar tipo de envío</button>
@@ -1543,8 +1547,26 @@ function wpcte_footer_crear() {
         var ajaxUrl=<?php echo $ajaxurl_js; ?>;
         var nonce=<?php echo $nonce_js; ?>;
         var currentUserId=<?php echo $current_uid_js; ?>;
+        var lockBranch=<?php echo $lock_branch_js; ?>;
         var f=document.querySelector('form.add-shipment');
         if(!f)return;
+        function wpcteLockSucursalByRole(form){
+            if(!lockBranch || !form) return;
+            var branchSelect=form.querySelector('select[name="shipment_branch"], #shipment_branch, select.shipment_branch');
+            if(!branchSelect) return;
+            var hidden=form.querySelector('input[type="hidden"][name="shipment_branch"]');
+            if(!hidden){
+                hidden=document.createElement('input');
+                hidden.type='hidden';
+                hidden.name='shipment_branch';
+                branchSelect.parentNode.appendChild(hidden);
+            }
+            hidden.value=branchSelect.value||'';
+            branchSelect.setAttribute('disabled','disabled');
+            branchSelect.addEventListener('change',function(){
+                hidden.value=branchSelect.value||'';
+            });
+        }
         function wpcteOcultarAgenteEmpleado(form){
             ['agent_fields','wpcargo_employee'].forEach(function(id){
                 var el=form.querySelector('#'+id+', select[name="'+id+'"]');
@@ -1605,8 +1627,11 @@ function wpcte_footer_crear() {
         wpcte_insertDir('');
         wpcte_ajustarDrivers(tipo,f,null,null);
         wpcteOcultarAgenteEmpleado(f);
+        wpcteLockSucursalByRole(f);
         setTimeout(function(){ wpcteOcultarAgenteEmpleado(f); }, 300);
         setTimeout(function(){ wpcteOcultarAgenteEmpleado(f); }, 1000);
+        setTimeout(function(){ wpcteLockSucursalByRole(f); }, 300);
+        setTimeout(function(){ wpcteLockSucursalByRole(f); }, 1000);
         if(isClient&&currentUserId){
             ensureClientShipmentField(currentUserId);
             loadClientData(currentUserId);
@@ -1764,6 +1789,11 @@ function wpcte_footer_editar() {
     $ea_js   = $es_admin ? 'true' : 'false';
     $nj      = wp_json_encode($nonce);
     $aj      = wp_json_encode($ajaxurl);
+    $usuario_actual = wp_get_current_user();
+    $roles_actuales = $usuario_actual instanceof WP_User ? (array) $usuario_actual->roles : array();
+    $lock_branch = ! in_array( 'administrator', $roles_actuales, true )
+        && ( in_array( 'wpcargo_admin', $roles_actuales, true ) || in_array( 'wpcargo_branch_manager', $roles_actuales, true ) );
+    $lb_js   = $lock_branch ? 'true' : 'false';
     ?>
     <div style="margin-bottom:1rem">
         <span class="wpcte-badge"><i class="fa fa-truck"></i> Tipo de envío: <strong><?php echo esc_html($tipo_label); ?></strong></span>
@@ -1873,7 +1903,25 @@ function wpcte_listenCliente(ajaxUrl,nonce){
         var isAdmin=<?php echo $ea_js; ?>;
         var ajaxUrl=<?php echo $aj; ?>;
         var nonce=<?php echo $nj; ?>;
+        var lockBranch=<?php echo $lb_js; ?>;
         var formEl=$('form').filter(function(){return $(this).find('[name=shipment_id],[name=update_shipment]').length>0;}).get(0)||document.querySelector('form');
+        function wpcteLockSucursalByRole(form){
+            if(!lockBranch || !form) return;
+            var branchSelect=form.querySelector('select[name="shipment_branch"], #shipment_branch, select.shipment_branch');
+            if(!branchSelect) return;
+            var hidden=form.querySelector('input[type="hidden"][name="shipment_branch"]');
+            if(!hidden){
+                hidden=document.createElement('input');
+                hidden.type='hidden';
+                hidden.name='shipment_branch';
+                branchSelect.parentNode.appendChild(hidden);
+            }
+            hidden.value=branchSelect.value||'';
+            branchSelect.setAttribute('disabled','disabled');
+            branchSelect.addEventListener('change',function(){
+                hidden.value=branchSelect.value||'';
+            });
+        }
         function wpcteOcultarAgenteEmpleado(form){
             if(!form) return;
             ['agent_fields','wpcargo_employee'].forEach(function(id){
@@ -1890,8 +1938,11 @@ function wpcte_listenCliente(ajaxUrl,nonce){
         wpcte_insertDir(<?php echo $dr_js; ?>);
         wpcte_ajustarDrivers(tipo,formEl,<?php echo $dv_js; ?>,<?php echo $ce_js; ?>);
         wpcteOcultarAgenteEmpleado(formEl);
+        wpcteLockSucursalByRole(formEl);
         setTimeout(function(){ wpcteOcultarAgenteEmpleado(formEl); }, 300);
         setTimeout(function(){ wpcteOcultarAgenteEmpleado(formEl); }, 1000);
+        setTimeout(function(){ wpcteLockSucursalByRole(formEl); }, 300);
+        setTimeout(function(){ wpcteLockSucursalByRole(formEl); }, 1000);
         if(isAdmin) wpcte_listenCliente(ajaxUrl,nonce);
 
         // Toggle verificar

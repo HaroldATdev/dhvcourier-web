@@ -161,9 +161,7 @@ function wpcumanage_registered_roles()
 {
     $roles = array(
         'wpc_shipment_manager',
-        'wpcargo_employee',
         'wpcargo_branch_manager',
-        'cargo_agent',
         'wpcargo_driver',
         'wpc_cashier',
         'wpcargo_client',

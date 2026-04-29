@@ -42,9 +42,15 @@ function wpcumanage_user_table_header_roles()
 }
 function wpcumanage_user_table_data_roles($user)
 {
+  $hidden_roles = array('cargo_agent', 'wpcargo_employee');
+  $visible_roles = array_values(array_filter($user->roles, function ($role) use ($hidden_roles) {
+    return !in_array($role, $hidden_roles, true);
+  }));
+
   $roles = array_map(function ($role) {
     return wpcumanage_get_role_label($role);
-  }, $user->roles);
+  }, $visible_roles);
+
   echo '<td class="wpcumanage-roles">' . implode(', ', $roles) . '</td>';
 }
 function wpcumanage_user_table_header_groups()
