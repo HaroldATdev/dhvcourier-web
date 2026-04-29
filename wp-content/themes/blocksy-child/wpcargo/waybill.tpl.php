@@ -78,8 +78,8 @@ table.grid-table > tbody > tr > td.grid-cell {
   bottom: 0;
   left: 0;
   width: 148mm;
-  height: 8.5mm;
-  padding: 0 4mm 2mm 4mm;
+  height: 10.5mm;
+  padding: 0.6mm 4mm 2.2mm 4mm;
   border-top: 0.5px solid #ddd;
 }
 .footer-label table {
@@ -88,25 +88,25 @@ table.grid-table > tbody > tr > td.grid-cell {
 }
 .footer-label td {
   vertical-align: middle;
-  font-size: 5.5px;
+  font-size: 6.3px;
   color: #333;
-  padding: 0 2.5mm 0 0;
+  padding: 0 2.8mm 0 0;
   white-space: nowrap;
 }
 .ficon {
-  width: 7px; height: 7px;
+  width: 8px; height: 8px;
   vertical-align: middle;
-  margin-right: 1.5px;
+  margin-right: 2px;
 }
 .phone {
   background: #f26522;
   color: #fff;
-  padding: 2px 5px;
+  padding: 2px 6px;
   border-radius: 2px;
-  font-size: 5.5px;
+  font-size: 6.5px;
   font-weight: 900;
   display: inline-block;
-  margin-right: 1mm;
+  margin-right: 1.2mm;
 }
 
 /* ══ QR FIJO ESQUINA INFERIOR DERECHA ══ */
@@ -135,7 +135,7 @@ table.grid-table > tbody > tr > td.grid-cell {
 
 /* ══ CONTENIDO PRINCIPAL ══ */
 .main-content {
-  padding: 4mm 4mm 10mm 4mm; /* bottom deja espacio al footer fijo */
+  padding: 4mm 4mm 12mm 4mm; /* bottom deja espacio al footer fijo */
   width: 148mm;
 }
 
@@ -321,7 +321,7 @@ td.fline {
           </td>
           <td>
             <img class="ficon" src="https://cdn-icons-png.flaticon.com/512/841/841364.png" alt="">
-            www.grupodhv.com
+            www.dhvcourier.com
           </td>
           <td>
             <span class="phone">934 072 960</span>
