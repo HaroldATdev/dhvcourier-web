@@ -14,8 +14,11 @@ if (empty($copies)) return false;
 $shipment_id  = $shipmentDetails['shipmentID'];
 $guia         = get_the_title($shipment_id);
 
+global $wpcargo;
+
 $tracking_url = 'https://dhvcourier.com/track-form/?tracking_number=' . urlencode($guia);
 $qr_url       = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' . urlencode($tracking_url);
+$barcode_url  = ( is_object( $wpcargo ) && method_exists( $wpcargo, 'barcode_url' ) ) ? $wpcargo->barcode_url( $shipment_id ) : '';
 
 if ( ! function_exists( 'dhv_meta' ) ) {
   function dhv_meta($id, $key, $fb = '') {
@@ -68,11 +71,6 @@ table.grid-table > tbody > tr > td.grid-cell {
   background: #fff;
   color: #111;
   overflow: hidden;
-}
-
-:root {
-  --dhv-title-font: "Arial Narrow", "HelveticaNeue-CondensedBold", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  --dhv-field-font: "Arial Narrow", "Franklin Gothic Medium", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 /* ══ FOOTER AL FONDO DE LA ETIQUETA ══ */
@@ -174,7 +172,7 @@ td.cell-slogan {
   padding-right: 2.5mm;
 }
 .slogan {
-  font-family: var(--dhv-title-font);
+  font-family: "Arial Narrow", Helvetica, Arial, sans-serif;
   font-size: 14.5px;
   font-weight: 900;
   color: #1e73be;
@@ -202,7 +200,7 @@ td.cell-cities {
   padding-left: 1mm;
 }
 .envios-title {
-  font-family: var(--dhv-title-font);
+  font-family: "Arial Narrow", Helvetica, Arial, sans-serif;
   font-size: 9px;
   font-weight: 900;
   color: #1e73be;
@@ -280,7 +278,7 @@ table.tbl-form td {
   padding: 0;
 }
 td.flabel {
-  font-family: var(--dhv-field-font);
+  font-family: "Arial Narrow", Helvetica, Arial, sans-serif;
   width: 25mm;
   font-size: 13px;
   font-weight: 900;
@@ -292,7 +290,7 @@ td.flabel {
   line-height: 1.15;
 }
 td.fline {
-  font-family: var(--dhv-field-font);
+  font-family: Helvetica, Arial, sans-serif;
   border-bottom: 0.75px dotted #555;
   font-size: 11px;
   color: #111;
@@ -354,9 +352,11 @@ td.fline {
           <td class="cell-slogan">
             <div class="slogan">EFICIENCIA,<br>RAPIDEZ Y<br>CONFIANZA</div>
             <div class="barcode-wrap">
-              <img class="bc"
-                   src="<?php echo esc_url($shipmentDetails['barcode']); ?>"
-                   alt="<?php echo esc_attr($guia); ?>">
+                <?php if ( ! empty( $barcode_url ) ) : ?>
+                <img class="bc"
+                  src="<?php echo esc_url( $barcode_url ); ?>"
+                  alt="<?php echo esc_attr($guia); ?>">
+                <?php endif; ?>
               <span class="guia-num"><?php echo esc_html($guia); ?></span>
             </div>
           </td>
