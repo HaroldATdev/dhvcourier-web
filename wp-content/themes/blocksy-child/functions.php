@@ -130,8 +130,16 @@ add_filter( 'wpcfe_billing_address_fields', 'dhv_custom_wpcargo_fields' );
  * =========================================
  */
 function dhv_departamento_ciudad_script() {
-    $saved_dep  = is_user_logged_in() ? (string) get_user_meta( get_current_user_id(), 'departamento', true ) : '';
-    $saved_city = is_user_logged_in() ? (string) get_user_meta( get_current_user_id(), 'billing_city', true ) : '';
+    $target_user_id = 0;
+
+    if ( isset( $_GET['umpage'], $_GET['uid'] ) && 'edit' === $_GET['umpage'] ) {
+        $target_user_id = absint( $_GET['uid'] );
+    } elseif ( is_user_logged_in() ) {
+        $target_user_id = get_current_user_id();
+    }
+
+    $saved_dep  = $target_user_id ? (string) get_user_meta( $target_user_id, 'departamento', true ) : '';
+    $saved_city = $target_user_id ? (string) get_user_meta( $target_user_id, 'billing_city', true ) : '';
 ?>
 <script>
 document.addEventListener("DOMContentLoaded", function() {
@@ -182,12 +190,23 @@ document.addEventListener("DOMContentLoaded", function() {
             if (selectedCity && item === selectedCity) option.selected = true;
             city.appendChild(option);
         });
+
+        if (selectedCity && data[department].indexOf(selectedCity) === -1) {
+            const customOption = document.createElement('option');
+            customOption.value = selectedCity;
+            customOption.textContent = selectedCity;
+            customOption.selected = true;
+            city.appendChild(customOption);
+        }
     }
 
     // Pre-poblar ciudades al cargar si hay departamento guardado
     var savedDep  = <?php echo wp_json_encode( $saved_dep ); ?>;
     var savedCity = <?php echo wp_json_encode( $saved_city ); ?>;
-    if (savedDep && dep.value === savedDep) {
+    if (savedDep && dep.value !== savedDep) {
+        dep.value = savedDep;
+    }
+    if (savedDep) {
         populateCities(savedDep, savedCity);
     }
 

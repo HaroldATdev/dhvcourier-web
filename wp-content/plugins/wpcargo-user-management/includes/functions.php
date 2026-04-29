@@ -171,6 +171,30 @@ function wpcumanage_registered_roles()
     );
     return apply_filters('wpcumanage_registered_roles', $roles);
 }
+function wpcumanage_get_role_label($role)
+{
+    $custom_labels = array(
+        'wpc_shipment_manager'  => __('Gestor de envios', 'wpcargo-umanagement'),
+        'wpcargo_employee'      => __('Empleado', 'wpcargo-umanagement'),
+        'wpcargo_branch_manager' => __('Administrador de sucursal', 'wpcargo-umanagement'),
+        'cargo_agent'           => __('Agente', 'wpcargo-umanagement'),
+        'wpcargo_driver'        => __('Conductor', 'wpcargo-umanagement'),
+        'wpc_cashier'           => __('Cajero', 'wpcargo-umanagement'),
+        'wpcargo_client'        => __('Cliente', 'wpcargo-umanagement'),
+        'wpcargo_pending_client' => __('Cliente pendiente', 'wpcargo-umanagement'),
+    );
+
+    if (isset($custom_labels[$role])) {
+        return $custom_labels[$role];
+    }
+
+    global $wp_roles;
+    if (isset($wp_roles->roles[$role]['name'])) {
+        return translate_user_role($wp_roles->roles[$role]['name']);
+    }
+
+    return $role;
+}
 function wpcumanage_default_users($user_id)
 {
     $user_defaults = array();

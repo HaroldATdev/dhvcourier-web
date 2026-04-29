@@ -43,8 +43,7 @@ function wpcumanage_user_table_header_roles()
 function wpcumanage_user_table_data_roles($user)
 {
   $roles = array_map(function ($role) {
-    global $wp_roles;
-    return translate_user_role($wp_roles->roles[$role]['name']);
+    return wpcumanage_get_role_label($role);
   }, $user->roles);
   echo '<td class="wpcumanage-roles">' . implode(', ', $roles) . '</td>';
 }

@@ -40,7 +40,7 @@ if( isset( $_GET['umpage'] ) && $_GET['umpage'] == 'edit' ) {
 					<select name="_roles[]" multiple="multiple" class="form-control browser-default custom-select wpcumanage-select2 _roles" id="_roles" required>
 						<?php foreach ( wpcumanage_registered_roles() as $role ): ?>
 							<?php if( !array_key_exists( $role, $all_roles ) ) continue; ?>
-							<option value="<?php echo $role; ?>" <?php echo in_array( $role, $user_data->roles ) ? 'selected' : '' ; ?>><?php echo $all_roles[$role]['name']; ?></option>
+							<option value="<?php echo $role; ?>" <?php echo in_array( $role, $user_data->roles ) ? 'selected' : '' ; ?>><?php echo wpcumanage_get_role_label( $role ); ?></option>
 						<?php endforeach; ?>
 					</select>
 				</div>
