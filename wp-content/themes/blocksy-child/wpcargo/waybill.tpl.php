@@ -200,7 +200,7 @@ td.cell-cities {
   color: #1e73be;
   text-transform: uppercase;
   letter-spacing: 0.25px;
-  margin-bottom: 2mm;
+  margin-bottom: 1.2mm;
 }
 table.tbl-cities {
   width: 100%;
@@ -208,7 +208,7 @@ table.tbl-cities {
 }
 table.tbl-cities td {
   vertical-align: top;
-  padding: 1.5mm 1.5mm 1.5mm 0;
+  padding: 0.7mm 1.2mm 0.7mm 0;
 }
 .city-name {
   font-size: 8px;
@@ -225,8 +225,8 @@ table.tbl-cities td {
 .city-addr {
   font-size: 6px;
   color: #555;
-  padding-left: 9px;
-  line-height: 1.3;
+  padding-left: 7px;
+  line-height: 1.15;
   display: block;
 }
 .pin-o {
@@ -264,7 +264,7 @@ table.tbl-form {
   border-collapse: collapse;
 }
 table.tbl-form tr {
-  height: 9.5mm; /* Fuerza altura estricta por fila para garantizar separación */
+  height: 11.2mm; /* Mayor separación entre NOMBRE / TELÉFONO / DIRECCIÓN / CIUDAD / REFERENCIA */
 }
 table.tbl-form td {
   vertical-align: bottom;
@@ -277,14 +277,14 @@ td.flabel {
   color: #111;
   text-transform: uppercase;
   white-space: nowrap;
-  padding: 0 2mm 1mm 0;
-  line-height: 1;
+  padding: 0 2mm 1.4mm 0;
+  line-height: 1.05;
 }
 td.fline {
   border-bottom: 0.75px dotted #555;
   font-size: 11px;
   color: #111;
-  padding: 0 2mm 1mm 2mm;
+  padding: 0 2mm 1.4mm 2mm;
 }
 </style>
 <?php endif; ?>
