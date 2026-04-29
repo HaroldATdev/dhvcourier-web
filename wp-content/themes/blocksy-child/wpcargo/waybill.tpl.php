@@ -14,11 +14,9 @@ if (empty($copies)) return false;
 $shipment_id  = $shipmentDetails['shipmentID'];
 $guia         = get_the_title($shipment_id);
 
-global $wpcargo;
-
 $tracking_url = 'https://dhvcourier.com/track-form/?tracking_number=' . urlencode($guia);
 $qr_url       = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' . urlencode($tracking_url);
-$barcode_url  = ( is_object( $wpcargo ) && method_exists( $wpcargo, 'barcode_url' ) ) ? $wpcargo->barcode_url( $shipment_id ) : '';
+$barcode_img  = isset($shipmentDetails['barcode']) ? $shipmentDetails['barcode'] : '';
 
 if ( ! function_exists( 'dhv_meta' ) ) {
   function dhv_meta($id, $key, $fb = '') {
@@ -268,10 +266,10 @@ table.tbl-cities td {
 table.tbl-form {
   width: 125mm; /* deja espacio al QR */
   border-collapse: separate;
-  border-spacing: 0 1.8mm; /* separación real entre filas */
+  border-spacing: 0 1.2mm; /* separación reducida entre filas */
 }
 table.tbl-form tr {
-  height: 10.8mm;
+  height: auto;
 }
 table.tbl-form td {
   vertical-align: bottom;
@@ -280,22 +278,22 @@ table.tbl-form td {
 td.flabel {
   font-family: "Arial Narrow", Helvetica, Arial, sans-serif;
   width: 25mm;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 900;
   color: #111;
   text-transform: uppercase;
   white-space: nowrap;
-  letter-spacing: 0.35px;
-  padding: 0 2mm 1.1mm 0;
-  line-height: 1.15;
+  letter-spacing: 0.5px;
+  padding: 0.3mm 2mm 1.8mm 0;
+  line-height: 1.1;
 }
 td.fline {
   font-family: Helvetica, Arial, sans-serif;
   border-bottom: 0.75px dotted #555;
-  font-size: 11px;
+  font-size: 13px;
   color: #111;
-  padding: 0 2mm 1.1mm 2mm;
-  line-height: 1.2;
+  padding: 0.3mm 2mm 1.8mm 2mm;
+  line-height: 1.25;
 }
 </style>
 <?php endif; ?>
@@ -352,11 +350,11 @@ td.fline {
           <td class="cell-slogan">
             <div class="slogan">EFICIENCIA,<br>RAPIDEZ Y<br>CONFIANZA</div>
             <div class="barcode-wrap">
-                <?php if ( ! empty( $barcode_url ) ) : ?>
-                <img class="bc"
-                  src="<?php echo esc_url( $barcode_url ); ?>"
-                  alt="<?php echo esc_attr($guia); ?>">
-                <?php endif; ?>
+              <?php if ( ! empty( $barcode_img ) ) : ?>
+              <img class="bc"
+                   src="<?php echo esc_url( $barcode_img ); ?>"
+                   alt="<?php echo esc_attr($guia); ?>">
+              <?php endif; ?>
               <span class="guia-num"><?php echo esc_html($guia); ?></span>
             </div>
           </td>
