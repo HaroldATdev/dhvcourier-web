@@ -171,7 +171,7 @@ td.cell-slogan {
 }
 .slogan {
   font-family: "Arial Narrow", Helvetica, Arial, sans-serif;
-  font-size: 14.5px;
+  font-size: 25px;
   font-weight: 900;
   color: #1e73be;
   line-height: 1.05;
@@ -199,7 +199,7 @@ td.cell-cities {
 }
 .envios-title {
   font-family: "Arial Narrow", Helvetica, Arial, sans-serif;
-  font-size: 9px;
+  font-size: 15px;
   font-weight: 900;
   color: #1e73be;
   text-transform: uppercase;
@@ -269,7 +269,7 @@ table.tbl-form {
   border-spacing: 0 1.2mm; /* separación reducida entre filas */
 }
 table.tbl-form tr {
-  height: auto;
+  height: 12mm;
 }
 table.tbl-form td {
   vertical-align: bottom;
@@ -278,14 +278,14 @@ table.tbl-form td {
 td.flabel {
   font-family: "Arial Narrow", Helvetica, Arial, sans-serif;
   width: 25mm;
-  font-size: 15px;
+  font-size: 18;
   font-weight: 900;
   color: #111;
   text-transform: uppercase;
   white-space: nowrap;
   letter-spacing: 0.5px;
   padding: 0.3mm 2mm 1.8mm 0;
-  line-height: 1.1;
+  line-height: 1.5;
 }
 td.fline {
   font-family: Helvetica, Arial, sans-serif;
@@ -293,7 +293,7 @@ td.fline {
   font-size: 13px;
   color: #111;
   padding: 0.3mm 2mm 1.8mm 2mm;
-  line-height: 1.25;
+  line-height: 1.5;
 }
 </style>
 <?php endif; ?>
