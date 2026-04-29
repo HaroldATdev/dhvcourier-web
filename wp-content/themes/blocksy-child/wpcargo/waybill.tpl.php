@@ -16,7 +16,7 @@ $guia         = get_the_title($shipment_id);
 
 $tracking_url = 'https://dhvcourier.com/track-form/?tracking_number=' . urlencode($guia);
 $qr_url       = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' . urlencode($tracking_url);
-$barcode_img  = isset($shipmentDetails['barcode']) ? $shipmentDetails['barcode'] : '';
+$barcode_url  = isset($shipmentDetails['barcode_url']) ? $shipmentDetails['barcode_url'] : '';
 
 if ( ! function_exists( 'dhv_meta' ) ) {
   function dhv_meta($id, $key, $fb = '') {
@@ -350,9 +350,9 @@ td.fline {
           <td class="cell-slogan">
             <div class="slogan">EFICIENCIA,<br>RAPIDEZ Y<br>CONFIANZA</div>
             <div class="barcode-wrap">
-              <?php if ( ! empty( $barcode_img ) ) : ?>
+              <?php if ( ! empty( $barcode_url ) ) : ?>
               <img class="bc"
-                   src="<?php echo esc_url( $barcode_img ); ?>"
+                   src="<?php echo esc_url( $barcode_url ); ?>"
                    alt="<?php echo esc_attr($guia); ?>">
               <?php endif; ?>
               <span class="guia-num"><?php echo esc_html($guia); ?></span>

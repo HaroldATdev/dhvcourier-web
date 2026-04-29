@@ -193,6 +193,7 @@ function wpcfe_bulkprint_template_path( $shipment_ids, $waybill_title, $print_ty
                     $shipmentDetails 	= array(
                         'shipmentID'	=> $shipment_id,
                         'barcode'		=> $wpcargo->barcode( $shipment_id ),
+                        'barcode_url'	=> $wpcargo->barcode_url( $shipment_id ),
                         'packageSettings'	=> $mp_settings,
                         'cargoSettings'	=> $setting_options,
                         'packages'		=> $packages,
