@@ -171,7 +171,7 @@ td.cell-slogan {
 }
 .slogan {
   font-family: "Arial Narrow", Helvetica, Arial, sans-serif;
-  font-size: 25px;
+  font-size: 20px;
   font-weight: 900;
   color: #1e73be;
   line-height: 1.05;
@@ -278,7 +278,7 @@ table.tbl-form td {
 td.flabel {
   font-family: "Arial Narrow", Helvetica, Arial, sans-serif;
   width: 25mm;
-  font-size: 18;
+  font-size: 18px;
   font-weight: 900;
   color: #111;
   text-transform: uppercase;
