@@ -32,6 +32,8 @@ class WCFIN_Caja {
              INNER JOIN {$wpdb->prefix}posts p ON p.ID = m.shipment_id
              INNER JOIN {$wpdb->prefix}postmeta pm ON pm.post_id = p.ID
              WHERE m.cuenta = 'balance_motorizado'
+               AND p.post_type = 'wpcargo_shipment'
+               AND p.post_status = 'publish'
                AND pm.meta_key = 'wpcargo_driver'
                AND pm.meta_value = %d",
             $driver_id
