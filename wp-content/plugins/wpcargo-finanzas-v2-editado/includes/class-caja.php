@@ -469,9 +469,15 @@ class WCFIN_Caja {
         global $wpdb;
 
         $cuentas = $wpdb->get_results(
-            "SELECT cuenta, SUM(monto*signo) as total
-             FROM {$wpdb->prefix}wcfin_movimientos
-             GROUP BY cuenta"
+            "SELECT m.cuenta, SUM(m.monto*m.signo) as total
+             FROM {$wpdb->prefix}wcfin_movimientos m
+             LEFT JOIN {$wpdb->prefix}posts p ON p.ID = m.shipment_id
+             WHERE m.shipment_id IS NULL
+                OR (
+                    p.post_type = 'wpcargo_shipment'
+                    AND p.post_status = 'publish'
+                )
+             GROUP BY m.cuenta"
         ) ?: [];
 
         $por_cuenta = [];
