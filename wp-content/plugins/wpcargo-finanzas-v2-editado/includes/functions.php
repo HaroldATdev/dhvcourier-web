@@ -125,38 +125,80 @@ function wcfin_track_metodos_y_vouchers( $shipment ): void {
         $pod_rows = [];
     }
 
-    $has_vouchers = (bool) array_filter( $pod_rows, fn( $r ) => ! empty( $r['image_url'] ) );
-
-    if ( $payment_mode === '' && empty( $pod_rows ) && ! $has_vouchers ) {
+    if ( $payment_mode === '' && empty( $pod_rows ) ) {
         return;
     }
+
+    // Paleta de colores que rota por índice
+    $palette = [ '#1a6faf', '#2e7d32', '#b45309', '#7b1fa2', '#c62828', '#00695c' ];
+    $total   = array_sum( array_map( fn( $r ) => (float) ( $r['amount'] ?? 0 ), $pod_rows ) );
     ?>
-    <div id="wcfin-track-pagos" class="wpcargo-row detail-section" style="margin-top:14px;">
-        <div class="wpcargo-col-md-12">
-            <p class="header-title"><strong>Metodo de pago y vouchers</strong></p>
+    <div id="wcfin-track-pagos" class="wpcargo-row detail-section" style="margin-top:20px;">
+
+        <div class="wpcargo-col-md-12" style="margin-bottom:10px;">
+            <p class="header-title" style="display:flex;align-items:center;gap:8px;margin-bottom:0;">
+                <span style="display:inline-block;width:4px;height:18px;background:#1a6faf;border-radius:2px;"></span>
+                <strong>METODO DE PAGO Y VOUCHERS</strong>
+            </p>
         </div>
 
-        <?php if ( $payment_mode !== '' ) : ?>
-            <div class="wpcargo-col-md-4">
-                <p class="wpcargo-label">Metodo principal:</p>
-                <p class="wpcargo-label-info"><?php echo esc_html( $payment_mode ); ?></p>
-            </div>
-        <?php endif; ?>
-
-        <?php foreach ( $pod_rows as $row ) :
+        <?php foreach ( $pod_rows as $i => $row ) :
             $method_name = sanitize_text_field( (string) ( $row['method_name'] ?? 'Metodo' ) );
             $amount      = number_format( (float) ( $row['amount'] ?? 0 ), 2 );
             $image_url   = esc_url( (string) ( $row['image_url'] ?? '' ) );
+            $color       = $palette[ $i % count( $palette ) ];
         ?>
-            <div class="wpcargo-col-md-12" style="margin-bottom:6px;">
-                <span class="wpcargo-label-info">
-                    <strong><?php echo esc_html( $method_name ); ?></strong>: S/ <?php echo esc_html( $amount ); ?>
-                    <?php if ( ! empty( $image_url ) ) : ?>
-                        &mdash; <a href="<?php echo $image_url; ?>" target="_blank" rel="noopener noreferrer">Ver voucher</a>
-                    <?php endif; ?>
-                </span>
+            <div class="wpcargo-col-md-12" style="margin-bottom:8px;">
+                <div style="
+                    background:#fff;
+                    border:1px solid #e0e0e0;
+                    border-left:4px solid <?php echo esc_attr( $color ); ?>;
+                    border-radius:4px;
+                    padding:10px 16px;
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                ">
+                    <div>
+                        <div style="font-weight:700;font-size:13px;color:#333;"><?php echo esc_html( $method_name ); ?></div>
+                        <div style="font-size:1.1em;font-weight:700;color:<?php echo esc_attr( $color ); ?>;margin-top:2px;">
+                            S/. <?php echo esc_html( $amount ); ?>
+                        </div>
+                    </div>
+                    <div style="font-size:12px;color:#888;text-align:right;">
+                        <?php if ( ! empty( $image_url ) ) : ?>
+                            <a href="<?php echo $image_url; ?>" target="_blank" rel="noopener noreferrer"
+                               style="color:#1a6faf;font-weight:600;text-decoration:none;">
+                                Ver voucher
+                            </a>
+                        <?php else : ?>
+                            <em>Sin comprobante adjunto</em>
+                        <?php endif; ?>
+                    </div>
+                </div>
             </div>
         <?php endforeach; ?>
+
+        <?php if ( ! empty( $pod_rows ) ) : ?>
+            <div class="wpcargo-col-md-12" style="margin-top:4px;">
+                <div style="
+                    background:#1a3a5c;
+                    border-radius:4px;
+                    padding:12px 16px;
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                ">
+                    <span style="font-size:11px;font-weight:700;color:#a0bfd8;text-transform:uppercase;letter-spacing:.5px;">
+                        TOTAL RECAUDADO
+                    </span>
+                    <span style="font-size:1.4em;font-weight:700;color:#fff;">
+                        S/. <?php echo esc_html( number_format( $total, 2 ) ); ?>
+                    </span>
+                </div>
+            </div>
+        <?php endif; ?>
+
     </div>
     <?php
 }
