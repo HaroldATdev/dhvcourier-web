@@ -19,6 +19,25 @@ $qr_url       = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data='
 $barcode_url  = isset($shipmentDetails['barcode_url']) ? $shipmentDetails['barcode_url'] : '';
 $barcode_src  = (is_string($barcode_url) && strpos($barcode_url, 'data:image') === 0) ? $barcode_url : esc_url($barcode_url);
 
+$logo_src = '';
+if ( ! empty( $shipmentDetails['cargoSettings']['settings_shipment_ship_logo'] ) ) {
+  $logo_url   = $shipmentDetails['cargoSettings']['settings_shipment_ship_logo'];
+  $logo_parts = wp_parse_url( $logo_url );
+  if ( ! empty( $logo_parts['path'] ) ) {
+    $logo_path = ABSPATH . ltrim( $logo_parts['path'], '/' );
+    if ( file_exists( $logo_path ) && is_readable( $logo_path ) ) {
+      $logo_bin = file_get_contents( $logo_path );
+      if ( $logo_bin !== false ) {
+        $logo_mime = function_exists( 'mime_content_type' ) ? mime_content_type( $logo_path ) : 'image/png';
+        $logo_src  = 'data:' . $logo_mime . ';base64,' . base64_encode( $logo_bin );
+      }
+    }
+  }
+  if ( empty( $logo_src ) ) {
+    $logo_src = esc_url( $logo_url );
+  }
+}
+
 if ( ! function_exists( 'dhv_meta' ) ) {
   function dhv_meta($id, $key, $fb = '') {
     $v = get_post_meta($id, $key, true);
@@ -345,7 +364,9 @@ td.fline {
         <table class="tbl-header">
         <tr>
           <td class="cell-logo">
-            <img class="logo" src="https://grupodhv.com/wp-content/uploads/2025/03/6-1.png" alt="DHV Courier">
+            <?php if ( ! empty( $logo_src ) ) : ?>
+            <img class="logo" src="<?php echo esc_attr( $logo_src ); ?>" alt="DHV Courier">
+            <?php endif; ?>
             <div class="ruc">RUC: 20611135786</div>
           </td>
           <td class="cell-slogan">
