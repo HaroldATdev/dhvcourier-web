@@ -226,8 +226,11 @@ class WCFIN_Caja {
         $acumulado = (float) $wpdb->get_var($wpdb->prepare(
             "SELECT COALESCE(SUM(m.monto * m.signo), 0)
              FROM {$wpdb->prefix}wcfin_movimientos m
+                         INNER JOIN {$wpdb->prefix}posts p ON p.ID = m.shipment_id
              INNER JOIN {$wpdb->prefix}postmeta pm ON pm.post_id = m.shipment_id
              WHERE m.cuenta = 'deuda_a_remitente'
+                             AND p.post_type = 'wpcargo_shipment'
+                             AND p.post_status = 'publish'
                AND pm.meta_key = 'registered_shipper'
                AND pm.meta_value = %d",
             $user_id
@@ -248,8 +251,11 @@ class WCFIN_Caja {
         $acumulado = (float) $wpdb->get_var($wpdb->prepare(
             "SELECT COALESCE(SUM(m.monto * m.signo), 0)
              FROM {$wpdb->prefix}wcfin_movimientos m
+                         INNER JOIN {$wpdb->prefix}posts p ON p.ID = m.shipment_id
              INNER JOIN {$wpdb->prefix}postmeta pm ON pm.post_id = m.shipment_id
              WHERE m.cuenta = 'deuda_de_remitente'
+                             AND p.post_type = 'wpcargo_shipment'
+                             AND p.post_status = 'publish'
                AND pm.meta_key = 'registered_shipper'
                AND pm.meta_value = %d",
             $user_id
@@ -336,8 +342,11 @@ class WCFIN_Caja {
         $user_ids = $wpdb->get_col(
             "SELECT DISTINCT pm.meta_value
              FROM {$wpdb->prefix}postmeta pm
+                         INNER JOIN {$wpdb->prefix}posts p ON p.ID = pm.post_id
              INNER JOIN {$wpdb->prefix}wcfin_movimientos m ON m.shipment_id = pm.post_id
              WHERE pm.meta_key = 'registered_shipper'
+                             AND p.post_type = 'wpcargo_shipment'
+                             AND p.post_status = 'publish'
                AND m.cuenta IN ('deuda_a_remitente','deuda_de_remitente')"
         );
         $lista = [];
@@ -354,8 +363,11 @@ class WCFIN_Caja {
                 'saldo_neto'   => $cliente_debe - $dhv_debe, // positivo = cliente debe
                 'n_envios'     => (int) $wpdb->get_var($wpdb->prepare(
                     "SELECT COUNT(DISTINCT pm.post_id) FROM {$wpdb->prefix}postmeta pm
+                                         INNER JOIN {$wpdb->prefix}posts p ON p.ID = pm.post_id
                      INNER JOIN {$wpdb->prefix}wcfin_movimientos m ON m.shipment_id = pm.post_id
                      WHERE pm.meta_key='registered_shipper' AND pm.meta_value=%d
+                                             AND p.post_type = 'wpcargo_shipment'
+                                             AND p.post_status = 'publish'
                        AND m.cuenta IN ('deuda_a_remitente','deuda_de_remitente')",
                     $uid
                 )),
