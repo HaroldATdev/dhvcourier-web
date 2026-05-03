@@ -64,23 +64,26 @@ class WPC_Facturacion_Ajax {
 		global $wpdb;
 
 		$like = '%' . $wpdb->esc_like( $query ) . '%';
+		$tabla_envios_comp = $wpdb->prefix . 'facturacion_comprobante_envios';
 
 		$sql = $wpdb->prepare(
 			"SELECT p.ID, p.post_title, p.post_date
 			 FROM {$wpdb->posts} p
 			 WHERE p.post_type = 'wpcargo_shipment'
 			   AND p.post_status = 'publish'
-			   AND p.ID NOT IN (
-				   SELECT shipment_id FROM {$wpdb->prefix}facturacion_comprobante_envios
+			   AND NOT EXISTS (
+				   SELECT 1 FROM {$tabla_envios_comp} fce
+				   WHERE fce.shipment_id = p.ID
 			   )
 			   AND NOT EXISTS (
 				   SELECT 1 FROM {$wpdb->postmeta} pm1
 				   WHERE pm1.post_id = p.ID
 					 AND pm1.meta_key IN ('registered_shipper', 'wpcargo_cliente')
-					 AND TRIM(COALESCE(pm1.meta_value, '')) <> ''
+					 AND CAST(TRIM(COALESCE(pm1.meta_value, '0')) AS UNSIGNED) > 0
 			   )
 			   AND (
 				   %s = ''
+				   OR CAST(p.ID AS CHAR) LIKE %s
 				   OR p.post_title LIKE %s
 				   OR EXISTS (
 					   SELECT 1 FROM {$wpdb->postmeta} pm2
@@ -92,6 +95,7 @@ class WPC_Facturacion_Ajax {
 			 ORDER BY p.post_date DESC
 			 LIMIT 100",
 			$query,
+			$like,
 			$like,
 			$like
 		);
