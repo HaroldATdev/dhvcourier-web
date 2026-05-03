@@ -7,10 +7,119 @@ class WPC_Facturacion_Ajax {
 
 	public function __construct() {
 		add_action( 'wp_ajax_wpcfact_buscar_cliente', array( $this, 'buscar_cliente' ) );
+		add_action( 'wp_ajax_wpcfact_buscar_envios_ocasionales', array( $this, 'buscar_envios_ocasionales' ) );
 		add_action( 'wp_ajax_wpcfact_obtener_envios', array( $this, 'obtener_envios' ) );
 		add_action( 'wp_ajax_wpcfact_emitir_comprobante', array( $this, 'emitir_comprobante' ) );
 		add_action( 'wp_ajax_wpcfact_anular_comprobante', array( $this, 'anular_comprobante' ) );
 		add_action( 'wp_ajax_wpcfact_emitir_nota_credito', array( $this, 'emitir_nota_credito' ) );
+	}
+
+	private function get_envio_monto( $shipment_id ) {
+		$freight_raw = get_post_meta( $shipment_id, 'costo_envio', true );
+		if ( empty( $freight_raw ) ) {
+			$freight_raw = get_post_meta( $shipment_id, 'monto', true );
+		}
+		if ( empty( $freight_raw ) ) {
+			$freight_raw = get_post_meta( $shipment_id, 'wpcargo_total_freight', true );
+		}
+
+		$freight_raw = is_string( $freight_raw ) ? $freight_raw : (string) $freight_raw;
+		return floatval( preg_replace( '/[^0-9.]/', '', $freight_raw ) );
+	}
+
+	private function get_envio_ruta( $shipment_id ) {
+		$origen = get_post_meta( $shipment_id, 'lugar_origen', true );
+		if ( empty( $origen ) ) {
+			$origen = get_post_meta( $shipment_id, 'wpcargo_origin_field', true );
+		}
+
+		$destino = get_post_meta( $shipment_id, 'lugar_destino', true );
+		if ( empty( $destino ) ) {
+			$destino = get_post_meta( $shipment_id, 'wpcargo_destination', true );
+		}
+
+		return trim( (string) $origen ) . ' → ' . trim( (string) $destino );
+	}
+
+	private function get_envio_remitente_data( $shipment_id ) {
+		$nombre = trim( (string) get_post_meta( $shipment_id, 'remitente', true ) );
+		$doc = trim( (string) get_post_meta( $shipment_id, 'dni_remitente', true ) );
+		$direccion = trim( (string) get_post_meta( $shipment_id, 'direccion_remitente', true ) );
+
+		if ( empty( $direccion ) ) {
+			$direccion = trim( (string) get_post_meta( $shipment_id, 'shipper_address', true ) );
+		}
+
+		return array(
+			'shipper_name'    => $nombre,
+			'shipper_doc'     => $doc,
+			'shipper_address' => $direccion,
+		);
+	}
+
+	public function buscar_envios_ocasionales() {
+		check_ajax_referer( 'wpcfact_wizard_nonce', 'nonce' );
+
+		$query = sanitize_text_field( wp_unslash( $_POST['q'] ?? '' ) );
+		global $wpdb;
+
+		$like = '%' . $wpdb->esc_like( $query ) . '%';
+
+		$sql = $wpdb->prepare(
+			"SELECT p.ID, p.post_title, p.post_date
+			 FROM {$wpdb->posts} p
+			 WHERE p.post_type = 'wpcargo_shipment'
+			   AND p.post_status = 'publish'
+			   AND p.ID NOT IN (
+				   SELECT shipment_id FROM {$wpdb->prefix}facturacion_comprobante_envios
+			   )
+			   AND NOT EXISTS (
+				   SELECT 1 FROM {$wpdb->postmeta} pm1
+				   WHERE pm1.post_id = p.ID
+					 AND pm1.meta_key IN ('registered_shipper', 'wpcargo_cliente')
+					 AND TRIM(COALESCE(pm1.meta_value, '')) <> ''
+			   )
+			   AND (
+				   %s = ''
+				   OR p.post_title LIKE %s
+				   OR EXISTS (
+					   SELECT 1 FROM {$wpdb->postmeta} pm2
+					   WHERE pm2.post_id = p.ID
+						 AND pm2.meta_key = 'remitente'
+						 AND pm2.meta_value LIKE %s
+				   )
+			   )
+			 ORDER BY p.post_date DESC
+			 LIMIT 100",
+			$query,
+			$like,
+			$like
+		);
+
+		$envios = $wpdb->get_results( $sql );
+		$resultados = array();
+
+		foreach ( $envios as $envio ) {
+			$monto = $this->get_envio_monto( $envio->ID );
+			if ( $monto <= 0 ) {
+				continue;
+			}
+
+			$remitente = $this->get_envio_remitente_data( $envio->ID );
+
+			$resultados[] = array_merge(
+				array(
+					'id'    => (int) $envio->ID,
+					'title' => (string) $envio->post_title,
+					'date'  => gmdate( 'd/m/Y', strtotime( $envio->post_date ) ),
+					'ruta'  => $this->get_envio_ruta( $envio->ID ),
+					'monto' => $monto,
+				),
+				$remitente
+			);
+		}
+
+		wp_send_json_success( $resultados );
 	}
 
 	public function buscar_cliente() {
@@ -131,36 +240,21 @@ class WPC_Facturacion_Ajax {
 		$resultados = array();
 
 		foreach ( $envios as $envio ) {
-			// Leer monto desde costo_envio (cotización original), fallback a monto y luego wpcargo_total_freight
-			$freight_raw = get_post_meta( $envio->ID, 'costo_envio', true );
-			if ( empty( $freight_raw ) ) {
-				$freight_raw = get_post_meta( $envio->ID, 'monto', true );
-			}
-			if ( empty( $freight_raw ) ) {
-				$freight_raw = get_post_meta( $envio->ID, 'wpcargo_total_freight', true );
-			}
-			$freight = floatval( preg_replace( '/[^0-9.]/', '', is_string($freight_raw) ? $freight_raw : (is_numeric($freight_raw) ? (string)$freight_raw : '') ) );
+			$freight = $this->get_envio_monto( $envio->ID );
 
 			if ( $freight <= 0 ) {
 				continue;
 			}
 
-			$origen  = get_post_meta( $envio->ID, 'lugar_origen', true );
-			if ( empty( $origen ) ) $origen = get_post_meta( $envio->ID, 'wpcargo_origin_field', true );
+			$remitente = $this->get_envio_remitente_data( $envio->ID );
 
-			$destino = get_post_meta( $envio->ID, 'lugar_destino', true );
-			if ( empty( $destino ) ) $destino = get_post_meta( $envio->ID, 'wpcargo_destination', true );
-
-			$tracking = get_post_meta( $envio->ID, 'remitente', true );
-			if ( empty( $tracking ) ) $tracking = $envio->post_title;
-
-			$resultados[] = array(
+			$resultados[] = array_merge(array(
 				'id'      => $envio->ID,
 				'title'   => $envio->post_title,  // Número de tracking (ej: DHV-0000051)
 				'date'    => gmdate( 'd/m/Y', strtotime( $envio->post_date ) ),
-				'ruta'    => $origen . ' → ' . $destino,
+				'ruta'    => $this->get_envio_ruta( $envio->ID ),
 				'monto'   => $freight,
-			);
+			), $remitente);
 		}
 
 		wp_send_json_success( $resultados );
@@ -169,6 +263,7 @@ class WPC_Facturacion_Ajax {
 	public function emitir_comprobante() {
 		check_ajax_referer( 'wpcfact_wizard_nonce', 'nonce' );
 
+		$modo       = sanitize_key( $_POST['modo'] ?? 'registrado' );
 		$user_id    = intval( $_POST['user_id'] ?? 0 );
 		$envios     = array_map( 'intval', $_POST['envios'] ?? array() );
 		$tipo       = sanitize_text_field( $_POST['tipo'] ?? '01' );
@@ -180,14 +275,20 @@ class WPC_Facturacion_Ajax {
 		$guia_motivo    = sanitize_text_field( $_POST['guia_motivo'] ?? '01' );
 		$guia_modalidad = sanitize_text_field( $_POST['guia_modalidad'] ?? '01' );
 
-		if ( ! $user_id || empty( $envios ) || empty( $doc_num ) || empty( $nombre ) ) {
+		if ( empty( $envios ) || empty( $doc_num ) || empty( $nombre ) ) {
 			wp_send_json_error( 'Faltan datos requeridos.' );
 		}
 
+		if ( 'registrado' === $modo && ! $user_id ) {
+			wp_send_json_error( 'Debe seleccionar un cliente registrado.' );
+		}
+
 		// Guardar user_meta para reutilización
-		update_user_meta( $user_id, 'wpcfact_doc_num', $doc_num );
-		update_user_meta( $user_id, 'wpcfact_razon_social', $nombre );
-		update_user_meta( $user_id, 'wpcfact_direccion', $direccion );
+		if ( $user_id > 0 ) {
+			update_user_meta( $user_id, 'wpcfact_doc_num', $doc_num );
+			update_user_meta( $user_id, 'wpcfact_razon_social', $nombre );
+			update_user_meta( $user_id, 'wpcfact_direccion', $direccion );
+		}
 
 		if ( $tipo === '00' ) {
 			if ( ! class_exists( 'WPC_Facturacion_Constructor_NotaVenta' ) ) {

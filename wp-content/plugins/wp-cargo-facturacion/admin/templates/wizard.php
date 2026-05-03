@@ -10,6 +10,15 @@
 	<!-- Paso 1: Seleccionar Cliente -->
 	<div class="wpcfact-wizard-step active" id="step-1">
 		<h2>1. Iniciar Comprobante</h2>
+
+		<div class="wpcfact-input-group">
+			<label>Modo de Emision</label>
+			<select id="wpcfact-modo-emision" class="wpcfact-select">
+				<option value="registrado" selected>Cliente registrado</option>
+				<option value="ocasional">Envio ocasional (sin cliente registrado)</option>
+			</select>
+			<small style="color:#64748b; margin-top:5px; display:block;">En modo ocasional podras buscar por tracking o nombre del remitente.</small>
+		</div>
 		
 		<div class="wpcfact-input-group">
 			<label>Tipo de Comprobante</label>
@@ -22,7 +31,7 @@
 			</select>
 		</div>
 
-		<div class="wpcfact-input-group">
+		<div class="wpcfact-input-group" id="wpcfact-box-cliente-registrado">
 			<label>Buscar Cliente (Remitente)</label>
 			<div style="display:flex; gap:10px;">
 				<input type="text" id="wpcfact-buscar-cliente" class="wpcfact-input" placeholder="Escriba nombre o documento..." style="flex:1;">
@@ -34,6 +43,19 @@
 		</div>
 
 		<div id="wpcfact-resultados-cliente" style="margin-top: 15px; max-height: 300px; overflow-y: auto;"></div>
+
+		<div class="wpcfact-input-group" id="wpcfact-box-envio-ocasional" style="display:none;">
+			<label>Buscar Envios Ocasionales</label>
+			<div style="display:flex; gap:10px;">
+				<input type="text" id="wpcfact-buscar-ocasional" class="wpcfact-input" placeholder="Tracking o nombre del remitente..." style="flex:1;">
+				<button type="button" id="btn-buscar-ocasional" class="wpcfact-btn">
+					<span class="dashicons dashicons-search" style="margin-top:4px;"></span> Buscar
+				</button>
+			</div>
+			<small style="color:#64748b; margin-top:5px; display:block;">Solo se mostraran envios sin cliente registrado asociado y aun no facturados.</small>
+		</div>
+
+		<div id="wpcfact-resultados-ocasional" style="margin-top: 15px; max-height: 320px; overflow-y: auto; display:none;"></div>
 
 		<div class="wpcfact-actions" style="justify-content: flex-end;">
 			<button type="button" id="btn-next-2" class="wpcfact-btn" disabled>Continuar a Envíos &rarr;</button>
