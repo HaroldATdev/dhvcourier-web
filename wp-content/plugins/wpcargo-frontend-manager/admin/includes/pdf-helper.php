@@ -331,6 +331,7 @@ function wpcfe_print_shipment_template_path( $shipment_id, $waybill_title, $prin
         $shipmentDetails 	= array(
             'shipmentID'	=> $shipment_id,
             'barcode'		=> $wpcargo->barcode( $shipment_id ),
+            'barcode_url'	=> $wpcargo->barcode_url( $shipment_id ),
             'packageSettings'	=> $mp_settings,
             'cargoSettings'	=> $setting_options,
             'packages'		=> $packages,
