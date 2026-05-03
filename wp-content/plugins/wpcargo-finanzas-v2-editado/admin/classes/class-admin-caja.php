@@ -53,7 +53,7 @@ class WCFIN_Admin_Caja {
             $balance       = WCFIN_Caja::balance_driver($driver_id);
             $liquidado     = WCFIN_Caja::liquidado_driver($driver_id);
             $saldo         = WCFIN_Caja::saldo_pendiente_driver($driver_id);
-            $envios        = WCFIN_Caja::envios_driver($driver_id);
+            $envios        = WCFIN_Caja::envios_driver($driver_id, 50, 0, true);
             $liquidaciones = WCFIN_Caja::liquidaciones_driver($driver_id);
             wcfin_tpl('admin-caja/driver-detalle.tpl.php', compact('driver','balance','liquidado','saldo','envios','liquidaciones'));
         } else {

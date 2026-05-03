@@ -64,6 +64,20 @@ class WCFIN_Caja {
     }
 
     /**
+     * Fecha de la última liquidación aprobada/confirmada de un driver.
+     * Se usa como corte para listar envíos aún no liquidados.
+     */
+    public static function ultima_liquidacion_aprobada_driver( int $driver_id ): ?string {
+        global $wpdb;
+        $fecha = $wpdb->get_var($wpdb->prepare(
+            "SELECT MAX(fecha) FROM {$wpdb->prefix}wcfin_liquidaciones
+             WHERE driver_id = %d AND (estado = 'aprobado' OR estado = '' OR estado IS NULL)",
+            $driver_id
+        ));
+        return $fecha ? (string) $fecha : null;
+    }
+
+    /**
      * El admin aprueba una liquidación subida por el driver.
      */
     public static function aprobar_liquidacion( int $liq_id ): void {
@@ -99,10 +113,23 @@ class WCFIN_Caja {
     /**
      * Detalle de envíos del driver con sus montos.
      */
-    public static function envios_driver( int $driver_id, int $limit = 50, int $offset = 0 ): array {
+    public static function envios_driver( int $driver_id, int $limit = 50, int $offset = 0, bool $solo_no_liquidados = false ): array {
         global $wpdb;
-        return $wpdb->get_results($wpdb->prepare(
-            "SELECT p.ID as shipment_id, p.post_title as tracking,
+        $where_mov_fecha = '';
+        $params = [ $driver_id ];
+
+        if ( $solo_no_liquidados ) {
+            $fecha_corte = self::ultima_liquidacion_aprobada_driver( $driver_id );
+            if ( $fecha_corte ) {
+                $where_mov_fecha = ' AND fecha > %s';
+                $params[] = $fecha_corte;
+            }
+        }
+
+        $params[] = $limit;
+        $params[] = $offset;
+
+        $sql = "SELECT p.ID as shipment_id, p.post_title as tracking,
                     COALESCE(mv.monto_driver, 0) as monto_driver,
                     mv.fecha,
                     tx.estado_pago,
@@ -115,6 +142,7 @@ class WCFIN_Caja {
                         MAX(fecha) as fecha
                  FROM {$wpdb->prefix}wcfin_movimientos
                  WHERE cuenta = 'balance_motorizado'
+                     {$where_mov_fecha}
                  GROUP BY shipment_id
              ) mv ON mv.shipment_id = p.ID
              LEFT JOIN (
@@ -132,9 +160,9 @@ class WCFIN_Caja {
              WHERE p.post_type = 'wpcargo_shipment' AND p.post_status = 'publish'
              HAVING monto_driver > 0
              ORDER BY fecha DESC
-             LIMIT %d OFFSET %d",
-            $driver_id, $limit, $offset
-        )) ?: [];
+             LIMIT %d OFFSET %d";
+
+        return $wpdb->get_results( $wpdb->prepare( $sql, ...$params ) ) ?: [];
     }
 
     /**

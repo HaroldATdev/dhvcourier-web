@@ -100,7 +100,7 @@
 
 <!-- Historial de envíos -->
 <div class="card mb-4">
-    <div class="card-header"><strong>📦 Envíos asignados con cobro</strong></div>
+    <div class="card-header"><strong>📦 Envíos pendientes por liquidar</strong></div>
     <div class="table-responsive">
     <table class="table table-striped table-hover mb-0">
         <thead class="thead-light"><tr><th>Tracking</th><th>Condición</th><th>Monto cobrado</th><th>Fecha</th><th>Estado</th></tr></thead>

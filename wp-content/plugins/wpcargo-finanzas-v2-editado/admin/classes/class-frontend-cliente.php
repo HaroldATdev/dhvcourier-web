@@ -57,7 +57,7 @@ class WCFIN_Frontend_Cliente {
         $balance      = WCFIN_Caja::balance_driver($driver_id);
         $liquidado    = WCFIN_Caja::liquidado_driver($driver_id);
         $saldo        = WCFIN_Caja::saldo_pendiente_driver($driver_id);
-        $envios       = WCFIN_Caja::envios_driver($driver_id, 30);
+        $envios       = WCFIN_Caja::envios_driver($driver_id, 30, 0, true);
         $liquidaciones= WCFIN_Caja::liquidaciones_driver($driver_id);
 
         ob_start();

@@ -213,7 +213,7 @@ $msg = sanitize_key($_GET['wcfin_msg'] ?? '');
 <!-- Tabla de envíos -->
 <div style="background:#fff;border:1px solid #dee2e6;border-radius:8px;overflow:hidden;margin-bottom:16px">
     <div style="padding:12px 16px;border-bottom:1px solid #dee2e6;background:#f8f9fa;display:flex;align-items:center;justify-content:space-between">
-        <strong><i class="fa fa-list mr-1 text-primary"></i>Mis envíos con cobro</strong>
+        <strong><i class="fa fa-list mr-1 text-primary"></i>Mis envíos pendientes por liquidar</strong>
         <span class="badge badge-primary"><?php echo count($envios); ?></span>
     </div>
     <?php if (empty($envios)): ?>

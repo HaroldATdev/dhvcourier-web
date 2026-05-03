@@ -98,7 +98,7 @@
 
 <!-- Historial de envíos -->
 <div class="postbox" style="margin-bottom:20px">
-    <div class="postbox-header"><h2 class="hndle">📦 Envíos asignados con cobro</h2></div>
+    <div class="postbox-header"><h2 class="hndle">📦 Envíos pendientes por liquidar</h2></div>
     <div class="inside" style="padding:0">
     <table class="wp-list-table widefat striped">
         <thead><tr><th>Tracking</th><th>Condición</th><th>Monto cobrado</th><th>Fecha</th><th>Estado</th></tr></thead>
