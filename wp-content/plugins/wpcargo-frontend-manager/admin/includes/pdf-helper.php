@@ -261,6 +261,7 @@ function wpcfe_print_shipment_ajax_callback(){
         // instantiate and use the dompdf class
         $dompdf = new Dompdf();
         $dompdf->set_option('isRemoteEnabled', true);
+        $dompdf->set_option('isHtml5ParserEnabled', true);
         
         $html = wpcfe_print_shipment_template_path( $shipment_id, $waybill_title, $print_type );
         if ( ! $html ) {
@@ -318,7 +319,10 @@ function wpcfe_print_shipment_template_path( $shipment_id, $waybill_title, $prin
         $setting_options        = get_option('wpcargo_option_settings');
         $logo                   = '';
         if( !empty( $setting_options['settings_shipment_ship_logo'] ) ){
-            $logo 		= '<img style="width: 180px;" id="logo" src="'.$setting_options['settings_shipment_ship_logo'].'">';
+            $logo_url  = $setting_options['settings_shipment_ship_logo'];
+            $logo_local = str_replace( site_url('/'), ABSPATH, $logo_url );
+            $logo_src   = file_exists( $logo_local ) ? $logo_local : $logo_url;
+            $logo 		= '<img style="width: 180px;" id="logo" src="'.$logo_src.'">';
         }
         if( get_option('wpcargo_label_header') ){
             $siteInfo = get_option('wpcargo_label_header');
