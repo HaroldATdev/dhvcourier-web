@@ -167,10 +167,10 @@ function wcfin_track_metodos_y_vouchers( $shipment ): void {
                     </div>
                     <div style="font-size:12px;color:#888;text-align:right;">
                         <?php if ( ! empty( $image_url ) ) : ?>
-                            <a href="<?php echo $image_url; ?>" target="_blank" rel="noopener noreferrer"
-                               style="color:#1a6faf;font-weight:600;text-decoration:none;">
-                                Ver voucher
-                            </a>
+                            <img src="<?php echo $image_url; ?>"
+                                 alt="Voucher <?php echo esc_attr( $method_name ); ?>"
+                                 onclick="wcfinOpenModal(this.src)"
+                                 style="height:52px;width:auto;max-width:80px;object-fit:cover;border-radius:4px;border:1px solid #ddd;cursor:zoom-in;display:block;">
                         <?php else : ?>
                             <em>Sin comprobante adjunto</em>
                         <?php endif; ?>
@@ -200,5 +200,29 @@ function wcfin_track_metodos_y_vouchers( $shipment ): void {
         <?php endif; ?>
 
     </div>
+
+    <!-- Modal voucher -->
+    <div id="wcfin-voucher-modal"
+         onclick="this.style.display='none'"
+         style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:99999;
+                align-items:center;justify-content:center;cursor:zoom-out;">
+        <img id="wcfin-voucher-modal-img" src="" alt="Voucher"
+             style="max-width:90vw;max-height:90vh;border-radius:6px;box-shadow:0 8px 32px rgba(0,0,0,.6);display:block;">
+        <button onclick="document.getElementById('wcfin-voucher-modal').style.display='none'"
+                style="position:absolute;top:16px;right:20px;background:none;border:none;
+                       color:#fff;font-size:28px;cursor:pointer;line-height:1;">&times;</button>
+    </div>
+    <script>
+    function wcfinOpenModal(src) {
+        var modal = document.getElementById('wcfin-voucher-modal');
+        document.getElementById('wcfin-voucher-modal-img').src = src;
+        modal.style.display = 'flex';
+    }
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            document.getElementById('wcfin-voucher-modal').style.display = 'none';
+        }
+    });
+    </script>
     <?php
 }
