@@ -103,17 +103,33 @@ class WCFIN_Caja {
         global $wpdb;
         return $wpdb->get_results($wpdb->prepare(
             "SELECT p.ID as shipment_id, p.post_title as tracking,
-                    COALESCE(SUM(m.monto * m.signo), 0) as monto_driver,
-                    MAX(m.fecha) as fecha,
-                    MAX(t.estado) as estado_pago,
-                    MAX(cp.nombre) as condicion
+                    COALESCE(mv.monto_driver, 0) as monto_driver,
+                    mv.fecha,
+                    tx.estado_pago,
+                    tx.condicion
              FROM {$wpdb->prefix}posts p
              INNER JOIN {$wpdb->prefix}postmeta pm ON pm.post_id = p.ID AND pm.meta_key = 'wpcargo_driver' AND pm.meta_value = %d
-             LEFT JOIN {$wpdb->prefix}wcfin_movimientos m ON m.shipment_id = p.ID AND m.cuenta = 'balance_motorizado'
-             LEFT JOIN {$wpdb->prefix}wcfin_transacciones t ON t.shipment_id = p.ID
-             LEFT JOIN {$wpdb->prefix}wcfin_condiciones cp ON cp.id = t.condicion_id
+             LEFT JOIN (
+                 SELECT shipment_id,
+                        SUM(monto * signo) as monto_driver,
+                        MAX(fecha) as fecha
+                 FROM {$wpdb->prefix}wcfin_movimientos
+                 WHERE cuenta = 'balance_motorizado'
+                 GROUP BY shipment_id
+             ) mv ON mv.shipment_id = p.ID
+             LEFT JOIN (
+                 SELECT t.shipment_id,
+                        t.estado as estado_pago,
+                        cp.nombre as condicion
+                 FROM {$wpdb->prefix}wcfin_transacciones t
+                 LEFT JOIN {$wpdb->prefix}wcfin_condiciones cp ON cp.id = t.condicion_id
+                 INNER JOIN (
+                     SELECT shipment_id, MAX(id) as max_id
+                     FROM {$wpdb->prefix}wcfin_transacciones
+                     GROUP BY shipment_id
+                 ) ult ON ult.max_id = t.id
+             ) tx ON tx.shipment_id = p.ID
              WHERE p.post_type = 'wpcargo_shipment' AND p.post_status = 'publish'
-             GROUP BY p.ID
              HAVING monto_driver > 0
              ORDER BY fecha DESC
              LIMIT %d OFFSET %d",
