@@ -239,22 +239,41 @@ class WCFIN_Caja {
         global $wpdb;
         return $wpdb->get_results($wpdb->prepare(
             "SELECT p.ID as shipment_id, p.post_title as tracking,
-                    MAX(t.monto_total) as monto_total,
-                    MAX(t.monto_servicio) as monto_servicio,
-                    MAX(cp.nombre) as condicion,
-                    MAX(cp.cobrar_a) as cobrar_a,
-                    COALESCE(SUM(CASE WHEN m.cuenta='deuda_a_remitente'  THEN m.monto*m.signo ELSE 0 END),0) as dhv_debe,
-                    COALESCE(SUM(CASE WHEN m.cuenta='deuda_de_remitente' THEN m.monto*m.signo ELSE 0 END),0) as cliente_debe,
-                    MAX(t.estado) as estado_pago,
-                    MAX(t.fecha_creacion) as fecha
+                    COALESCE(tx.monto_total, 0) as monto_total,
+                    COALESCE(tx.monto_servicio, 0) as monto_servicio,
+                    tx.condicion,
+                    tx.cobrar_a,
+                    COALESCE(mv.dhv_debe, 0) as dhv_debe,
+                    COALESCE(mv.cliente_debe, 0) as cliente_debe,
+                    tx.estado_pago,
+                    tx.fecha
              FROM {$wpdb->prefix}posts p
              INNER JOIN {$wpdb->prefix}postmeta pm ON pm.post_id = p.ID AND pm.meta_key='registered_shipper' AND pm.meta_value = %d
-             LEFT JOIN {$wpdb->prefix}wcfin_transacciones t ON t.shipment_id = p.ID
-             LEFT JOIN {$wpdb->prefix}wcfin_condiciones cp ON cp.id = t.condicion_id
-             LEFT JOIN {$wpdb->prefix}wcfin_movimientos m ON m.shipment_id = p.ID
-               AND m.cuenta IN ('deuda_a_remitente','deuda_de_remitente')
+             LEFT JOIN (
+                 SELECT shipment_id,
+                        SUM(CASE WHEN cuenta='deuda_a_remitente'  THEN monto*signo ELSE 0 END) as dhv_debe,
+                        SUM(CASE WHEN cuenta='deuda_de_remitente' THEN monto*signo ELSE 0 END) as cliente_debe
+                 FROM {$wpdb->prefix}wcfin_movimientos
+                 WHERE cuenta IN ('deuda_a_remitente','deuda_de_remitente')
+                 GROUP BY shipment_id
+             ) mv ON mv.shipment_id = p.ID
+             LEFT JOIN (
+                 SELECT t.shipment_id,
+                        t.monto_total,
+                        t.monto_servicio,
+                        t.estado as estado_pago,
+                        t.fecha_creacion as fecha,
+                        cp.nombre as condicion,
+                        cp.cobrar_a
+                 FROM {$wpdb->prefix}wcfin_transacciones t
+                 LEFT JOIN {$wpdb->prefix}wcfin_condiciones cp ON cp.id = t.condicion_id
+                 INNER JOIN (
+                     SELECT shipment_id, MAX(id) as max_id
+                     FROM {$wpdb->prefix}wcfin_transacciones
+                     GROUP BY shipment_id
+                 ) ult ON ult.max_id = t.id
+             ) tx ON tx.shipment_id = p.ID
              WHERE p.post_type='wpcargo_shipment' AND p.post_status='publish'
-             GROUP BY p.ID
              HAVING (dhv_debe > 0 OR cliente_debe > 0)
              ORDER BY fecha DESC
              LIMIT %d OFFSET %d",
