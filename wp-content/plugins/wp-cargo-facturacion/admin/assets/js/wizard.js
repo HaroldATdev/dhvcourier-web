@@ -8,6 +8,7 @@ jQuery(document).ready(function($) {
 
     // Cache de resultados de busqueda ocasional (id -> data)
     let ocasionalesCache = {};
+    let libresLineas = [];
 
     function showStep(step) {
         $('.wpcfact-wizard-step').removeClass('active');
@@ -33,9 +34,51 @@ jQuery(document).ready(function($) {
             $('#btn-next-2').prop('disabled', !selectedUser);
             return;
         }
-
+        if (emissionMode === 'libre') {
+            $('#btn-next-2').prop('disabled', false);
+            return;
+        }
         const selectedCount = $('.wpcfact-ocasional-row.wpcfact-row-selected').length;
         $('#btn-next-2').prop('disabled', selectedCount === 0);
+    }
+
+    // ---- Modo Libre: gestión de líneas manuales ----
+
+    function renderLineasLibres() {
+        const tbody = $('#tbody-lineas-libres');
+        tbody.empty();
+        if (!libresLineas.length) {
+            $('#libre-vacio-msg').show();
+            $('#table-lineas-libres').hide();
+            calcularTotalesLibre();
+            return;
+        }
+        $('#libre-vacio-msg').hide();
+        $('#table-lineas-libres').show();
+        libresLineas.forEach(function(linea, idx) {
+            const total = (parseFloat(linea.cantidad) * parseFloat(linea.precio_unitario)).toFixed(2);
+            tbody.append(`<tr>
+                <td><input type="text" class="wpcfact-input libre-desc" data-idx="${idx}" value="${$('<div>').text(linea.descripcion).html()}" placeholder="Descripción del servicio o producto" style="width:100%; box-sizing:border-box;"></td>
+                <td style="text-align:center;"><input type="number" class="wpcfact-input libre-cant" data-idx="${idx}" value="${linea.cantidad}" min="1" step="1" style="width:70px; text-align:center;"></td>
+                <td style="text-align:right;"><input type="number" class="wpcfact-input libre-precio" data-idx="${idx}" value="${linea.precio_unitario}" min="0" step="0.01" style="width:120px; text-align:right;"></td>
+                <td style="text-align:right; font-weight:600;">S/. ${total}</td>
+                <td style="text-align:center;"><button type="button" class="btn-remove-linea" data-idx="${idx}" style="background:none; border:none; cursor:pointer; color:#ef4444; font-size:18px;" title="Eliminar">&times;</button></td>
+            </tr>`);
+        });
+        calcularTotalesLibre();
+    }
+
+    function calcularTotalesLibre() {
+        let total = 0;
+        libresLineas.forEach(function(l) {
+            total += parseFloat(l.cantidad) * parseFloat(l.precio_unitario);
+        });
+        const base = total / 1.18;
+        const igv = total - base;
+        $('#summary-base').text('S/. ' + base.toFixed(2));
+        $('#summary-igv').text('S/. ' + igv.toFixed(2));
+        $('#summary-total').text('S/. ' + total.toFixed(2));
+        $('#btn-next-3').prop('disabled', total <= 0);
     }
 
     function renderOcasionalResults(rows) {
@@ -239,9 +282,15 @@ jQuery(document).ready(function($) {
         if (emissionMode === 'registrado') {
             $('#wpcfact-box-cliente-registrado, #wpcfact-resultados-cliente').show();
             $('#wpcfact-box-envio-ocasional, #wpcfact-resultados-ocasional').hide();
-        } else {
+            $('#wpcfact-box-libre-info').hide();
+        } else if (emissionMode === 'ocasional') {
             $('#wpcfact-box-cliente-registrado, #wpcfact-resultados-cliente').hide();
             $('#wpcfact-box-envio-ocasional, #wpcfact-resultados-ocasional').show();
+            $('#wpcfact-box-libre-info').hide();
+        } else {
+            $('#wpcfact-box-cliente-registrado, #wpcfact-resultados-cliente').hide();
+            $('#wpcfact-box-envio-ocasional, #wpcfact-resultados-ocasional').hide();
+            $('#wpcfact-box-libre-info').show();
         }
 
         updateContinueButton();
@@ -340,13 +389,55 @@ jQuery(document).ready(function($) {
 
         if (emissionMode === 'registrado') {
             if (!selectedUser) return;
+            $('#wpcfact-step2-libre').hide();
+            $('#wpcfact-step2-shipments').show();
             cargarEnviosClienteRegistrado();
-        } else {
+        } else if (emissionMode === 'ocasional') {
             selectedUser = { id: 0, name: '', doc: '', dir: '' };
+            $('#wpcfact-step2-libre').hide();
+            $('#wpcfact-step2-shipments').show();
             cargarEnviosOcasionalesSeleccionados();
+        } else {
+            // libre
+            selectedUser = { id: 0, name: '', doc: '', dir: '' };
+            libresLineas = [];
+            $('#wpcfact-step2-shipments').hide();
+            $('#wpcfact-step2-libre').show();
+            renderLineasLibres();
         }
 
         showStep(2);
+    });
+
+    // Agregar línea libre
+    $('#step-2').on('click', '#btn-add-linea-libre', function() {
+        libresLineas.push({ descripcion: '', cantidad: 1, precio_unitario: 0 });
+        renderLineasLibres();
+        // Foco en la última descripción
+        $('#tbody-lineas-libres tr:last-child .libre-desc').focus();
+    });
+
+    // Eliminar línea libre
+    $('#step-2').on('click', '.btn-remove-linea', function() {
+        const idx = parseInt($(this).data('idx'), 10);
+        libresLineas.splice(idx, 1);
+        renderLineasLibres();
+    });
+
+    // Editar campos de línea libre
+    $('#step-2').on('input change', '.libre-desc, .libre-cant, .libre-precio', function() {
+        const idx = parseInt($(this).data('idx'), 10);
+        if ($(this).hasClass('libre-desc')) {
+            libresLineas[idx].descripcion = $(this).val();
+        } else if ($(this).hasClass('libre-cant')) {
+            libresLineas[idx].cantidad = parseFloat($(this).val()) || 1;
+        } else if ($(this).hasClass('libre-precio')) {
+            libresLineas[idx].precio_unitario = parseFloat($(this).val()) || 0;
+        }
+        // Actualizar total de esa fila
+        const total = (libresLineas[idx].cantidad * libresLineas[idx].precio_unitario).toFixed(2);
+        $(this).closest('tr').find('td:nth-child(4)').text('S/. ' + total);
+        calcularTotalesLibre();
     });
 
     // Paso 2: seleccionar filas
@@ -387,7 +478,7 @@ jQuery(document).ready(function($) {
             $('#wpcfact-receptor-doc').val((selectedUser && selectedUser.doc) ? selectedUser.doc : '');
             $('#wpcfact-receptor-nombre').val((selectedUser && selectedUser.name) ? selectedUser.name : '');
             $('#wpcfact-receptor-direccion').val((selectedUser && selectedUser.dir) ? selectedUser.dir : '');
-        } else {
+        } else if (emissionMode === 'ocasional') {
             const remitente = obtenerDatosRemitenteSeleccion();
 
             if (remitente.consistente) {
@@ -404,6 +495,11 @@ jQuery(document).ready(function($) {
                     text: 'Los envios seleccionados tienen datos de remitente distintos. Completa los datos de facturacion manualmente.'
                 });
             }
+        } else {
+            // libre: campos vacíos para llenar manualmente
+            $('#wpcfact-receptor-doc').val('');
+            $('#wpcfact-receptor-nombre').val('');
+            $('#wpcfact-receptor-direccion').val('');
         }
 
         detectarTipoDoc();
@@ -419,7 +515,8 @@ jQuery(document).ready(function($) {
             nonce: wpcfact_ajax.nonce,
             modo: emissionMode,
             user_id: emissionMode === 'registrado' && selectedUser ? selectedUser.id : 0,
-            envios: selectedEnvios,
+            envios: emissionMode !== 'libre' ? selectedEnvios : [],
+            lineas: emissionMode === 'libre' ? JSON.stringify(libresLineas) : '',
             tipo: $('#wpcfact-tipo-doc').val(),
             doc_num: $('#wpcfact-receptor-doc').val(),
             nombre: $('#wpcfact-receptor-nombre').val(),

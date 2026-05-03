@@ -293,4 +293,229 @@ class WPC_Facturacion_Constructor {
 			'estado'      => $api_response['status'],
 		);
 	}
+
+	/**
+	 * Emitir comprobante con líneas manuales (modo libre), sin vincular envíos.
+	 *
+	 * @param int    $user_id    0 si no hay usuario registrado.
+	 * @param array  $lineas     [ ['descripcion'=>..., 'cantidad'=>..., 'precio_unitario'=>...], ... ]
+	 *                           precio_unitario debe ser el valor CON IGV.
+	 * @param string $tipo       Código SUNAT del tipo de comprobante (01, 03, etc.).
+	 * @param string $doc_num    Documento del receptor.
+	 * @param string $nombre     Nombre/razón social del receptor.
+	 * @param string $direccion  Dirección fiscal del receptor.
+	 * @param string $forma_pago 'Contado' o 'Credito'.
+	 */
+	public static function emitir_libre( $user_id, $lineas, $tipo, $doc_num, $nombre, $direccion, $forma_pago ) {
+		$ruc_emisor          = get_option( 'wpcfact_ruc_emisor' );
+		$razon_social_emisor = get_option( 'wpcfact_razon_social_emisor' );
+		$direccion_emisor    = get_option( 'wpcfact_direccion_emisor', '' );
+		$codigo_local        = get_option( 'wpcfact_codigo_local', '0000' );
+		if ( empty( $codigo_local ) ) $codigo_local = '0000';
+		if ( empty( $direccion_emisor ) ) $direccion_emisor = '-';
+		if ( empty( $ruc_emisor ) ) {
+			return new WP_Error( 'config_error', 'Falta configurar el RUC emisor.' );
+		}
+
+		$serie = ( $tipo === '01' )
+			? get_option( 'wpcfact_serie_factura', 'F001' )
+			: get_option( 'wpcfact_serie_boleta', 'B001' );
+
+		$last_doc = WPC_Facturacion_APISunat::last_document( $tipo, $serie );
+		if ( is_wp_error( $last_doc ) ) return $last_doc;
+
+		$correlativo      = sprintf( '%08d', intval( $last_doc['suggestedNumber'] ) );
+		$numero_documento = $serie . '-' . $correlativo;
+		$file_name        = $ruc_emisor . '-' . $tipo . '-' . $serie . '-' . $correlativo;
+
+		// Calcular totales
+		$total_general    = 0;
+		$monto_base_total = 0;
+		$igv_total        = 0;
+		$lineas_datos     = array();
+
+		foreach ( $lineas as $linea ) {
+			$precio_con_igv  = floatval( $linea['precio_unitario'] );
+			$cantidad        = floatval( $linea['cantidad'] );
+			$total_linea     = round( $precio_con_igv * $cantidad, 2 );
+			$precio_sin_igv  = round( $precio_con_igv / 1.18, 5 );
+			$valor_venta     = round( $precio_sin_igv * $cantidad, 2 );
+			$igv_linea       = round( $total_linea - $valor_venta, 2 );
+
+			$total_general    += $total_linea;
+			$monto_base_total += $valor_venta;
+			$igv_total        += $igv_linea;
+
+			$lineas_datos[] = array(
+				'descripcion'    => $linea['descripcion'],
+				'cantidad'       => $cantidad,
+				'precio_con_igv' => $precio_con_igv,
+				'precio_sin_igv' => $precio_sin_igv,
+				'valor_venta'    => $valor_venta,
+				'igv_linea'      => $igv_linea,
+				'total_linea'    => $total_linea,
+			);
+		}
+
+		if ( empty( $lineas_datos ) || $total_general <= 0 ) {
+			return new WP_Error( 'data_error', 'No hay líneas válidas para facturar.' );
+		}
+
+		$monto_letras  = wpcfact_numero_a_letras( $total_general );
+		$fecha_emision = current_time( 'Y-m-d\TH:i:sP' );
+		$scheme_id     = ( strlen( $doc_num ) === 11 ) ? '6' : ( strlen( $doc_num ) === 8 ? '1' : '4' );
+
+		$document_body = array(
+			'cbc:UBLVersionID'     => array( '_text' => '2.1' ),
+			'cbc:CustomizationID'  => array( '_text' => '2.0' ),
+			'cbc:ID'               => array( '_text' => $numero_documento ),
+			'cbc:IssueDate'        => array( '_text' => current_time( 'Y-m-d' ) ),
+			'cbc:IssueTime'        => array( '_text' => current_time( 'H:i:s' ) ),
+			'cbc:InvoiceTypeCode'  => array(
+				'_attributes' => array( 'listID' => '0101' ),
+				'_text' => $tipo,
+			),
+			'cbc:Note' => array(
+				array(
+					'_attributes' => array( 'languageLocaleID' => '1000' ),
+					'_text' => $monto_letras,
+				),
+			),
+			'cbc:DocumentCurrencyCode' => array( '_text' => 'PEN' ),
+			'cac:Signature' => array(
+				'cbc:ID' => array( '_text' => $ruc_emisor ),
+				'cac:SignatoryParty' => array(
+					'cac:PartyIdentification' => array( 'cbc:ID' => array( '_text' => $ruc_emisor ) ),
+					'cac:PartyName'           => array( 'cbc:Name' => array( '_text' => $razon_social_emisor ) ),
+				),
+				'cac:DigitalSignatureAttachment' => array(
+					'cac:ExternalReference' => array( 'cbc:URI' => array( '_text' => '#SIGN-SUNAT' ) ),
+				),
+			),
+			'cac:AccountingSupplierParty' => array(
+				'cac:Party' => array(
+					'cac:PartyIdentification' => array(
+						'cbc:ID' => array( '_attributes' => array( 'schemeID' => '6' ), '_text' => $ruc_emisor ),
+					),
+					'cac:PartyLegalEntity' => array(
+						'cbc:RegistrationName' => array( '_text' => $razon_social_emisor ),
+						'cac:RegistrationAddress' => array(
+							'cbc:AddressTypeCode' => array( '_text' => $codigo_local ),
+							'cac:AddressLine'     => array( 'cbc:Line' => array( '_text' => $direccion_emisor ) ),
+						),
+					),
+				),
+			),
+			'cac:AccountingCustomerParty' => array(
+				'cac:Party' => array(
+					'cac:PartyIdentification' => array(
+						'cbc:ID' => array( '_attributes' => array( 'schemeID' => $scheme_id ), '_text' => $doc_num ),
+					),
+					'cac:PartyLegalEntity' => array(
+						'cbc:RegistrationName' => array( '_text' => $nombre ),
+						'cac:RegistrationAddress' => array(
+							'cac:AddressLine' => array( 'cbc:Line' => array( '_text' => $direccion ) ),
+						),
+					),
+				),
+			),
+			'cac:PaymentTerms' => array(
+				array(
+					'cbc:ID'              => array( '_text' => 'FormaPago' ),
+					'cbc:PaymentMeansID'  => array( '_text' => $forma_pago ),
+				),
+			),
+			'cac:TaxTotal' => array(
+				'cbc:TaxAmount' => array( '_attributes' => array( 'currencyID' => 'PEN' ), '_text' => $igv_total ),
+				'cac:TaxSubtotal' => array(
+					'cbc:TaxableAmount' => array( '_attributes' => array( 'currencyID' => 'PEN' ), '_text' => $monto_base_total ),
+					'cbc:TaxAmount'     => array( '_attributes' => array( 'currencyID' => 'PEN' ), '_text' => $igv_total ),
+					'cac:TaxCategory'   => array(
+						'cac:TaxScheme' => array(
+							'cbc:ID'          => array( '_text' => '1000' ),
+							'cbc:Name'        => array( '_text' => 'IGV' ),
+							'cbc:TaxTypeCode' => array( '_text' => 'VAT' ),
+						),
+					),
+				),
+			),
+			'cac:LegalMonetaryTotal' => array(
+				'cbc:LineExtensionAmount' => array( '_attributes' => array( 'currencyID' => 'PEN' ), '_text' => $monto_base_total ),
+				'cbc:TaxInclusiveAmount'  => array( '_attributes' => array( 'currencyID' => 'PEN' ), '_text' => $total_general ),
+				'cbc:PayableAmount'       => array( '_attributes' => array( 'currencyID' => 'PEN' ), '_text' => $total_general ),
+			),
+			'cac:InvoiceLine' => array(),
+		);
+
+		$line_id = 1;
+		foreach ( $lineas_datos as $linea ) {
+			$document_body['cac:InvoiceLine'][] = array(
+				'cbc:ID'              => array( '_text' => $line_id ),
+				'cbc:InvoicedQuantity' => array( '_attributes' => array( 'unitCode' => 'ZZ' ), '_text' => $linea['cantidad'] ),
+				'cbc:LineExtensionAmount' => array( '_attributes' => array( 'currencyID' => 'PEN' ), '_text' => $linea['valor_venta'] ),
+				'cac:PricingReference' => array(
+					'cac:AlternativeConditionPrice' => array(
+						'cbc:PriceAmount'   => array( '_attributes' => array( 'currencyID' => 'PEN' ), '_text' => $linea['precio_con_igv'] ),
+						'cbc:PriceTypeCode' => array( '_text' => '01' ),
+					),
+				),
+				'cac:TaxTotal' => array(
+					'cbc:TaxAmount' => array( '_attributes' => array( 'currencyID' => 'PEN' ), '_text' => $linea['igv_linea'] ),
+					'cac:TaxSubtotal' => array(
+						'cbc:TaxableAmount' => array( '_attributes' => array( 'currencyID' => 'PEN' ), '_text' => $linea['valor_venta'] ),
+						'cbc:TaxAmount'     => array( '_attributes' => array( 'currencyID' => 'PEN' ), '_text' => $linea['igv_linea'] ),
+						'cac:TaxCategory'   => array(
+							'cbc:Percent'                  => array( '_text' => 18 ),
+							'cbc:TaxExemptionReasonCode'   => array( '_text' => '10' ),
+							'cac:TaxScheme' => array(
+								'cbc:ID'          => array( '_text' => '1000' ),
+								'cbc:Name'        => array( '_text' => 'IGV' ),
+								'cbc:TaxTypeCode' => array( '_text' => 'VAT' ),
+							),
+						),
+					),
+				),
+				'cac:Item' => array(
+					'cbc:Description' => array( '_text' => $linea['descripcion'] ),
+				),
+				'cac:Price' => array(
+					'cbc:PriceAmount' => array( '_attributes' => array( 'currencyID' => 'PEN' ), '_text' => $linea['precio_sin_igv'] ),
+				),
+			);
+			$line_id++;
+		}
+
+		$user_data      = $user_id ? get_userdata( $user_id ) : false;
+		$customer_email = $user_data ? $user_data->user_email : '';
+
+		$api_response = WPC_Facturacion_APISunat::send_bill( $file_name, $document_body, $customer_email );
+		if ( is_wp_error( $api_response ) ) return $api_response;
+
+		$datos_guardar = array(
+			'tipo'             => $tipo,
+			'serie'            => $serie,
+			'correlativo'      => $correlativo,
+			'file_name'        => $file_name,
+			'document_id'      => $api_response['documentId'],
+			'estado'           => $api_response['status'],
+			'cliente_doc_tipo' => $scheme_id,
+			'cliente_doc_num'  => $doc_num,
+			'cliente_nombre'   => $nombre,
+			'monto_base'       => $monto_base_total,
+			'igv'              => $igv_total,
+			'total'            => $total_general,
+			'emitido_en'       => $fecha_emision,
+		);
+
+		// Sin envíos vinculados en modo libre
+		$comprobante_id = WPC_Facturacion_Comprobante::crear( $datos_guardar, array() );
+		if ( is_wp_error( $comprobante_id ) ) return $comprobante_id;
+
+		return array(
+			'id'          => $comprobante_id,
+			'serie'       => $serie,
+			'correlativo' => $correlativo,
+			'estado'      => $api_response['status'],
+		);
+	}
 }

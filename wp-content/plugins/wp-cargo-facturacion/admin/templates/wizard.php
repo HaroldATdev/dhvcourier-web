@@ -16,6 +16,7 @@
 			<select id="wpcfact-modo-emision" class="wpcfact-select">
 				<option value="registrado" selected>Cliente registrado</option>
 				<option value="ocasional">Envio ocasional (sin cliente registrado)</option>
+				<option value="libre">Libre (ingresar líneas manualmente)</option>
 			</select>
 			<small style="color:#64748b; margin-top:5px; display:block;">En modo ocasional podras buscar por tracking o nombre del remitente.</small>
 		</div>
@@ -57,6 +58,13 @@
 
 		<div id="wpcfact-resultados-ocasional" style="margin-top: 15px; max-height: 320px; overflow-y: auto; display:none;"></div>
 
+		<div class="wpcfact-input-group" id="wpcfact-box-libre-info" style="display:none;">
+			<div style="background:#f0fdf4; border:1px solid #bbf7d0; border-left:4px solid #22c55e; padding:15px; border-radius:6px;">
+				<strong style="color:#166534;">Modo Libre</strong>
+				<p style="color:#166534; margin:5px 0 0;">En el siguiente paso podrás ingresar las líneas del comprobante manualmente, igual que en SUNAT. No se vinculará ningún envío.</p>
+			</div>
+		</div>
+
 		<div class="wpcfact-actions" style="justify-content: flex-end;">
 			<button type="button" id="btn-next-2" class="wpcfact-btn" disabled>Continuar a Envíos &rarr;</button>
 		</div>
@@ -66,7 +74,30 @@
 	<div class="wpcfact-wizard-step" id="step-2">
 		<h2>2. Seleccione los envíos a facturar</h2>
 		<p style="color:#475569; margin-bottom:20px;">Mostrando envíos pendientes (sin comprobante) para el cliente seleccionado.</p>
-		
+
+		<!-- Modo libre: líneas manuales -->
+		<div id="wpcfact-step2-libre" style="display:none;">
+			<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+				<h3 style="margin:0;">Líneas del Comprobante</h3>
+				<button type="button" id="btn-add-linea-libre" class="wpcfact-btn" style="padding:6px 16px;">+ Agregar línea</button>
+			</div>
+			<table class="wpcfact-shipment-list" id="table-lineas-libres" style="width:100%;">
+				<thead>
+					<tr>
+						<th>Descripción</th>
+						<th style="width:90px; text-align:center;">Cant.</th>
+						<th style="width:160px; text-align:right;">Precio Unit. (c/IGV)</th>
+						<th style="width:120px; text-align:right;">Total</th>
+						<th style="width:40px;"></th>
+					</tr>
+				</thead>
+				<tbody id="tbody-lineas-libres"></tbody>
+			</table>
+			<p id="libre-vacio-msg" style="text-align:center; color:#94a3b8; padding:30px 0;">Haz clic en &ldquo;+ Agregar línea&rdquo; para comenzar.</p>
+		</div>
+
+		<!-- Modo normal: tabla de envíos -->
+		<div id="wpcfact-step2-shipments">
 		<div class="wpcfact-table-container">
 			<table class="wpcfact-shipment-list" id="table-envios-pendientes">
 				<thead>
@@ -98,6 +129,8 @@
 				<span id="summary-total">S/. 0.00</span>
 			</div>
 		</div>
+
+		</div><!-- /#wpcfact-step2-shipments -->
 
 		<div class="wpcfact-actions">
 			<button type="button" id="btn-prev-1" class="wpcfact-btn wpcfact-btn-outline">&larr; Volver</button>

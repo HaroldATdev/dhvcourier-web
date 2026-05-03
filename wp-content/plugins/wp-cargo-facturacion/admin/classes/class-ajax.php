@@ -279,8 +279,35 @@ class WPC_Facturacion_Ajax {
 		$guia_motivo    = sanitize_text_field( $_POST['guia_motivo'] ?? '01' );
 		$guia_modalidad = sanitize_text_field( $_POST['guia_modalidad'] ?? '01' );
 
-		if ( empty( $envios ) || empty( $doc_num ) || empty( $nombre ) ) {
+		// Modo libre: líneas manuales
+		$lineas_libres = array();
+		if ( 'libre' === $modo ) {
+			$lineas_raw = json_decode( wp_unslash( $_POST['lineas'] ?? '[]' ), true );
+			if ( ! is_array( $lineas_raw ) || empty( $lineas_raw ) ) {
+				wp_send_json_error( 'Debe agregar al menos una línea al comprobante.' );
+			}
+			foreach ( $lineas_raw as $linea ) {
+				$desc  = sanitize_text_field( $linea['descripcion'] ?? '' );
+				$cant  = floatval( $linea['cantidad'] ?? 1 );
+				$precio = floatval( $linea['precio_unitario'] ?? 0 );
+				if ( $precio <= 0 || $cant <= 0 ) continue;
+				$lineas_libres[] = array(
+					'descripcion'    => $desc ?: 'Servicio',
+					'cantidad'       => $cant,
+					'precio_unitario' => $precio,
+				);
+			}
+			if ( empty( $lineas_libres ) ) {
+				wp_send_json_error( 'Las líneas no tienen montos válidos.' );
+			}
+		}
+
+		if ( 'libre' !== $modo && ( empty( $envios ) || empty( $doc_num ) || empty( $nombre ) ) ) {
 			wp_send_json_error( 'Faltan datos requeridos.' );
+		}
+
+		if ( 'libre' === $modo && ( empty( $doc_num ) || empty( $nombre ) ) ) {
+			wp_send_json_error( 'Faltan datos del receptor.' );
 		}
 
 		if ( 'registrado' === $modo && ! $user_id ) {
@@ -304,6 +331,8 @@ class WPC_Facturacion_Ajax {
 				require_once dirname( __FILE__ ) . '/../../includes/class-constructor-guia.php';
 			}
 			$resultado = WPC_Facturacion_Constructor_Guia::emitir( $user_id, $envios, $tipo, $doc_num, $nombre, $direccion, $guia_peso, $guia_motivo, $guia_modalidad );
+		} elseif ( 'libre' === $modo ) {
+			$resultado = WPC_Facturacion_Constructor::emitir_libre( $user_id, $lineas_libres, $tipo, $doc_num, $nombre, $direccion, $forma_pago );
 		} else {
 			$resultado = WPC_Facturacion_Constructor::emitir( $user_id, $envios, $tipo, $doc_num, $nombre, $direccion, $forma_pago );
 		}
