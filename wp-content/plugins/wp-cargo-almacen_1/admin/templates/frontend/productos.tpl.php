@@ -3,6 +3,12 @@
 .wpca-select { display: block !important; width: 100%; height: calc(1.5em + .75rem + 2px); padding: .375rem 1.75rem .375rem .75rem; font-size: 1rem; line-height: 1.5; color: #495057; background-color: #fff; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right .75rem center; background-size: 8px 10px; border: 1px solid #ced4da; border-radius: .25rem; appearance: none; }
 .wpca-select:focus { border-color: #80bdff; outline: 0; box-shadow: 0 0 0 .2rem rgba(0,123,255,.25); }
 .wpca-select.form-control-sm { height: calc(1.5em + .5rem + 2px); padding: .25rem 1.5rem .25rem .5rem; font-size: .875rem; }
+.wpca-thumb-btn { border: 0; background: transparent; padding: 0; cursor: zoom-in; line-height: 0; }
+.wpca-image-modal { display: none; position: fixed; inset: 0; z-index: 99999; background: rgba(0,0,0,.75); align-items: center; justify-content: center; padding: 20px; }
+.wpca-image-modal.open { display: flex; }
+.wpca-image-modal__content { position: relative; max-width: 92vw; max-height: 92vh; }
+.wpca-image-modal__img { display: block; max-width: 92vw; max-height: 92vh; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,.45); background: #fff; }
+.wpca-image-modal__close { position: absolute; top: -12px; right: -12px; width: 30px; height: 30px; border: 0; border-radius: 50%; background: #fff; color: #111; font-size: 20px; line-height: 1; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,.3); }
 </style>
 
 
@@ -103,7 +109,9 @@
                         </td>
                         <td>
                             <?php if ( ! empty( $p->imagen ) ) : ?>
-                                <img src="<?php echo esc_url( $p->imagen ); ?>" style="width:40px;height:40px;object-fit:contain;border-radius:4px;border:1px solid #dee2e6;">
+                                <button type="button" class="wpca-thumb-btn wpca-open-image" data-src="<?php echo esc_url( $p->imagen ); ?>" data-alt="<?php echo esc_attr( $p->descripcion ); ?>" title="Ver imagen grande">
+                                    <img src="<?php echo esc_url( $p->imagen ); ?>" alt="<?php echo esc_attr( $p->descripcion ); ?>" style="width:40px;height:40px;object-fit:contain;border-radius:4px;border:1px solid #dee2e6;">
+                                </button>
                             <?php else : ?>
                                 <span style="display:inline-block;width:40px;height:40px;background:#f8f9fa;border:1px solid #dee2e6;border-radius:4px;"></span>
                             <?php endif; ?>
@@ -150,6 +158,13 @@
     </form>
 </div>
 
+<div id="wpca-image-modal" class="wpca-image-modal" aria-hidden="true">
+    <div class="wpca-image-modal__content">
+        <button type="button" id="wpca-image-modal-close" class="wpca-image-modal__close" aria-label="Cerrar">&times;</button>
+        <img id="wpca-image-modal-img" class="wpca-image-modal__img" src="" alt="Imagen del producto">
+    </div>
+</div>
+
 <script>
 document.getElementById('wpca-select-all')?.addEventListener('change', function(e){
     var checked = e.target.checked;
@@ -178,4 +193,39 @@ document.querySelectorAll('.wpca-bulk-btn').forEach(function(btn){
         form.submit();
     });
 });
+
+(function(){
+    var modal = document.getElementById('wpca-image-modal');
+    var modalImg = document.getElementById('wpca-image-modal-img');
+    var closeBtn = document.getElementById('wpca-image-modal-close');
+    if (!modal || !modalImg || !closeBtn) return;
+
+    function closeModal(){
+        modal.classList.remove('open');
+        modal.setAttribute('aria-hidden', 'true');
+        modalImg.src = '';
+        document.body.style.overflow = '';
+    }
+
+    document.querySelectorAll('.wpca-open-image').forEach(function(btn){
+        btn.addEventListener('click', function(){
+            var src = btn.getAttribute('data-src') || '';
+            var alt = btn.getAttribute('data-alt') || 'Imagen del producto';
+            if (!src) return;
+            modalImg.src = src;
+            modalImg.alt = alt;
+            modal.classList.add('open');
+            modal.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+        });
+    });
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', function(e){
+        if (e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', function(e){
+        if (e.key === 'Escape' && modal.classList.contains('open')) closeModal();
+    });
+})();
 </script>
