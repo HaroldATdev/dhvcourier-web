@@ -252,4 +252,11 @@ $configured = ! empty( $persona_id ) && ! empty( $persona_token ) && ! empty( $r
 			</tr>
 		</table>
 	</div>
+
+	<p class="submit">
+		<button type="submit" name="wpcfact_save_config" class="button button-primary button-large">
+			💾 Guardar Configuración
+		</button>
+	</p>
+</form>
 </div>
