@@ -39,11 +39,11 @@ class WPC_Facturacion_Metabox {
 		echo '<p><strong>Cliente:</strong> ' . esc_html( $comprobante->cliente_nombre ) . '</p>';
 		echo '<p><strong>Estado:</strong> <span style="color:' . $color . '; font-weight:bold;">' . esc_html( $comprobante->estado ) . '</span></p>';
 		
-		if ( $comprobante->estado === 'ACEPTADO' ) {
-			echo '<hr style="margin:10px 0;">';
+		echo '<hr style="margin:10px 0;">';
+		if ( ! empty( $comprobante->document_id ) && strpos( $comprobante->document_id, 'LOCAL-' ) !== 0 ) {
 			echo '<a href="' . esc_url( WPC_Facturacion_APISunat::get_pdf_url( $comprobante->document_id, $comprobante->file_name, 'A4' ) ) . '" target="_blank" class="button button-small">Ver PDF</a> ';
-			echo '<a href="admin.php?page=wpcfact-comprobantes" class="button button-small">Ver Detalles</a>';
 		}
+		echo '<a href="admin.php?page=wpcfact-comprobantes" class="button button-small">Ver Detalles</a>';
 		echo '</div>';
 	}
 }

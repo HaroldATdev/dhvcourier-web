@@ -55,14 +55,16 @@ $total_pages = ceil( $total_items / $limit );
 							<?php endif; ?>
 						</td>
 						<td>
-							<?php if ( $comp->estado === 'ACEPTADO' ) : ?>
+							<?php if ( ! empty( $comp->document_id ) && strpos( $comp->document_id, 'LOCAL-' ) !== 0 ) : ?>
 								<a href="<?php echo esc_url( WPC_Facturacion_APISunat::get_pdf_url( $comp->document_id, $comp->file_name, 'A4' ) ); ?>" target="_blank" class="button button-small">PDF (A4)</a>
 								<a href="<?php echo esc_url( WPC_Facturacion_APISunat::get_pdf_url( $comp->document_id, $comp->file_name, 'ticket80mm' ) ); ?>" target="_blank" class="button button-small">Ticket</a>
+							<?php endif; ?>
+							<?php if ( $comp->estado === 'ACEPTADO' ) : ?>
 								<button class="button button-small button-link-delete wpcfact-btn-anular" data-id="<?php echo esc_attr( $comp->id ); ?>">Anular</button>
 								<button class="button button-small wpcfact-btn-ncredito" data-id="<?php echo esc_attr( $comp->id ); ?>">N. Crédito</button>
 							<?php endif; ?>
 							<?php if ( $comp->estado === 'PENDIENTE' ) : ?>
-								<button class="button button-small" disabled title="Esperando a SUNAT">Procesando...</button>
+								<span style="color:orange; font-size:12px;">Procesando...</span>
 							<?php endif; ?>
 						</td>
 					</tr>

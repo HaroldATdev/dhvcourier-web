@@ -62,8 +62,10 @@
 							<span class="<?php echo $badge_class; ?>"><?php echo esc_html( $comp->estado ); ?></span>
 						</td>
 						<td>
-							<?php if ( $comp->estado === 'ACEPTADO' ) : ?>
+							<?php if ( ! empty( $comp->document_id ) && strpos( $comp->document_id, 'LOCAL-' ) !== 0 ) : ?>
 								<a href="<?php echo esc_url( WPC_Facturacion_APISunat::get_pdf_url( $comp->document_id, $comp->file_name, 'A4' ) ); ?>" target="_blank" class="wpcargo-btn wpcargo-btn-sm" style="background:#444; color:#fff; padding:5px 10px; font-size:12px; text-decoration:none; border-radius:3px;">PDF</a>
+							<?php endif; ?>
+							<?php if ( $comp->estado === 'ACEPTADO' ) : ?>
 								<button class="wpcargo-btn wpcargo-btn-sm wpcfact-btn-anular" data-id="<?php echo esc_attr( $comp->id ); ?>" style="background:#dc3232; color:#fff; padding:5px 10px; font-size:12px; border:none; border-radius:3px; cursor:pointer;">Anular</button>
 								<button class="wpcargo-btn wpcargo-btn-sm wpcfact-btn-ncredito" data-id="<?php echo esc_attr( $comp->id ); ?>" style="background:#f59e0b; color:#fff; padding:5px 10px; font-size:12px; border:none; border-radius:3px; cursor:pointer;">N. Crédito</button>
 							<?php endif; ?>
