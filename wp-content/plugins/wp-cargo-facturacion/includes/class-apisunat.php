@@ -175,6 +175,8 @@ class WPC_Facturacion_APISunat {
 	 */
 	public static function consultar_doc( string $tipo, string $numero ) {
 		$token = get_option( 'wpcfact_apisperu_token', '' );
+		$token = trim( (string) $token );
+		$token = preg_replace( '/^Bearer\s+/i', '', $token );
 		if ( empty( $token ) ) {
 			return new WP_Error( 'missing_token', 'Token de APIsPeru no configurado.' );
 		}
@@ -191,7 +193,10 @@ class WPC_Facturacion_APISunat {
 			array(
 				'timeout' => 10,
 				'headers' => array(
-					'Accept' => 'application/json',
+					'Accept'        => 'application/json',
+					'Authorization' => 'Bearer ' . $token,
+					'token'         => $token,
+					'User-Agent'    => 'WordPress/' . get_bloginfo( 'version' ) . '; ' . home_url(),
 				),
 			)
 		);
