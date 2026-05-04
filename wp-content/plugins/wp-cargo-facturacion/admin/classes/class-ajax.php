@@ -424,7 +424,8 @@ class WPC_Facturacion_Ajax {
 		$numero = preg_replace( '/\D/', '', $numero );
 
 		if ( strlen( $numero ) === 8 ) {
-			$tipo = 'dni';
+			wp_send_json_error( 'Consulta de DNI deshabilitada por normativa. Complete nombre y direccion manualmente.' );
+			return;
 		} elseif ( strlen( $numero ) === 11 ) {
 			$tipo = 'ruc';
 		} else {

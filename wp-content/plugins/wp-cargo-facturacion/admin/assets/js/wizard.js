@@ -213,7 +213,7 @@ jQuery(document).ready(function($) {
             $('#wpcfact-tipo-detectado').text('RUC detectado').css('color', 'green');
             if (sel === '03') $('#wpcfact-tipo-doc').val('01');
         } else if (doc.length === 8) {
-            $('#wpcfact-tipo-detectado').text('DNI detectado').css('color', 'green');
+            $('#wpcfact-tipo-detectado').text('DNI detectado: completar datos manualmente').css('color', '#b45309');
             if (sel === '01') $('#wpcfact-tipo-doc').val('03');
         } else {
             $('#wpcfact-tipo-detectado').text('Documento invalido o vacio').css('color', 'red');
@@ -225,17 +225,12 @@ jQuery(document).ready(function($) {
         function consultarDocSunat(numero) {
             clearTimeout(consultaDocTimer);
             consultaDocTimer = setTimeout(function() {
-                $('#wpcfact-tipo-detectado').text('Consultando SUNAT...').css('color', '#888');
-                console.log('[wpcfact_consultar_doc] Enviando consulta', {
-                    numero: numero,
-                    action: 'wpcfact_consultar_doc'
-                });
+                $('#wpcfact-tipo-detectado').text('Consultando RUC...').css('color', '#888');
                 $.post(wpcfact_ajax.url, {
                     action: 'wpcfact_consultar_doc',
                     nonce: wpcfact_ajax.nonce,
                     numero: numero
                 }, function(res) {
-                    console.log('[wpcfact_consultar_doc] Respuesta', res);
                     if (res.success && res.data) {
                         if (res.data.nombre) {
                             $('#wpcfact-receptor-nombre').val(res.data.nombre);
@@ -243,24 +238,12 @@ jQuery(document).ready(function($) {
                         if (res.data.direccion) {
                             $('#wpcfact-receptor-direccion').val(res.data.direccion);
                         }
-                        console.log('[wpcfact_consultar_doc] Campos autocompletados', {
-                            nombre: $('#wpcfact-receptor-nombre').val(),
-                            direccion: $('#wpcfact-receptor-direccion').val()
-                        });
-                        $('#wpcfact-tipo-detectado').text(
-                            (numero.length === 11 ? 'RUC' : 'DNI') + ' encontrado ✓'
-                        ).css('color', 'green');
+                        $('#wpcfact-tipo-detectado').text('RUC encontrado ✓').css('color', 'green');
                     } else {
-                        console.warn('[wpcfact_consultar_doc] Sin resultados', res);
-                        $('#wpcfact-tipo-detectado').text('No encontrado en SUNAT').css('color', 'orange');
+                        $('#wpcfact-tipo-detectado').text('RUC no encontrado').css('color', 'orange');
                     }
-                }).fail(function(xhr, status, error) {
-                    console.error('[wpcfact_consultar_doc] Error AJAX', {
-                        status: status,
-                        error: error,
-                        responseText: xhr && xhr.responseText ? xhr.responseText : ''
-                    });
-                    $('#wpcfact-tipo-detectado').text('Error al consultar SUNAT').css('color', 'red');
+                }).fail(function() {
+                    $('#wpcfact-tipo-detectado').text('Error al consultar RUC').css('color', 'red');
                 });
             }, 600);
         }
@@ -554,8 +537,10 @@ jQuery(document).ready(function($) {
     $('#wpcfact-receptor-doc').on('input', function() {
         detectarTipoDoc();
         const doc = $(this).val().replace(/\s/g, '');
-        if (emissionMode === 'libre' && (doc.length === 8 || doc.length === 11)) {
+        if (emissionMode === 'libre' && doc.length === 11) {
             consultarDocSunat(doc);
+        } else if (emissionMode === 'libre' && doc.length === 8) {
+            clearTimeout(consultaDocTimer);
         }
     });
 
