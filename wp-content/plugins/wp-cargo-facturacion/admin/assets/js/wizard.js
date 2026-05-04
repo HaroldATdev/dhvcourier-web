@@ -226,11 +226,16 @@ jQuery(document).ready(function($) {
             clearTimeout(consultaDocTimer);
             consultaDocTimer = setTimeout(function() {
                 $('#wpcfact-tipo-detectado').text('Consultando SUNAT...').css('color', '#888');
+                console.log('[wpcfact_consultar_doc] Enviando consulta', {
+                    numero: numero,
+                    action: 'wpcfact_consultar_doc'
+                });
                 $.post(wpcfact_ajax.url, {
                     action: 'wpcfact_consultar_doc',
                     nonce: wpcfact_ajax.nonce,
                     numero: numero
                 }, function(res) {
+                    console.log('[wpcfact_consultar_doc] Respuesta', res);
                     if (res.success && res.data) {
                         if (res.data.nombre) {
                             $('#wpcfact-receptor-nombre').val(res.data.nombre);
@@ -238,13 +243,23 @@ jQuery(document).ready(function($) {
                         if (res.data.direccion) {
                             $('#wpcfact-receptor-direccion').val(res.data.direccion);
                         }
+                        console.log('[wpcfact_consultar_doc] Campos autocompletados', {
+                            nombre: $('#wpcfact-receptor-nombre').val(),
+                            direccion: $('#wpcfact-receptor-direccion').val()
+                        });
                         $('#wpcfact-tipo-detectado').text(
                             (numero.length === 11 ? 'RUC' : 'DNI') + ' encontrado ✓'
                         ).css('color', 'green');
                     } else {
+                        console.warn('[wpcfact_consultar_doc] Sin resultados', res);
                         $('#wpcfact-tipo-detectado').text('No encontrado en SUNAT').css('color', 'orange');
                     }
-                }).fail(function() {
+                }).fail(function(xhr, status, error) {
+                    console.error('[wpcfact_consultar_doc] Error AJAX', {
+                        status: status,
+                        error: error,
+                        responseText: xhr && xhr.responseText ? xhr.responseText : ''
+                    });
                     $('#wpcfact-tipo-detectado').text('Error al consultar SUNAT').css('color', 'red');
                 });
             }, 600);
