@@ -214,14 +214,24 @@ class WPC_Facturacion_APISunat {
 			return new WP_Error( 'not_found', 'APIsPeru: ' . $msg );
 		}
 
+		// Algunas respuestas llegan como { success: true, data: { ... } }.
+		$payload = ( isset( $body['data'] ) && is_array( $body['data'] ) ) ? $body['data'] : $body;
+
 		$result = array( 'nombre' => '', 'direccion' => '' );
 
 		if ( $tipo === 'dni' ) {
-			$nombres = trim( ( $body['nombres'] ?? '' ) . ' ' . ( $body['apellidoPaterno'] ?? '' ) . ' ' . ( $body['apellidoMaterno'] ?? '' ) );
-			$result['nombre'] = $nombres;
+			$result['nombre'] = trim(
+				( $payload['nombreCompleto'] ?? '' )
+				. ' '
+				. ( $payload['nombres'] ?? '' )
+				. ' '
+				. ( $payload['apellidoPaterno'] ?? '' )
+				. ' '
+				. ( $payload['apellidoMaterno'] ?? '' )
+			);
 		} else {
-			$result['nombre']    = $body['razonSocial'] ?? '';
-			$result['direccion'] = $body['direccion'] ?? '';
+			$result['nombre']    = $payload['razonSocial'] ?? '';
+			$result['direccion'] = $payload['direccion'] ?? ( $payload['direccionCompleta'] ?? '' );
 		}
 
 		if ( empty( $result['nombre'] ) ) {
