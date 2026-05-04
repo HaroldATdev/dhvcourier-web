@@ -181,9 +181,9 @@ class WPC_Facturacion_APISunat {
 
 		$tipo = strtolower( $tipo );
 		if ( $tipo === 'dni' ) {
-			$url = 'https://api.apis.net.pe/v2/reniec/dni?numero=' . rawurlencode( $numero );
+			$url = 'https://dniruc.apisperu.com/api/v1/dni/' . rawurlencode( $numero ) . '?token=' . rawurlencode( $token );
 		} else {
-			$url = 'https://api.apis.net.pe/v2/sunat/ruc?numero=' . rawurlencode( $numero );
+			$url = 'https://dniruc.apisperu.com/api/v1/ruc/' . rawurlencode( $numero ) . '?token=' . rawurlencode( $token );
 		}
 
 		$response = wp_remote_get(
@@ -191,8 +191,7 @@ class WPC_Facturacion_APISunat {
 			array(
 				'timeout' => 10,
 				'headers' => array(
-					'Authorization' => 'Bearer ' . $token,
-					'Accept'        => 'application/json',
+					'Accept' => 'application/json',
 				),
 			)
 		);
@@ -205,19 +204,18 @@ class WPC_Facturacion_APISunat {
 		$body = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		if ( $code !== 200 || empty( $body ) ) {
-			return new WP_Error( 'not_found', 'No se encontraron datos para el documento.' );
+			$msg = isset( $body['message'] ) ? $body['message'] : ( isset( $body['detail'] ) ? $body['detail'] : "HTTP {$code}" );
+			return new WP_Error( 'not_found', 'APIsPeru: ' . $msg );
 		}
 
 		$result = array( 'nombre' => '', 'direccion' => '' );
 
 		if ( $tipo === 'dni' ) {
-			$result['nombre'] = $body['nombreCompleto'] ?? '';
-			if ( empty( $result['nombre'] ) ) {
-				$result['nombre'] = trim( ( $body['nombres'] ?? '' ) . ' ' . ( $body['apellidoPaterno'] ?? '' ) . ' ' . ( $body['apellidoMaterno'] ?? '' ) );
-			}
+			$nombres = trim( ( $body['nombres'] ?? '' ) . ' ' . ( $body['apellidoPaterno'] ?? '' ) . ' ' . ( $body['apellidoMaterno'] ?? '' ) );
+			$result['nombre'] = $nombres;
 		} else {
 			$result['nombre']    = $body['razonSocial'] ?? '';
-			$result['direccion'] = $body['direccionCompleta'] ?? ( $body['direccion'] ?? '' );
+			$result['direccion'] = $body['direccion'] ?? '';
 		}
 
 		return $result;
