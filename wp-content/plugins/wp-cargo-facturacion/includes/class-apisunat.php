@@ -182,31 +182,61 @@ class WPC_Facturacion_APISunat {
 		}
 
 		$tipo = strtolower( $tipo );
+		$urls = array();
 		if ( $tipo === 'dni' ) {
-			$url = 'https://dniruc.apisperu.com/api/v1/dni/' . rawurlencode( $numero ) . '?token=' . rawurlencode( $token );
+			$urls[] = 'https://dniruc.apisperu.com/api/v1/dni/' . rawurlencode( $numero ) . '?token=' . rawurlencode( $token );
+			$urls[] = 'https://dniruc.apisperu.com/api/v1/dni?numero=' . rawurlencode( $numero ) . '&token=' . rawurlencode( $token );
+
+			// Algunos gateways tratan el path param como number y pueden recortar ceros a la izquierda.
+			$numero_sin_ceros = ltrim( $numero, '0' );
+			if ( $numero_sin_ceros !== '' && $numero_sin_ceros !== $numero ) {
+				$urls[] = 'https://dniruc.apisperu.com/api/v1/dni/' . rawurlencode( $numero_sin_ceros ) . '?token=' . rawurlencode( $token );
+				$urls[] = 'https://dniruc.apisperu.com/api/v1/dni?numero=' . rawurlencode( $numero_sin_ceros ) . '&token=' . rawurlencode( $token );
+			}
 		} else {
-			$url = 'https://dniruc.apisperu.com/api/v1/ruc/' . rawurlencode( $numero ) . '?token=' . rawurlencode( $token );
+			$urls[] = 'https://dniruc.apisperu.com/api/v1/ruc/' . rawurlencode( $numero ) . '?token=' . rawurlencode( $token );
 		}
 
-		$response = wp_remote_get(
-			$url,
-			array(
-				'timeout' => 10,
-				'headers' => array(
-					'Accept'        => 'application/json',
-					'Authorization' => 'Bearer ' . $token,
-					'token'         => $token,
-					'User-Agent'    => 'WordPress/' . get_bloginfo( 'version' ) . '; ' . home_url(),
-				),
-			)
-		);
+		$code       = 0;
+		$body       = array();
+		$last_error = null;
 
-		if ( is_wp_error( $response ) ) {
-			return $response;
+		foreach ( $urls as $url ) {
+			$response = wp_remote_get(
+				$url,
+				array(
+					'timeout' => 10,
+					'headers' => array(
+						'Accept'        => 'application/json',
+						'Authorization' => 'Bearer ' . $token,
+						'token'         => $token,
+						'User-Agent'    => 'WordPress/' . get_bloginfo( 'version' ) . '; ' . home_url(),
+					),
+				)
+			);
+
+			if ( is_wp_error( $response ) ) {
+				$last_error = $response;
+				continue;
+			}
+
+			$code = wp_remote_retrieve_response_code( $response );
+			$body = json_decode( wp_remote_retrieve_body( $response ), true );
+
+			if ( $code !== 200 || empty( $body ) ) {
+				continue;
+			}
+
+			if ( isset( $body['success'] ) && $body['success'] === false ) {
+				continue;
+			}
+
+			break;
 		}
 
-		$code = wp_remote_retrieve_response_code( $response );
-		$body = json_decode( wp_remote_retrieve_body( $response ), true );
+		if ( $last_error instanceof WP_Error && empty( $body ) ) {
+			return $last_error;
+		}
 
 		if ( $code !== 200 || empty( $body ) ) {
 			$msg = isset( $body['message'] ) ? $body['message'] : ( isset( $body['detail'] ) ? $body['detail'] : "HTTP {$code}" );
