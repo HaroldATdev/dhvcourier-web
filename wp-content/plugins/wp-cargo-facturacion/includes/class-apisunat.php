@@ -182,71 +182,39 @@ class WPC_Facturacion_APISunat {
 		}
 
 		$tipo = strtolower( $tipo );
-		$urls = array();
 		if ( $tipo === 'dni' ) {
-			$urls[] = 'https://dniruc.apisperu.com/api/v1/dni/' . rawurlencode( $numero ) . '?token=' . rawurlencode( $token );
-			$urls[] = 'https://dniruc.apisperu.com/api/v1/dni?numero=' . rawurlencode( $numero ) . '&token=' . rawurlencode( $token );
-
-			// Algunos gateways tratan el path param como number y pueden recortar ceros a la izquierda.
-			$numero_sin_ceros = ltrim( $numero, '0' );
-			if ( $numero_sin_ceros !== '' && $numero_sin_ceros !== $numero ) {
-				$urls[] = 'https://dniruc.apisperu.com/api/v1/dni/' . rawurlencode( $numero_sin_ceros ) . '?token=' . rawurlencode( $token );
-				$urls[] = 'https://dniruc.apisperu.com/api/v1/dni?numero=' . rawurlencode( $numero_sin_ceros ) . '&token=' . rawurlencode( $token );
-			}
+			$url = 'https://dniruc.apisperu.com/api/v1/dni/' . rawurlencode( $numero ) . '?token=' . rawurlencode( $token );
 		} else {
-			$urls[] = 'https://dniruc.apisperu.com/api/v1/ruc/' . rawurlencode( $numero ) . '?token=' . rawurlencode( $token );
+			$url = 'https://dniruc.apisperu.com/api/v1/ruc/' . rawurlencode( $numero ) . '?token=' . rawurlencode( $token );
 		}
 
-		$code       = 0;
-		$body       = array();
-		$last_error = null;
+		$response = wp_remote_get(
+			$url,
+			array(
+				'timeout' => 10,
+				'headers' => array(
+					'Accept'     => 'application/json',
+					'User-Agent' => 'WordPress/' . get_bloginfo( 'version' ) . '; ' . home_url(),
+				),
+			)
+		);
 
-		foreach ( $urls as $url ) {
-			$response = wp_remote_get(
-				$url,
-				array(
-					'timeout' => 10,
-					'headers' => array(
-						'Accept'        => 'application/json',
-						'Authorization' => 'Bearer ' . $token,
-						'token'         => $token,
-						'User-Agent'    => 'WordPress/' . get_bloginfo( 'version' ) . '; ' . home_url(),
-					),
-				)
-			);
-
-			if ( is_wp_error( $response ) ) {
-				$last_error = $response;
-				continue;
-			}
-
-			$code = wp_remote_retrieve_response_code( $response );
-			$body = json_decode( wp_remote_retrieve_body( $response ), true );
-
-			if ( $code !== 200 || empty( $body ) ) {
-				continue;
-			}
-
-			if ( isset( $body['success'] ) && $body['success'] === false ) {
-				continue;
-			}
-
-			break;
+		if ( is_wp_error( $response ) ) {
+			return $response;
 		}
 
-		if ( $last_error instanceof WP_Error && empty( $body ) ) {
-			return $last_error;
-		}
+		$code = wp_remote_retrieve_response_code( $response );
+		$body = json_decode( wp_remote_retrieve_body( $response ), true );
 
 		if ( $code !== 200 || empty( $body ) ) {
 			$msg = isset( $body['message'] ) ? $body['message'] : ( isset( $body['detail'] ) ? $body['detail'] : "HTTP {$code}" );
-			return new WP_Error( 'not_found', 'APIsPeru: ' . $msg );
+			return new WP_Error( 'not_found', 'APIsPeru (HTTP ' . $code . '): ' . $msg );
 		}
 
 		// La API puede devolver HTTP 200 con {"success": false, "message": "..."}
 		if ( isset( $body['success'] ) && $body['success'] === false ) {
 			$msg = $body['message'] ?? 'Documento no encontrado.';
-			return new WP_Error( 'not_found', 'APIsPeru: ' . $msg );
+			return new WP_Error( 'not_found', 'APIsPeru (HTTP ' . $code . '): ' . $msg );
 		}
 
 		// Algunas respuestas llegan como { success: true, data: { ... } }.
