@@ -167,31 +167,34 @@ class WPC_Facturacion_APISunat {
 	}
 
 	/**
-	 * Consulta datos fiscales de un DNI (8 dígitos) o RUC (11 dígitos) en APISUNAT.
+	 * Consulta datos fiscales de un DNI (8 dígitos) o RUC (11 dígitos) usando APIsPeru.
 	 *
 	 * @param string $tipo  'dni' o 'ruc'
 	 * @param string $numero Número de documento
 	 * @return array|WP_Error  Array con keys: nombre, direccion (ruc), o WP_Error
 	 */
 	public static function consultar_doc( string $tipo, string $numero ) {
-		$creds = self::get_credentials();
-		if ( empty( $creds['personaId'] ) || empty( $creds['personaToken'] ) ) {
-			return new WP_Error( 'missing_creds', 'Credenciales de APISUNAT no configuradas.' );
+		$token = get_option( 'wpcfact_apisperu_token', '' );
+		if ( empty( $token ) ) {
+			return new WP_Error( 'missing_token', 'Token de APIsPeru no configurado.' );
 		}
 
-		$tipo  = strtolower( $tipo );
-		$url   = self::get_api_url() . "/utils/{$tipo}/{$numero}";
-		$url   = add_query_arg(
-			array(
-				'personaId'    => $creds['personaId'],
-				'personaToken' => $creds['personaToken'],
-			),
-			$url
-		);
+		$tipo = strtolower( $tipo );
+		if ( $tipo === 'dni' ) {
+			$url = 'https://api.apis.net.pe/v2/reniec/dni?numero=' . rawurlencode( $numero );
+		} else {
+			$url = 'https://api.apis.net.pe/v2/sunat/ruc?numero=' . rawurlencode( $numero );
+		}
 
 		$response = wp_remote_get(
 			$url,
-			array( 'timeout' => 10 )
+			array(
+				'timeout' => 10,
+				'headers' => array(
+					'Authorization' => 'Bearer ' . $token,
+					'Accept'        => 'application/json',
+				),
+			)
 		);
 
 		if ( is_wp_error( $response ) ) {
@@ -201,19 +204,20 @@ class WPC_Facturacion_APISunat {
 		$code = wp_remote_retrieve_response_code( $response );
 		$body = json_decode( wp_remote_retrieve_body( $response ), true );
 
-		if ( $code !== 200 || empty( $body['data'] ) ) {
+		if ( $code !== 200 || empty( $body ) ) {
 			return new WP_Error( 'not_found', 'No se encontraron datos para el documento.' );
 		}
 
-		$data   = $body['data'];
 		$result = array( 'nombre' => '', 'direccion' => '' );
 
 		if ( $tipo === 'dni' ) {
-			$result['nombre'] = $data['nombreCompleto'] ?? ( ( $data['nombre'] ?? '' ) . ' ' . ( $data['apellidoPaterno'] ?? '' ) . ' ' . ( $data['apellidoMaterno'] ?? '' ) );
-			$result['nombre'] = trim( $result['nombre'] );
+			$result['nombre'] = $body['nombreCompleto'] ?? '';
+			if ( empty( $result['nombre'] ) ) {
+				$result['nombre'] = trim( ( $body['nombres'] ?? '' ) . ' ' . ( $body['apellidoPaterno'] ?? '' ) . ' ' . ( $body['apellidoMaterno'] ?? '' ) );
+			}
 		} else {
-			$result['nombre']    = $data['razonSocial'] ?? '';
-			$result['direccion'] = $data['direccion'] ?? '';
+			$result['nombre']    = $body['razonSocial'] ?? '';
+			$result['direccion'] = $body['direccionCompleta'] ?? ( $body['direccion'] ?? '' );
 		}
 
 		return $result;

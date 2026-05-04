@@ -9,6 +9,7 @@ if ( isset( $_POST['wpcfact_save_config'] ) && check_admin_referer( 'wpcfact_con
 	update_option( 'wpcfact_codigo_local',         sanitize_text_field( $_POST['wpcfact_codigo_local'] ?? '0000' ) );
 	update_option( 'wpcfact_persona_id',           sanitize_text_field( $_POST['wpcfact_persona_id'] ?? '' ) );
 	update_option( 'wpcfact_persona_token',        sanitize_text_field( $_POST['wpcfact_persona_token'] ?? '' ) );
+	update_option( 'wpcfact_apisperu_token',       sanitize_text_field( $_POST['wpcfact_apisperu_token'] ?? '' ) );
 	update_option( 'wpcfact_ambiente',             sanitize_text_field( $_POST['wpcfact_ambiente'] ?? 'DEV' ) );
 	update_option( 'wpcfact_serie_factura',        sanitize_text_field( $_POST['wpcfact_serie_factura'] ?? 'F001' ) );
 	update_option( 'wpcfact_serie_boleta',         sanitize_text_field( $_POST['wpcfact_serie_boleta'] ?? 'B001' ) );
@@ -24,8 +25,9 @@ $ruc            = get_option( 'wpcfact_ruc_emisor', '' );
 $razon_social   = get_option( 'wpcfact_razon_social_emisor', '' );
 $direccion      = get_option( 'wpcfact_direccion_emisor', '' );
 $codigo_local   = get_option( 'wpcfact_codigo_local', '0000' );
-$persona_id     = get_option( 'wpcfact_persona_id', '' );
-$persona_token  = get_option( 'wpcfact_persona_token', '' );
+$persona_id       = get_option( 'wpcfact_persona_id', '' );
+$persona_token    = get_option( 'wpcfact_persona_token', '' );
+$apisperu_token   = get_option( 'wpcfact_apisperu_token', '' );
 $ambiente       = get_option( 'wpcfact_ambiente', 'DEV' );
 $serie_factura       = get_option( 'wpcfact_serie_factura', 'F001' );
 $serie_boleta        = get_option( 'wpcfact_serie_boleta', 'B001' );
@@ -224,10 +226,30 @@ $configured = ! empty( $persona_id ) && ! empty( $persona_token ) && ! empty( $r
 		</table>
 	</div>
 
-	<p class="submit">
-		<button type="submit" name="wpcfact_save_config" class="button button-primary button-large">
-			💾 Guardar Configuración
-		</button>
-	</p>
-</form>
+	<!-- SECCIÓN 4: APISPERU -->
+	<div style="background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:25px; margin-bottom:20px; box-shadow:0 1px 3px rgba(0,0,0,0.05);">
+		<h2 style="margin-top:0; color:#1e293b; font-size:16px; border-bottom:2px solid #f1f5f9; padding-bottom:10px;">
+			🔎 APIsPeru — Consulta de DNI / RUC
+		</h2>
+		<p style="color:#475569; margin-bottom:20px;">
+			Obtén tu token en <a href="https://apis.net.pe" target="_blank">apis.net.pe</a>. Se usa para auto-completar nombre y dirección al escribir el DNI o RUC en el wizard.
+		</p>
+		<table class="form-table" style="margin:0;">
+			<tr>
+				<th style="width:220px; vertical-align:top; padding-top:15px;"><label for="wpcfact_apisperu_token">Token APIsPeru</label></th>
+				<td>
+					<input type="password" id="wpcfact_apisperu_token" name="wpcfact_apisperu_token"
+						value="<?php echo esc_attr( $apisperu_token ); ?>"
+						class="large-text" placeholder="apis.net.pe Bearer token"
+						style="font-size:15px; padding:8px;">
+					<button type="button" onclick="
+						var f = document.getElementById('wpcfact_apisperu_token');
+						f.type = f.type === 'password' ? 'text' : 'password';
+						this.textContent = f.type === 'password' ? 'Mostrar' : 'Ocultar';
+					" style="margin-left:8px; padding:6px 12px; cursor:pointer;">Mostrar</button>
+					<p class="description">Bearer token de <a href="https://apis.net.pe" target="_blank">apis.net.pe</a> para consultar DNI (RENIEC) y RUC (SUNAT).</p>
+				</td>
+			</tr>
+		</table>
+	</div>
 </div>
