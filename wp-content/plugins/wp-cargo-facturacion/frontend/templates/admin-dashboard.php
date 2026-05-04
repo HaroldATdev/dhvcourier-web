@@ -124,37 +124,46 @@
 
 		$('.wpcfact-btn-anular').click(function(e) {
 			e.preventDefault();
-			$('#wpcfact-anular-id').val($(this).data('id'));
-			$('#wpcfact-motivo-anulacion').val('');
-			$('#wpcfact-anular-error').text('');
-			$('#wpcfact-modal-anular').show();
-		});
+			var comprobanteId = $(this).data('id');
+			Swal.fire({
+				title: 'Anular comprobante',
+				text: 'Ingrese el motivo de la anulación',
+				input: 'text',
+				inputPlaceholder: 'Ej: Error en los datos del cliente',
+				showCancelButton: true,
+				confirmButtonText: 'Confirmar anulación',
+				cancelButtonText: 'Cancelar',
+				confirmButtonColor: '#dc3232',
+				showLoaderOnConfirm: true,
+				preConfirm: function(motivo) {
+					if (!motivo || !motivo.trim()) {
+						Swal.showValidationMessage('Debe ingresar un motivo.');
+						return false;
+					}
 
-		$('#wpcfact-cancelar-anular').click(function() {
-			$('#wpcfact-modal-anular').hide();
-		});
-
-		$('#wpcfact-confirmar-anular').click(function() {
-			var motivo = $('#wpcfact-motivo-anulacion').val();
-			if (!motivo) {
-				$('#wpcfact-anular-error').text('Debe ingresar un motivo.');
-				return;
-			}
-
-			$(this).prop('disabled', true).text('Procesando...');
-
-			$.post(custom_ajaxurl, {
-				action: 'wpcfact_anular_comprobante',
-				nonce: '<?php echo wp_create_nonce("wpcfact_wizard_nonce"); ?>',
-				comprobante_id: $('#wpcfact-anular-id').val(),
-				motivo: motivo
-			}, function(res) {
-				if (res.success) {
-					Swal.fire('Éxito', 'Comprobante anulado correctamente.', 'success').then(() => location.reload());
-				} else {
-					$('#wpcfact-confirmar-anular').prop('disabled', false).text('Confirmar Anulación');
-					Swal.fire('Error', res.data, 'error');
-					$('#wpcfact-anular-error').text(res.data);
+					return $.post(custom_ajaxurl, {
+						action: 'wpcfact_anular_comprobante',
+						nonce: '<?php echo wp_create_nonce("wpcfact_wizard_nonce"); ?>',
+						comprobante_id: comprobanteId,
+						motivo: motivo.trim()
+					}).then(function(res) {
+						if (!res.success) {
+							throw new Error(res.data || 'No se pudo anular el comprobante.');
+						}
+						return res;
+					}).catch(function(err) {
+						Swal.showValidationMessage(err.message || 'Error de conexión.');
+						return false;
+					});
+				},
+				allowOutsideClick: function() {
+					return !Swal.isLoading();
+				}
+			}).then(function(result) {
+				if (result.isConfirmed) {
+					Swal.fire('Éxito', 'Comprobante anulado correctamente.', 'success').then(function() {
+						location.reload();
+					});
 				}
 			});
 		});

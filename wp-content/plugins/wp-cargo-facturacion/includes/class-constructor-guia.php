@@ -158,6 +158,9 @@ class WPC_Facturacion_Constructor_Guia {
 			$document_body['cac:DespatchLine'][] = array(
 				'cbc:ID' => array( '_text' => $line_id ),
 				'cbc:DeliveredQuantity' => array( '_attributes' => array( 'unitCode' => 'NIU' ), '_text' => 1 ),
+				'cac:OrderLineReference' => array(
+					'cbc:LineID' => array( '_text' => $line_id )
+				),
 				'cac:Item' => array(
 					'cbc:Name' => array( '_text' => 'Servicio de courier - Tracking: ' . $envio['tracking'] )
 				)
