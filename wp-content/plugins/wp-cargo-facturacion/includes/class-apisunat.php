@@ -208,6 +208,12 @@ class WPC_Facturacion_APISunat {
 			return new WP_Error( 'not_found', 'APIsPeru: ' . $msg );
 		}
 
+		// La API puede devolver HTTP 200 con {"success": false, "message": "..."}
+		if ( isset( $body['success'] ) && $body['success'] === false ) {
+			$msg = $body['message'] ?? 'Documento no encontrado.';
+			return new WP_Error( 'not_found', 'APIsPeru: ' . $msg );
+		}
+
 		$result = array( 'nombre' => '', 'direccion' => '' );
 
 		if ( $tipo === 'dni' ) {
@@ -216,6 +222,10 @@ class WPC_Facturacion_APISunat {
 		} else {
 			$result['nombre']    = $body['razonSocial'] ?? '';
 			$result['direccion'] = $body['direccion'] ?? '';
+		}
+
+		if ( empty( $result['nombre'] ) ) {
+			return new WP_Error( 'empty_result', 'APIsPeru: no se obtuvo nombre para el documento.' );
 		}
 
 		return $result;
