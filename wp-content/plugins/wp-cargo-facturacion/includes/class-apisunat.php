@@ -93,10 +93,27 @@ class WPC_Facturacion_APISunat {
 		}
 
 		$response_code = wp_remote_retrieve_response_code( $response );
-		$response_body = json_decode( wp_remote_retrieve_body( $response ), true );
-		
-		if ( isset( $response_body['status'] ) && $response_body['status'] === 'ERROR' ) {
-			return new WP_Error( 'api_error', 'Error en el envío del comprobante.', $response_body['error'] );
+		$raw_body      = wp_remote_retrieve_body( $response );
+		$response_body = json_decode( $raw_body, true );
+
+		if ( ! is_array( $response_body ) ) {
+			return new WP_Error( 'api_error', 'Respuesta inválida de APISUNAT (no JSON).', $raw_body );
+		}
+
+		if ( $response_code !== 200 ) {
+			$detail = $response_body['message'] ?? ( $response_body['error'] ?? $raw_body );
+			if ( is_array( $detail ) ) {
+				$detail = wp_json_encode( $detail );
+			}
+			return new WP_Error( 'api_http_error', 'APISUNAT HTTP ' . $response_code . ': ' . $detail, $response_body );
+		}
+
+		if ( isset( $response_body['status'] ) && strtoupper( (string) $response_body['status'] ) === 'ERROR' ) {
+			$detail = $response_body['error'] ?? ( $response_body['message'] ?? 'Sin detalle.' );
+			if ( is_array( $detail ) ) {
+				$detail = wp_json_encode( $detail );
+			}
+			return new WP_Error( 'api_error', 'Error en el envío del comprobante: ' . $detail, $response_body );
 		}
 
 		return $response_body;

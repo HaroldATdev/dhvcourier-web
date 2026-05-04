@@ -18,6 +18,14 @@ class WPC_Facturacion_Constructor_Guia {
 			return new WP_Error( 'config_error', 'Falta configurar el RUC emisor.' );
 		}
 
+		if ( empty( $razon_social_emisor ) ) {
+			return new WP_Error( 'config_error', 'Falta configurar la razón social del emisor.' );
+		}
+
+		if ( empty( $direccion_emisor ) ) {
+			return new WP_Error( 'config_error', 'Falta configurar la dirección del emisor para la guía.' );
+		}
+
 		// 2. Definir Serie
 		$serie = ( $tipo === '09' ) ? get_option( 'wpcfact_serie_guia_remision', 'T001' ) : get_option( 'wpcfact_serie_guia_transp', 'V001' );
 
@@ -61,6 +69,15 @@ class WPC_Facturacion_Constructor_Guia {
 
 		$fecha_emision = current_time( 'Y-m-d' );
 		$hora_emision = current_time( 'H:i:s' );
+		$peso = floatval( $peso );
+		if ( $peso <= 0 ) {
+			return new WP_Error( 'data_error', 'El peso total debe ser mayor a 0 para emitir la guía.' );
+		}
+
+		if ( empty( $direccion ) ) {
+			return new WP_Error( 'data_error', 'La dirección de llegada es obligatoria para la guía.' );
+		}
+
 		$scheme_id = ( strlen( $doc_num ) === 11 ) ? '6' : ( strlen( $doc_num ) === 8 ? '1' : '4' );
 
 		// 5. Construir JSON Básico (DespatchAdvice)
@@ -89,6 +106,12 @@ class WPC_Facturacion_Constructor_Guia {
 					'cac:PartyIdentification' => array( 'cbc:ID' => array( '_attributes' => array( 'schemeID' => '6' ), '_text' => $ruc_emisor ) ),
 					'cac:PartyLegalEntity' => array(
 						'cbc:RegistrationName' => array( '_text' => $razon_social_emisor ),
+						'cac:RegistrationAddress' => array(
+							'cbc:AddressTypeCode' => array( '_text' => $codigo_local ),
+							'cac:AddressLine' => array(
+								'cbc:Line' => array( '_text' => $direccion_emisor )
+							)
+						)
 					)
 				)
 			),
@@ -104,12 +127,10 @@ class WPC_Facturacion_Constructor_Guia {
 				'cbc:ID' => array('_text' => '1'),
 				'cbc:HandlingCode' => array('_text' => $motivo),
 				'cbc:Information' => array('_text' => 'Traslado de encomiendas'),
-				'cbc:GrossWeightMeasure' => array('_attributes' => array('unitCode' => 'KGM'), '_text' => $peso),
-				'cac:ShipmentStages' => array(
-					array(
-						'cbc:TransportModeCode' => array('_text' => $modalidad),
-						'cac:TransitPeriod' => array('cbc:StartDate' => array('_text' => $fecha_emision)),
-					)
+				'cbc:GrossWeightMeasure' => array('_attributes' => array('unitCode' => 'KGM'), '_text' => number_format( $peso, 3, '.', '' )),
+				'cac:ShipmentStage' => array(
+					'cbc:TransportModeCode' => array('_text' => $modalidad),
+					'cac:TransitPeriod' => array('cbc:StartDate' => array('_text' => $fecha_emision)),
 				),
 				'cac:Delivery' => array(
 					'cac:DeliveryAddress' => array(
@@ -152,6 +173,14 @@ class WPC_Facturacion_Constructor_Guia {
 		
 		if ( is_wp_error( $api_response ) ) {
 			return $api_response;
+		}
+
+		if ( empty( $api_response['documentId'] ) || empty( $api_response['status'] ) ) {
+			return new WP_Error(
+				'api_response_invalid',
+				'Respuesta incompleta al emitir guía en APISUNAT.',
+				$api_response
+			);
 		}
 
 		// 7. Guardar en Base de Datos Local
