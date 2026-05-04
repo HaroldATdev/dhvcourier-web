@@ -443,6 +443,11 @@ class WPC_Facturacion_Ajax {
 			return;
 		}
 
+		if ( empty( $resultado['nombre'] ) ) {
+			wp_send_json_error( 'No se pudo obtener el nombre desde APIsPeru.' );
+			return;
+		}
+
 		wp_send_json_success( $resultado );
 	}
 }

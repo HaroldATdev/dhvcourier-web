@@ -216,26 +216,42 @@ class WPC_Facturacion_APISunat {
 
 		// Algunas respuestas llegan como { success: true, data: { ... } }.
 		$payload = ( isset( $body['data'] ) && is_array( $body['data'] ) ) ? $body['data'] : $body;
+		if ( isset( $body['data'] ) && is_string( $body['data'] ) ) {
+			$decoded_data = json_decode( $body['data'], true );
+			if ( is_array( $decoded_data ) ) {
+				$payload = $decoded_data;
+			}
+		}
 
 		$result = array( 'nombre' => '', 'direccion' => '' );
 
 		if ( $tipo === 'dni' ) {
-			$result['nombre'] = trim(
-				( $payload['nombreCompleto'] ?? '' )
-				. ' '
-				. ( $payload['nombres'] ?? '' )
-				. ' '
-				. ( $payload['apellidoPaterno'] ?? '' )
-				. ' '
-				. ( $payload['apellidoMaterno'] ?? '' )
-			);
+			$nombre_directo = '';
+			if ( ! empty( $payload['nombreCompleto'] ) ) {
+				$nombre_directo = $payload['nombreCompleto'];
+			} elseif ( ! empty( $payload['nombre_completo'] ) ) {
+				$nombre_directo = $payload['nombre_completo'];
+			} elseif ( ! empty( $payload['nombre'] ) ) {
+				$nombre_directo = $payload['nombre'];
+			}
+
+			$nombres   = $payload['nombres'] ?? ( $payload['nombre'] ?? '' );
+			$ape_pat   = $payload['apellidoPaterno'] ?? ( $payload['apellido_paterno'] ?? '' );
+			$ape_mat   = $payload['apellidoMaterno'] ?? ( $payload['apellido_materno'] ?? '' );
+			$compuesto = trim( $nombres . ' ' . $ape_pat . ' ' . $ape_mat );
+
+			$result['nombre'] = trim( $nombre_directo );
+			if ( empty( $result['nombre'] ) ) {
+				$result['nombre'] = $compuesto;
+			}
 		} else {
-			$result['nombre']    = $payload['razonSocial'] ?? '';
-			$result['direccion'] = $payload['direccion'] ?? ( $payload['direccionCompleta'] ?? '' );
+			$result['nombre']    = $payload['razonSocial'] ?? ( $payload['razon_social'] ?? ( $payload['nombreComercial'] ?? '' ) );
+			$result['direccion'] = $payload['direccion'] ?? ( $payload['direccionCompleta'] ?? ( $payload['direccion_completa'] ?? '' ) );
 		}
 
 		if ( empty( $result['nombre'] ) ) {
-			return new WP_Error( 'empty_result', 'APIsPeru: no se obtuvo nombre para el documento.' );
+			$keys = implode( ', ', array_keys( (array) $payload ) );
+			return new WP_Error( 'empty_result', 'APIsPeru: no se obtuvo nombre para el documento. Keys recibidas: ' . $keys );
 		}
 
 		return $result;
