@@ -165,4 +165,57 @@ class WPC_Facturacion_APISunat {
 	public static function get_pdf_url( $document_id, $file_name, $format = 'A4' ) {
 		return self::get_api_url() . "/documents/{$document_id}/getPDF/{$format}/{$file_name}.pdf";
 	}
+
+	/**
+	 * Consulta datos fiscales de un DNI (8 dígitos) o RUC (11 dígitos) en APISUNAT.
+	 *
+	 * @param string $tipo  'dni' o 'ruc'
+	 * @param string $numero Número de documento
+	 * @return array|WP_Error  Array con keys: nombre, direccion (ruc), o WP_Error
+	 */
+	public static function consultar_doc( string $tipo, string $numero ) {
+		$creds = self::get_credentials();
+		if ( empty( $creds['personaId'] ) || empty( $creds['personaToken'] ) ) {
+			return new WP_Error( 'missing_creds', 'Credenciales de APISUNAT no configuradas.' );
+		}
+
+		$tipo  = strtolower( $tipo );
+		$url   = self::get_api_url() . "/utils/{$tipo}/{$numero}";
+		$url   = add_query_arg(
+			array(
+				'personaId'    => $creds['personaId'],
+				'personaToken' => $creds['personaToken'],
+			),
+			$url
+		);
+
+		$response = wp_remote_get(
+			$url,
+			array( 'timeout' => 10 )
+		);
+
+		if ( is_wp_error( $response ) ) {
+			return $response;
+		}
+
+		$code = wp_remote_retrieve_response_code( $response );
+		$body = json_decode( wp_remote_retrieve_body( $response ), true );
+
+		if ( $code !== 200 || empty( $body['data'] ) ) {
+			return new WP_Error( 'not_found', 'No se encontraron datos para el documento.' );
+		}
+
+		$data   = $body['data'];
+		$result = array( 'nombre' => '', 'direccion' => '' );
+
+		if ( $tipo === 'dni' ) {
+			$result['nombre'] = $data['nombreCompleto'] ?? ( ( $data['nombre'] ?? '' ) . ' ' . ( $data['apellidoPaterno'] ?? '' ) . ' ' . ( $data['apellidoMaterno'] ?? '' ) );
+			$result['nombre'] = trim( $result['nombre'] );
+		} else {
+			$result['nombre']    = $data['razonSocial'] ?? '';
+			$result['direccion'] = $data['direccion'] ?? '';
+		}
+
+		return $result;
+	}
 }

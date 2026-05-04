@@ -8,6 +8,7 @@ class WPC_Facturacion_Ajax {
 	public function __construct() {
 		add_action( 'wp_ajax_wpcfact_buscar_cliente', array( $this, 'buscar_cliente' ) );
 		add_action( 'wp_ajax_wpcfact_buscar_envios_ocasionales', array( $this, 'buscar_envios_ocasionales' ) );
+		add_action( 'wp_ajax_wpcfact_consultar_doc', array( $this, 'consultar_doc' ) );
 		add_action( 'wp_ajax_wpcfact_obtener_envios', array( $this, 'obtener_envios' ) );
 		add_action( 'wp_ajax_wpcfact_emitir_comprobante', array( $this, 'emitir_comprobante' ) );
 		add_action( 'wp_ajax_wpcfact_anular_comprobante', array( $this, 'anular_comprobante' ) );
@@ -412,6 +413,34 @@ class WPC_Facturacion_Ajax {
 
 		if ( is_wp_error( $resultado ) ) {
 			wp_send_json_error( $resultado->get_error_message() );
+		}
+
+		wp_send_json_success( $resultado );
+	}
+
+	public function consultar_doc() {
+		check_ajax_referer( 'wpcfact_wizard_nonce', 'nonce' ); // dentro de la clase
+		$numero = sanitize_text_field( $_POST['numero'] ?? '' );
+		$numero = preg_replace( '/\D/', '', $numero );
+
+		if ( strlen( $numero ) === 8 ) {
+			$tipo = 'dni';
+		} elseif ( strlen( $numero ) === 11 ) {
+			$tipo = 'ruc';
+		} else {
+			wp_send_json_error( 'Número de documento inválido.' );
+			return;
+		}
+
+		if ( ! class_exists( 'WPC_Facturacion_APISunat' ) ) {
+			require_once dirname( __FILE__ ) . '/../../includes/class-apisunat.php';
+		}
+
+		$resultado = WPC_Facturacion_APISunat::consultar_doc( $tipo, $numero );
+
+		if ( is_wp_error( $resultado ) ) {
+			wp_send_json_error( $resultado->get_error_message() );
+			return;
 		}
 
 		wp_send_json_success( $resultado );

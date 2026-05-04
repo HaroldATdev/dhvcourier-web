@@ -220,6 +220,36 @@ jQuery(document).ready(function($) {
         }
     }
 
+        var consultaDocTimer = null;
+
+        function consultarDocSunat(numero) {
+            clearTimeout(consultaDocTimer);
+            consultaDocTimer = setTimeout(function() {
+                $('#wpcfact-tipo-detectado').text('Consultando SUNAT...').css('color', '#888');
+                $.post(wpcfact_ajax.url, {
+                    action: 'wpcfact_consultar_doc',
+                    nonce: wpcfact_ajax.nonce,
+                    numero: numero
+                }, function(res) {
+                    if (res.success && res.data) {
+                        if (res.data.nombre) {
+                            $('#wpcfact-receptor-nombre').val(res.data.nombre);
+                        }
+                        if (res.data.direccion) {
+                            $('#wpcfact-receptor-direccion').val(res.data.direccion);
+                        }
+                        $('#wpcfact-tipo-detectado').text(
+                            (numero.length === 11 ? 'RUC' : 'DNI') + ' encontrado ✓'
+                        ).css('color', 'green');
+                    } else {
+                        $('#wpcfact-tipo-detectado').text('No encontrado en SUNAT').css('color', 'orange');
+                    }
+                }).fail(function() {
+                    $('#wpcfact-tipo-detectado').text('Error al consultar SUNAT').css('color', 'red');
+                });
+            }, 600);
+        }
+
     function cargarEnviosClienteRegistrado() {
         $('#table-envios-pendientes tbody').html('<tr><td colspan="5">Cargando envios...</td></tr>');
 
@@ -506,7 +536,13 @@ jQuery(document).ready(function($) {
         showStep(3);
     });
 
-    $('#wpcfact-receptor-doc').on('input', detectarTipoDoc);
+    $('#wpcfact-receptor-doc').on('input', function() {
+        detectarTipoDoc();
+        const doc = $(this).val().replace(/\s/g, '');
+        if (emissionMode === 'libre' && (doc.length === 8 || doc.length === 11)) {
+            consultarDocSunat(doc);
+        }
+    });
 
     // Emitir
     $('#btn-emitir').click(function() {
