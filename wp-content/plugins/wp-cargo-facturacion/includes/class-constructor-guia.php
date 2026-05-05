@@ -123,39 +123,57 @@ class WPC_Facturacion_Constructor_Guia {
 					)
 				)
 			),
-			'cac:Shipment' => array(
-				'cbc:ID' => array('_text' => '1'),
-				'cbc:HandlingCode' => array('_text' => $motivo),
-				'cbc:Information' => array('_text' => 'Traslado de encomiendas'),
-				'cbc:GrossWeightMeasure' => array('_attributes' => array('unitCode' => 'KGM'), '_text' => number_format( $peso, 3, '.', '' )),
+			'cac:Shipment' => ( $tipo === '31' )
+			? array(
+				// Guía de Transportista (tipo 31)
+				'cbc:ID'                 => array( '_text' => 'SUNAT_Envio' ),
+				'cbc:GrossWeightMeasure' => array( '_attributes' => array( 'unitCode' => 'KGM' ), '_text' => number_format( $peso, 3, '.', '' ) ),
+				'cbc:SpecialInstructions' => array(
+					array( '_text' => 'SUNAT_Envio_IndicadorPagadorFlete_Remitente' )
+				),
 				'cac:ShipmentStage' => array(
-					'cbc:TransportModeCode' => array('_text' => $modalidad),
-					'cac:TransitPeriod' => array('cbc:StartDate' => array('_text' => $fecha_emision)),
-					// Para tipo 31 (transportista), el emisor ES el transportista y debe incluirse en CarrierParty
-					...( $tipo === '31' ? array(
-						'cac:CarrierParty' => array(
-							'cac:PartyIdentification' => array(
-								'cbc:ID' => array( '_attributes' => array( 'schemeID' => '6' ), '_text' => $ruc_emisor )
-							),
-							'cac:PartyLegalEntity' => array(
-								'cbc:RegistrationName' => array( '_text' => $razon_social_emisor )
-							)
+					'cac:TransitPeriod' => array( 'cbc:StartDate' => array( '_text' => $fecha_emision ) ),
+					'cac:CarrierParty'  => array(
+						'cac:PartyIdentification' => array(
+							'cbc:ID' => array( '_attributes' => array( 'schemeID' => '6' ), '_text' => $ruc_emisor )
+						),
+						'cac:PartyLegalEntity' => array(
+							'cbc:CompanyID' => array( '_text' => get_option( 'wpcfact_mtc_autorizacion', $ruc_emisor ) )
 						)
-					) : array() ),
+					),
 				),
 				'cac:Delivery' => array(
 					'cac:DeliveryAddress' => array(
-						'cbc:ID' => array('_text' => '150101'),
-						'cac:AddressLine' => array(
-							'cbc:Line' => array('_text' => $direccion)
-						)
+						'cbc:ID'          => array( '_text' => '150101' ),
+						'cac:AddressLine' => array( 'cbc:Line' => array( '_text' => $direccion ) )
 					),
 					'cac:Despatch' => array(
 						'cac:DespatchAddress' => array(
-							'cbc:ID' => array('_text' => '150101'),
-							'cac:AddressLine' => array(
-								'cbc:Line' => array('_text' => $direccion_emisor)
-							)
+							'cbc:ID'          => array( '_text' => '150101' ),
+							'cac:AddressLine' => array( 'cbc:Line' => array( '_text' => $direccion_emisor ) )
+						)
+					)
+				)
+			)
+			: array(
+				// Guía de Remisión Remitente (tipo 09)
+				'cbc:ID'                 => array( '_text' => '1' ),
+				'cbc:HandlingCode'       => array( '_text' => $motivo ),
+				'cbc:Information'        => array( '_text' => 'Traslado de encomiendas' ),
+				'cbc:GrossWeightMeasure' => array( '_attributes' => array( 'unitCode' => 'KGM' ), '_text' => number_format( $peso, 3, '.', '' ) ),
+				'cac:ShipmentStage' => array(
+					'cbc:TransportModeCode' => array( '_text' => $modalidad ),
+					'cac:TransitPeriod'     => array( 'cbc:StartDate' => array( '_text' => $fecha_emision ) ),
+				),
+				'cac:Delivery' => array(
+					'cac:DeliveryAddress' => array(
+						'cbc:ID'          => array( '_text' => '150101' ),
+						'cac:AddressLine' => array( 'cbc:Line' => array( '_text' => $direccion ) )
+					),
+					'cac:Despatch' => array(
+						'cac:DespatchAddress' => array(
+							'cbc:ID'          => array( '_text' => '150101' ),
+							'cac:AddressLine' => array( 'cbc:Line' => array( '_text' => $direccion_emisor ) )
 						)
 					)
 				)
