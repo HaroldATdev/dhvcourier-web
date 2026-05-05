@@ -66,6 +66,7 @@ class WPC_Facturacion_Ajax {
 
 		$like = '%' . $wpdb->esc_like( $query ) . '%';
 		$tabla_envios_comp = $wpdb->prefix . 'facturacion_comprobante_envios';
+		$tabla_comprobantes = $wpdb->prefix . 'facturacion_comprobantes';
 
 		$sql = $wpdb->prepare(
 			"SELECT p.ID, p.post_title, p.post_date
@@ -73,8 +74,11 @@ class WPC_Facturacion_Ajax {
 			 WHERE p.post_type = 'wpcargo_shipment'
 			   AND p.post_status = 'publish'
 			   AND NOT EXISTS (
-				   SELECT 1 FROM {$tabla_envios_comp} fce
+				   SELECT 1
+				   FROM {$tabla_envios_comp} fce
+				   LEFT JOIN {$tabla_comprobantes} fc ON fc.id = fce.comprobante_id
 				   WHERE fce.shipment_id = p.ID
+					 AND ( fc.id IS NULL OR UPPER(TRIM(COALESCE(fc.estado, ''))) <> 'ANULADO' )
 			   )
 			   AND NOT EXISTS (
 				   SELECT 1 FROM {$wpdb->postmeta} pm1
@@ -233,8 +237,12 @@ class WPC_Facturacion_Ajax {
 			INNER JOIN {$wpdb->postmeta} pm ON (p.ID = pm.post_id AND pm.meta_key IN ('registered_shipper', 'wpcargo_cliente') AND pm.meta_value = %s)
 			WHERE p.post_type = 'wpcargo_shipment'
 			AND p.post_status = 'publish'
-			AND p.ID NOT IN (
-				SELECT shipment_id FROM {$wpdb->prefix}facturacion_comprobante_envios
+			AND NOT EXISTS (
+				SELECT 1
+				FROM {$wpdb->prefix}facturacion_comprobante_envios fce
+				LEFT JOIN {$wpdb->prefix}facturacion_comprobantes fc ON fc.id = fce.comprobante_id
+				WHERE fce.shipment_id = p.ID
+				  AND (fc.id IS NULL OR UPPER(TRIM(COALESCE(fc.estado, ''))) <> 'ANULADO')
 			)
 			ORDER BY p.post_date DESC
 			LIMIT 100
