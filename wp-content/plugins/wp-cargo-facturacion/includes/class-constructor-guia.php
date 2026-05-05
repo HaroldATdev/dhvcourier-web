@@ -78,9 +78,7 @@ class WPC_Facturacion_Constructor_Guia {
 			$shipment = array(
 				'cbc:ID'                  => array( '_text' => 'SUNAT_Envio' ),
 				'cbc:GrossWeightMeasure'  => array( '_attributes' => array( 'unitCode' => 'KGM' ), '_text' => number_format( $peso, 3, '.', '' ) ),
-				'cbc:SpecialInstructions' => array(
-					array( '_text' => 'SUNAT_Envio_IndicadorPagadorFlete_Remitente' )
-				),
+				'cbc:SpecialInstructions' => array( '_text' => 'SUNAT_Envio_IndicadorPagadorFlete_Remitente' ),
 				'cac:ShipmentStage' => array(
 					'cac:TransitPeriod' => array( 'cbc:StartDate' => array( '_text' => $fecha_emision ) ),
 					'cac:CarrierParty'  => array(
@@ -94,11 +92,11 @@ class WPC_Facturacion_Constructor_Guia {
 					'cac:DriverPerson' => array(
 						array(
 							'cbc:ID'          => array( '_attributes' => array( 'schemeID' => '1' ), '_text' => $conductor_dni ),
-							'cbc:FirstName'   => array( '_text' => $conductor_nombre ),
-							'cbc:FamilyName'  => array( '_text' => '' ),
-							'cbc:JobTitle'    => array( '_text' => 'Principal' ),
-							'cac:IdentityDocumentReference' => array(
-								'cbc:ID' => array( '_text' => $conductor_licencia )
+						'cbc:FirstName'   => array( '_text' => $conductor_nombre ?: ' ' ),
+						'cbc:FamilyName'  => array( '_text' => '-' ),
+						'cbc:JobTitle'    => array( '_text' => 'Principal' ),
+						'cac:IdentityDocumentReference' => array(
+							'cbc:ID' => array( '_text' => $conductor_licencia ?: '00000' )
 							)
 						)
 					)
@@ -150,11 +148,11 @@ class WPC_Facturacion_Constructor_Guia {
 					'cac:DriverPerson' => array(
 						array(
 							'cbc:ID'          => array( '_attributes' => array( 'schemeID' => '1' ), '_text' => $conductor_09_dni ),
-							'cbc:FirstName'   => array( '_text' => $conductor_09_nombre ),
-							'cbc:FamilyName'  => array( '_text' => '' ),
-							'cbc:JobTitle'    => array( '_text' => 'Principal' ),
-							'cac:IdentityDocumentReference' => array(
-								'cbc:ID' => array( '_text' => $conductor_09_licencia )
+						'cbc:FirstName'   => array( '_text' => $conductor_09_nombre ?: ' ' ),
+						'cbc:FamilyName'  => array( '_text' => '-' ),
+						'cbc:JobTitle'    => array( '_text' => 'Principal' ),
+						'cac:IdentityDocumentReference' => array(
+							'cbc:ID' => array( '_text' => $conductor_09_licencia ?: '00000' )
 							)
 						)
 					),
