@@ -77,8 +77,7 @@ class WPC_Facturacion_Ajax {
 				   SELECT 1
 				   FROM {$tabla_envios_comp} fce
 				   LEFT JOIN {$tabla_comprobantes} fc ON fc.id = fce.comprobante_id
-				   WHERE fce.shipment_id = p.ID
-					 AND ( fc.id IS NULL OR UPPER(TRIM(COALESCE(fc.estado, ''))) <> 'ANULADO' )
+				   WHERE fce.shipment_id = p.ID					 AND fc.tipo NOT IN ('09', '31')					 AND ( fc.id IS NULL OR UPPER(TRIM(COALESCE(fc.estado, ''))) <> 'ANULADO' )
 			   )
 			   AND NOT EXISTS (
 				   SELECT 1 FROM {$wpdb->postmeta} pm1
@@ -242,6 +241,7 @@ class WPC_Facturacion_Ajax {
 				FROM {$wpdb->prefix}facturacion_comprobante_envios fce
 				LEFT JOIN {$wpdb->prefix}facturacion_comprobantes fc ON fc.id = fce.comprobante_id
 				WHERE fce.shipment_id = p.ID
+				  AND fc.tipo NOT IN ('09', '31')
 				  AND (fc.id IS NULL OR UPPER(TRIM(COALESCE(fc.estado, ''))) <> 'ANULADO')
 			)
 			ORDER BY p.post_date DESC
