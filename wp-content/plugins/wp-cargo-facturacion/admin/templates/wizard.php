@@ -168,19 +168,19 @@
 			</select>
 		</div>
 
-		<div id="wpcfact-campos-guia" style="display:none; margin-top:20px; padding:15px; border:1px solid #cbd5e1; border-radius:6px; background:#f8fafc;">
-			<h3 style="margin-top:0;">Datos Adicionales para Guía</h3>
+		<div id="wpcfact-campos-guia" style="display:none; margin-top:30px; padding:25px; border:1px solid #e2e8f0; border-radius:8px; background:#f8fafc;">
+			<h3 style="margin-top:0; margin-bottom:25px; padding-bottom:15px; border-bottom:2px solid #e2e8f0; font-size:18px;">Datos Adicionales para Guía</h3>
 
 			<!-- Campo común: peso -->
-			<div style="display:flex; gap:20px; flex-wrap:wrap;">
+			<div style="display:flex; gap:20px; flex-wrap:wrap; margin-bottom:30px; padding-bottom:25px; border-bottom:1px solid #e2e8f0;">
 				<div class="wpcfact-input-group" style="flex:1; min-width:140px;">
 					<label>Peso Bruto Total (KGM)</label>
 					<input type="number" step="0.01" id="wpcfact-guia-peso" class="wpcfact-input" value="1.00">
 				</div>
 
 <!-- Solo tipo 09: remitente, motivo, modalidad -->
-			<div class="wpcfact-campo-09" style="display:none; margin-top:15px; padding-top:12px; border-top:1px solid #e2e8f0;">
-				<h4 style="margin:0 0 10px 0; color:#374151;">Transportista</h4>
+			<div class="wpcfact-campo-09" style="display:none; margin-top:30px; padding:20px; background:#fafbfc; border-radius:6px; border-left:4px solid #3b82f6;">
+				<h4 style="margin:0 0 18px 0; color:#1e293b; font-size:16px;">Transportista</h4>
 				<div style="display:flex; gap:20px; flex-wrap:wrap;">
 					<div class="wpcfact-input-group" style="flex:1; min-width:140px;">
 						<label>RUC del Transportista</label>
@@ -194,8 +194,8 @@
 			</div>
 
 			<!-- Solo tipo 09: conductor -->
-			<div class="wpcfact-campo-09" style="display:none; margin-top:15px; padding-top:12px; border-top:1px solid #e2e8f0;">
-				<h4 style="margin:0 0 10px 0; color:#374151;">Conductor</h4>
+			<div class="wpcfact-campo-09" style="display:none; margin-top:30px; padding:20px; background:#fafbfc; border-radius:6px; border-left:4px solid #3b82f6;">
+				<h4 style="margin:0 0 18px 0; color:#1e293b; font-size:16px;">Conductor</h4>
 				<div style="display:flex; gap:20px; flex-wrap:wrap;">
 					<div class="wpcfact-input-group" style="flex:1; min-width:120px;">
 						<label>DNI del Conductor</label>
@@ -217,9 +217,11 @@
 			</div>
 
 			<!-- Solo tipo 09: motivo y modalidad -->
-			<div class="wpcfact-campo-09" style="display:flex; gap:20px; flex-wrap:wrap; margin-top:15px; display:none;">
-				<div class="wpcfact-input-group" style="flex:1;">
-					<label>Motivo de Traslado</label>
+			<div class="wpcfact-campo-09" style="display:none; margin-top:30px; padding:20px; background:#fafbfc; border-radius:6px; border-left:4px solid #3b82f6;">
+				<h4 style="margin:0 0 18px 0; color:#1e293b; font-size:16px;">Detalles del Traslado</h4>
+				<div style="display:flex; gap:20px; flex-wrap:wrap;">
+					<div class="wpcfact-input-group" style="flex:1;">
+						<label>Motivo de Traslado</label>
 					<select id="wpcfact-guia-motivo" class="wpcfact-select">
 						<option value="01">Venta</option>
 						<option value="14">Venta sujeta a confirmación del comprador</option>
@@ -234,12 +236,13 @@
 						<option value="01">Transporte Público</option>
 						<option value="02">Transporte Privado</option>
 					</select>
+					</div>
 				</div>
 			</div>
 
 <!-- Ubigeo solo para tipo 09 -->
-		<div class="wpcfact-campo-09" style="display:none; margin-top:15px; padding-top:12px; border-top:1px solid #e2e8f0;">
-			<h4 style="margin:0 0 10px 0; color:#374151;">Ubicación de Partida y Llegada</h4>
+		<div class="wpcfact-campo-09" style="display:none; margin-top:30px; padding:20px; background:#fafbfc; border-radius:6px; border-left:4px solid #3b82f6;">
+			<h4 style="margin:0 0 18px 0; color:#1e293b; font-size:16px;">Ubicación de Partida y Llegada</h4>
 			<div style="display:flex; gap:20px; flex-wrap:wrap;">
 				<div class="wpcfact-input-group" style="flex:1; min-width:120px;">
 					<label>Ubigeo Partida (6 dígitos)</label>
@@ -253,8 +256,8 @@
 		</div>
 
 		<!-- Departamento/Provincia/Distrito solo para tipo 31 -->
-		<div class="wpcfact-campo-31" style="display:none; margin-top:15px; padding-top:12px; border-top:1px solid #e2e8f0;">
-			<h4 style="margin:0 0 10px 0; color:#374151;">Punto de Partida</h4>
+		<div class="wpcfact-campo-31" style="display:none; margin-top:30px; padding:20px; background:#fafbfc; border-radius:6px; border-left:4px solid #8b5cf6;">
+			<h4 style="margin:0 0 18px 0; color:#1e293b; font-size:16px;">Punto de Partida</h4>
 			<div style="display:flex; gap:15px; flex-wrap:wrap;">
 				<div class="wpcfact-input-group" style="flex:1; min-width:120px;">
 					<label>Departamento</label>
@@ -270,7 +273,7 @@
 				</div>
 			</div>
 
-			<h4 style="margin:15px 0 10px 0; color:#374151;">Punto de Llegada</h4>
+			<h4 style="margin:30px 0 18px 0; color:#1e293b; font-size:16px;">Punto de Llegada</h4>
 			<div style="display:flex; gap:15px; flex-wrap:wrap;">
 				<div class="wpcfact-input-group" style="flex:1; min-width:120px;">
 					<label>Departamento</label>
@@ -288,8 +291,8 @@
 			</div>
 
 			<!-- Solo tipo 31: remitente -->
-			<div class="wpcfact-campo-31" style="display:none; margin-top:15px; padding-top:12px; border-top:1px solid #e2e8f0;">
-				<h4 style="margin:0 0 10px 0; color:#374151;">Datos del Remitente <small style="font-weight:normal; color:#6b7280;">(quien entrega la carga al transportista)</small></h4>
+			<div class="wpcfact-campo-31" style="display:none; margin-top:30px; padding:20px; background:#fafbfc; border-radius:6px; border-left:4px solid #8b5cf6;">
+				<h4 style="margin:0 0 18px 0; color:#1e293b; font-size:16px;">Datos del Remitente <small style="font-weight:normal; color:#6b7280; font-size:14px;">(quien entrega la carga al transportista)</small></h4>
 				<div style="display:flex; gap:20px; flex-wrap:wrap;">
 					<div class="wpcfact-input-group" style="flex:1; min-width:140px;">
 						<label>RUC / DNI del Remitente</label>
@@ -303,8 +306,8 @@
 			</div>
 
 			<!-- Solo tipo 31: conductor -->
-			<div class="wpcfact-campo-31" style="display:none; margin-top:15px; padding-top:12px; border-top:1px solid #e2e8f0;">
-				<h4 style="margin:0 0 10px 0; color:#374151;">Datos del Conductor y Vehículo</h4>
+			<div class="wpcfact-campo-31" style="display:none; margin-top:30px; padding:20px; background:#fafbfc; border-radius:6px; border-left:4px solid #8b5cf6;">
+				<h4 style="margin:0 0 18px 0; color:#1e293b; font-size:16px;">Datos del Conductor y Vehículo</h4>
 				<div style="display:flex; gap:20px; flex-wrap:wrap;">
 					<div class="wpcfact-input-group" style="flex:1; min-width:120px;">
 						<label>DNI del Conductor</label>
@@ -325,11 +328,12 @@
 				</div>
 			</div>
 
-			<small style="color:#64748b; margin-top:10px; display:block;">(El sistema usará la dirección del emisor como punto de partida y la dirección del destinatario como punto de llegada).</small>
 		</div>
 
-		<div style="background:#fffbeb; border:1px solid #fef3c7; border-left:4px solid #f59e0b; padding:15px; border-radius:6px; margin-top:20px; color:#b45309;">
-			<strong>Nota:</strong> Las líneas del comprobante/guía se autogenerarán indicando el servicio y el número de tracking de cada envío seleccionado.
+		<small style="color:#64748b; margin-top:25px; display:block; padding:15px; background:#f1f5f9; border-radius:6px; border-left:3px solid #94a3b8;">(El sistema usará la dirección del emisor como punto de partida y la dirección del destinatario como punto de llegada).</small>
+
+		<div style="background:#fffbeb; border:1px solid #fef3c7; border-left:4px solid #f59e0b; padding:18px; border-radius:6px; margin-top:30px; color:#b45309; line-height:1.6;">
+			<strong>ℹ️ Nota:</strong> Las líneas del comprobante/guía se autogenerarán indicando el servicio y el número de tracking de cada envío seleccionado.
 		</div>
 
 		<script>
