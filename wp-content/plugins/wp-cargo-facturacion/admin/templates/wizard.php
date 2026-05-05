@@ -184,9 +184,15 @@
 			<h4 style="margin:0 0 18px 0; color:#1e293b; font-size:16px;">Transportista</h4>
 			<div style="display:flex; gap:20px; flex-wrap:wrap;">
 				<div class="wpcfact-input-group" style="flex:1; min-width:140px;">
-					</div>
+					<label>RUC del Transportista</label>
+					<input type="text" id="wpcfact-guia-09-transportista-ruc" class="wpcfact-input" maxlength="11" placeholder="20123456789">
+				</div>
+				<div class="wpcfact-input-group" style="flex:2; min-width:200px;">
+					<label>Nombre del Transportista</label>
+					<input type="text" id="wpcfact-guia-09-transportista-nombre" class="wpcfact-input" placeholder="Razón social o nombre completo">
 				</div>
 			</div>
+		</div>
 
 			<!-- Solo tipo 09: conductor -->
 			<div class="wpcfact-campo-09" style="display:none; margin-top:30px; padding:20px; background:#fafbfc; border-radius:6px; border-left:4px solid #3b82f6;">
@@ -328,30 +334,28 @@
 		<div style="background:#fffbeb; border:1px solid #fef3c7; border-left:4px solid #f59e0b; padding:18px; border-radius:6px; margin-top:30px; color:#b45309; line-height:1.6;">
 			<strong>ℹ️ Nota:</strong> Las líneas del comprobante/guía se autogenerarán indicando el servicio y el número de tracking de cada envío seleccionado.
 		</div>
-	</div>
-	</div>
 
-	<script>
-		// Mostrar/Ocultar campos de Guía según tipo de documento
-		jQuery('#wpcfact-tipo-doc').on('change', function() {
-			var val = jQuery(this).val();
-			if (val === '09' || val === '31') {
-				jQuery('#wpcfact-campos-guia').show();
-				jQuery('#wpcfact-forma-pago').closest('.wpcfact-input-group').hide();
-				jQuery('.wpcfact-campo-09').toggle(val === '09');
-				jQuery('.wpcfact-campo-31').toggle(val === '31');
-			} else {
-				jQuery('#wpcfact-campos-guia').hide();
-				jQuery('#wpcfact-forma-pago').closest('.wpcfact-input-group').show();
-			}
-		});
-	</script>
+		<script>
+			// Mostrar/Ocultar campos de Guía según tipo de documento
+			jQuery('#wpcfact-tipo-doc').on('change', function() {
+				var val = jQuery(this).val();
+				if (val === '09' || val === '31') {
+					jQuery('#wpcfact-campos-guia').show();
+					jQuery('#wpcfact-forma-pago').closest('.wpcfact-input-group').hide();
+					jQuery('.wpcfact-campo-09').toggle(val === '09');
+					jQuery('.wpcfact-campo-31').toggle(val === '31');
+				} else {
+					jQuery('#wpcfact-campos-guia').hide();
+					jQuery('#wpcfact-forma-pago').closest('.wpcfact-input-group').show();
+				}
+			});
+		</script>
 
-	<div class="wpcfact-actions">
-		<button type="button" id="btn-prev-2" class="wpcfact-btn wpcfact-btn-outline">&larr; Volver a envíos</button>
-		<button type="button" id="btn-emitir" class="wpcfact-btn" style="background: linear-gradient(to right, #10b981, #059669);">Emitir a la SUNAT &rarr;</button>
+		<div class="wpcfact-actions">
+			<button type="button" id="btn-prev-2" class="wpcfact-btn wpcfact-btn-outline">&larr; Volver a envíos</button>
+			<button type="button" id="btn-emitir" class="wpcfact-btn" style="background: linear-gradient(to right, #10b981, #059669);">Emitir a la SUNAT &rarr;</button>
+		</div>
 	</div>
-</div>
 
 <!-- Paso 4: Resultado -->
 	<div class="wpcfact-wizard-step" id="step-4">
