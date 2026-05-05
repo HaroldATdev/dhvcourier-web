@@ -2,7 +2,7 @@
 /**
  * Funciones para acceder a datos de UBIGEOS desde la base de datos
  * 
- * Las ubicaciones se almacenan en wp_hEhUP_ubigeos con estructura:
+ * Las ubicaciones se almacenan en wp_hEhUP_ubigeos (o wp_ubigeos) con estructura:
  * - departamento (2 dígitos)
  * - provincia (2 dígitos)
  * - distrito (2 dígitos)
@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function wpcfact_get_departamentos() {
 	global $wpdb;
-	$table = $wpdb->prefix . 'hEhUP_ubigeos';
+	$table = $wpdb->prefix . 'ubigeos';
 	$results = $wpdb->get_results(
 		"SELECT DISTINCT departamento, nombre FROM `{$table}` 
 		WHERE provincia = '00' AND distrito = '00'
@@ -42,7 +42,7 @@ function wpcfact_get_departamentos() {
  */
 function wpcfact_get_provincias( $departamento ) {
 	global $wpdb;
-	$table = $wpdb->prefix . 'hEhUP_ubigeos';
+	$table = $wpdb->prefix . 'ubigeos';
 	$results = $wpdb->get_results( $wpdb->prepare(
 		"SELECT DISTINCT provincia, nombre FROM `{$table}` 
 		WHERE departamento = %s AND distrito = '00'
@@ -64,7 +64,7 @@ function wpcfact_get_provincias( $departamento ) {
  */
 function wpcfact_get_distritos( $departamento, $provincia ) {
 	global $wpdb;
-	$table = $wpdb->prefix . 'hEhUP_ubigeos';
+	$table = $wpdb->prefix . 'ubigeos';
 	$results = $wpdb->get_results( $wpdb->prepare(
 		"SELECT DISTINCT distrito, nombre FROM `{$table}` 
 		WHERE departamento = %s AND provincia = %s AND distrito != '00'

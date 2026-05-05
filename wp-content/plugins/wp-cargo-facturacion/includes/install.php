@@ -14,7 +14,7 @@ function wpfc_create_ubicaciones_tables() {
 	$charset_collate = $wpdb->get_charset_collate();
 	
 	// ===== NUEVA TABLA UNIFICADA DE UBIGEOS (más simple y directa) =====
-	$table_ubigeos = $wpdb->prefix . 'hEhUP_ubigeos';
+	$table_ubigeos = $wpdb->prefix . 'ubigeos';
 	$sql_ubigeos = "
 		CREATE TABLE IF NOT EXISTS `{$table_ubigeos}` (
 			`id` INT AUTO_INCREMENT PRIMARY KEY,
@@ -37,67 +37,16 @@ function wpfc_create_ubicaciones_tables() {
 	if ( $count == 0 ) {
 		wpfc_insert_ubigeos_desde_array();
 	}
-	
-	// ===== TABLAS ANTERIORES (mantenerlas para compatibilidad) =====
-	$sql_departamentos = "
-		CREATE TABLE IF NOT EXISTS `{$table_departamentos}` (
-			`id` INT AUTO_INCREMENT PRIMARY KEY,
-			`codigo` VARCHAR(5) UNIQUE NOT NULL,
-			`nombre` VARCHAR(100) NOT NULL,
-			`created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-		) $charset_collate;
-	";
-	
-	// Tabla de provincias
-	$table_provincias = $wpdb->prefix . 'hEhUP_provincias';
-	$sql_provincias = "
-		CREATE TABLE IF NOT EXISTS `{$table_provincias}` (
-			`id` INT AUTO_INCREMENT PRIMARY KEY,
-			`codigo` VARCHAR(5) UNIQUE NOT NULL,
-			`departamento_codigo` VARCHAR(5) NOT NULL,
-			`nombre` VARCHAR(100) NOT NULL,
-			`created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			FOREIGN KEY (`departamento_codigo`) REFERENCES `{$table_departamentos}`(`codigo`)
-		) $charset_collate;
-	";
-	
-	// Tabla de distritos
-	$table_distritos = $wpdb->prefix . 'hEhUP_distritos';
-	$sql_distritos = "
-		CREATE TABLE IF NOT EXISTS `{$table_distritos}` (
-			`id` INT AUTO_INCREMENT PRIMARY KEY,
-			`codigo` VARCHAR(5) UNIQUE NOT NULL,
-			`provincia_codigo` VARCHAR(5) NOT NULL,
-			`departamento_codigo` VARCHAR(5) NOT NULL,
-			`nombre` VARCHAR(100) NOT NULL,
-			`ubigeo` VARCHAR(6),
-			`created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			FOREIGN KEY (`provincia_codigo`) REFERENCES `{$table_provincias}`(`codigo`),
-			FOREIGN KEY (`departamento_codigo`) REFERENCES `{$table_departamentos}`(`codigo`)
-		) $charset_collate;
-	";
-	
-	require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-	dbDelta( $sql_departamentos );
-	dbDelta( $sql_provincias );
-	dbDelta( $sql_distritos );
-	
-	// Verificar si ya hay datos
-	$count = $wpdb->get_var( "SELECT COUNT(*) FROM `{$table_departamentos}`" );
-	if ( $count === 0 ) {
-		wpfc_insert_ubicaciones_data();
-	}
 }
 
 /**
- * Inserta datos en la tabla unificada wp_hEhUP_ubigeos
- * Lee del array obtenido desde ubigeos.php (ahora con formato plano JSON)
+ * Inserta datos en la tabla unificada de ubigeos
+ * Lee del array obtenido desde ubigeos.php (con formato plano)
  */
 function wpfc_insert_ubigeos_desde_array() {
-	global $wpdb;
-	
-	$table = $wpdb->prefix . 'hEhUP_ubigeos';
-	
+        global $wpdb;
+
+        $table = $wpdb->prefix . 'ubigeos';
 	// Incluir array de ubigeos desde ubigeos.php
 	// Ahora devuelve un array plano: array(
 	//   array('departamento' => '01', 'provincia' => '01', 'distrito' => '01', 'nombre' => 'Chachapoyas'),
@@ -127,112 +76,27 @@ function wpfc_insert_ubigeos_desde_array() {
 }
 
 /**
- * Inserta los datos de ubicaciones (del archivo ubigeos.php)
- */
-function wpfc_insert_ubicaciones_data() {
-	global $wpdb;
-	
-	$table_departamentos = $wpdb->prefix . 'hEhUP_departamentos';
-	$table_provincias = $wpdb->prefix . 'hEhUP_provincias';
-	$table_distritos = $wpdb->prefix . 'hEhUP_distritos';
-	
-	// Obtener datos del archivo ubigeos.php
-	$ubigeos_data = include( WPC_FACTURACION_PATH . 'includes/ubigeos.php' );
-	
-	foreach ( $ubigeos_data as $dept_codigo => $dept_info ) {
-		// Insertar departamento
-		$wpdb->insert(
-			$table_departamentos,
-			array(
-				'codigo' => $dept_codigo,
-				'nombre' => $dept_info['nombre']
-			),
-			array( '%s', '%s' )
-		);
-		
-		// Insertar provincias y distritos
-		foreach ( $dept_info['provincias'] as $prov_codigo => $prov_info ) {
-			$wpdb->insert(
-				$table_provincias,
-				array(
-					'codigo' => $prov_codigo,
-					'departamento_codigo' => $dept_codigo,
-					'nombre' => $prov_info['nombre']
-				),
-				array( '%s', '%s', '%s' )
-			);
-			
-			// Insertar distritos
-			foreach ( $prov_info['distritos'] as $dist_codigo => $dist_nombre ) {
-				$ubigeo = $dept_codigo . $prov_codigo . $dist_codigo;
-				$wpdb->insert(
-					$table_distritos,
-					array(
-						'codigo' => $dist_codigo,
-						'provincia_codigo' => $prov_codigo,
-						'departamento_codigo' => $dept_codigo,
-						'nombre' => $dist_nombre,
-						'ubigeo' => $ubigeo
-					),
-					array( '%s', '%s', '%s', '%s', '%s' )
-				);
-			}
-		}
-	}
-}
-
-/**
- * Consulta departamentos desde la BD
+ * Consulta departamentos desde la BD - DEPRECATED
+ * Usar wpcfact_get_departamentos() de ubigeos.php en su lugar
  */
 function wpfc_get_departamentos() {
-	global $wpdb;
-	$table = $wpdb->prefix . 'hEhUP_departamentos';
-	return $wpdb->get_results( "SELECT codigo, nombre FROM `{$table}` ORDER BY nombre", ARRAY_A );
+	return wpcfact_get_departamentos();
 }
 
 /**
- * Consulta provincias por departamento desde la BD
+ * Consulta provincias por departamento desde la BD - DEPRECATED
+ * Usar wpcfact_get_provincias() de ubigeos.php en su lugar
  */
 function wpfc_get_provincias( $dept_codigo ) {
-	global $wpdb;
-	$table = $wpdb->prefix . 'hEhUP_provincias';
-	$dept_codigo = sanitize_text_field( $dept_codigo );
-	return $wpdb->get_results( 
-		$wpdb->prepare( 
-			"SELECT codigo, nombre FROM `{$table}` WHERE departamento_codigo = %s ORDER BY nombre",
-			$dept_codigo
-		),
-		ARRAY_A
-	);
+	return wpcfact_get_provincias( $dept_codigo );
 }
 
 /**
- * Consulta distritos por provincia y departamento desde la BD
+ * Consulta distritos por provincia y departamento desde la BD - DEPRECATED
+ * Usar wpcfact_get_distritos() de ubigeos.php en su lugar
  */
 function wpfc_get_distritos( $prov_codigo, $dept_codigo = '' ) {
-	global $wpdb;
-	$table = $wpdb->prefix . 'hEhUP_distritos';
-	$prov_codigo = sanitize_text_field( $prov_codigo );
-	
-	if ( $dept_codigo ) {
-		$dept_codigo = sanitize_text_field( $dept_codigo );
-		return $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT codigo, nombre, ubigeo FROM `{$table}` WHERE provincia_codigo = %s AND departamento_codigo = %s ORDER BY nombre",
-				$prov_codigo,
-				$dept_codigo
-			),
-			ARRAY_A
-		);
-	} else {
-		return $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT codigo, nombre, ubigeo FROM `{$table}` WHERE provincia_codigo = %s ORDER BY nombre",
-				$prov_codigo
-			),
-			ARRAY_A
-		);
-	}
+	return wpcfact_get_distritos( $dept_codigo, $prov_codigo );
 }
 
 // Ejecutar al activar el plugin
