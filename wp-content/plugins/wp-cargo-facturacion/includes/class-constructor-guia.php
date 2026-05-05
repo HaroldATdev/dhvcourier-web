@@ -206,9 +206,11 @@ class WPC_Facturacion_Constructor_Guia {
 							'cac:AddressLine' => array( 'cbc:Line' => array( '_text' => $direccion_emisor ) )
 						)
 					)
-				),
-			'cac:DespatchLine' => array()
-		);
+				)
+			)
+		),
+		'cac:DespatchLine' => array()
+	);
 		// Líneas de la guía
 		$line_id = 1;
 		foreach ( $envios_datos as $envio ) {
