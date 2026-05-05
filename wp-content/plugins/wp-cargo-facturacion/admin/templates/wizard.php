@@ -323,13 +323,12 @@
 				</div>
 			</div>
 
-		</div>
-
 		<small style="color:#64748b; margin-top:25px; display:block; padding:15px; background:#f1f5f9; border-radius:6px; border-left:3px solid #94a3b8;">(El sistema usará la dirección del emisor como punto de partida y la dirección del destinatario como punto de llegada).</small>
 
 		<div style="background:#fffbeb; border:1px solid #fef3c7; border-left:4px solid #f59e0b; padding:18px; border-radius:6px; margin-top:30px; color:#b45309; line-height:1.6;">
 			<strong>ℹ️ Nota:</strong> Las líneas del comprobante/guía se autogenerarán indicando el servicio y el número de tracking de cada envío seleccionado.
 		</div>
+	</div>
 	</div>
 
 	<script>
