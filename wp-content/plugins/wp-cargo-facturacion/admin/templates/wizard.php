@@ -334,27 +334,27 @@
 		<div style="background:#fffbeb; border:1px solid #fef3c7; border-left:4px solid #f59e0b; padding:18px; border-radius:6px; margin-top:30px; color:#b45309; line-height:1.6;">
 			<strong>ℹ️ Nota:</strong> Las líneas del comprobante/guía se autogenerarán indicando el servicio y el número de tracking de cada envío seleccionado.
 		</div>
+	</div>
 
-		<script>
-			// Mostrar/Ocultar campos de Guía según tipo de documento
-			jQuery('#wpcfact-tipo-doc').on('change', function() {
-				var val = jQuery(this).val();
-				if (val === '09' || val === '31') {
-					jQuery('#wpcfact-campos-guia').show();
-					jQuery('#wpcfact-forma-pago').closest('.wpcfact-input-group').hide();
-					jQuery('.wpcfact-campo-09').toggle(val === '09');
-					jQuery('.wpcfact-campo-31').toggle(val === '31');
-				} else {
-					jQuery('#wpcfact-campos-guia').hide();
-					jQuery('#wpcfact-forma-pago').closest('.wpcfact-input-group').show();
-				}
-			});
-		</script>
+	<script>
+		// Mostrar/Ocultar campos de Guía según tipo de documento
+		jQuery('#wpcfact-tipo-doc').on('change', function() {
+			var val = jQuery(this).val();
+			if (val === '09' || val === '31') {
+				jQuery('#wpcfact-campos-guia').show();
+				jQuery('#wpcfact-forma-pago').closest('.wpcfact-input-group').hide();
+				jQuery('.wpcfact-campo-09').toggle(val === '09');
+				jQuery('.wpcfact-campo-31').toggle(val === '31');
+			} else {
+				jQuery('#wpcfact-campos-guia').hide();
+				jQuery('#wpcfact-forma-pago').closest('.wpcfact-input-group').show();
+			}
+		});
+	</script>
 
-		<div class="wpcfact-actions">
-			<button type="button" id="btn-prev-2" class="wpcfact-btn wpcfact-btn-outline">&larr; Volver a envíos</button>
-			<button type="button" id="btn-emitir" class="wpcfact-btn" style="background: linear-gradient(to right, #10b981, #059669);">Emitir a la SUNAT &rarr;</button>
-		</div>
+	<div class="wpcfact-actions">
+		<button type="button" id="btn-prev-2" class="wpcfact-btn wpcfact-btn-outline">&larr; Volver a envíos</button>
+		<button type="button" id="btn-emitir" class="wpcfact-btn" style="background: linear-gradient(to right, #10b981, #059669);">Emitir a la SUNAT &rarr;</button>
 	</div>
 
 <!-- Paso 4: Resultado -->
