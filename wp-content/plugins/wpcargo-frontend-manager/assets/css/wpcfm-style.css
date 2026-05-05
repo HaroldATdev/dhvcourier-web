@@ -201,9 +201,9 @@ ul.wpccf_uploads li .actions .delete {
     width: unset;
 }
 /* table CSS */
-.no-space {
+/*.no-space {
     white-space: nowrap;
-}
+}*/
 .wpcargo-dashboard #shipment-history td, .wpcargo-dashboard #shipment-history th {
   word-break: initial;
 }
@@ -522,3 +522,26 @@ html[dir="rtl"] #shipments-table-list td {
 	}
 }
 .sidebar-fixed{top:0;}
+
+
+
+/*CSS MEJORA DE DASHBOARD*/
+#shipment-list tbody td:nth-child(3), 
+#shipment-list tbody td:nth-child(5) {
+    max-width: 140px !important;    /* Ajusta el ancho de Remitente y Destinatario */
+    white-space: nowrap !important; /* Evita que el nombre crezca hacia abajo */
+    overflow: hidden !important;    /* Esconde el exceso de texto */
+    text-overflow: ellipsis !important; /* Agrega los puntos suspensivos (...) */
+    display: table-cell;            /* Mantiene el comportamiento de tabla */
+}
+
+/* Efecto opcional: Mostrar nombre completo al pasar el mouse */
+#shipment-list tbody td:nth-child(3):hover, 
+#shipment-list tbody td:nth-child(5):hover {
+    overflow: visible;
+    white-space: normal;
+    background: #fff;
+    position: relative;
+    z-index: 99;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
