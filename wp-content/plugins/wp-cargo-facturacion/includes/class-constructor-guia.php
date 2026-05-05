@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class WPC_Facturacion_Constructor_Guia {
 
-	public static function emitir( $user_id, $envios_ids, $tipo, $doc_num, $nombre, $direccion, $peso, $motivo, $modalidad, $remitente_doc = '', $remitente_nombre = '', $conductor_dni = '', $conductor_nombre = '', $conductor_licencia = '', $vehiculo_placa = '' ) {
+	public static function emitir( $user_id, $envios_ids, $tipo, $doc_num, $nombre, $direccion, $peso, $motivo, $modalidad, $remitente_doc = '', $remitente_nombre = '', $conductor_dni = '', $conductor_nombre = '', $conductor_licencia = '', $vehiculo_placa = '', $ubigeo_partida = '150101', $ubigeo_llegada = '150131', $transportista_09_ruc = '', $transportista_09_nombre = '', $conductor_09_dni = '', $conductor_09_nombre = '', $conductor_09_licencia = '', $vehiculo_09_placa = '' ) {
 		global $wpdb;
 
 		// 1. Obtener RUC emisor
@@ -112,7 +112,7 @@ class WPC_Facturacion_Constructor_Guia {
 					'cac:TransitPeriod' => array( 'cbc:StartDate' => array( '_text' => $fecha_emision ) ),
 					'cac:CarrierParty'  => array(
 						'cac:PartyIdentification' => array(
-							'cbc:ID' => array( '_attributes' => array( 'schemeID' => '6' ) )
+							'cbc:ID' => array( '_attributes' => array( 'schemeID' => '6' ), '_text' => $ruc_emisor )
 						),
 						'cac:PartyLegalEntity' => array(
 							'cbc:CompanyID' => array( '_text' => get_option( 'wpcfact_mtc_autorizacion', '0' ) )
@@ -132,12 +132,12 @@ class WPC_Facturacion_Constructor_Guia {
 				),
 				'cac:Delivery' => array(
 					'cac:DeliveryAddress' => array(
-						'cbc:ID'          => array( '_text' => '150101' ),
+						'cbc:ID'          => array( '_text' => $ubigeo_llegada ),
 						'cac:AddressLine' => array( 'cbc:Line' => array( '_text' => $direccion ) )
 					),
 					'cac:Despatch' => array(
 						'cac:DespatchAddress' => array(
-							'cbc:ID'          => array( '_text' => '150101' ),
+							'cbc:ID'          => array( '_text' => $ubigeo_partida ),
 							'cac:AddressLine' => array( 'cbc:Line' => array( '_text' => $direccion_emisor ) )
 						),
 						'cac:DespatchParty' => array(
@@ -174,16 +174,46 @@ class WPC_Facturacion_Constructor_Guia {
 				'cac:ShipmentStage' => array(
 					'cbc:TransportModeCode' => array( '_text' => $modalidad ),
 					'cac:TransitPeriod'     => array( 'cbc:StartDate' => array( '_text' => $fecha_emision ) ),
+					'cac:DriverPerson' => array(
+						array(
+							'cbc:ID'          => array( '_attributes' => array( 'schemeID' => '1' ), '_text' => $conductor_09_dni ),
+							'cbc:FirstName'   => array( '_text' => $conductor_09_nombre ),
+							'cbc:FamilyName'  => array( '_text' => '' ),
+							'cbc:JobTitle'    => array( '_text' => 'Principal' ),
+							'cac:IdentityDocumentReference' => array(
+								'cbc:ID' => array( '_text' => $conductor_09_licencia )
+							)
+						)
+					),
+					'cac:CarrierParty' => array(
+						'cac:PartyIdentification' => array(
+							'cbc:ID' => array( '_attributes' => array( 'schemeID' => '6' ), '_text' => $transportista_09_ruc ?: $ruc_emisor )
+						),
+						'cac:PartyLegalEntity' => array(
+							'cbc:RegistrationName' => array( '_text' => $transportista_09_nombre ?: $razon_social_emisor )
+						)
+					)
 				),
 				'cac:Delivery' => array(
 					'cac:DeliveryAddress' => array(
-						'cbc:ID'          => array( '_text' => '150101' ),
+						'cbc:ID'          => array( '_text' => $ubigeo_llegada ),
 						'cac:AddressLine' => array( 'cbc:Line' => array( '_text' => $direccion ) )
 					),
 					'cac:Despatch' => array(
 						'cac:DespatchAddress' => array(
-							'cbc:ID'          => array( '_text' => '150101' ),
+							'cbc:ID'          => array( '_text' => $ubigeo_partida ),
 							'cac:AddressLine' => array( 'cbc:Line' => array( '_text' => $direccion_emisor ) )
+						)
+					)
+				),
+				'cac:TransportHandlingUnit' => array(
+					'cac:TransportEquipment' => array(
+						'cbc:ID' => array( '_text' => $vehiculo_09_placa ),
+						'cac:ApplicableTransportMeans' => array(
+							'cbc:RegistrationNationalityID' => array( '_text' => $vehiculo_09_placa )
+						),
+						'cac:ShipmentDocumentReference' => array(
+							'cbc:ID' => array( '_attributes' => array( 'schemeID' => '06' ), '_text' => '0' )
 						)
 					)
 				)

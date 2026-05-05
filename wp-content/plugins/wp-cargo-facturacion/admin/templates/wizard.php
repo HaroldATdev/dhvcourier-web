@@ -178,8 +178,47 @@
 					<input type="number" step="0.01" id="wpcfact-guia-peso" class="wpcfact-input" value="1.00">
 				</div>
 
-				<!-- Solo tipo 09: motivo de traslado -->
-				<div class="wpcfact-campo-09 wpcfact-input-group" style="flex:2; display:none;">
+<!-- Solo tipo 09: remitente, motivo, modalidad -->
+			<div class="wpcfact-campo-09" style="display:none; margin-top:15px; padding-top:12px; border-top:1px solid #e2e8f0;">
+				<h4 style="margin:0 0 10px 0; color:#374151;">Transportista</h4>
+				<div style="display:flex; gap:20px; flex-wrap:wrap;">
+					<div class="wpcfact-input-group" style="flex:1; min-width:140px;">
+						<label>RUC del Transportista</label>
+						<input type="text" id="wpcfact-guia-09-transportista-ruc" class="wpcfact-input" maxlength="11" placeholder="Ej: 20123456789">
+					</div>
+					<div class="wpcfact-input-group" style="flex:2; min-width:220px;">
+						<label>Razón Social del Transportista</label>
+						<input type="text" id="wpcfact-guia-09-transportista-nombre" class="wpcfact-input" placeholder="Nombre de la transportista">
+					</div>
+				</div>
+			</div>
+
+			<!-- Solo tipo 09: conductor -->
+			<div class="wpcfact-campo-09" style="display:none; margin-top:15px; padding-top:12px; border-top:1px solid #e2e8f0;">
+				<h4 style="margin:0 0 10px 0; color:#374151;">Conductor</h4>
+				<div style="display:flex; gap:20px; flex-wrap:wrap;">
+					<div class="wpcfact-input-group" style="flex:1; min-width:120px;">
+						<label>DNI del Conductor</label>
+						<input type="text" id="wpcfact-guia-09-conductor-dni" class="wpcfact-input" maxlength="8" placeholder="12345678">
+					</div>
+					<div class="wpcfact-input-group" style="flex:2; min-width:200px;">
+						<label>Nombre Completo del Conductor</label>
+						<input type="text" id="wpcfact-guia-09-conductor-nombre" class="wpcfact-input" placeholder="Nombres y apellidos">
+					</div>
+					<div class="wpcfact-input-group" style="flex:1; min-width:140px;">
+						<label>Licencia de Conducir</label>
+						<input type="text" id="wpcfact-guia-09-conductor-licencia" class="wpcfact-input" placeholder="A-I-123456789">
+					</div>
+					<div class="wpcfact-input-group" style="flex:1; min-width:120px;">
+						<label>Placa del Vehículo</label>
+						<input type="text" id="wpcfact-guia-09-vehiculo-placa" class="wpcfact-input" placeholder="ABC-123">
+					</div>
+				</div>
+			</div>
+
+			<!-- Solo tipo 09: motivo y modalidad -->
+			<div class="wpcfact-campo-09" style="display:flex; gap:20px; flex-wrap:wrap; margin-top:15px; display:none;">
+				<div class="wpcfact-input-group" style="flex:1;">
 					<label>Motivo de Traslado</label>
 					<select id="wpcfact-guia-motivo" class="wpcfact-select">
 						<option value="01">Venta</option>
@@ -189,16 +228,24 @@
 						<option value="13">Otros</option>
 					</select>
 				</div>
-			</div>
-
-			<!-- Solo tipo 09: modalidad -->
-			<div class="wpcfact-campo-09" style="display:flex; gap:20px; flex-wrap:wrap; margin-top:15px; display:none;">
 				<div class="wpcfact-input-group" style="flex:1;">
 					<label>Modalidad de Traslado</label>
 					<select id="wpcfact-guia-modalidad" class="wpcfact-select">
 						<option value="01">Transporte Público</option>
 						<option value="02">Transporte Privado</option>
 					</select>
+				</div>
+			</div>
+
+			<!-- Ubigeo para tipo 09 y 31 -->
+			<div style="display:flex; gap:20px; flex-wrap:wrap; margin-top:15px; border-top:1px solid #e2e8f0; padding-top:15px;">
+				<div class="wpcfact-input-group" style="flex:1; min-width:120px;">
+					<label>Ubigeo Partida (6 dígitos)</label>
+					<input type="text" id="wpcfact-guia-ubigeo-partida" class="wpcfact-input" maxlength="6" placeholder="150101">
+				</div>
+				<div class="wpcfact-input-group" style="flex:1; min-width:120px;">
+					<label>Ubigeo Llegada (6 dígitos)</label>
+					<input type="text" id="wpcfact-guia-ubigeo-llegada" class="wpcfact-input" maxlength="6" placeholder="150131">
 				</div>
 			</div>
 
