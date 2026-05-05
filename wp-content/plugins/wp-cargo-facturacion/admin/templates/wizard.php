@@ -178,12 +178,12 @@
 					<input type="number" step="0.01" id="wpcfact-guia-peso" class="wpcfact-input" value="1.00">
 				</div>
 		</div>
-						<label>RUC del Transportista</label>
-						<input type="text" id="wpcfact-guia-09-transportista-ruc" class="wpcfact-input" maxlength="11" placeholder="Ej: 20123456789">
-					</div>
-					<div class="wpcfact-input-group" style="flex:2; min-width:220px;">
-						<label>Razón Social del Transportista</label>
-						<input type="text" id="wpcfact-guia-09-transportista-nombre" class="wpcfact-input" placeholder="Nombre de la transportista">
+
+<!-- Solo tipo 09: remitente, motivo, modalidad -->
+		<div class="wpcfact-campo-09" style="display:none; margin-top:30px; padding:20px; background:#fafbfc; border-radius:6px; border-left:4px solid #3b82f6;">
+			<h4 style="margin:0 0 18px 0; color:#1e293b; font-size:16px;">Transportista</h4>
+			<div style="display:flex; gap:20px; flex-wrap:wrap;">
+				<div class="wpcfact-input-group" style="flex:1; min-width:140px;">
 					</div>
 				</div>
 			</div>
