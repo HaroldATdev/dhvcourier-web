@@ -3,6 +3,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+require_once plugin_dir_path( __FILE__ ) . 'ubigeos.php';
+
 class WPC_Facturacion_Constructor_Guia {
 
 	public static function emitir( $user_id, $envios_ids, $tipo, $doc_num, $nombre, $direccion, $peso, $motivo, $modalidad, $remitente_doc = '', $remitente_nombre = '', $conductor_dni = '', $conductor_nombre = '', $conductor_licencia = '', $vehiculo_placa = '', $ubigeo_partida = '150101', $ubigeo_llegada = '150131', $transportista_09_ruc = '', $transportista_09_nombre = '', $conductor_09_dni = '', $conductor_09_nombre = '', $conductor_09_licencia = '', $vehiculo_09_placa = '', $partida_09_departamento = '', $partida_09_provincia = '', $partida_09_distrito = '', $llegada_09_departamento = '', $llegada_09_provincia = '', $llegada_09_distrito = '', $partida_departamento = '', $partida_provincia = '', $partida_distrito = '', $llegada_departamento = '', $llegada_provincia = '', $llegada_distrito = '' ) {
