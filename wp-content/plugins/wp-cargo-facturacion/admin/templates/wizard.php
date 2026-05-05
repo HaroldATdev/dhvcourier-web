@@ -241,17 +241,49 @@
 				</div>
 			</div>
 
-<!-- Ubigeo solo para tipo 09 -->
+<!-- Ubicación solo para tipo 09 -->
 		<div class="wpcfact-campo-09" style="display:none; margin-top:30px; padding:20px; background:#fafbfc; border-radius:6px; border-left:4px solid #3b82f6;">
-			<h4 style="margin:0 0 18px 0; color:#1e293b; font-size:16px;">Ubicación de Partida y Llegada</h4>
-			<div style="display:flex; gap:20px; flex-wrap:wrap;">
+			<h4 style="margin:0 0 18px 0; color:#1e293b; font-size:16px;">Punto de Partida</h4>
+			<div style="display:flex; gap:15px; flex-wrap:wrap;">
 				<div class="wpcfact-input-group" style="flex:1; min-width:120px;">
-					<label>Ubigeo Partida (6 dígitos)</label>
-					<input type="text" id="wpcfact-guia-ubigeo-partida" class="wpcfact-input" maxlength="6" placeholder="150101" value="150101">
+					<label>Departamento</label>
+					<select id="wpcfact-guia-09-partida-departamento" class="wpcfact-select">
+						<option value="">Seleccionar...</option>
+					</select>
 				</div>
 				<div class="wpcfact-input-group" style="flex:1; min-width:120px;">
-					<label>Ubigeo Llegada (6 dígitos)</label>
-					<input type="text" id="wpcfact-guia-ubigeo-llegada" class="wpcfact-input" maxlength="6" placeholder="150131" value="150131">
+					<label>Provincia</label>
+					<select id="wpcfact-guia-09-partida-provincia" class="wpcfact-select">
+						<option value="">Seleccionar...</option>
+					</select>
+				</div>
+				<div class="wpcfact-input-group" style="flex:1; min-width:120px;">
+					<label>Distrito</label>
+					<select id="wpcfact-guia-09-partida-distrito" class="wpcfact-select">
+						<option value="">Seleccionar...</option>
+					</select>
+				</div>
+			</div>
+
+			<h4 style="margin:30px 0 18px 0; color:#1e293b; font-size:16px;">Punto de Llegada</h4>
+			<div style="display:flex; gap:15px; flex-wrap:wrap;">
+				<div class="wpcfact-input-group" style="flex:1; min-width:120px;">
+					<label>Departamento</label>
+					<select id="wpcfact-guia-09-llegada-departamento" class="wpcfact-select">
+						<option value="">Seleccionar...</option>
+					</select>
+				</div>
+				<div class="wpcfact-input-group" style="flex:1; min-width:120px;">
+					<label>Provincia</label>
+					<select id="wpcfact-guia-09-llegada-provincia" class="wpcfact-select">
+						<option value="">Seleccionar...</option>
+					</select>
+				</div>
+				<div class="wpcfact-input-group" style="flex:1; min-width:120px;">
+					<label>Distrito</label>
+					<select id="wpcfact-guia-09-llegada-distrito" class="wpcfact-select">
+						<option value="">Seleccionar...</option>
+					</select>
 				</div>
 			</div>
 		</div>
@@ -345,10 +377,129 @@
 				jQuery('#wpcfact-forma-pago').closest('.wpcfact-input-group').hide();
 				jQuery('.wpcfact-campo-09').toggle(val === '09');
 				jQuery('.wpcfact-campo-31').toggle(val === '31');
+				if (val === '09') {
+					cargarDepartamentos('tipo09-partida');
+					cargarDepartamentos('tipo09-llegada');
+				}
 			} else {
 				jQuery('#wpcfact-campos-guia').hide();
 				jQuery('#wpcfact-forma-pago').closest('.wpcfact-input-group').show();
 			}
+		});
+
+		// Cargar departamentos
+		function cargarDepartamentos(tipo) {
+			jQuery.post(wpcfact_ajax.url, {
+				action: 'wpcfact_cargar_ubicaciones',
+				nonce: wpcfact_ajax.nonce,
+				tipo: 'departamentos'
+			}, function(res) {
+				if (res.success) {
+					var selectId = tipo === 'tipo09-partida' ? '#wpcfact-guia-09-partida-departamento' : '#wpcfact-guia-09-llegada-departamento';
+					var $select = jQuery(selectId);
+					$select.empty().append('<option value="">Seleccionar...</option>');
+					res.data.forEach(function(item) {
+						$select.append('<option value="' + item.codigo + '">' + item.nombre + '</option>');
+					});
+				}
+			}, 'json');
+		}
+
+		// Cargar provincias cuando se selecciona departamento (tipo 09)
+		jQuery('#wpcfact-guia-09-partida-departamento').on('change', function() {
+			var departamento = jQuery(this).val();
+			if (!departamento) {
+				jQuery('#wpcfact-guia-09-partida-provincia').empty().append('<option value="">Seleccionar...</option>');
+				jQuery('#wpcfact-guia-09-partida-distrito').empty().append('<option value="">Seleccionar...</option>');
+				return;
+			}
+			jQuery.post(wpcfact_ajax.url, {
+				action: 'wpcfact_cargar_ubicaciones',
+				nonce: wpcfact_ajax.nonce,
+				tipo: 'provincias',
+				departamento: departamento
+			}, function(res) {
+				if (res.success) {
+					var $select = jQuery('#wpcfact-guia-09-partida-provincia');
+					$select.empty().append('<option value="">Seleccionar...</option>');
+					res.data.forEach(function(item) {
+						$select.append('<option value="' + item.codigo + '">' + item.nombre + '</option>');
+					});
+				}
+			}, 'json');
+		});
+
+		// Cargar distritos cuando se selecciona provincia (tipo 09)
+		jQuery('#wpcfact-guia-09-partida-provincia').on('change', function() {
+			var departamento = jQuery('#wpcfact-guia-09-partida-departamento').val();
+			var provincia = jQuery(this).val();
+			if (!departamento || !provincia) {
+				jQuery('#wpcfact-guia-09-partida-distrito').empty().append('<option value="">Seleccionar...</option>');
+				return;
+			}
+			jQuery.post(wpcfact_ajax.url, {
+				action: 'wpcfact_cargar_ubicaciones',
+				nonce: wpcfact_ajax.nonce,
+				tipo: 'distritos',
+				departamento: departamento,
+				provincia: provincia
+			}, function(res) {
+				if (res.success) {
+					var $select = jQuery('#wpcfact-guia-09-partida-distrito');
+					$select.empty().append('<option value="">Seleccionar...</option>');
+					res.data.forEach(function(item) {
+						$select.append('<option value="' + item.codigo + '">' + item.nombre + '</option>');
+					});
+				}
+			}, 'json');
+		});
+
+		// Repetir para llegada (tipo 09)
+		jQuery('#wpcfact-guia-09-llegada-departamento').on('change', function() {
+			var departamento = jQuery(this).val();
+			if (!departamento) {
+				jQuery('#wpcfact-guia-09-llegada-provincia').empty().append('<option value="">Seleccionar...</option>');
+				jQuery('#wpcfact-guia-09-llegada-distrito').empty().append('<option value="">Seleccionar...</option>');
+				return;
+			}
+			jQuery.post(wpcfact_ajax.url, {
+				action: 'wpcfact_cargar_ubicaciones',
+				nonce: wpcfact_ajax.nonce,
+				tipo: 'provincias',
+				departamento: departamento
+			}, function(res) {
+				if (res.success) {
+					var $select = jQuery('#wpcfact-guia-09-llegada-provincia');
+					$select.empty().append('<option value="">Seleccionar...</option>');
+					res.data.forEach(function(item) {
+						$select.append('<option value="' + item.codigo + '">' + item.nombre + '</option>');
+					});
+				}
+			}, 'json');
+		});
+
+		jQuery('#wpcfact-guia-09-llegada-provincia').on('change', function() {
+			var departamento = jQuery('#wpcfact-guia-09-llegada-departamento').val();
+			var provincia = jQuery(this).val();
+			if (!departamento || !provincia) {
+				jQuery('#wpcfact-guia-09-llegada-distrito').empty().append('<option value="">Seleccionar...</option>');
+				return;
+			}
+			jQuery.post(wpcfact_ajax.url, {
+				action: 'wpcfact_cargar_ubicaciones',
+				nonce: wpcfact_ajax.nonce,
+				tipo: 'distritos',
+				departamento: departamento,
+				provincia: provincia
+			}, function(res) {
+				if (res.success) {
+					var $select = jQuery('#wpcfact-guia-09-llegada-distrito');
+					$select.empty().append('<option value="">Seleccionar...</option>');
+					res.data.forEach(function(item) {
+						$select.append('<option value="' + item.codigo + '">' + item.nombre + '</option>');
+					});
+				}
+			}, 'json');
 		});
 	</script>
 

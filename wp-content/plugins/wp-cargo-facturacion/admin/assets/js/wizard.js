@@ -557,12 +557,24 @@ jQuery(document).ready(function($) {
 
         // Validaciones específicas para tipo 09
         if (tipo === '09') {
-            // Ubicación con ubigeos
-            if (!$('#wpcfact-guia-ubigeo-partida').val() || $('#wpcfact-guia-ubigeo-partida').val().length !== 6) {
-                camposFaltantes.push('Ubigeo Partida (6 dígitos)');
+            // Ubicación con departamento/provincia/distrito
+            if (!$('#wpcfact-guia-09-partida-departamento').val()) {
+                camposFaltantes.push('Departamento Partida');
             }
-            if (!$('#wpcfact-guia-ubigeo-llegada').val() || $('#wpcfact-guia-ubigeo-llegada').val().length !== 6) {
-                camposFaltantes.push('Ubigeo Llegada (6 dígitos)');
+            if (!$('#wpcfact-guia-09-partida-provincia').val()) {
+                camposFaltantes.push('Provincia Partida');
+            }
+            if (!$('#wpcfact-guia-09-partida-distrito').val()) {
+                camposFaltantes.push('Distrito Partida');
+            }
+            if (!$('#wpcfact-guia-09-llegada-departamento').val()) {
+                camposFaltantes.push('Departamento Llegada');
+            }
+            if (!$('#wpcfact-guia-09-llegada-provincia').val()) {
+                camposFaltantes.push('Provincia Llegada');
+            }
+            if (!$('#wpcfact-guia-09-llegada-distrito').val()) {
+                camposFaltantes.push('Distrito Llegada');
             }
             if (!$('#wpcfact-guia-motivo').val()) {
                 camposFaltantes.push('Motivo de Traslado');
@@ -673,8 +685,12 @@ jQuery(document).ready(function($) {
             guia_09_conductor_nombre: $('#wpcfact-guia-09-conductor-nombre').val() || '',
             guia_09_conductor_licencia: $('#wpcfact-guia-09-conductor-licencia').val() || '',
             guia_09_vehiculo_placa: $('#wpcfact-guia-09-vehiculo-placa').val() || '',
-            guia_ubigeo_partida: $('#wpcfact-guia-ubigeo-partida').val() || '150101',
-            guia_ubigeo_llegada: $('#wpcfact-guia-ubigeo-llegada').val() || '150131',
+            guia_09_partida_departamento: $('#wpcfact-guia-09-partida-departamento').val() || '',
+            guia_09_partida_provincia: $('#wpcfact-guia-09-partida-provincia').val() || '',
+            guia_09_partida_distrito: $('#wpcfact-guia-09-partida-distrito').val() || '',
+            guia_09_llegada_departamento: $('#wpcfact-guia-09-llegada-departamento').val() || '',
+            guia_09_llegada_provincia: $('#wpcfact-guia-09-llegada-provincia').val() || '',
+            guia_09_llegada_distrito: $('#wpcfact-guia-09-llegada-distrito').val() || '',
             guia_31_partida_departamento: $('#wpcfact-guia-31-partida-departamento').val() || '',
             guia_31_partida_provincia: $('#wpcfact-guia-31-partida-provincia').val() || '',
             guia_31_partida_distrito: $('#wpcfact-guia-31-partida-distrito').val() || '',
