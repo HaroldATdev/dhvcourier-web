@@ -1,8 +1,102 @@
 <?php
 /**
- * Datos de departamentos, provincias y distritos del Perú
+ * Funciones para acceder a datos de UBIGEOS desde la base de datos
+ * 
+ * Las ubicaciones se almacenan en wp_hEhUP_ubigeos con estructura:
+ * - departamento (2 dígitos)
+ * - provincia (2 dígitos)
+ * - distrito (2 dígitos)
+ * - nombre (string)
+ * 
+ * Este archivo fue actualizado para consultar desde BD en lugar de usar datos hardcodeados
  */
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+/**
+ * Obtiene los departamentos únicos de la BD
+ * 
+ * @return array Array de departamentos con formato: [ '01' => 'Amazonas', ... ]
+ */
+function wpcfact_get_departamentos() {
+	global $wpdb;
+	
+	$table = $wpdb->prefix . 'hEhUP_ubigeos';
+	
+	$results = $wpdb->get_results(
+		"SELECT DISTINCT departamento, nombre FROM `{$table}` 
+		WHERE provincia = '00' AND distrito = '00'
+		ORDER BY departamento ASC"
+	);
+	
+	$departamentos = array();
+	foreach ( $results as $row ) {
+		$departamentos[ $row->departamento ] = $row->nombre;
+	}
+	
+	return $departamentos;
+}
+
+/**
+ * Obtiene las provincias de un departamento
+ * 
+ * @param string $departamento Código de departamento (2 dígitos)
+ * @return array Array de provincias con formato: [ '01' => 'Nombre', ... ]
+ */
+function wpcfact_get_provincias( $departamento ) {
+	global $wpdb;
+	
+	$table = $wpdb->prefix . 'hEhUP_ubigeos';
+	
+	$results = $wpdb->get_results( $wpdb->prepare(
+		"SELECT DISTINCT provincia, nombre FROM `{$table}` 
+		WHERE departamento = %s AND distrito = '00'
+		ORDER BY provincia ASC",
+		$departamento
+	) );
+	
+	$provincias = array();
+	foreach ( $results as $row ) {
+		$provincias[ $row->provincia ] = $row->nombre;
+	}
+	
+	return $provincias;
+}
+
+/**
+ * Obtiene los distritos de una provincia
+ * 
+ * @param string $departamento Código de departamento (2 dígitos)
+ * @param string $provincia Código de provincia (2 dígitos)
+ * @return array Array de distritos con formato: [ '01' => 'Nombre', ... ]
+ */
+function wpcfact_get_distritos( $departamento, $provincia ) {
+	global $wpdb;
+	
+	$table = $wpdb->prefix . 'hEhUP_ubigeos';
+	
+	$results = $wpdb->get_results( $wpdb->prepare(
+		"SELECT DISTINCT distrito, nombre FROM `{$table}` 
+		WHERE departamento = %s AND provincia = %s AND distrito != '00'
+		ORDER BY distrito ASC",
+		$departamento,
+		$provincia
+	) );
+	
+	$distritos = array();
+	foreach ( $results as $row ) {
+		$distritos[ $row->distrito ] = $row->nombre;
+	}
+	
+	return $distritos;
+}
+
+/**
+ * Array de compatibilidad con estructura antigua de ubigeos
+ * Usado por install.php para poblar la tabla BD la primera vez
+ */
 return array(
 	'01' => array(
 		'nombre' => 'AMAZONAS',
@@ -32,3 +126,5 @@ return array(
 		),
 	),
 );
+
+?>

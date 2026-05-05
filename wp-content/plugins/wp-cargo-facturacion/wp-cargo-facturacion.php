@@ -14,8 +14,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 define( 'WPC_FACTURACION_VERSION', '1.0.0' );
 define( 'WPC_FACTURACION_PATH', plugin_dir_path( __FILE__ ) );
 define( 'WPC_FACTURACION_URL', plugin_dir_url( __FILE__ ) );
+define( 'WPC_FACTURACION_FILE', __FILE__ );
 
 // Includes Base
+require_once WPC_FACTURACION_PATH . 'includes/install.php';
 require_once WPC_FACTURACION_PATH . 'includes/functions.php';
 require_once WPC_FACTURACION_PATH . 'includes/class-database.php';
 require_once WPC_FACTURACION_PATH . 'includes/class-apisunat.php';

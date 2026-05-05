@@ -497,37 +497,48 @@ class WPC_Facturacion_Ajax {
 		$tipo = sanitize_text_field( $_POST['tipo'] ?? '' );
 		$departamento = sanitize_text_field( $_POST['departamento'] ?? '' );
 
-		// Incluir datos de ubigeos
-		$ubigeos = include dirname( __FILE__ ) . '/../../includes/ubigeos.php';
+		// Asegúrate de que ubigeos.php esté cargado
+		if ( ! function_exists( 'wpcfact_get_departamentos' ) ) {
+			require_once( WPC_FACTURACION_PATH . 'includes/ubigeos.php' );
+		}
 
 		if ( $tipo === 'departamentos' ) {
+			$departamentos = wpcfact_get_departamentos();
+			if ( empty( $departamentos ) ) {
+				wp_send_json_error( 'No se encontraron departamentos.' );
+			}
 			$response = array();
-			foreach ( $ubigeos as $codigo => $data ) {
+			foreach ( $departamentos as $codigo => $nombre ) {
 				$response[] = array(
 					'codigo' => $codigo,
-					'nombre' => $data['nombre']
+					'nombre' => $nombre
 				);
 			}
 			wp_send_json_success( $response );
 		} elseif ( $tipo === 'provincias' && ! empty( $departamento ) ) {
-			if ( ! isset( $ubigeos[ $departamento ] ) ) {
-				wp_send_json_error( 'Departamento inválido.' );
+			$provincias = wpcfact_get_provincias( $departamento );
+			if ( empty( $provincias ) ) {
+				wp_send_json_error( 'No se encontraron provincias para este departamento.' );
 			}
 			$response = array();
-			foreach ( $ubigeos[ $departamento ]['provincias'] as $codigo => $data ) {
+			foreach ( $provincias as $codigo => $nombre ) {
 				$response[] = array(
 					'codigo' => $codigo,
-					'nombre' => $data['nombre']
+					'nombre' => $nombre
 				);
 			}
 			wp_send_json_success( $response );
 		} elseif ( $tipo === 'distritos' && ! empty( $departamento ) ) {
 			$provincia = sanitize_text_field( $_POST['provincia'] ?? '' );
-			if ( ! isset( $ubigeos[ $departamento ] ) || ! isset( $ubigeos[ $departamento ]['provincias'][ $provincia ] ) ) {
-				wp_send_json_error( 'Departamento o provincia inválidos.' );
+			if ( empty( $provincia ) ) {
+				wp_send_json_error( 'Provincia no especificada.' );
+			}
+			$distritos = wpcfact_get_distritos( $departamento, $provincia );
+			if ( empty( $distritos ) ) {
+				wp_send_json_error( 'No se encontraron distritos para esta provincia.' );
 			}
 			$response = array();
-			foreach ( $ubigeos[ $departamento ]['provincias'][ $provincia ]['distritos'] as $codigo => $nombre ) {
+			foreach ( $distritos as $codigo => $nombre ) {
 				$response[] = array(
 					'codigo' => $codigo,
 					'nombre' => $nombre
