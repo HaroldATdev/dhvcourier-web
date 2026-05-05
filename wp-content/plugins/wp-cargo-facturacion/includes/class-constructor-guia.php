@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class WPC_Facturacion_Constructor_Guia {
 
-	public static function emitir( $user_id, $envios_ids, $tipo, $doc_num, $nombre, $direccion, $peso, $motivo, $modalidad ) {
+	public static function emitir( $user_id, $envios_ids, $tipo, $doc_num, $nombre, $direccion, $peso, $motivo, $modalidad, $remitente_doc = '', $remitente_nombre = '', $conductor_dni = '', $conductor_nombre = '', $conductor_licencia = '', $vehiculo_placa = '' ) {
 		global $wpdb;
 
 		// 1. Obtener RUC emisor
@@ -47,19 +47,9 @@ class WPC_Facturacion_Constructor_Guia {
 			$post = get_post( $envio_id );
 			if ( ! $post ) continue;
 
-			$freight_raw = get_post_meta( $envio_id, 'costo_envio', true );
-			if ( empty( $freight_raw ) ) $freight_raw = get_post_meta( $envio_id, 'monto', true );
-			if ( empty( $freight_raw ) ) $freight_raw = get_post_meta( $envio_id, 'wpcargo_total_freight', true );
-			$monto = floatval( preg_replace( '/[^0-9.]/', '', $freight_raw ) );
-			
-			if ( $monto <= 0 ) continue;
-
-			$total_general += $monto;
-
 			$envios_datos[] = array(
-				'id'          => $envio_id,
-				'tracking'    => $post->post_title,
-				'monto'       => $monto,
+				'id'       => $envio_id,
+				'tracking' => $post->post_title,
 			);
 		}
 
@@ -113,8 +103,8 @@ class WPC_Facturacion_Constructor_Guia {
 			'cac:Shipment' => ( $tipo === '31' )
 			? array(
 				// Guía de Transportista (tipo 31)
-				'cbc:ID'                 => array( '_text' => 'SUNAT_Envio' ),
-				'cbc:GrossWeightMeasure' => array( '_attributes' => array( 'unitCode' => 'KGM' ), '_text' => number_format( $peso, 3, '.', '' ) ),
+				'cbc:ID'                  => array( '_text' => 'SUNAT_Envio' ),
+				'cbc:GrossWeightMeasure'  => array( '_attributes' => array( 'unitCode' => 'KGM' ), '_text' => number_format( $peso, 3, '.', '' ) ),
 				'cbc:SpecialInstructions' => array(
 					array( '_text' => 'SUNAT_Envio_IndicadorPagadorFlete_Remitente' )
 				),
@@ -122,12 +112,23 @@ class WPC_Facturacion_Constructor_Guia {
 					'cac:TransitPeriod' => array( 'cbc:StartDate' => array( '_text' => $fecha_emision ) ),
 					'cac:CarrierParty'  => array(
 						'cac:PartyIdentification' => array(
-							'cbc:ID' => array( '_attributes' => array( 'schemeID' => '6' ), '_text' => $ruc_emisor )
+							'cbc:ID' => array( '_attributes' => array( 'schemeID' => '6' ) )
 						),
 						'cac:PartyLegalEntity' => array(
-							'cbc:CompanyID' => array( '_text' => get_option( 'wpcfact_mtc_autorizacion', $ruc_emisor ) )
+							'cbc:CompanyID' => array( '_text' => get_option( 'wpcfact_mtc_autorizacion', '0' ) )
 						)
 					),
+					'cac:DriverPerson' => array(
+						array(
+							'cbc:ID'          => array( '_attributes' => array( 'schemeID' => '1' ), '_text' => $conductor_dni ),
+							'cbc:FirstName'   => array( '_text' => $conductor_nombre ),
+							'cbc:FamilyName'  => array( '_text' => '' ),
+							'cbc:JobTitle'    => array( '_text' => 'Principal' ),
+							'cac:IdentityDocumentReference' => array(
+								'cbc:ID' => array( '_text' => $conductor_licencia )
+							)
+						)
+					)
 				),
 				'cac:Delivery' => array(
 					'cac:DeliveryAddress' => array(
@@ -141,11 +142,25 @@ class WPC_Facturacion_Constructor_Guia {
 						),
 						'cac:DespatchParty' => array(
 							'cac:PartyIdentification' => array(
-								'cbc:ID' => array( '_attributes' => array( 'schemeID' => '6' ), '_text' => $ruc_emisor )
+								'cbc:ID' => array(
+									'_attributes' => array( 'schemeID' => ( strlen( $remitente_doc ) === 11 ? '6' : '1' ) ),
+									'_text'       => $remitente_doc ?: $ruc_emisor
+								)
 							),
 							'cac:PartyLegalEntity' => array(
-								'cbc:RegistrationName' => array( '_text' => $razon_social_emisor )
+								'cbc:RegistrationName' => array( '_text' => $remitente_nombre ?: $razon_social_emisor )
 							)
+						)
+					)
+				),
+				'cac:TransportHandlingUnit' => array(
+					'cac:TransportEquipment' => array(
+						'cbc:ID' => array( '_text' => $vehiculo_placa ),
+						'cac:ApplicableTransportMeans' => array(
+							'cbc:RegistrationNationalityID' => array( '_text' => $vehiculo_placa )
+						),
+						'cac:ShipmentDocumentReference' => array(
+							'cbc:ID' => array( '_attributes' => array( 'schemeID' => '06' ), '_text' => '0' )
 						)
 					)
 				)
@@ -180,13 +195,13 @@ class WPC_Facturacion_Constructor_Guia {
 		$line_id = 1;
 		foreach ( $envios_datos as $envio ) {
 			$document_body['cac:DespatchLine'][] = array(
-				'cbc:ID' => array( '_text' => $line_id ),
+				'cbc:ID'                => array( '_text' => $line_id ),
 				'cbc:DeliveredQuantity' => array( '_attributes' => array( 'unitCode' => 'NIU' ), '_text' => 1 ),
 				'cac:OrderLineReference' => array(
 					'cbc:LineID' => array( '_text' => $line_id )
 				),
 				'cac:Item' => array(
-					'cbc:Name' => array( '_text' => 'Servicio de courier - Tracking: ' . $envio['tracking'] )
+					'cbc:Description' => array( '_text' => 'Encomienda - Tracking: ' . $envio['tracking'] )
 				)
 			);
 			$line_id++;

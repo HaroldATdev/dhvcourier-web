@@ -284,9 +284,15 @@ class WPC_Facturacion_Ajax {
 		$nombre     = sanitize_text_field( $_POST['nombre'] ?? '' );
 		$direccion  = sanitize_text_field( $_POST['direccion'] ?? '' );
 		$forma_pago = sanitize_text_field( $_POST['forma_pago'] ?? 'Contado' );
-		$guia_peso      = sanitize_text_field( $_POST['guia_peso'] ?? '1.00' );
-		$guia_motivo    = sanitize_text_field( $_POST['guia_motivo'] ?? '01' );
-		$guia_modalidad = sanitize_text_field( $_POST['guia_modalidad'] ?? '01' );
+		$guia_peso               = sanitize_text_field( $_POST['guia_peso'] ?? '1.00' );
+		$guia_motivo             = sanitize_text_field( $_POST['guia_motivo'] ?? '01' );
+		$guia_modalidad          = sanitize_text_field( $_POST['guia_modalidad'] ?? '01' );
+		$guia_remitente_doc      = sanitize_text_field( $_POST['guia_remitente_doc'] ?? '' );
+		$guia_remitente_nombre   = sanitize_text_field( $_POST['guia_remitente_nombre'] ?? '' );
+		$guia_conductor_dni      = sanitize_text_field( $_POST['guia_conductor_dni'] ?? '' );
+		$guia_conductor_nombre   = sanitize_text_field( $_POST['guia_conductor_nombre'] ?? '' );
+		$guia_conductor_licencia = sanitize_text_field( $_POST['guia_conductor_licencia'] ?? '' );
+		$guia_vehiculo_placa     = sanitize_text_field( $_POST['guia_vehiculo_placa'] ?? '' );
 
 		// Modo libre: líneas manuales
 		$lineas_libres = array();
@@ -339,7 +345,7 @@ class WPC_Facturacion_Ajax {
 			if ( ! class_exists( 'WPC_Facturacion_Constructor_Guia' ) ) {
 				require_once dirname( __FILE__ ) . '/../../includes/class-constructor-guia.php';
 			}
-			$resultado = WPC_Facturacion_Constructor_Guia::emitir( $user_id, $envios, $tipo, $doc_num, $nombre, $direccion, $guia_peso, $guia_motivo, $guia_modalidad );
+			$resultado = WPC_Facturacion_Constructor_Guia::emitir( $user_id, $envios, $tipo, $doc_num, $nombre, $direccion, $guia_peso, $guia_motivo, $guia_modalidad, $guia_remitente_doc, $guia_remitente_nombre, $guia_conductor_dni, $guia_conductor_nombre, $guia_conductor_licencia, $guia_vehiculo_placa );
 		} elseif ( 'libre' === $modo ) {
 			$resultado = WPC_Facturacion_Constructor::emitir_libre( $user_id, $lineas_libres, $tipo, $doc_num, $nombre, $direccion, $forma_pago );
 		} else {

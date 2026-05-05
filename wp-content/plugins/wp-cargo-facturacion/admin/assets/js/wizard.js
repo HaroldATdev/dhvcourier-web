@@ -560,7 +560,13 @@ jQuery(document).ready(function($) {
             forma_pago: $('#wpcfact-forma-pago').val(),
             guia_peso: $('#wpcfact-guia-peso').val(),
             guia_motivo: $('#wpcfact-guia-motivo').val(),
-            guia_modalidad: $('#wpcfact-guia-modalidad').val()
+            guia_modalidad: $('#wpcfact-guia-modalidad').val(),
+            guia_remitente_doc: $('#wpcfact-guia-remitente-doc').val() || '',
+            guia_remitente_nombre: $('#wpcfact-guia-remitente-nombre').val() || '',
+            guia_conductor_dni: $('#wpcfact-guia-conductor-dni').val() || '',
+            guia_conductor_nombre: $('#wpcfact-guia-conductor-nombre').val() || '',
+            guia_conductor_licencia: $('#wpcfact-guia-conductor-licencia').val() || '',
+            guia_vehiculo_placa: $('#wpcfact-guia-vehiculo-placa').val() || ''
         };
 
         showStep(4);

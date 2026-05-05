@@ -170,12 +170,16 @@
 
 		<div id="wpcfact-campos-guia" style="display:none; margin-top:20px; padding:15px; border:1px solid #cbd5e1; border-radius:6px; background:#f8fafc;">
 			<h3 style="margin-top:0;">Datos Adicionales para Guía</h3>
+
+			<!-- Campo común: peso -->
 			<div style="display:flex; gap:20px; flex-wrap:wrap;">
-				<div class="wpcfact-input-group" style="flex:1;">
+				<div class="wpcfact-input-group" style="flex:1; min-width:140px;">
 					<label>Peso Bruto Total (KGM)</label>
 					<input type="number" step="0.01" id="wpcfact-guia-peso" class="wpcfact-input" value="1.00">
 				</div>
-				<div class="wpcfact-input-group" style="flex:1;">
+
+				<!-- Solo tipo 09: motivo de traslado -->
+				<div class="wpcfact-campo-09 wpcfact-input-group" style="flex:2; display:none;">
 					<label>Motivo de Traslado</label>
 					<select id="wpcfact-guia-motivo" class="wpcfact-select">
 						<option value="01">Venta</option>
@@ -186,7 +190,9 @@
 					</select>
 				</div>
 			</div>
-			<div style="display:flex; gap:20px; flex-wrap:wrap; margin-top:15px;">
+
+			<!-- Solo tipo 09: modalidad -->
+			<div class="wpcfact-campo-09" style="display:flex; gap:20px; flex-wrap:wrap; margin-top:15px; display:none;">
 				<div class="wpcfact-input-group" style="flex:1;">
 					<label>Modalidad de Traslado</label>
 					<select id="wpcfact-guia-modalidad" class="wpcfact-select">
@@ -195,7 +201,46 @@
 					</select>
 				</div>
 			</div>
-			<small style="color:#64748b; margin-top:10px; display:block;">(El sistema usará la dirección fiscal como punto de partida y la dirección del cliente como punto de llegada por defecto).</small>
+
+			<!-- Solo tipo 31: remitente -->
+			<div class="wpcfact-campo-31" style="display:none; margin-top:15px; padding-top:12px; border-top:1px solid #e2e8f0;">
+				<h4 style="margin:0 0 10px 0; color:#374151;">Datos del Remitente <small style="font-weight:normal; color:#6b7280;">(quien entrega la carga al transportista)</small></h4>
+				<div style="display:flex; gap:20px; flex-wrap:wrap;">
+					<div class="wpcfact-input-group" style="flex:1; min-width:140px;">
+						<label>RUC / DNI del Remitente</label>
+						<input type="text" id="wpcfact-guia-remitente-doc" class="wpcfact-input" maxlength="11" placeholder="RUC o DNI">
+					</div>
+					<div class="wpcfact-input-group" style="flex:2; min-width:220px;">
+						<label>Nombre / Razón Social del Remitente</label>
+						<input type="text" id="wpcfact-guia-remitente-nombre" class="wpcfact-input" placeholder="Razón social o nombre completo">
+					</div>
+				</div>
+			</div>
+
+			<!-- Solo tipo 31: conductor -->
+			<div class="wpcfact-campo-31" style="display:none; margin-top:15px; padding-top:12px; border-top:1px solid #e2e8f0;">
+				<h4 style="margin:0 0 10px 0; color:#374151;">Datos del Conductor y Vehículo</h4>
+				<div style="display:flex; gap:20px; flex-wrap:wrap;">
+					<div class="wpcfact-input-group" style="flex:1; min-width:120px;">
+						<label>DNI del Conductor</label>
+						<input type="text" id="wpcfact-guia-conductor-dni" class="wpcfact-input" maxlength="8" placeholder="12345678">
+					</div>
+					<div class="wpcfact-input-group" style="flex:2; min-width:200px;">
+						<label>Nombre completo del Conductor</label>
+						<input type="text" id="wpcfact-guia-conductor-nombre" class="wpcfact-input" placeholder="Nombre y apellidos">
+					</div>
+					<div class="wpcfact-input-group" style="flex:1; min-width:140px;">
+						<label>Licencia de Conducir</label>
+						<input type="text" id="wpcfact-guia-conductor-licencia" class="wpcfact-input" placeholder="A-I-123456789">
+					</div>
+					<div class="wpcfact-input-group" style="flex:1; min-width:120px;">
+						<label>Placa del Vehículo</label>
+						<input type="text" id="wpcfact-guia-vehiculo-placa" class="wpcfact-input" placeholder="ABC-123">
+					</div>
+				</div>
+			</div>
+
+			<small style="color:#64748b; margin-top:10px; display:block;">(El sistema usará la dirección del emisor como punto de partida y la dirección del destinatario como punto de llegada).</small>
 		</div>
 
 		<div style="background:#fffbeb; border:1px solid #fef3c7; border-left:4px solid #f59e0b; padding:15px; border-radius:6px; margin-top:20px; color:#b45309;">
@@ -206,12 +251,14 @@
 			// Mostrar/Ocultar campos de Guía según tipo de documento
 			jQuery('#wpcfact-tipo-doc').on('change', function() {
 				var val = jQuery(this).val();
-				if(val === '09' || val === '31') {
+				if (val === '09' || val === '31') {
 					jQuery('#wpcfact-campos-guia').show();
-					jQuery('#wpcfact-forma-pago').parent().hide();
+					jQuery('#wpcfact-forma-pago').closest('.wpcfact-input-group').hide();
+					jQuery('.wpcfact-campo-09').toggle(val === '09');
+					jQuery('.wpcfact-campo-31').toggle(val === '31');
 				} else {
 					jQuery('#wpcfact-campos-guia').hide();
-					jQuery('#wpcfact-forma-pago').parent().show();
+					jQuery('#wpcfact-forma-pago').closest('.wpcfact-input-group').show();
 				}
 			});
 		</script>
