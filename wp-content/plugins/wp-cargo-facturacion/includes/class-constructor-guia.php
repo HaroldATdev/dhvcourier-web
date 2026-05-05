@@ -138,6 +138,14 @@ class WPC_Facturacion_Constructor_Guia {
 						'cac:DespatchAddress' => array(
 							'cbc:ID'          => array( '_text' => '150101' ),
 							'cac:AddressLine' => array( 'cbc:Line' => array( '_text' => $direccion_emisor ) )
+						),
+						'cac:DespatchParty' => array(
+							'cac:PartyIdentification' => array(
+								'cbc:ID' => array( '_attributes' => array( 'schemeID' => '6' ), '_text' => $ruc_emisor )
+							),
+							'cac:PartyLegalEntity' => array(
+								'cbc:RegistrationName' => array( '_text' => $razon_social_emisor )
+							)
 						)
 					)
 				)
