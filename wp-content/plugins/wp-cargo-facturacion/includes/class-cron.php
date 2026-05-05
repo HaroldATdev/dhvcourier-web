@@ -5,6 +5,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class WPC_Facturacion_Cron {
 
+	private static function has_exception_data( $api_response ) {
+		if ( ! is_array( $api_response ) ) {
+			return false;
+		}
+
+		$keys_directas = array( 'exceptions', 'exception', 'faults', 'errors', 'error' );
+		foreach ( $keys_directas as $k ) {
+			if ( isset( $api_response[ $k ] ) && ! empty( $api_response[ $k ] ) ) {
+				return true;
+			}
+		}
+
+		$texto = wp_json_encode( $api_response );
+		if ( is_string( $texto ) && ( stripos( $texto, 'ExceptionXsd' ) !== false || stripos( $texto, 'exception' ) !== false ) ) {
+			return true;
+		}
+
+		return false;
+	}
+
 	public static function init() {
 		add_filter( 'cron_schedules', array( __CLASS__, 'add_cron_intervals' ) );
 		add_action( 'wpcfact_polling_estado_sunat', array( __CLASS__, 'polling_estado_comprobantes' ) );
@@ -31,8 +51,13 @@ class WPC_Facturacion_Cron {
 			$api_response = WPC_Facturacion_APISunat::get_by_id( $comp->document_id );
 
 			if ( ! is_wp_error( $api_response ) && isset( $api_response['status'] ) ) {
-				$status = $api_response['status'];
-				
+				$status = strtoupper( trim( (string) $api_response['status'] ) );
+
+				$has_exception = self::has_exception_data( $api_response );
+				if ( $has_exception ) {
+					$status = 'ERROR';
+				}
+
 				if ( $status !== 'PENDIENTE' ) {
 					$update_data = array(
 						'estado' => $status,
@@ -46,6 +71,8 @@ class WPC_Facturacion_Cron {
 					}
 					if ( isset( $api_response['faults'] ) && ! empty( $api_response['faults'] ) ) {
 						$update_data['faults'] = wp_json_encode( $api_response['faults'] );
+					} elseif ( $has_exception ) {
+						$update_data['faults'] = wp_json_encode( $api_response );
 					}
 
 					WPC_Facturacion_Comprobante::actualizar( $comp->id, $update_data );

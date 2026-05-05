@@ -186,6 +186,23 @@ class WPC_Facturacion_Constructor_Guia {
 			);
 		}
 
+		$status_api = strtoupper( trim( (string) $api_response['status'] ) );
+		$has_exception = false;
+		foreach ( array( 'exceptions', 'exception', 'faults', 'errors', 'error' ) as $k ) {
+			if ( isset( $api_response[ $k ] ) && ! empty( $api_response[ $k ] ) ) {
+				$has_exception = true;
+				break;
+			}
+		}
+		if ( ! $has_exception ) {
+			$api_texto = wp_json_encode( $api_response );
+			if ( is_string( $api_texto ) && ( stripos( $api_texto, 'ExceptionXsd' ) !== false || stripos( $api_texto, 'exception' ) !== false ) ) {
+				$has_exception = true;
+			}
+		}
+
+		$status_guardar = $has_exception ? 'ERROR' : $status_api;
+
 		// 7. Guardar en Base de Datos Local
 		$datos_guardar = array(
 			'tipo'             => $tipo,
@@ -193,7 +210,7 @@ class WPC_Facturacion_Constructor_Guia {
 			'correlativo'      => $correlativo,
 			'file_name'        => $file_name,
 			'document_id'      => $api_response['documentId'],
-			'estado'           => $api_response['status'],
+			'estado'           => $status_guardar,
 			'cliente_doc_tipo' => $scheme_id,
 			'cliente_doc_num'  => $doc_num,
 			'cliente_nombre'   => $nombre,
@@ -213,7 +230,7 @@ class WPC_Facturacion_Constructor_Guia {
 			'id'          => $comprobante_id,
 			'serie'       => $serie,
 			'correlativo' => $correlativo,
-			'estado'      => $api_response['status'],
+			'estado'      => $status_guardar,
 		);
 	}
 }
