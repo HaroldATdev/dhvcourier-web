@@ -282,8 +282,8 @@
 					<label>Distrito</label>
 					<input type="text" id="wpcfact-guia-31-llegada-distrito" class="wpcfact-input" placeholder="Ej: AREQUIPA">
 				</div>
-				</div>
 			</div>
+		</div>
 
 			<!-- Solo tipo 31: remitente -->
 			<div class="wpcfact-campo-31" style="display:none; margin-top:30px; padding:20px; background:#fafbfc; border-radius:6px; border-left:4px solid #8b5cf6;">
