@@ -134,17 +134,13 @@ class WPC_Facturacion_Constructor_Guia {
 				),
 				'cac:Delivery' => array(
 					'cac:DeliveryAddress' => array(
-						'cbc:CountrySubentity' => array( '_text' => wpcfact_get_ubicacion_nombre( $llegada_departamento, '00', '00' ) ),
-						'cbc:CityName'        => array( '_text' => wpcfact_get_ubicacion_nombre( $llegada_departamento, $llegada_provincia, '00' ) ),
-						'cbc:District'        => array( '_text' => wpcfact_get_ubicacion_nombre( $llegada_departamento, $llegada_provincia, $llegada_distrito ) ),
-						'cac:AddressLine'     => array( 'cbc:Line' => array( '_text' => $direccion ) )
+						'cbc:ID'          => array( '_text' => wpcfact_build_ubigeo_code( $llegada_departamento, $llegada_provincia, $llegada_distrito ) ),
+						'cac:AddressLine' => array( 'cbc:Line' => array( '_text' => $direccion ) )
 					),
 					'cac:Despatch' => array(
 						'cac:DespatchAddress' => array(
-							'cbc:CountrySubentity' => array( '_text' => wpcfact_get_ubicacion_nombre( $partida_departamento, '00', '00' ) ),
-							'cbc:CityName'        => array( '_text' => wpcfact_get_ubicacion_nombre( $partida_departamento, $partida_provincia, '00' ) ),
-							'cbc:District'        => array( '_text' => wpcfact_get_ubicacion_nombre( $partida_departamento, $partida_provincia, $partida_distrito ) ),
-							'cac:AddressLine'     => array( 'cbc:Line' => array( '_text' => $direccion_emisor ) )
+							'cbc:ID'          => array( '_text' => wpcfact_build_ubigeo_code( $partida_departamento, $partida_provincia, $partida_distrito ) ),
+							'cac:AddressLine' => array( 'cbc:Line' => array( '_text' => $direccion_emisor ) )
 						),
 						'cac:DespatchParty' => array(
 							'cac:PartyIdentification' => array(
@@ -173,9 +169,8 @@ class WPC_Facturacion_Constructor_Guia {
 			)
 			: array(
 				// Guía de Remisión Remitente (tipo 09)
-				'cbc:ID'                 => array( '_text' => '1' ),
+				'cbc:ID'                 => array( '_text' => 'SUNAT_Envio' ),
 				'cbc:HandlingCode'       => array( '_text' => $motivo ),
-				'cbc:Information'        => array( '_text' => 'Traslado de encomiendas' ),
 				'cbc:GrossWeightMeasure' => array( '_attributes' => array( 'unitCode' => 'KGM' ), '_text' => number_format( $peso, 3, '.', '' ) ),
 				'cac:ShipmentStage' => array(
 					'cbc:TransportModeCode' => array( '_text' => $modalidad ),
@@ -202,35 +197,18 @@ class WPC_Facturacion_Constructor_Guia {
 				),
 				'cac:Delivery' => array(
 					'cac:DeliveryAddress' => array(
-						'cbc:CountrySubentity' => array( '_text' => wpcfact_get_ubicacion_nombre( $llegada_09_departamento, '00', '00' ) ),
-						'cbc:CityName'        => array( '_text' => wpcfact_get_ubicacion_nombre( $llegada_09_departamento, $llegada_09_provincia, '00' ) ),
-						'cbc:District'        => array( '_text' => wpcfact_get_ubicacion_nombre( $llegada_09_departamento, $llegada_09_provincia, $llegada_09_distrito ) ),
-						'cac:AddressLine'     => array( 'cbc:Line' => array( '_text' => $direccion ) )
+						'cbc:ID'          => array( '_text' => wpcfact_build_ubigeo_code( $llegada_09_departamento, $llegada_09_provincia, $llegada_09_distrito ) ),
+						'cac:AddressLine' => array( 'cbc:Line' => array( '_text' => $direccion ) )
 					),
 					'cac:Despatch' => array(
 						'cac:DespatchAddress' => array(
-							'cbc:CountrySubentity' => array( '_text' => wpcfact_get_ubicacion_nombre( $partida_09_departamento, '00', '00' ) ),
-							'cbc:CityName'        => array( '_text' => wpcfact_get_ubicacion_nombre( $partida_09_departamento, $partida_09_provincia, '00' ) ),
-							'cbc:District'        => array( '_text' => wpcfact_get_ubicacion_nombre( $partida_09_departamento, $partida_09_provincia, $partida_09_distrito ) ),
-							'cac:AddressLine'     => array( 'cbc:Line' => array( '_text' => $direccion_emisor ) )
+							'cbc:ID'          => array( '_text' => wpcfact_build_ubigeo_code( $partida_09_departamento, $partida_09_provincia, $partida_09_distrito ) ),
+							'cac:AddressLine' => array( 'cbc:Line' => array( '_text' => $direccion_emisor ) )
 						)
 					)
 				),
-				'cac:TransportHandlingUnit' => array(
-					'cac:TransportEquipment' => array(
-						'cbc:ID' => array( '_text' => $vehiculo_09_placa ),
-						'cac:ApplicableTransportMeans' => array(
-							'cbc:RegistrationNationalityID' => array( '_text' => $vehiculo_09_placa )
-						),
-						'cac:ShipmentDocumentReference' => array(
-							'cbc:ID' => array( '_attributes' => array( 'schemeID' => '06' ), '_text' => '0' )
-						)
-					)
-				)
-			),
 			'cac:DespatchLine' => array()
 		);
-
 		// Líneas de la guía
 		$line_id = 1;
 		foreach ( $envios_datos as $envio ) {

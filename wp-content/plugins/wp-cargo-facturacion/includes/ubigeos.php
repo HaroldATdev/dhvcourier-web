@@ -81,19 +81,24 @@ function wpcfact_get_distritos( $departamento, $provincia ) {
 
 /**
  * Obtiene el nombre de una ubicación (departamento, provincia o distrito)
+ * Si no encuentra, retorna el código como fallback
  * @param string $departamento Código de departamento
  * @param string $provincia Código de provincia (opcional)
  * @param string $distrito Código de distrito (opcional)
- * @return string Nombre de la ubicación
+ * @return string Nombre de la ubicación o código si no se encuentra
  */
 function wpcfact_get_ubicacion_nombre( $departamento, $provincia = '00', $distrito = '00' ) {
 	global $wpdb;
 	$table = $wpdb->prefix . 'ubigeos';
 	
-	// Sanitizar inputs
-	$departamento = str_pad( $departamento, 2, '0', STR_PAD_LEFT );
-	$provincia = str_pad( $provincia, 2, '0', STR_PAD_LEFT );
-	$distrito = str_pad( $distrito, 2, '0', STR_PAD_LEFT );
+	if ( empty( $departamento ) ) {
+		return 'DESCONOCIDO';
+	}
+	
+	// Sanitizar inputs - asegurar formato XX
+	$departamento = str_pad( trim( $departamento ), 2, '0', STR_PAD_LEFT );
+	$provincia = str_pad( trim( $provincia ), 2, '0', STR_PAD_LEFT );
+	$distrito = str_pad( trim( $distrito ), 2, '0', STR_PAD_LEFT );
 	
 	// Buscar registro exacto
 	$result = $wpdb->get_row( $wpdb->prepare(
@@ -139,7 +144,25 @@ function wpcfact_get_ubicacion_nombre( $departamento, $provincia = '00', $distri
 	// Log de error para debugging
 	error_log( "ubigeos.php: No se encontró ubicación para {$departamento}-{$provincia}-{$distrito}" );
 	
-	return '';
+	// Fallback: si no encuentra nada, retornar código
+	return $departamento . '-' . $provincia . '-' . $distrito;
+}
+
+/**
+ * Construye el código UBIGEO en formato XXXXXX para SUNAT
+ * Ejemplo: (15, 01, 01) → "150101"
+ * @param string $departamento Código de departamento (XX)
+ * @param string $provincia Código de provincia (YY)
+ * @param string $distrito Código de distrito (ZZ)
+ * @return string Ubigeo en formato XXXXXX
+ */
+function wpcfact_build_ubigeo_code( $departamento = '15', $provincia = '01', $distrito = '01' ) {
+	// Asegurar formato de dos dígitos
+	$departamento = str_pad( trim( $departamento ), 2, '0', STR_PAD_LEFT );
+	$provincia = str_pad( trim( $provincia ), 2, '0', STR_PAD_LEFT );
+	$distrito = str_pad( trim( $distrito ), 2, '0', STR_PAD_LEFT );
+	
+	return $departamento . $provincia . $distrito;
 }
 
 return array(
