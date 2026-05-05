@@ -241,11 +241,11 @@
 			<div style="display:flex; gap:20px; flex-wrap:wrap; margin-top:15px; border-top:1px solid #e2e8f0; padding-top:15px;">
 				<div class="wpcfact-input-group" style="flex:1; min-width:120px;">
 					<label>Ubigeo Partida (6 dígitos)</label>
-					<input type="text" id="wpcfact-guia-ubigeo-partida" class="wpcfact-input" maxlength="6" placeholder="150101">
+					<input type="text" id="wpcfact-guia-ubigeo-partida" class="wpcfact-input" maxlength="6" placeholder="150101" value="150101">
 				</div>
 				<div class="wpcfact-input-group" style="flex:1; min-width:120px;">
 					<label>Ubigeo Llegada (6 dígitos)</label>
-					<input type="text" id="wpcfact-guia-ubigeo-llegada" class="wpcfact-input" maxlength="6" placeholder="150131">
+					<input type="text" id="wpcfact-guia-ubigeo-llegada" class="wpcfact-input" maxlength="6" placeholder="150131" value="150131">
 				</div>
 			</div>
 

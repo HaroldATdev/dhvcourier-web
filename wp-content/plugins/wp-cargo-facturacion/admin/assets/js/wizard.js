@@ -545,7 +545,92 @@ jQuery(document).ready(function($) {
     });
 
     // Emitir
+    // Validar campos obligatorios según tipo de documento
+    function validarCamposGuia() {
+        const tipo = $('#wpcfact-tipo-doc').val();
+        const camposFaltantes = [];
+
+        // Campos comunes para guías
+        if (!$('#wpcfact-guia-peso').val() || parseFloat($('#wpcfact-guia-peso').val()) <= 0) {
+            camposFaltantes.push('Peso Bruto Total (debe ser mayor a 0)');
+        }
+        if (!$('#wpcfact-guia-ubigeo-partida').val() || $('#wpcfact-guia-ubigeo-partida').val().length !== 6) {
+            camposFaltantes.push('Ubigeo Partida (6 dígitos)');
+        }
+        if (!$('#wpcfact-guia-ubigeo-llegada').val() || $('#wpcfact-guia-ubigeo-llegada').val().length !== 6) {
+            camposFaltantes.push('Ubigeo Llegada (6 dígitos)');
+        }
+
+        // Validaciones específicas para tipo 09
+        if (tipo === '09') {
+            if (!$('#wpcfact-guia-motivo').val()) {
+                camposFaltantes.push('Motivo de Traslado');
+            }
+            if (!$('#wpcfact-guia-modalidad').val()) {
+                camposFaltantes.push('Modalidad de Traslado');
+            }
+            if (!$('#wpcfact-guia-09-transportista-ruc').val()) {
+                camposFaltantes.push('RUC del Transportista');
+            }
+            if (!$('#wpcfact-guia-09-transportista-nombre').val()) {
+                camposFaltantes.push('Razón Social del Transportista');
+            }
+            if (!$('#wpcfact-guia-09-conductor-dni').val() || $('#wpcfact-guia-09-conductor-dni').val().length !== 8) {
+                camposFaltantes.push('DNI del Conductor (8 dígitos)');
+            }
+            if (!$('#wpcfact-guia-09-conductor-nombre').val()) {
+                camposFaltantes.push('Nombre Completo del Conductor');
+            }
+            if (!$('#wpcfact-guia-09-conductor-licencia').val()) {
+                camposFaltantes.push('Licencia de Conducir');
+            }
+            if (!$('#wpcfact-guia-09-vehiculo-placa').val()) {
+                camposFaltantes.push('Placa del Vehículo');
+            }
+        }
+
+        // Validaciones específicas para tipo 31
+        if (tipo === '31') {
+            if (!$('#wpcfact-guia-remitente-doc').val()) {
+                camposFaltantes.push('RUC / DNI del Remitente');
+            }
+            if (!$('#wpcfact-guia-remitente-nombre').val()) {
+                camposFaltantes.push('Nombre / Razón Social del Remitente');
+            }
+            if (!$('#wpcfact-guia-conductor-dni').val() || $('#wpcfact-guia-conductor-dni').val().length !== 8) {
+                camposFaltantes.push('DNI del Conductor (8 dígitos)');
+            }
+            if (!$('#wpcfact-guia-conductor-nombre').val()) {
+                camposFaltantes.push('Nombre Completo del Conductor');
+            }
+            if (!$('#wpcfact-guia-conductor-licencia').val()) {
+                camposFaltantes.push('Licencia de Conducir');
+            }
+            if (!$('#wpcfact-guia-vehiculo-placa').val()) {
+                camposFaltantes.push('Placa del Vehículo');
+            }
+        }
+
+        return camposFaltantes;
+    }
+
     $('#btn-emitir').click(function() {
+        // Validar si es guía (09 o 31)
+        const tipo = $('#wpcfact-tipo-doc').val();
+        if (tipo === '09' || tipo === '31') {
+            const camposFaltantes = validarCamposGuia();
+            if (camposFaltantes.length > 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Campos Obligatorios Incompletos',
+                    html: '<strong>Por favor complete los siguientes campos:</strong><br><br>' + 
+                          camposFaltantes.map(c => '• ' + c).join('<br>'),
+                    confirmButtonText: 'Entendido',
+                    confirmButtonColor: '#ef4444'
+                });
+                return false;
+            }
+        }
         const data = {
             action: 'wpcfact_emitir_comprobante',
             nonce: wpcfact_ajax.nonce,
