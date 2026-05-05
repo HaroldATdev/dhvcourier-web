@@ -84,11 +84,16 @@ function wpcfact_get_distritos( $departamento, $provincia ) {
  * @param string $departamento Código de departamento
  * @param string $provincia Código de provincia (opcional)
  * @param string $distrito Código de distrito (opcional)
- * @return string Nombre de la ubicación o código si no se encuentra
+ * @return string Nombre de la ubicación
  */
 function wpcfact_get_ubicacion_nombre( $departamento, $provincia = '00', $distrito = '00' ) {
 	global $wpdb;
 	$table = $wpdb->prefix . 'ubigeos';
+	
+	// Sanitizar inputs
+	$departamento = str_pad( $departamento, 2, '0', STR_PAD_LEFT );
+	$provincia = str_pad( $provincia, 2, '0', STR_PAD_LEFT );
+	$distrito = str_pad( $distrito, 2, '0', STR_PAD_LEFT );
 	
 	// Buscar registro exacto
 	$result = $wpdb->get_row( $wpdb->prepare(
@@ -100,12 +105,41 @@ function wpcfact_get_ubicacion_nombre( $departamento, $provincia = '00', $distri
 		$distrito
 	) );
 	
-	if ( $result ) {
-		return $result->nombre;
+	if ( $result && ! empty( $result->nombre ) ) {
+		return sanitize_text_field( $result->nombre );
 	}
 	
-	// Si no encuentra, retornar código como fallback
-	return "{$departamento}-{$provincia}-{$distrito}";
+	// Si es distrito (ZZ != 00), intentar obtener provincia
+	if ( $distrito !== '00' ) {
+		$result = $wpdb->get_row( $wpdb->prepare(
+			"SELECT nombre FROM `{$table}` 
+			WHERE departamento = %s AND provincia = %s AND distrito = '00'
+			LIMIT 1",
+			$departamento,
+			$provincia
+		) );
+		if ( $result && ! empty( $result->nombre ) ) {
+			return sanitize_text_field( $result->nombre );
+		}
+	}
+	
+	// Si es provincia (YY != 00), intentar obtener departamento
+	if ( $provincia !== '00' ) {
+		$result = $wpdb->get_row( $wpdb->prepare(
+			"SELECT nombre FROM `{$table}` 
+			WHERE departamento = %s AND provincia = '00' AND distrito = '00'
+			LIMIT 1",
+			$departamento
+		) );
+		if ( $result && ! empty( $result->nombre ) ) {
+			return sanitize_text_field( $result->nombre );
+		}
+	}
+	
+	// Log de error para debugging
+	error_log( "ubigeos.php: No se encontró ubicación para {$departamento}-{$provincia}-{$distrito}" );
+	
+	return '';
 }
 
 return array(
