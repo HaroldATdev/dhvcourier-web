@@ -200,13 +200,17 @@ class WPC_Facturacion_Constructor_Guia {
 				),
 				'cac:Delivery' => array(
 					'cac:DeliveryAddress' => array(
-						'cbc:ID'          => array( '_text' => $ubigeo_llegada ),
-						'cac:AddressLine' => array( 'cbc:Line' => array( '_text' => $direccion ) )
+						'cbc:CountrySubentity' => array( '_text' => $llegada_09_departamento ),
+						'cbc:CityName'        => array( '_text' => $llegada_09_provincia ),
+						'cbc:District'        => array( '_text' => $llegada_09_distrito ),
+						'cac:AddressLine'     => array( 'cbc:Line' => array( '_text' => $direccion ) )
 					),
 					'cac:Despatch' => array(
 						'cac:DespatchAddress' => array(
-							'cbc:ID'          => array( '_text' => $ubigeo_partida ),
-							'cac:AddressLine' => array( 'cbc:Line' => array( '_text' => $direccion_emisor ) )
+							'cbc:CountrySubentity' => array( '_text' => $partida_09_departamento ),
+							'cbc:CityName'        => array( '_text' => $partida_09_provincia ),
+							'cbc:District'        => array( '_text' => $partida_09_distrito ),
+							'cac:AddressLine'     => array( 'cbc:Line' => array( '_text' => $direccion_emisor ) )
 						)
 					)
 				),
