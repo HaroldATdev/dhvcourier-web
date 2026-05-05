@@ -354,10 +354,19 @@ class WPC_Facturacion_Ajax {
 			wp_send_json_error( 'Debe seleccionar un cliente registrado.' );
 		}
 
+		// Obtener datos del emisor para validación
+		$ruc_emisor = get_option( 'wpcfact_ruc_emisor' );
+
 		// Validar ubicaciones para guías
 		if ( '09' === $tipo ) {
 			if ( empty( $guia_09_partida_departamento ) || empty( $guia_09_llegada_departamento ) ) {
 				wp_send_json_error( 'Para guía tipo 09 debe seleccionar departamentos de partida y llegada.' );
+			}
+			if ( empty( $guia_09_transportista_ruc ) && empty( $ruc_emisor ) ) {
+				wp_send_json_error( 'Falta RUC del transportista para guía tipo 09.' );
+			}
+			if ( empty( $guia_09_conductor_dni ) ) {
+				wp_send_json_error( 'Falta DNI del conductor para guía tipo 09.' );
 			}
 		} elseif ( '31' === $tipo ) {
 			if ( empty( $guia_31_partida_departamento ) || empty( $guia_31_partida_provincia ) || empty( $guia_31_partida_distrito ) ) {

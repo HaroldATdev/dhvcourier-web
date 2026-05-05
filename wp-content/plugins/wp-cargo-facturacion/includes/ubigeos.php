@@ -79,6 +79,35 @@ function wpcfact_get_distritos( $departamento, $provincia ) {
 	return $distritos;
 }
 
+/**
+ * Obtiene el nombre de una ubicación (departamento, provincia o distrito)
+ * @param string $departamento Código de departamento
+ * @param string $provincia Código de provincia (opcional)
+ * @param string $distrito Código de distrito (opcional)
+ * @return string Nombre de la ubicación o código si no se encuentra
+ */
+function wpcfact_get_ubicacion_nombre( $departamento, $provincia = '00', $distrito = '00' ) {
+	global $wpdb;
+	$table = $wpdb->prefix . 'ubigeos';
+	
+	// Buscar registro exacto
+	$result = $wpdb->get_row( $wpdb->prepare(
+		"SELECT nombre FROM `{$table}` 
+		WHERE departamento = %s AND provincia = %s AND distrito = %s
+		LIMIT 1",
+		$departamento,
+		$provincia,
+		$distrito
+	) );
+	
+	if ( $result ) {
+		return $result->nombre;
+	}
+	
+	// Si no encuentra, retornar código como fallback
+	return "{$departamento}-{$provincia}-{$distrito}";
+}
+
 return array(
 	array('departamento' => '01', 'provincia' => '00', 'distrito' => '00', 'nombre' => 'Amazonas'),
 	array('departamento' => '02', 'provincia' => '00', 'distrito' => '00', 'nombre' => 'Áncash'),

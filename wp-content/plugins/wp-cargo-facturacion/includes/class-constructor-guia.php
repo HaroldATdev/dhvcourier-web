@@ -132,16 +132,16 @@ class WPC_Facturacion_Constructor_Guia {
 				),
 				'cac:Delivery' => array(
 					'cac:DeliveryAddress' => array(
-						'cbc:CountrySubentity' => array( '_text' => $llegada_departamento ),
-						'cbc:CityName'        => array( '_text' => $llegada_provincia ),
-						'cbc:District'        => array( '_text' => $llegada_distrito ),
+						'cbc:CountrySubentity' => array( '_text' => wpcfact_get_ubicacion_nombre( $llegada_departamento, '00', '00' ) ),
+						'cbc:CityName'        => array( '_text' => wpcfact_get_ubicacion_nombre( $llegada_departamento, $llegada_provincia, '00' ) ),
+						'cbc:District'        => array( '_text' => wpcfact_get_ubicacion_nombre( $llegada_departamento, $llegada_provincia, $llegada_distrito ) ),
 						'cac:AddressLine'     => array( 'cbc:Line' => array( '_text' => $direccion ) )
 					),
 					'cac:Despatch' => array(
 						'cac:DespatchAddress' => array(
-							'cbc:CountrySubentity' => array( '_text' => $partida_departamento ),
-							'cbc:CityName'        => array( '_text' => $partida_provincia ),
-							'cbc:District'        => array( '_text' => $partida_distrito ),
+							'cbc:CountrySubentity' => array( '_text' => wpcfact_get_ubicacion_nombre( $partida_departamento, '00', '00' ) ),
+							'cbc:CityName'        => array( '_text' => wpcfact_get_ubicacion_nombre( $partida_departamento, $partida_provincia, '00' ) ),
+							'cbc:District'        => array( '_text' => wpcfact_get_ubicacion_nombre( $partida_departamento, $partida_provincia, $partida_distrito ) ),
 							'cac:AddressLine'     => array( 'cbc:Line' => array( '_text' => $direccion_emisor ) )
 						),
 						'cac:DespatchParty' => array(
@@ -200,16 +200,16 @@ class WPC_Facturacion_Constructor_Guia {
 				),
 				'cac:Delivery' => array(
 					'cac:DeliveryAddress' => array(
-						'cbc:CountrySubentity' => array( '_text' => $llegada_09_departamento ),
-						'cbc:CityName'        => array( '_text' => $llegada_09_provincia ),
-						'cbc:District'        => array( '_text' => $llegada_09_distrito ),
+						'cbc:CountrySubentity' => array( '_text' => wpcfact_get_ubicacion_nombre( $llegada_09_departamento, '00', '00' ) ),
+						'cbc:CityName'        => array( '_text' => wpcfact_get_ubicacion_nombre( $llegada_09_departamento, $llegada_09_provincia, '00' ) ),
+						'cbc:District'        => array( '_text' => wpcfact_get_ubicacion_nombre( $llegada_09_departamento, $llegada_09_provincia, $llegada_09_distrito ) ),
 						'cac:AddressLine'     => array( 'cbc:Line' => array( '_text' => $direccion ) )
 					),
 					'cac:Despatch' => array(
 						'cac:DespatchAddress' => array(
-							'cbc:CountrySubentity' => array( '_text' => $partida_09_departamento ),
-							'cbc:CityName'        => array( '_text' => $partida_09_provincia ),
-							'cbc:District'        => array( '_text' => $partida_09_distrito ),
+							'cbc:CountrySubentity' => array( '_text' => wpcfact_get_ubicacion_nombre( $partida_09_departamento, '00', '00' ) ),
+							'cbc:CityName'        => array( '_text' => wpcfact_get_ubicacion_nombre( $partida_09_departamento, $partida_09_provincia, '00' ) ),
+							'cbc:District'        => array( '_text' => wpcfact_get_ubicacion_nombre( $partida_09_departamento, $partida_09_provincia, $partida_09_distrito ) ),
 							'cac:AddressLine'     => array( 'cbc:Line' => array( '_text' => $direccion_emisor ) )
 						)
 					)
