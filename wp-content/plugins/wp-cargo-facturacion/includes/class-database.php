@@ -49,5 +49,9 @@ class WPC_Facturacion_Database {
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
 		dbDelta( $sql );
+
+		// Crear tabla de ubicaciones (ubigeos)
+		require_once WPC_FACTURACION_PATH . 'includes/install.php';
+		wpfc_create_ubicaciones_tables();
 	}
 }
