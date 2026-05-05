@@ -208,6 +208,7 @@ class WPC_Facturacion_Constructor_Guia {
 					)
 				)
 			)
+		)
 		),
 		'cac:DespatchLine' => array()
 	);
