@@ -131,6 +131,17 @@ class WPC_Facturacion_Constructor_Guia {
 				'cac:ShipmentStage' => array(
 					'cbc:TransportModeCode' => array('_text' => $modalidad),
 					'cac:TransitPeriod' => array('cbc:StartDate' => array('_text' => $fecha_emision)),
+					// Para tipo 31 (transportista), el emisor ES el transportista y debe incluirse en CarrierParty
+					...( $tipo === '31' ? array(
+						'cac:CarrierParty' => array(
+							'cac:PartyIdentification' => array(
+								'cbc:ID' => array( '_attributes' => array( 'schemeID' => '6' ), '_text' => $ruc_emisor )
+							),
+							'cac:PartyLegalEntity' => array(
+								'cbc:RegistrationName' => array( '_text' => $razon_social_emisor )
+							)
+						)
+					) : array() ),
 				),
 				'cac:Delivery' => array(
 					'cac:DeliveryAddress' => array(
