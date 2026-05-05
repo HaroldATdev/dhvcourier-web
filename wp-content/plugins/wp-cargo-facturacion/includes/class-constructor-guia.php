@@ -88,19 +88,6 @@ class WPC_Facturacion_Constructor_Guia {
 			'cbc:IssueDate' => array( '_text' => $fecha_emision ),
 			'cbc:IssueTime' => array( '_text' => $hora_emision ),
 			'cbc:DespatchAdviceTypeCode' => array( '_text' => $tipo ),
-			'cbc:Note' => array(
-				array( '_text' => 'Guía generada desde WPCargo' )
-			),
-			'cac:Signature' => array(
-				'cbc:ID' => array( '_text' => $ruc_emisor ),
-				'cac:SignatoryParty' => array(
-					'cac:PartyIdentification' => array( 'cbc:ID' => array( '_text' => $ruc_emisor ) ),
-					'cac:PartyName' => array( 'cbc:Name' => array( '_text' => $razon_social_emisor ) )
-				),
-				'cac:DigitalSignatureAttachment' => array(
-					'cac:ExternalReference' => array( 'cbc:URI' => array( '_text' => '#SIGN-SUNAT' ) )
-				)
-			),
 			'cac:DespatchSupplierParty' => array(
 				'cac:Party' => array(
 					'cac:PartyIdentification' => array( 'cbc:ID' => array( '_attributes' => array( 'schemeID' => '6' ), '_text' => $ruc_emisor ) ),
