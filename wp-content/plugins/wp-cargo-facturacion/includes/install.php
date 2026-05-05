@@ -91,68 +91,37 @@ function wpfc_create_ubicaciones_tables() {
 
 /**
  * Inserta datos en la tabla unificada wp_hEhUP_ubigeos
- * Lee del array antiguo de ubigeos.php (que devuelve datos de compatibilidad)
+ * Lee del array obtenido desde ubigeos.php (ahora con formato plano JSON)
  */
 function wpfc_insert_ubigeos_desde_array() {
 	global $wpdb;
 	
 	$table = $wpdb->prefix . 'hEhUP_ubigeos';
 	
-	// Incluir array de compatibilidad desde ubigeos.php
+	// Incluir array de ubigeos desde ubigeos.php
+	// Ahora devuelve un array plano: array(
+	//   array('departamento' => '01', 'provincia' => '01', 'distrito' => '01', 'nombre' => 'Chachapoyas'),
+	//   ...
+	// )
 	$ubigeos_data = include( WPC_FACTURACION_PATH . 'includes/ubigeos.php' );
 	
-	// Si el array está vacío, usar datos de ejemplo
-	if ( empty( $ubigeos_data ) ) {
-		// Datos de ejemplo: el array de compatibilidad aún devuelve estos datos
-		// No haremos nada, la tabla se llenará cuando el usuario use los selects
-		return;
+	if ( empty( $ubigeos_data ) || ! is_array( $ubigeos_data ) ) {
+		return; // Sin datos para insertar
 	}
 	
-	// Iterar y insertar en la tabla plana
-	foreach ( $ubigeos_data as $dept_codigo => $dept_info ) {
-		// Insertar entrada de departamento (provincia='00', distrito='00')
-		$wpdb->insert(
-			$table,
-			array(
-				'departamento' => $dept_codigo,
-				'provincia' => '00',
-				'distrito' => '00',
-				'nombre' => $dept_info['nombre']
-			),
-			array( '%s', '%s', '%s', '%s' )
-		);
-		
-		// Insertar provincias y distritos
-		if ( ! empty( $dept_info['provincias'] ) ) {
-			foreach ( $dept_info['provincias'] as $prov_codigo => $prov_info ) {
-				// Insertar entrada de provincia (distrito='00')
-				$wpdb->insert(
-					$table,
-					array(
-						'departamento' => $dept_codigo,
-						'provincia' => $prov_codigo,
-						'distrito' => '00',
-						'nombre' => $prov_info['nombre']
-					),
-					array( '%s', '%s', '%s', '%s' )
-				);
-				
-				// Insertar distritos
-				if ( ! empty( $prov_info['distritos'] ) ) {
-					foreach ( $prov_info['distritos'] as $dist_codigo => $dist_nombre ) {
-						$wpdb->insert(
-							$table,
-							array(
-								'departamento' => $dept_codigo,
-								'provincia' => $prov_codigo,
-								'distrito' => $dist_codigo,
-								'nombre' => $dist_nombre
-							),
-							array( '%s', '%s', '%s', '%s' )
-						);
-					}
-				}
-			}
+	// Insertar cada registro directo desde el array plano
+	foreach ( $ubigeos_data as $ubigeo ) {
+		if ( isset( $ubigeo['departamento'], $ubigeo['provincia'], $ubigeo['distrito'], $ubigeo['nombre'] ) ) {
+			$wpdb->insert(
+				$table,
+				array(
+					'departamento' => $ubigeo['departamento'],
+					'provincia'    => $ubigeo['provincia'],
+					'distrito'     => $ubigeo['distrito'],
+					'nombre'       => $ubigeo['nombre']
+				),
+				array( '%s', '%s', '%s', '%s' )
+			);
 		}
 	}
 }
