@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class WPC_Facturacion_Constructor_Guia {
 
-	public static function emitir( $user_id, $envios_ids, $tipo, $doc_num, $nombre, $direccion, $peso, $motivo, $modalidad, $remitente_doc = '', $remitente_nombre = '', $conductor_dni = '', $conductor_nombre = '', $conductor_licencia = '', $vehiculo_placa = '', $ubigeo_partida = '150101', $ubigeo_llegada = '150131', $transportista_09_ruc = '', $transportista_09_nombre = '', $conductor_09_dni = '', $conductor_09_nombre = '', $conductor_09_licencia = '', $vehiculo_09_placa = '' ) {
+	public static function emitir( $user_id, $envios_ids, $tipo, $doc_num, $nombre, $direccion, $peso, $motivo, $modalidad, $remitente_doc = '', $remitente_nombre = '', $conductor_dni = '', $conductor_nombre = '', $conductor_licencia = '', $vehiculo_placa = '', $ubigeo_partida = '150101', $ubigeo_llegada = '150131', $transportista_09_ruc = '', $transportista_09_nombre = '', $conductor_09_dni = '', $conductor_09_nombre = '', $conductor_09_licencia = '', $vehiculo_09_placa = '', $partida_departamento = '', $partida_provincia = '', $partida_distrito = '', $llegada_departamento = '', $llegada_provincia = '', $llegada_distrito = '' ) {
 		global $wpdb;
 
 		// 1. Obtener RUC emisor
@@ -132,13 +132,17 @@ class WPC_Facturacion_Constructor_Guia {
 				),
 				'cac:Delivery' => array(
 					'cac:DeliveryAddress' => array(
-						'cbc:ID'          => array( '_text' => $ubigeo_llegada ),
-						'cac:AddressLine' => array( 'cbc:Line' => array( '_text' => $direccion ) )
+						'cbc:CountrySubentity' => array( '_text' => $llegada_departamento ),
+						'cbc:CityName'        => array( '_text' => $llegada_provincia ),
+						'cbc:District'        => array( '_text' => $llegada_distrito ),
+						'cac:AddressLine'     => array( 'cbc:Line' => array( '_text' => $direccion ) )
 					),
 					'cac:Despatch' => array(
 						'cac:DespatchAddress' => array(
-							'cbc:ID'          => array( '_text' => $ubigeo_partida ),
-							'cac:AddressLine' => array( 'cbc:Line' => array( '_text' => $direccion_emisor ) )
+							'cbc:CountrySubentity' => array( '_text' => $partida_departamento ),
+							'cbc:CityName'        => array( '_text' => $partida_provincia ),
+							'cbc:District'        => array( '_text' => $partida_distrito ),
+							'cac:AddressLine'     => array( 'cbc:Line' => array( '_text' => $direccion_emisor ) )
 						),
 						'cac:DespatchParty' => array(
 							'cac:PartyIdentification' => array(

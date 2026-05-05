@@ -554,15 +554,16 @@ jQuery(document).ready(function($) {
         if (!$('#wpcfact-guia-peso').val() || parseFloat($('#wpcfact-guia-peso').val()) <= 0) {
             camposFaltantes.push('Peso Bruto Total (debe ser mayor a 0)');
         }
-        if (!$('#wpcfact-guia-ubigeo-partida').val() || $('#wpcfact-guia-ubigeo-partida').val().length !== 6) {
-            camposFaltantes.push('Ubigeo Partida (6 dígitos)');
-        }
-        if (!$('#wpcfact-guia-ubigeo-llegada').val() || $('#wpcfact-guia-ubigeo-llegada').val().length !== 6) {
-            camposFaltantes.push('Ubigeo Llegada (6 dígitos)');
-        }
 
         // Validaciones específicas para tipo 09
         if (tipo === '09') {
+            // Ubicación con ubigeos
+            if (!$('#wpcfact-guia-ubigeo-partida').val() || $('#wpcfact-guia-ubigeo-partida').val().length !== 6) {
+                camposFaltantes.push('Ubigeo Partida (6 dígitos)');
+            }
+            if (!$('#wpcfact-guia-ubigeo-llegada').val() || $('#wpcfact-guia-ubigeo-llegada').val().length !== 6) {
+                camposFaltantes.push('Ubigeo Llegada (6 dígitos)');
+            }
             if (!$('#wpcfact-guia-motivo').val()) {
                 camposFaltantes.push('Motivo de Traslado');
             }
@@ -591,6 +592,26 @@ jQuery(document).ready(function($) {
 
         // Validaciones específicas para tipo 31
         if (tipo === '31') {
+            // Punto de Partida
+            if (!$('#wpcfact-guia-31-partida-departamento').val()) {
+                camposFaltantes.push('Departamento Partida');
+            }
+            if (!$('#wpcfact-guia-31-partida-provincia').val()) {
+                camposFaltantes.push('Provincia Partida');
+            }
+            if (!$('#wpcfact-guia-31-partida-distrito').val()) {
+                camposFaltantes.push('Distrito Partida');
+            }
+            // Punto de Llegada
+            if (!$('#wpcfact-guia-31-llegada-departamento').val()) {
+                camposFaltantes.push('Departamento Llegada');
+            }
+            if (!$('#wpcfact-guia-31-llegada-provincia').val()) {
+                camposFaltantes.push('Provincia Llegada');
+            }
+            if (!$('#wpcfact-guia-31-llegada-distrito').val()) {
+                camposFaltantes.push('Distrito Llegada');
+            }
             if (!$('#wpcfact-guia-remitente-doc').val()) {
                 camposFaltantes.push('RUC / DNI del Remitente');
             }
@@ -654,6 +675,12 @@ jQuery(document).ready(function($) {
             guia_09_vehiculo_placa: $('#wpcfact-guia-09-vehiculo-placa').val() || '',
             guia_ubigeo_partida: $('#wpcfact-guia-ubigeo-partida').val() || '150101',
             guia_ubigeo_llegada: $('#wpcfact-guia-ubigeo-llegada').val() || '150131',
+            guia_31_partida_departamento: $('#wpcfact-guia-31-partida-departamento').val() || '',
+            guia_31_partida_provincia: $('#wpcfact-guia-31-partida-provincia').val() || '',
+            guia_31_partida_distrito: $('#wpcfact-guia-31-partida-distrito').val() || '',
+            guia_31_llegada_departamento: $('#wpcfact-guia-31-llegada-departamento').val() || '',
+            guia_31_llegada_provincia: $('#wpcfact-guia-31-llegada-provincia').val() || '',
+            guia_31_llegada_distrito: $('#wpcfact-guia-31-llegada-distrito').val() || '',
             guia_remitente_doc: $('#wpcfact-guia-remitente-doc').val() || '',
             guia_remitente_nombre: $('#wpcfact-guia-remitente-nombre').val() || '',
             guia_conductor_dni: $('#wpcfact-guia-conductor-dni').val() || '',

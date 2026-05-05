@@ -297,6 +297,13 @@ class WPC_Facturacion_Ajax {
 		// Campos para ambos tipos
 		$guia_ubigeo_partida          = sanitize_text_field( $_POST['guia_ubigeo_partida'] ?? '150101' );
 		$guia_ubigeo_llegada          = sanitize_text_field( $_POST['guia_ubigeo_llegada'] ?? '150131' );
+		// Campos específicos tipo 31 (departamento/provincia/distrito)
+		$guia_31_partida_departamento = sanitize_text_field( $_POST['guia_31_partida_departamento'] ?? '' );
+		$guia_31_partida_provincia    = sanitize_text_field( $_POST['guia_31_partida_provincia'] ?? '' );
+		$guia_31_partida_distrito     = sanitize_text_field( $_POST['guia_31_partida_distrito'] ?? '' );
+		$guia_31_llegada_departamento = sanitize_text_field( $_POST['guia_31_llegada_departamento'] ?? '' );
+		$guia_31_llegada_provincia    = sanitize_text_field( $_POST['guia_31_llegada_provincia'] ?? '' );
+		$guia_31_llegada_distrito     = sanitize_text_field( $_POST['guia_31_llegada_distrito'] ?? '' );
 		// Campos específicos tipo 31
 		$guia_remitente_doc           = sanitize_text_field( $_POST['guia_remitente_doc'] ?? '' );
 		$guia_remitente_nombre        = sanitize_text_field( $_POST['guia_remitente_nombre'] ?? '' );
@@ -356,7 +363,7 @@ class WPC_Facturacion_Ajax {
 			if ( ! class_exists( 'WPC_Facturacion_Constructor_Guia' ) ) {
 				require_once dirname( __FILE__ ) . '/../../includes/class-constructor-guia.php';
 			}
-			$resultado = WPC_Facturacion_Constructor_Guia::emitir( $user_id, $envios, $tipo, $doc_num, $nombre, $direccion, $guia_peso, $guia_motivo, $guia_modalidad, $guia_remitente_doc, $guia_remitente_nombre, $guia_conductor_dni, $guia_conductor_nombre, $guia_conductor_licencia, $guia_vehiculo_placa, $guia_ubigeo_partida, $guia_ubigeo_llegada, $guia_09_transportista_ruc, $guia_09_transportista_nombre, $guia_09_conductor_dni, $guia_09_conductor_nombre, $guia_09_conductor_licencia, $guia_09_vehiculo_placa );
+			$resultado = WPC_Facturacion_Constructor_Guia::emitir( $user_id, $envios, $tipo, $doc_num, $nombre, $direccion, $guia_peso, $guia_motivo, $guia_modalidad, $guia_remitente_doc, $guia_remitente_nombre, $guia_conductor_dni, $guia_conductor_nombre, $guia_conductor_licencia, $guia_vehiculo_placa, $guia_ubigeo_partida, $guia_ubigeo_llegada, $guia_09_transportista_ruc, $guia_09_transportista_nombre, $guia_09_conductor_dni, $guia_09_conductor_nombre, $guia_09_conductor_licencia, $guia_09_vehiculo_placa, $guia_31_partida_departamento, $guia_31_partida_provincia, $guia_31_partida_distrito, $guia_31_llegada_departamento, $guia_31_llegada_provincia, $guia_31_llegada_distrito );
 		} elseif ( 'libre' === $modo ) {
 			$resultado = WPC_Facturacion_Constructor::emitir_libre( $user_id, $lineas_libres, $tipo, $doc_num, $nombre, $direccion, $forma_pago );
 		} else {

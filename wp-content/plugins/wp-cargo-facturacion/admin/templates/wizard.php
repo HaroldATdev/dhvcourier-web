@@ -237,8 +237,10 @@
 				</div>
 			</div>
 
-			<!-- Ubigeo para tipo 09 y 31 -->
-			<div style="display:flex; gap:20px; flex-wrap:wrap; margin-top:15px; border-top:1px solid #e2e8f0; padding-top:15px;">
+<!-- Ubigeo solo para tipo 09 -->
+		<div class="wpcfact-campo-09" style="display:none; margin-top:15px; padding-top:12px; border-top:1px solid #e2e8f0;">
+			<h4 style="margin:0 0 10px 0; color:#374151;">Ubicación de Partida y Llegada</h4>
+			<div style="display:flex; gap:20px; flex-wrap:wrap;">
 				<div class="wpcfact-input-group" style="flex:1; min-width:120px;">
 					<label>Ubigeo Partida (6 dígitos)</label>
 					<input type="text" id="wpcfact-guia-ubigeo-partida" class="wpcfact-input" maxlength="6" placeholder="150101" value="150101">
@@ -246,6 +248,42 @@
 				<div class="wpcfact-input-group" style="flex:1; min-width:120px;">
 					<label>Ubigeo Llegada (6 dígitos)</label>
 					<input type="text" id="wpcfact-guia-ubigeo-llegada" class="wpcfact-input" maxlength="6" placeholder="150131" value="150131">
+				</div>
+			</div>
+		</div>
+
+		<!-- Departamento/Provincia/Distrito solo para tipo 31 -->
+		<div class="wpcfact-campo-31" style="display:none; margin-top:15px; padding-top:12px; border-top:1px solid #e2e8f0;">
+			<h4 style="margin:0 0 10px 0; color:#374151;">Punto de Partida</h4>
+			<div style="display:flex; gap:15px; flex-wrap:wrap;">
+				<div class="wpcfact-input-group" style="flex:1; min-width:120px;">
+					<label>Departamento</label>
+					<input type="text" id="wpcfact-guia-31-partida-departamento" class="wpcfact-input" placeholder="Ej: LIMA">
+				</div>
+				<div class="wpcfact-input-group" style="flex:1; min-width:120px;">
+					<label>Provincia</label>
+					<input type="text" id="wpcfact-guia-31-partida-provincia" class="wpcfact-input" placeholder="Ej: LIMA">
+				</div>
+				<div class="wpcfact-input-group" style="flex:1; min-width:120px;">
+					<label>Distrito</label>
+					<input type="text" id="wpcfact-guia-31-partida-distrito" class="wpcfact-input" placeholder="Ej: LIMA">
+				</div>
+			</div>
+
+			<h4 style="margin:15px 0 10px 0; color:#374151;">Punto de Llegada</h4>
+			<div style="display:flex; gap:15px; flex-wrap:wrap;">
+				<div class="wpcfact-input-group" style="flex:1; min-width:120px;">
+					<label>Departamento</label>
+					<input type="text" id="wpcfact-guia-31-llegada-departamento" class="wpcfact-input" placeholder="Ej: AREQUIPA">
+				</div>
+				<div class="wpcfact-input-group" style="flex:1; min-width:120px;">
+					<label>Provincia</label>
+					<input type="text" id="wpcfact-guia-31-llegada-provincia" class="wpcfact-input" placeholder="Ej: AREQUIPA">
+				</div>
+				<div class="wpcfact-input-group" style="flex:1; min-width:120px;">
+					<label>Distrito</label>
+					<input type="text" id="wpcfact-guia-31-llegada-distrito" class="wpcfact-input" placeholder="Ej: AREQUIPA">
+				</div>
 				</div>
 			</div>
 
