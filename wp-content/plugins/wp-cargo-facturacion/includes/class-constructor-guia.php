@@ -72,39 +72,10 @@ class WPC_Facturacion_Constructor_Guia {
 
 		$scheme_id = ( strlen( $doc_num ) === 11 ) ? '6' : ( strlen( $doc_num ) === 8 ? '1' : '4' );
 
-		// 5. Construir JSON Básico (DespatchAdvice)
-		$document_body = array(
-			'cbc:UBLVersionID' => array( '_text' => '2.1' ),
-			'cbc:CustomizationID' => array( '_text' => '2.0' ),
-			'cbc:ID' => array( '_text' => $numero_documento ),
-			'cbc:IssueDate' => array( '_text' => $fecha_emision ),
-			'cbc:IssueTime' => array( '_text' => $hora_emision ),
-			'cbc:DespatchAdviceTypeCode' => array( '_text' => $tipo ),
-			'cac:DespatchSupplierParty' => array(
-				'cac:Party' => array(
-					'cac:PartyIdentification' => array( 'cbc:ID' => array( '_attributes' => array( 'schemeID' => '6' ), '_text' => $ruc_emisor ) ),
-					'cac:PartyLegalEntity' => array(
-						'cbc:RegistrationName' => array( '_text' => $razon_social_emisor ),
-						'cac:RegistrationAddress' => array(
-							'cbc:AddressTypeCode' => array( '_text' => $codigo_local ),
-							'cac:AddressLine' => array(
-								'cbc:Line' => array( '_text' => $direccion_emisor )
-							)
-						)
-					)
-				)
-			),
-			'cac:DeliveryCustomerParty' => array(
-				'cac:Party' => array(
-					'cac:PartyIdentification' => array( 'cbc:ID' => array( '_attributes' => array( 'schemeID' => $scheme_id ), '_text' => $doc_num ) ),
-					'cac:PartyLegalEntity' => array(
-						'cbc:RegistrationName' => array( '_text' => $nombre ),
-					)
-				)
-			),
-			'cac:Shipment' => ( $tipo === '31' )
-			? array(
-				// Guía de Transportista (tipo 31)
+		// 5a. Construir Shipment según el tipo de guía
+		if ( $tipo === '31' ) {
+			// Guía de Transportista (tipo 31)
+			$shipment = array(
 				'cbc:ID'                  => array( '_text' => 'SUNAT_Envio' ),
 				'cbc:GrossWeightMeasure'  => array( '_attributes' => array( 'unitCode' => 'KGM' ), '_text' => number_format( $peso, 3, '.', '' ) ),
 				'cbc:SpecialInstructions' => array(
@@ -166,9 +137,10 @@ class WPC_Facturacion_Constructor_Guia {
 						)
 					)
 				)
-			)
-			: array(
-				// Guía de Remisión Remitente (tipo 09)
+			);
+		} else {
+			// Guía de Remisión Remitente (tipo 09)
+			$shipment = array(
 				'cbc:ID'                 => array( '_text' => 'SUNAT_Envio' ),
 				'cbc:HandlingCode'       => array( '_text' => $motivo ),
 				'cbc:GrossWeightMeasure' => array( '_attributes' => array( 'unitCode' => 'KGM' ), '_text' => number_format( $peso, 3, '.', '' ) ),
@@ -207,9 +179,40 @@ class WPC_Facturacion_Constructor_Guia {
 						)
 					)
 				)
-			)
-		)
-		),
+			);
+		}
+
+		// 5. Construir JSON Básico (DespatchAdvice)
+		$document_body = array(
+			'cbc:UBLVersionID' => array( '_text' => '2.1' ),
+			'cbc:CustomizationID' => array( '_text' => '2.0' ),
+			'cbc:ID' => array( '_text' => $numero_documento ),
+			'cbc:IssueDate' => array( '_text' => $fecha_emision ),
+			'cbc:IssueTime' => array( '_text' => $hora_emision ),
+			'cbc:DespatchAdviceTypeCode' => array( '_text' => $tipo ),
+			'cac:DespatchSupplierParty' => array(
+				'cac:Party' => array(
+					'cac:PartyIdentification' => array( 'cbc:ID' => array( '_attributes' => array( 'schemeID' => '6' ), '_text' => $ruc_emisor ) ),
+					'cac:PartyLegalEntity' => array(
+						'cbc:RegistrationName' => array( '_text' => $razon_social_emisor ),
+						'cac:RegistrationAddress' => array(
+							'cbc:AddressTypeCode' => array( '_text' => $codigo_local ),
+							'cac:AddressLine' => array(
+								'cbc:Line' => array( '_text' => $direccion_emisor )
+							)
+						)
+					)
+				)
+			),
+			'cac:DeliveryCustomerParty' => array(
+				'cac:Party' => array(
+					'cac:PartyIdentification' => array( 'cbc:ID' => array( '_attributes' => array( 'schemeID' => $scheme_id ), '_text' => $doc_num ) ),
+					'cac:PartyLegalEntity' => array(
+						'cbc:RegistrationName' => array( '_text' => $nombre ),
+					)
+				)
+			),
+			'cac:Shipment' => $shipment,
 		'cac:DespatchLine' => array()
 	);
 		// Líneas de la guía
