@@ -354,6 +354,20 @@ class WPC_Facturacion_Ajax {
 			wp_send_json_error( 'Debe seleccionar un cliente registrado.' );
 		}
 
+		// Validar ubicaciones para guías
+		if ( '09' === $tipo ) {
+			if ( empty( $guia_09_partida_departamento ) || empty( $guia_09_llegada_departamento ) ) {
+				wp_send_json_error( 'Para guía tipo 09 debe seleccionar departamentos de partida y llegada.' );
+			}
+		} elseif ( '31' === $tipo ) {
+			if ( empty( $guia_31_partida_departamento ) || empty( $guia_31_partida_provincia ) || empty( $guia_31_partida_distrito ) ) {
+				wp_send_json_error( 'Para guía tipo 31 debe completar ubicación de partida (departamento, provincia, distrito).' );
+			}
+			if ( empty( $guia_31_llegada_departamento ) || empty( $guia_31_llegada_provincia ) || empty( $guia_31_llegada_distrito ) ) {
+				wp_send_json_error( 'Para guía tipo 31 debe completar ubicación de llegada (departamento, provincia, distrito).' );
+			}
+		}
+
 		// Guardar user_meta para reutilización
 		if ( $user_id > 0 ) {
 			update_user_meta( $user_id, 'wpcfact_doc_num', $doc_num );

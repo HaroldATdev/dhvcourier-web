@@ -652,7 +652,41 @@ jQuery(document).ready(function($) {
         const tipo = $('#wpcfact-tipo-doc').val();
         if (tipo === '09' || tipo === '31') {
             const camposFaltantes = validarCamposGuia();
-            if (camposFaltantes.length > 0) {
+            if (tipo === '09' || tipo === '31') {
+            // Validar ubicaciones para guía
+            if (tipo === '09') {
+                if (!$('#wpcfact-guia-09-partida-departamento').val() || !$('#wpcfact-guia-09-llegada-departamento').val()) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Ubicaciones Incompletas',
+                        html: 'Para guía tipo 09 debe seleccionar departamento de partida y llegada.',
+                        confirmButtonText: 'Entendido'
+                    });
+                    return false;
+                }
+            } else if (tipo === '31') {
+                if (!$('#wpcfact-guia-31-partida-departamento').val() || !$('#wpcfact-guia-31-partida-provincia').val() || !$('#wpcfact-guia-31-partida-distrito').val()) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Ubicación de Partida Incompleta',
+                        html: 'Para guía tipo 31 debe seleccionar departamento, provincia y distrito de partida.',
+                        confirmButtonText: 'Entendido'
+                    });
+                    return false;
+                }
+                if (!$('#wpcfact-guia-31-llegada-departamento').val() || !$('#wpcfact-guia-31-llegada-provincia').val() || !$('#wpcfact-guia-31-llegada-distrito').val()) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Ubicación de Llegada Incompleta',
+                        html: 'Para guía tipo 31 debe seleccionar departamento, provincia y distrito de llegada.',
+                        confirmButtonText: 'Entendido'
+                    });
+                    return false;
+                }
+            }
+        }
+        
+        if (camposFaltantes.length > 0) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Campos Obligatorios Incompletos',
@@ -709,8 +743,9 @@ jQuery(document).ready(function($) {
 
         $.post(wpcfact_ajax.url, data, function(res) {
             $('#wpcfact-resultado-box .spinner').removeClass('is-active');
+            console.log('Respuesta AJAX:', res);
 
-            if (res.success) {
+            if (res && res.success) {
                 $('#wpcfact-resultado-box').html(`
                     <div class="wpcfact-result-success">
                         <i class="dashicons dashicons-yes-alt"></i>
@@ -720,11 +755,12 @@ jQuery(document).ready(function($) {
                     </div>
                 `);
             } else {
+                const errorMsg = (res && res.data) ? res.data : 'Error desconocido al emitir';
                 $('#wpcfact-resultado-box').html(`
                     <div class="wpcfact-result-success" style="color:#ef4444;">
                         <i class="dashicons dashicons-dismiss" style="color:#ef4444;"></i>
                         <h3 style="color:#ef4444;">Error al emitir</h3>
-                        <p>${res.data}</p>
+                        <p>${errorMsg}</p>
                     </div>
                 `);
             }
@@ -734,9 +770,18 @@ jQuery(document).ready(function($) {
                 $('#box-acciones-finales a').eq(1).attr('href', wpcfact_ajax.url_listado);
             }
             $('#box-acciones-finales').show();
-        }).fail(function() {
+        }, 'json').fail(function(jqXHR, textStatus, errorThrown) {
             $('#wpcfact-resultado-box .spinner').removeClass('is-active');
-            $('#wpcfact-resultado-box').html('<h3 style="color:red;">Error de conexion. Intente nuevamente.</h3>');
+            console.error('Error AJAX:', textStatus, errorThrown, jqXHR.responseText);
+            
+            $('#wpcfact-resultado-box').html(`
+                <div style="color:#ef4444;">
+                    <i class="dashicons dashicons-dismiss" style="color:#ef4444;"></i>
+                    <h3 style="color:#ef4444;">Error de conexión</h3>
+                    <p>${textStatus}: ${errorThrown}</p>
+                    <p style="font-size:12px; margin-top:10px; color:#64748b;">Respuesta: ${jqXHR.responseText}</p>
+                </div>
+            `);
 
             if (typeof wpcfact_ajax.url_emitir !== 'undefined') {
                 $('#box-acciones-finales a').eq(0).attr('href', wpcfact_ajax.url_emitir);
