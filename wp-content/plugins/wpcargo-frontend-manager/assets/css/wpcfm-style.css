@@ -200,27 +200,10 @@ ul.wpccf_uploads li .actions .delete {
     display: unset;
     width: unset;
 }
-
 /* table CSS */
 .no-space {
-    white-space: nowrap !important;
-    max-width: 140px !important;    /* Forzamos el ancho máximo */
-    min-width: 140px !important;    /* Forzamos que no se estire */
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    display: inline-block !important; /* CAMBIO CLAVE: inline-block permite que el ancho funcione mejor */
-    vertical-align: middle;
+    white-space: nowrap;
 }
-/* Hover para ver el nombre */
-.no-space:hover {
-    max-width: none !important;
-    white-space: normal !important;
-    overflow: visible !important;
-    background-color: #fff !important;
-    position: relative;
-    z-index: 10;
-}
-
 .wpcargo-dashboard #shipment-history td, .wpcargo-dashboard #shipment-history th {
   word-break: initial;
 }
