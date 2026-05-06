@@ -200,8 +200,8 @@ ul.wpccf_uploads li .actions .delete {
     display: unset;
     width: unset;
 }
-/* table CSS */
 
+/* table CSS */
 .no-space {
     white-space: nowrap !important;
     max-width: 140px !important;    /* Forzamos el ancho máximo */
@@ -220,6 +220,7 @@ ul.wpccf_uploads li .actions .delete {
     position: relative;
     z-index: 10;
 }
+
 .wpcargo-dashboard #shipment-history td, .wpcargo-dashboard #shipment-history th {
   word-break: initial;
 }
