@@ -7,3 +7,4 @@
 /node_modules/ export-ignore
 /src/ export-ignore
 /bin/ export-ignore
+* binary
