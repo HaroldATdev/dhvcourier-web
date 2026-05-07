@@ -7,7 +7,7 @@
 </div>
 <div class="shipments-wrapper mb-4" style="visibility: visible; animation-name: fadeIn;">
     <div class="shipments-body">
-		<div id="shipments-table-list" class="content">
+		<div id="shipments-table-list" class="content">-
 			<?php if ( $wpc_shipments->have_posts() ) : ?>
 			<div class="table-top form-group">
 				<div class="float-md-none float-lg-right">
@@ -39,6 +39,35 @@
 				<?php do_action( 'wpcfe_before_after_shipment_table' ); ?>
 			</div>
 			<?php do_action('wpcfe_after_shipment_table_actions'); ?>
+			<style>
+                /* Forzamos que la tabla no sea elástica */
+                #shipment-list {
+                    table-layout: fixed !important;
+                    width: 100% !important;
+                }
+                /* Atacamos las columnas 3 (Remitente) y 5 (Destinatario) */
+                #shipment-list tbody td:nth-child(3), 
+                #shipment-list tbody td:nth-child(5),
+                #shipment-list tbody td.no-space {
+                    max-width: 130px !important;
+                    min-width: 130px !important;
+                    white-space: nowrap !important;
+                    overflow: hidden !important;
+                    text-overflow: ellipsis !important;
+                    display: table-cell !important;
+                }
+                /* Para que se pueda leer al pasar el mouse */
+                #shipment-list tbody td:nth-child(3):hover, 
+                #shipment-list tbody td:nth-child(5):hover,
+                #shipment-list tbody td.no-space:hover {
+                    overflow: visible !important;
+                    white-space: normal !important;
+                    background: #fff !important;
+                    position: relative;
+                    z-index: 100;
+                    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+                }
+            </style>
 			<div class="card m-0 mb-2">
 				<div class="card-body table-responsive">
 					<?php do_action( 'wpcfe_before_shipment_table' ); ?>
