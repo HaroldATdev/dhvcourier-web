@@ -27,3 +27,9 @@ wp-content/plugins/wpcargo-frontend-manager/admin/includes/file-container/*.pdf
 wp-content/languages/
 # Seguridad y Logs
 wp-content/wflogs/
+wp-content/uploads/**/*
+wp-content/plugins/wpcargo-frontend-manager/admin/includes/file-container/*
+*.pdf
+*.zip
+*.tar.gz
+wp-content/wflogs/*

@@ -1,0 +1,184 @@
+[wpcfe_bulkprint] RAW _POST: Array
+(
+    [action] => wpcfe_bulkprint
+    [selectedShipment] => 1848,1798,1796,1795,1794,1751,1744,1733,1725,1724
+    [printType] => waybill
+)
+
+[wpcfe_bulkprint] RAW INPUT: action=wpcfe_bulkprint&selectedShipment=1848%2C1798%2C1796%2C1795%2C1794%2C1751%2C1744%2C1733%2C1725%2C1724&printType=waybill
+[wpcfe_bulkprint] entry for shipments_raw=1848,1798,1796,1795,1794,1751,1744,1733,1725,1724
+[wpcfe_bulkprint] entry for shipments_raw=1848,1798,1796,1795,1794,1751,1744,1733,1725,1724
+[wpcfe_bulkprint] entry for shipments_raw=1848,1798,1796,1795,1794,1751,1744,1733,1725,1724
+[wpcfe_bulkprint][shutdown] last_error=Array
+(
+    [type] => 1
+    [message] => Cannot redeclare dhv_meta() (previously declared in /home/diffdhv/web/dhvcourier.com/public_html/wp-content/themes/blocksy-child/wpcargo/waybill.tpl.php:20)
+    [file] => /home/diffdhv/web/dhvcourier.com/public_html/wp-content/themes/blocksy-child/wpcargo/waybill.tpl.php
+    [line] => 20
+)
+
+[wpcfe_bulkprint] entry for shipments_raw=1848,1798,1796,1795,1794,1751,1744,1733,1725,1724
+[wpcfe_bulkprint] render html bytes=86813 shipments=10
+[wpcfe_bulkprint] temp_html=/home/diffdhv/tmp/wpcfe_bulk_waybill-1775767904.html
+[wpcfe_bulkprint] dompdf_exists=1
+[wpcfe_bulkprint] render html bytes=86813 shipments=10
+[wpcfe_bulkprint] entry for shipments_raw=1848,1798,1796,1795,1794,1751,1744,1733,1725,1724
+[wpcfe_bulkprint] render html bytes=47060 shipments=10
+[wpcfe_bulkprint] temp_html=/home/diffdhv/tmp/wpcfe_bulk_waybill-1775768211.html
+[wpcfe_bulkprint] dompdf_exists=1
+[wpcfe_bulkprint] render html bytes=47060 shipments=10
+[wpcfe_bulkprint] entry for shipments_raw=1848,1798,1796,1795,1794,1751,1744,1733,1725,1724
+[wpcfe_bulkprint] render html bytes=47567 shipments=10
+[wpcfe_bulkprint] temp_html=/home/diffdhv/tmp/wpcfe_bulk_waybill-1775768780.html
+[wpcfe_bulkprint] dompdf_exists=1
+[wpcfe_bulkprint] render html bytes=47567 shipments=10
+[wpcfe_bulkprint] entry for shipments_raw=1848,1798,1796,1795,1794,1751,1744,1733,1725,1724
+[wpcfe_bulkprint] render html bytes=86813 shipments=10
+[wpcfe_bulkprint] temp_html=/home/diffdhv/tmp/wpcfe_bulk_waybill-1775768822.html
+[wpcfe_bulkprint] dompdf_exists=1
+[wpcfe_bulkprint] render html bytes=86813 shipments=10
+[wpcfe_bulkprint] entry for shipments_raw=1992,1991
+[wpcfe_bulkprint] render html bytes=18707 shipments=2
+[wpcfe_bulkprint] temp_html=/home/diffdhv/tmp/wpcfe_bulk_waybill-1776128180.html
+[wpcfe_bulkprint] dompdf_exists=1
+[wpcfe_bulkprint] render html bytes=18707 shipments=2
+[wpcfe_bulkprint] entry for shipments_raw=1995,1992,1991,1990
+[wpcfe_bulkprint] render html bytes=35722 shipments=4
+[wpcfe_bulkprint] temp_html=/home/diffdhv/tmp/wpcfe_bulk_waybill-1776176513.html
+[wpcfe_bulkprint] dompdf_exists=1
+[wpcfe_bulkprint] render html bytes=35722 shipments=4
+[wpcfe_bulkprint] entry for shipments_raw=2158,2015
+[wpcfe_bulkprint] render html bytes=18696 shipments=2
+[wpcfe_bulkprint] temp_html=/home/diffdhv/tmp/wpcfe_bulk_waybill-1776599078.html
+[wpcfe_bulkprint] dompdf_exists=1
+[wpcfe_bulkprint] render html bytes=18696 shipments=2
+[wpcfe_bulkprint] entry for shipments_raw=2158,2015
+[wpcfe_bulkprint] render html bytes=18696 shipments=2
+[wpcfe_bulkprint] temp_html=/home/diffdhv/tmp/wpcfe_bulk_waybill-1776599122.html
+[wpcfe_bulkprint] dompdf_exists=1
+[wpcfe_bulkprint] render html bytes=18696 shipments=2
+[wpcfe_bulkprint] entry for shipments_raw=2385,2289,2257,2251
+[wpcfe_bulkprint] render html bytes=24799 shipments=4
+[wpcfe_bulkprint] temp_html=/home/diffdhv/tmp/wpcfe_bulk_waybill-1777412036.html
+[wpcfe_bulkprint] dompdf_exists=1
+[wpcfe_bulkprint] render html bytes=24799 shipments=4
+[wpcfe_bulkprint] entry for shipments_raw=2385,2289,2257,2251,2244
+[wpcfe_bulkprint] render html bytes=29378 shipments=5
+[wpcfe_bulkprint] temp_html=/home/diffdhv/tmp/wpcfe_bulk_waybill-1777412424.html
+[wpcfe_bulkprint] dompdf_exists=1
+[wpcfe_bulkprint] render html bytes=29378 shipments=5
+[wpcfe_bulkprint] entry for shipments_raw=2385,2289,2257,2251
+[wpcfe_bulkprint] render html bytes=24700 shipments=4
+[wpcfe_bulkprint] temp_html=/home/diffdhv/tmp/wpcfe_bulk_waybill-1777412451.html
+[wpcfe_bulkprint] dompdf_exists=1
+[wpcfe_bulkprint] render html bytes=24700 shipments=4
+[wpcfe_bulkprint] entry for shipments_raw=2385,2289,2257,2251,2244,2243,2239,2233
+[wpcfe_bulkprint] render html bytes=47663 shipments=8
+[wpcfe_bulkprint] temp_html=/home/diffdhv/tmp/wpcfe_bulk_waybill-1777413552.html
+[wpcfe_bulkprint] dompdf_exists=1
+[wpcfe_bulkprint] render html bytes=47663 shipments=8
+[wpcfe_bulkprint] entry for shipments_raw=2385,2289,2257,2251,2244,2243
+[wpcfe_bulkprint] render html bytes=37330 shipments=6
+[wpcfe_bulkprint] temp_html=/home/diffdhv/tmp/wpcfe_bulk_waybill-1777414407.html
+[wpcfe_bulkprint] dompdf_exists=1
+[wpcfe_bulkprint] render html bytes=37330 shipments=6
+[wpcfe_bulkprint] entry for shipments_raw=2385,2289,2257
+[wpcfe_bulkprint] render html bytes=21758 shipments=3
+[wpcfe_bulkprint] temp_html=/home/diffdhv/tmp/wpcfe_bulk_waybill-1777414443.html
+[wpcfe_bulkprint] dompdf_exists=1
+[wpcfe_bulkprint] render html bytes=21758 shipments=3
+[wpcfe_bulkprint] entry for shipments_raw=2385,2289,2257,2251,2244,2243,2239,2233
+[wpcfe_bulkprint] render html bytes=47660 shipments=8
+[wpcfe_bulkprint] temp_html=/home/diffdhv/tmp/wpcfe_bulk_waybill-1777415099.html
+[wpcfe_bulkprint] dompdf_exists=1
+[wpcfe_bulkprint] render html bytes=47660 shipments=8
+[wpcfe_bulkprint] entry for shipments_raw=2385,2289,2257,2251,2244,2243,2239,2233
+[wpcfe_bulkprint] render html bytes=47660 shipments=8
+[wpcfe_bulkprint] temp_html=/home/diffdhv/tmp/wpcfe_bulk_waybill-1777415907.html
+[wpcfe_bulkprint] dompdf_exists=1
+[wpcfe_bulkprint] render html bytes=47660 shipments=8
+[wpcfe_bulkprint] entry for shipments_raw=2385,2289,2257,2251,2244,2243,2239,2233
+[wpcfe_bulkprint] render html bytes=47755 shipments=8
+[wpcfe_bulkprint] temp_html=/home/diffdhv/tmp/wpcfe_bulk_waybill-1777416189.html
+[wpcfe_bulkprint] dompdf_exists=1
+[wpcfe_bulkprint] render html bytes=47755 shipments=8
+[wpcfe_bulkprint] entry for shipments_raw=2385,2289,2257,2251,2244,2243,2239,2233
+[wpcfe_bulkprint] render html bytes=47732 shipments=8
+[wpcfe_bulkprint] temp_html=/home/diffdhv/tmp/wpcfe_bulk_waybill-1777416618.html
+[wpcfe_bulkprint] dompdf_exists=1
+[wpcfe_bulkprint] render html bytes=47732 shipments=8
+[wpcfe_bulkprint] entry for shipments_raw=2385,2289,2257,2251,2244,2243,2239,2233
+[wpcfe_bulkprint] render html bytes=47755 shipments=8
+[wpcfe_bulkprint] temp_html=/home/diffdhv/tmp/wpcfe_bulk_waybill-1777416776.html
+[wpcfe_bulkprint] dompdf_exists=1
+[wpcfe_bulkprint] render html bytes=47755 shipments=8
+[wpcfe_bulkprint] entry for shipments_raw=2385
+[wpcfe_bulkprint] render html bytes=11502 shipments=1
+[wpcfe_bulkprint] temp_html=/home/diffdhv/tmp/wpcfe_bulk_waybill-1777422506.html
+[wpcfe_bulkprint] dompdf_exists=1
+[wpcfe_bulkprint] render html bytes=11502 shipments=1
+[wpcfe_bulkprint] entry for shipments_raw=2385,2289,2257
+[wpcfe_bulkprint] render html bytes=21880 shipments=3
+[wpcfe_bulkprint] temp_html=/home/diffdhv/tmp/wpcfe_bulk_waybill-1777423078.html
+[wpcfe_bulkprint] dompdf_exists=1
+[wpcfe_bulkprint] render html bytes=21880 shipments=3
+[wpcfe_bulkprint] entry for shipments_raw=2385,2289,2257,2251,2244,2243,2239,2233
+[wpcfe_bulkprint] render html bytes=48221 shipments=8
+[wpcfe_bulkprint] temp_html=/home/diffdhv/tmp/wpcfe_bulk_waybill-1777424613.html
+[wpcfe_bulkprint] dompdf_exists=1
+[wpcfe_bulkprint] render html bytes=48221 shipments=8
+[wpcfe_bulkprint] entry for shipments_raw=2385,2289,2257,2251,2244,2243,2239,2233
+[wpcfe_bulkprint] render html bytes=48221 shipments=8
+[wpcfe_bulkprint] temp_html=/home/diffdhv/tmp/wpcfe_bulk_waybill-1777424707.html
+[wpcfe_bulkprint] dompdf_exists=1
+[wpcfe_bulkprint] render html bytes=48221 shipments=8
+[wpcfe_bulkprint] entry for shipments_raw=2385,2289,2257,2251,2244,2243,2239,2233
+[wpcfe_bulkprint] render html bytes=48221 shipments=8
+[wpcfe_bulkprint] temp_html=/home/diffdhv/tmp/wpcfe_bulk_waybill-1777424744.html
+[wpcfe_bulkprint] dompdf_exists=1
+[wpcfe_bulkprint] render html bytes=48221 shipments=8
+[wpcfe_bulkprint] entry for shipments_raw=2385,2289,2257
+[wpcfe_bulkprint] render html bytes=22255 shipments=3
+[wpcfe_bulkprint] temp_html=/home/diffdhv/tmp/wpcfe_bulk_waybill-1777425002.html
+[wpcfe_bulkprint] dompdf_exists=1
+[wpcfe_bulkprint] render html bytes=22255 shipments=3
+[wpcfe_bulkprint] entry for shipments_raw=2385
+[wpcfe_bulkprint] render html bytes=11840 shipments=1
+[wpcfe_bulkprint] temp_html=/home/diffdhv/tmp/wpcfe_bulk_waybill-1777425923.html
+[wpcfe_bulkprint] dompdf_exists=1
+[wpcfe_bulkprint] render html bytes=11840 shipments=1
+[wpcfe_bulkprint] entry for shipments_raw=2385,2289
+[wpcfe_bulkprint] render html bytes=17053 shipments=2
+[wpcfe_bulkprint] temp_html=/home/diffdhv/tmp/wpcfe_bulk_waybill-1777426598.html
+[wpcfe_bulkprint] dompdf_exists=1
+[wpcfe_bulkprint] render html bytes=17053 shipments=2
+[wpcfe_bulkprint] entry for shipments_raw=2385,2289
+[wpcfe_bulkprint] render html bytes=17053 shipments=2
+[wpcfe_bulkprint] temp_html=/home/diffdhv/tmp/wpcfe_bulk_waybill-1777426613.html
+[wpcfe_bulkprint] dompdf_exists=1
+[wpcfe_bulkprint] render html bytes=17053 shipments=2
+[wpcfe_bulkprint] entry for shipments_raw=2385,2289
+[wpcfe_bulkprint] render html bytes=17067 shipments=2
+[wpcfe_bulkprint] temp_html=/home/diffdhv/tmp/wpcfe_bulk_waybill-1777427146.html
+[wpcfe_bulkprint] dompdf_exists=1
+[wpcfe_bulkprint] render html bytes=17067 shipments=2
+[wpcfe_bulkprint] entry for shipments_raw=2385,2289,2257
+[wpcfe_bulkprint] render html bytes=22268 shipments=3
+[wpcfe_bulkprint] temp_html=/home/diffdhv/tmp/wpcfe_bulk_waybill-1777427264.html
+[wpcfe_bulkprint] dompdf_exists=1
+[wpcfe_bulkprint] render html bytes=22268 shipments=3
+[wpcfe_bulkprint] entry for shipments_raw=2385,2289
+[wpcfe_bulkprint] render html bytes=17979 shipments=2
+[wpcfe_bulkprint] temp_html=/home/diffdhv/tmp/wpcfe_bulk_waybill-1777427603.html
+[wpcfe_bulkprint] dompdf_exists=1
+[wpcfe_bulkprint] render html bytes=17979 shipments=2
+[wpcfe_bulkprint] entry for shipments_raw=2385,2289,2257,2251,2244,2243,2239,2233
+[wpcfe_bulkprint] render html bytes=51707 shipments=8
+[wpcfe_bulkprint] temp_html=/home/diffdhv/tmp/wpcfe_bulk_waybill-1777428119.html
+[wpcfe_bulkprint] dompdf_exists=1
+[wpcfe_bulkprint] render html bytes=51707 shipments=8
+[wpcfe_bulkprint] entry for shipments_raw=2387,2386,2385
+[wpcfe_bulkprint] render html bytes=23592 shipments=3
+[wpcfe_bulkprint] temp_html=/home/diffdhv/tmp/wpcfe_bulk_waybill-1777498386.html
+[wpcfe_bulkprint] dompdf_exists=1
+[wpcfe_bulkprint] render html bytes=23592 shipments=3
