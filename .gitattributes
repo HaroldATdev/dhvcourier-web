@@ -8,3 +8,5 @@ wp-content/plugins/wpcargo-api/**/*.php binary
 wp-content/plugins/wpcargo*/**/*.php binary
 # Por si acaso, proteger también el tema si es de ellos
 wp-content/themes/wpcargo*/**/*.php binary
+# Forzar tratamiento binario para evitar conversión LF -> CRLF
+wp-content/plugins/wpcargo*/**/*.tpl.php binary
