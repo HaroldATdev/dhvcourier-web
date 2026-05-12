@@ -357,16 +357,35 @@ class WPC_Facturacion_Ajax {
 		// Obtener datos del emisor para validación
 		$ruc_emisor = get_option( 'wpcfact_ruc_emisor' );
 
-		// Validar ubicaciones para guías
+		// Helpers de formato SUNAT
+		$es_placa_valida = function( $p ) { return (bool) preg_match( '/^[A-Z0-9]{2,3}-[A-Z0-9]{3,4}$/i', trim( $p ) ); };
+		$es_dni_valido   = function( $d ) { return (bool) preg_match( '/^\d{8}$/', trim( $d ) ); };
+		$es_ruc_valido   = function( $r ) { return (bool) preg_match( '/^(10|20)\d{9}$/', trim( $r ) ); };
+		$es_lic_valida   = function( $l ) { return (bool) preg_match( '/^[A-Z0-9\-]{5,15}$/i', trim( $l ) ); };
+
+		// Validar ubicaciones y datos para guías
 		if ( '09' === $tipo ) {
 			if ( empty( $guia_09_partida_departamento ) || empty( $guia_09_llegada_departamento ) ) {
 				wp_send_json_error( 'Para guía tipo 09 debe seleccionar departamentos de partida y llegada.' );
 			}
-			if ( $guia_modalidad !== '02' && empty( $guia_09_transportista_ruc ) && empty( $ruc_emisor ) ) {
-				wp_send_json_error( 'Falta RUC del transportista para guía tipo 09.' );
+			if ( $guia_modalidad !== '02' ) {
+				if ( empty( $guia_09_transportista_ruc ) ) {
+					wp_send_json_error( 'Falta RUC del transportista para guía tipo 09.' );
+				}
+				if ( ! $es_ruc_valido( $guia_09_transportista_ruc ) ) {
+					wp_send_json_error( 'RUC del transportista inválido (11 dígitos, empieza con 10 o 20).' );
+				}
 			}
-			if ( $guia_modalidad === '02' && empty( $guia_09_conductor_dni ) ) {
-				wp_send_json_error( 'Falta DNI del conductor para guía tipo 09.' );
+			if ( $guia_modalidad === '02' ) {
+				if ( empty( $guia_09_conductor_dni ) || ! $es_dni_valido( $guia_09_conductor_dni ) ) {
+					wp_send_json_error( 'DNI del conductor inválido (debe tener 8 dígitos numéricos).' );
+				}
+				if ( ! empty( $guia_09_conductor_licencia ) && ! $es_lic_valida( $guia_09_conductor_licencia ) ) {
+					wp_send_json_error( 'Licencia de conducir del conductor inválida (alfanumérica, 5-15 caracteres).' );
+				}
+				if ( ! empty( $guia_09_vehiculo_placa ) && ! $es_placa_valida( $guia_09_vehiculo_placa ) ) {
+					wp_send_json_error( 'Placa del vehículo inválida para guía tipo 09 (formato: ABC-123 o A1B-234).' );
+				}
 			}
 		} elseif ( '31' === $tipo ) {
 			if ( empty( $guia_31_partida_departamento ) || empty( $guia_31_partida_provincia ) || empty( $guia_31_partida_distrito ) ) {
@@ -374,6 +393,15 @@ class WPC_Facturacion_Ajax {
 			}
 			if ( empty( $guia_31_llegada_departamento ) || empty( $guia_31_llegada_provincia ) || empty( $guia_31_llegada_distrito ) ) {
 				wp_send_json_error( 'Para guía tipo 31 debe completar ubicación de llegada (departamento, provincia, distrito).' );
+			}
+			if ( empty( $guia_conductor_dni ) || ! $es_dni_valido( $guia_conductor_dni ) ) {
+				wp_send_json_error( 'DNI del conductor inválido para guía tipo 31 (debe tener 8 dígitos numéricos).' );
+			}
+			if ( ! empty( $guia_conductor_licencia ) && ! $es_lic_valida( $guia_conductor_licencia ) ) {
+				wp_send_json_error( 'Licencia de conducir del conductor inválida (alfanumérica, 5-15 caracteres).' );
+			}
+			if ( ! empty( $guia_vehiculo_placa ) && ! $es_placa_valida( $guia_vehiculo_placa ) ) {
+				wp_send_json_error( 'Placa del vehículo inválida para guía tipo 31 (formato: ABC-123 o A1B-234).' );
 			}
 		}
 

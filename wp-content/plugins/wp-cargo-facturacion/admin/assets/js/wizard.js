@@ -545,6 +545,20 @@ jQuery(document).ready(function($) {
     });
 
     // Emitir
+    // Helpers de formato SUNAT
+    function esPlacaValida(placa) {
+        return /^[A-Z0-9]{2,3}-[A-Z0-9]{3,4}$/i.test(placa.trim());
+    }
+    function esDniValido(dni) {
+        return /^\d{8}$/.test(dni.trim());
+    }
+    function esRucValido(ruc) {
+        return /^(10|20)\d{9}$/.test(ruc.trim());
+    }
+    function esLicenciaValida(lic) {
+        return /^[A-Z0-9\-]{5,15}$/i.test(lic.trim());
+    }
+
     // Validar campos obligatorios según tipo de documento
     function validarCamposGuia() {
         const tipo = $('#wpcfact-tipo-doc').val();
@@ -585,25 +599,33 @@ jQuery(document).ready(function($) {
             // Transportista solo para modalidad 01, conductor solo para modalidad 02
             const modalidad09 = $('#wpcfact-guia-modalidad').val();
             if (modalidad09 !== '02') {
-                if (!$('#wpcfact-guia-09-transportista-ruc').val()) {
+                const ruc09 = $('#wpcfact-guia-09-transportista-ruc').val();
+                if (!ruc09) {
                     camposFaltantes.push('RUC del Transportista');
+                } else if (!esRucValido(ruc09)) {
+                    camposFaltantes.push('RUC del Transportista inválido (debe tener 11 dígitos y empezar con 10 o 20)');
                 }
                 if (!$('#wpcfact-guia-09-transportista-nombre').val()) {
                     camposFaltantes.push('Razón Social del Transportista');
                 }
             }
             if (modalidad09 === '02') {
-                if (!$('#wpcfact-guia-09-conductor-dni').val() || $('#wpcfact-guia-09-conductor-dni').val().length !== 8) {
-                    camposFaltantes.push('DNI del Conductor (8 dígitos)');
+                const dni09 = $('#wpcfact-guia-09-conductor-dni').val();
+                if (!dni09 || !esDniValido(dni09)) {
+                    camposFaltantes.push('DNI del Conductor (8 dígitos numéricos)');
                 }
                 if (!$('#wpcfact-guia-09-conductor-nombre').val()) {
                     camposFaltantes.push('Nombre Completo del Conductor');
                 }
-                if (!$('#wpcfact-guia-09-conductor-licencia').val()) {
-                    camposFaltantes.push('Licencia de Conducir');
+                const lic09 = $('#wpcfact-guia-09-conductor-licencia').val();
+                if (!lic09 || !esLicenciaValida(lic09)) {
+                    camposFaltantes.push('Licencia de Conducir inválida (alfanumérica, 5-15 caracteres)');
                 }
-                if (!$('#wpcfact-guia-09-vehiculo-placa').val()) {
+                const placa09 = $('#wpcfact-guia-09-vehiculo-placa').val();
+                if (!placa09) {
                     camposFaltantes.push('Placa del Vehículo');
+                } else if (!esPlacaValida(placa09)) {
+                    camposFaltantes.push('Placa del Vehículo inválida (formato: ABC-123 o A1B-234)');
                 }
             }
         }
@@ -636,17 +658,22 @@ jQuery(document).ready(function($) {
             if (!$('#wpcfact-guia-remitente-nombre').val()) {
                 camposFaltantes.push('Nombre / Razón Social del Remitente');
             }
-            if (!$('#wpcfact-guia-conductor-dni').val() || $('#wpcfact-guia-conductor-dni').val().length !== 8) {
-                camposFaltantes.push('DNI del Conductor (8 dígitos)');
+            const dni31 = $('#wpcfact-guia-conductor-dni').val();
+            if (!dni31 || !esDniValido(dni31)) {
+                camposFaltantes.push('DNI del Conductor (8 dígitos numéricos)');
             }
             if (!$('#wpcfact-guia-conductor-nombre').val()) {
                 camposFaltantes.push('Nombre Completo del Conductor');
             }
-            if (!$('#wpcfact-guia-conductor-licencia').val()) {
-                camposFaltantes.push('Licencia de Conducir');
+            const lic31 = $('#wpcfact-guia-conductor-licencia').val();
+            if (!lic31 || !esLicenciaValida(lic31)) {
+                camposFaltantes.push('Licencia de Conducir inválida (alfanumérica, 5-15 caracteres)');
             }
-            if (!$('#wpcfact-guia-vehiculo-placa').val()) {
+            const placa31 = $('#wpcfact-guia-vehiculo-placa').val();
+            if (!placa31) {
                 camposFaltantes.push('Placa del Vehículo');
+            } else if (!esPlacaValida(placa31)) {
+                camposFaltantes.push('Placa del Vehículo inválida (formato: ABC-123 o A1B-234)');
             }
         }
 
