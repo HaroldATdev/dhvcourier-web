@@ -145,6 +145,14 @@ class WPC_Facturacion_Constructor_Guia {
 				'cac:ShipmentStage' => array(
 					'cbc:TransportModeCode' => array( '_text' => $modalidad ),
 					'cac:TransitPeriod'     => array( 'cbc:StartDate' => array( '_text' => $fecha_emision ) ),
+					'cac:CarrierParty' => array(
+						'cac:PartyIdentification' => array(
+							'cbc:ID' => array( '_attributes' => array( 'schemeID' => '6' ), '_text' => $transportista_09_ruc ?: $ruc_emisor )
+						),
+						'cac:PartyLegalEntity' => array(
+							'cbc:RegistrationName' => array( '_text' => $transportista_09_nombre ?: $razon_social_emisor )
+						)
+					),
 					'cac:DriverPerson' => array(
 						array(
 							'cbc:ID'          => array( '_attributes' => array( 'schemeID' => '1' ), '_text' => $conductor_09_dni ),
@@ -156,14 +164,6 @@ class WPC_Facturacion_Constructor_Guia {
 							)
 						)
 					),
-					'cac:CarrierParty' => array(
-						'cac:PartyIdentification' => array(
-							'cbc:ID' => array( '_attributes' => array( 'schemeID' => '6' ), '_text' => $transportista_09_ruc ?: $ruc_emisor )
-						),
-						'cac:PartyLegalEntity' => array(
-							'cbc:RegistrationName' => array( '_text' => $transportista_09_nombre ?: $razon_social_emisor )
-						)
-					)
 				),
 				'cac:Delivery' => array(
 					'cac:DeliveryAddress' => array(

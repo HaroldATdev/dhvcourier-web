@@ -628,6 +628,7 @@
 		<button type="button" id="btn-prev-2" class="wpcfact-btn wpcfact-btn-outline">&larr; Volver a envíos</button>
 		<button type="button" id="btn-emitir" class="wpcfact-btn" style="background: linear-gradient(to right, #10b981, #059669);">Emitir a la SUNAT &rarr;</button>
 	</div>
+	</div><!-- /step-3 -->
 
 <!-- Paso 4: Resultado -->
 	<div class="wpcfact-wizard-step" id="step-4">
