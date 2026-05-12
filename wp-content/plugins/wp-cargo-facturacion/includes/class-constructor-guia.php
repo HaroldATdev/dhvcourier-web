@@ -91,7 +91,7 @@ class WPC_Facturacion_Constructor_Guia {
 					),
 					'cac:DriverPerson' => array(
 						array(
-							'cbc:ID'          => array( '_attributes' => array( 'schemeID' => '1' ), '_text' => $conductor_dni ),
+							'cbc:ID'          => array( '_attributes' => array( 'schemeID' => '1', 'schemeName' => 'Documento de identidad', 'schemeAgencyName' => 'PE:SUNAT', 'schemeURI' => 'urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo22' ), '_text' => $conductor_dni ),
 						'cbc:FirstName'   => array( '_text' => $conductor_nombre ?: ' ' ),
 						'cbc:FamilyName'  => array( '_text' => '-' ),
 						'cbc:JobTitle'    => array( '_text' => 'Principal' ),
@@ -155,7 +155,7 @@ class WPC_Facturacion_Constructor_Guia {
 					),
 					'cac:DriverPerson' => array(
 						array(
-							'cbc:ID'          => array( '_attributes' => array( 'schemeID' => '1' ), '_text' => $conductor_09_dni ),
+							'cbc:ID'          => array( '_attributes' => array( 'schemeID' => '1', 'schemeName' => 'Documento de identidad', 'schemeAgencyName' => 'PE:SUNAT', 'schemeURI' => 'urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo22' ), '_text' => $conductor_09_dni ),
 						'cbc:FirstName'   => array( '_text' => $conductor_09_nombre ?: ' ' ),
 						'cbc:FamilyName'  => array( '_text' => '-' ),
 						'cbc:JobTitle'    => array( '_text' => 'Principal' ),
