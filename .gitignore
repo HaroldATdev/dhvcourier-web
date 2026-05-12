@@ -33,3 +33,8 @@ wp-content/plugins/wpcargo-frontend-manager/admin/includes/file-container/*
 *.zip
 *.tar.gz
 wp-content/wflogs/*
+
+# Windows metadata
+*:Zone.Identifier
+[Dd]esktop.ini
+[Tt]humbs.db
