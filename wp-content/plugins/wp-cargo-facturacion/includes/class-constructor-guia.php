@@ -75,10 +75,11 @@ class WPC_Facturacion_Constructor_Guia {
 		// 5a. Construir Shipment según el tipo de guía
 		if ( $tipo === '31' ) {
 			// Guía de Transportista (tipo 31)
+			// Siempre tiene CarrierParty + DriverPerson (como array)
 			$shipment = array(
 				'cbc:ID'                  => array( '_text' => 'SUNAT_Envio' ),
 				'cbc:GrossWeightMeasure'  => array( '_attributes' => array( 'unitCode' => 'KGM' ), '_text' => number_format( $peso, 3, '.', '' ) ),
-				'cbc:SpecialInstructions' => array( '_text' => 'SUNAT_Envio_IndicadorPagadorFlete_Remitente' ),
+				'cbc:SpecialInstructions' => array( array( '_text' => 'SUNAT_Envio_IndicadorPagadorFlete_Remitente' ) ),
 				'cac:ShipmentStage' => array(
 					'cac:TransitPeriod' => array( 'cbc:StartDate' => array( '_text' => $fecha_emision ) ),
 					'cac:CarrierParty'  => array(
@@ -90,14 +91,16 @@ class WPC_Facturacion_Constructor_Guia {
 						)
 					),
 					'cac:DriverPerson' => array(
-						'cbc:ID'          => array( '_attributes' => array( 'schemeID' => '1', 'schemeName' => 'Documento de identidad', 'schemeAgencyName' => 'PE:SUNAT', 'schemeURI' => 'urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo22' ), '_text' => $conductor_dni ),
-						'cbc:FirstName'   => array( '_text' => $conductor_nombre ?: ' ' ),
-						'cbc:FamilyName'  => array( '_text' => '-' ),
-						'cbc:JobTitle'    => array( '_text' => 'Principal' ),
-						'cac:IdentityDocumentReference' => array(
-							'cbc:ID' => array( '_text' => $conductor_licencia ?: '00000' )
-						),
-					)
+						array(
+							'cbc:ID'        => array( '_attributes' => array( 'schemeID' => '1' ), '_text' => $conductor_dni ),
+							'cbc:FirstName' => array( '_text' => $conductor_nombre ?: ' ' ),
+							'cbc:FamilyName' => array( '_text' => '-' ),
+							'cbc:JobTitle'  => array( '_text' => 'Principal' ),
+							'cac:IdentityDocumentReference' => array(
+								'cbc:ID' => array( '_text' => $conductor_licencia ?: '00000' )
+							),
+						)
+					),
 				),
 				'cac:Delivery' => array(
 					'cac:DeliveryAddress' => array(
@@ -136,11 +139,37 @@ class WPC_Facturacion_Constructor_Guia {
 			);
 		} else {
 			// Guía de Remisión Remitente (tipo 09)
-			$shipment = array(
-				'cbc:ID'                 => array( '_text' => 'SUNAT_Envio' ),
-				'cbc:HandlingCode'       => array( '_text' => $motivo ),
-				'cbc:GrossWeightMeasure' => array( '_attributes' => array( 'unitCode' => 'KGM' ), '_text' => number_format( $peso, 3, '.', '' ) ),
-				'cac:ShipmentStage' => array(
+			// Modalidad 01 (Transporte Público):  CarrierParty solamente
+			// Modalidad 02 (Transporte Privado):  DriverPerson (array) + TransportHandlingUnit, sin CarrierParty
+			if ( $modalidad === '02' ) {
+				$shipment_stage_09 = array(
+					'cbc:TransportModeCode' => array( '_text' => $modalidad ),
+					'cac:TransitPeriod'     => array( 'cbc:StartDate' => array( '_text' => $fecha_emision ) ),
+					'cac:DriverPerson' => array(
+						array(
+							'cbc:ID'         => array( '_attributes' => array( 'schemeID' => '1' ), '_text' => $conductor_09_dni ),
+							'cbc:FirstName'  => array( '_text' => $conductor_09_nombre ?: ' ' ),
+							'cbc:FamilyName' => array( '_text' => '-' ),
+							'cbc:JobTitle'   => array( '_text' => 'Principal' ),
+							'cac:IdentityDocumentReference' => array(
+								'cbc:ID' => array( '_text' => $conductor_09_licencia ?: '00000' )
+							),
+						)
+					),
+				);
+				$shipment_transporte = array(
+					'cac:TransportHandlingUnit' => array(
+						'cac:TransportEquipment' => array(
+							'cbc:ID' => array( '_text' => $vehiculo_09_placa ?: $conductor_09_licencia ),
+							'cac:ShipmentDocumentReference' => array(
+								'cbc:ID' => array( '_attributes' => array( 'schemeID' => '06' ), '_text' => '0' )
+							)
+						)
+					)
+				);
+			} else {
+				// Modalidad 01: Transporte Público — solo CarrierParty
+				$shipment_stage_09 = array(
 					'cbc:TransportModeCode' => array( '_text' => $modalidad ),
 					'cac:TransitPeriod'     => array( 'cbc:StartDate' => array( '_text' => $fecha_emision ) ),
 					'cac:CarrierParty' => array(
@@ -151,28 +180,30 @@ class WPC_Facturacion_Constructor_Guia {
 							'cbc:RegistrationName' => array( '_text' => $transportista_09_nombre ?: $razon_social_emisor )
 						)
 					),
-					'cac:DriverPerson' => array(
-						'cbc:ID'          => array( '_attributes' => array( 'schemeID' => '1', 'schemeName' => 'Documento de identidad', 'schemeAgencyName' => 'PE:SUNAT', 'schemeURI' => 'urn:pe:gob:sunat:cpe:see:gem:catalogos:catalogo22' ), '_text' => $conductor_09_dni ),
-						'cbc:FirstName'   => array( '_text' => $conductor_09_nombre ?: ' ' ),
-						'cbc:FamilyName'  => array( '_text' => '-' ),
-						'cbc:JobTitle'    => array( '_text' => 'Principal' ),
-						'cac:IdentityDocumentReference' => array(
-							'cbc:ID' => array( '_text' => $conductor_09_licencia ?: '00000' )
+				);
+				$shipment_transporte = array();
+			}
+
+			$shipment = array_merge(
+				array(
+					'cbc:ID'                 => array( '_text' => 'SUNAT_Envio' ),
+					'cbc:HandlingCode'       => array( '_text' => $motivo ),
+					'cbc:GrossWeightMeasure' => array( '_attributes' => array( 'unitCode' => 'KGM' ), '_text' => number_format( $peso, 3, '.', '' ) ),
+					'cac:ShipmentStage' => $shipment_stage_09,
+					'cac:Delivery' => array(
+						'cac:DeliveryAddress' => array(
+							'cbc:ID'          => array( '_text' => wpcfact_build_ubigeo_code( $llegada_09_departamento, $llegada_09_provincia, $llegada_09_distrito ) ),
+							'cac:AddressLine' => array( 'cbc:Line' => array( '_text' => $direccion ) )
 						),
+						'cac:Despatch' => array(
+							'cac:DespatchAddress' => array(
+								'cbc:ID'          => array( '_text' => wpcfact_build_ubigeo_code( $partida_09_departamento, $partida_09_provincia, $partida_09_distrito ) ),
+								'cac:AddressLine' => array( 'cbc:Line' => array( '_text' => $direccion_emisor ) )
+							)
+						)
 					),
 				),
-				'cac:Delivery' => array(
-					'cac:DeliveryAddress' => array(
-						'cbc:ID'          => array( '_text' => wpcfact_build_ubigeo_code( $llegada_09_departamento, $llegada_09_provincia, $llegada_09_distrito ) ),
-						'cac:AddressLine' => array( 'cbc:Line' => array( '_text' => $direccion ) )
-					),
-					'cac:Despatch' => array(
-						'cac:DespatchAddress' => array(
-							'cbc:ID'          => array( '_text' => wpcfact_build_ubigeo_code( $partida_09_departamento, $partida_09_provincia, $partida_09_distrito ) ),
-							'cac:AddressLine' => array( 'cbc:Line' => array( '_text' => $direccion_emisor ) )
-						)
-					)
-				)
+				$shipment_transporte
 			);
 		}
 

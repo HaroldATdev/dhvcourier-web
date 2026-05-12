@@ -194,8 +194,8 @@
 			</div>
 		</div>
 
-			<!-- Solo tipo 09: conductor -->
-			<div class="wpcfact-campo-09" style="display:none; margin-top:30px; padding:20px; background:#fafbfc; border-radius:6px; border-left:4px solid #3b82f6;">
+			<!-- Solo tipo 09: conductor (solo visible en Transporte Privado) -->
+			<div class="wpcfact-campo-09" id="wpcfact-box-09-conductor" style="display:none; margin-top:30px; padding:20px; background:#fafbfc; border-radius:6px; border-left:4px solid #3b82f6;">
 				<h4 style="margin:0 0 18px 0; color:#1e293b; font-size:16px;">Conductor</h4>
 				<div style="display:flex; gap:20px; flex-wrap:wrap;">
 					<div class="wpcfact-input-group" style="flex:1; min-width:120px;">
@@ -399,6 +399,17 @@
 			} else {
 				jQuery('#wpcfact-campos-guia').hide();
 				jQuery('#wpcfact-forma-pago').closest('.wpcfact-input-group').show();
+			}
+		});
+
+		// Mostrar/Ocultar conductor tipo 09 según modalidad
+		jQuery('#wpcfact-guia-modalidad').on('change', function() {
+			if (jQuery('#wpcfact-tipo-doc').val() === '09') {
+				if (jQuery(this).val() === '02') {
+					jQuery('#wpcfact-box-09-conductor').show();
+				} else {
+					jQuery('#wpcfact-box-09-conductor').hide();
+				}
 			}
 		});
 

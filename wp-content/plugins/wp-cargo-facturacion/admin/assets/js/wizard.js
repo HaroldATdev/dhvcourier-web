@@ -588,17 +588,21 @@ jQuery(document).ready(function($) {
             if (!$('#wpcfact-guia-09-transportista-nombre').val()) {
                 camposFaltantes.push('Razón Social del Transportista');
             }
-            if (!$('#wpcfact-guia-09-conductor-dni').val() || $('#wpcfact-guia-09-conductor-dni').val().length !== 8) {
-                camposFaltantes.push('DNI del Conductor (8 dígitos)');
-            }
-            if (!$('#wpcfact-guia-09-conductor-nombre').val()) {
-                camposFaltantes.push('Nombre Completo del Conductor');
-            }
-            if (!$('#wpcfact-guia-09-conductor-licencia').val()) {
-                camposFaltantes.push('Licencia de Conducir');
-            }
-            if (!$('#wpcfact-guia-09-vehiculo-placa').val()) {
-                camposFaltantes.push('Placa del Vehículo');
+            // Conductor solo obligatorio en Transporte Privado (modalidad 02)
+            const modalidad09 = $('#wpcfact-guia-modalidad').val();
+            if (modalidad09 === '02') {
+                if (!$('#wpcfact-guia-09-conductor-dni').val() || $('#wpcfact-guia-09-conductor-dni').val().length !== 8) {
+                    camposFaltantes.push('DNI del Conductor (8 dígitos)');
+                }
+                if (!$('#wpcfact-guia-09-conductor-nombre').val()) {
+                    camposFaltantes.push('Nombre Completo del Conductor');
+                }
+                if (!$('#wpcfact-guia-09-conductor-licencia').val()) {
+                    camposFaltantes.push('Licencia de Conducir');
+                }
+                if (!$('#wpcfact-guia-09-vehiculo-placa').val()) {
+                    camposFaltantes.push('Placa del Vehículo');
+                }
             }
         }
 
