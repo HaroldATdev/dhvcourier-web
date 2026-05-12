@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'WPC_FACTURACION_VERSION', '1.0.0' );
+define( 'WPC_FACTURACION_VERSION', '1.0.1' );
 define( 'WPC_FACTURACION_PATH', plugin_dir_path( __FILE__ ) );
 define( 'WPC_FACTURACION_URL', plugin_dir_url( __FILE__ ) );
 define( 'WPC_FACTURACION_FILE', __FILE__ );

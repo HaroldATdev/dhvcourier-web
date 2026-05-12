@@ -181,6 +181,29 @@
 
 <!-- Solo tipo 09: remitente, motivo, modalidad -->
 		<div class="wpcfact-campo-09" style="display:none; margin-top:30px; padding:20px; background:#fafbfc; border-radius:6px; border-left:4px solid #3b82f6;">
+			<h4 style="margin:0 0 18px 0; color:#1e293b; font-size:16px;">Detalles del Traslado</h4>
+			<div style="display:flex; gap:20px; flex-wrap:wrap;">
+				<div class="wpcfact-input-group" style="flex:1;">
+					<label>Motivo de Traslado</label>
+				<select id="wpcfact-guia-motivo" class="wpcfact-select">
+					<option value="01">Venta</option>
+					<option value="14">Venta sujeta a confirmación del comprador</option>
+					<option value="02">Compra</option>
+					<option value="04">Traslado entre establecimientos de la misma empresa</option>
+					<option value="13">Otros</option>
+				</select>
+			</div>
+			<div class="wpcfact-input-group" style="flex:1;">
+				<label>Modalidad de Traslado</label>
+				<select id="wpcfact-guia-modalidad" class="wpcfact-select">
+					<option value="01">Transporte Público</option>
+					<option value="02">Transporte Privado</option>
+				</select>
+				</div>
+			</div>
+		</div>
+
+		<div class="wpcfact-campo-09" id="wpcfact-box-09-transportista" style="display:none; margin-top:30px; padding:20px; background:#fafbfc; border-radius:6px; border-left:4px solid #3b82f6;">
 			<h4 style="margin:0 0 18px 0; color:#1e293b; font-size:16px;">Transportista</h4>
 			<div style="display:flex; gap:20px; flex-wrap:wrap;">
 				<div class="wpcfact-input-group" style="flex:1; min-width:140px;">
@@ -217,31 +240,7 @@
 				</div>
 			</div>
 
-			<!-- Solo tipo 09: motivo y modalidad -->
-			<div class="wpcfact-campo-09" style="display:none; margin-top:30px; padding:20px; background:#fafbfc; border-radius:6px; border-left:4px solid #3b82f6;">
-				<h4 style="margin:0 0 18px 0; color:#1e293b; font-size:16px;">Detalles del Traslado</h4>
-				<div style="display:flex; gap:20px; flex-wrap:wrap;">
-					<div class="wpcfact-input-group" style="flex:1;">
-						<label>Motivo de Traslado</label>
-					<select id="wpcfact-guia-motivo" class="wpcfact-select">
-						<option value="01">Venta</option>
-						<option value="14">Venta sujeta a confirmación del comprador</option>
-						<option value="02">Compra</option>
-						<option value="04">Traslado entre establecimientos de la misma empresa</option>
-						<option value="13">Otros</option>
-					</select>
-				</div>
-				<div class="wpcfact-input-group" style="flex:1;">
-					<label>Modalidad de Traslado</label>
-					<select id="wpcfact-guia-modalidad" class="wpcfact-select">
-						<option value="01">Transporte Público</option>
-						<option value="02">Transporte Privado</option>
-					</select>
-					</div>
-				</div>
-			</div>
-
-<!-- Ubicación solo para tipo 09 -->
+	<!-- Ubicación solo para tipo 09 -->
 		<div class="wpcfact-campo-09" style="display:none; margin-top:30px; padding:20px; background:#fafbfc; border-radius:6px; border-left:4px solid #3b82f6;">
 			<h4 style="margin:0 0 18px 0; color:#1e293b; font-size:16px;">Punto de Partida</h4>
 			<div style="display:flex; gap:15px; flex-wrap:wrap;">
@@ -389,6 +388,15 @@
 				jQuery('#wpcfact-forma-pago').closest('.wpcfact-input-group').hide();
 				jQuery('.wpcfact-campo-09').toggle(val === '09');
 				jQuery('.wpcfact-campo-31').toggle(val === '31');
+				// Conductor solo para modalidad 02, Transportista solo para modalidad 01
+				if (val === '09') {
+					var modalidad = jQuery('#wpcfact-guia-modalidad').val();
+					jQuery('#wpcfact-box-09-conductor').toggle(modalidad === '02');
+					jQuery('#wpcfact-box-09-transportista').toggle(modalidad !== '02');
+				} else {
+					jQuery('#wpcfact-box-09-conductor').hide();
+					jQuery('#wpcfact-box-09-transportista').hide();
+				}
 				if (val === '09') {
 					cargarDepartamentos('tipo09-partida');
 					cargarDepartamentos('tipo09-llegada');
@@ -402,14 +410,12 @@
 			}
 		});
 
-		// Mostrar/Ocultar conductor tipo 09 según modalidad
+		// Mostrar/Ocultar conductor y transportista tipo 09 según modalidad
 		jQuery('#wpcfact-guia-modalidad').on('change', function() {
 			if (jQuery('#wpcfact-tipo-doc').val() === '09') {
-				if (jQuery(this).val() === '02') {
-					jQuery('#wpcfact-box-09-conductor').show();
-				} else {
-					jQuery('#wpcfact-box-09-conductor').hide();
-				}
+				var privado = jQuery(this).val() === '02';
+				jQuery('#wpcfact-box-09-conductor').toggle(privado);
+				jQuery('#wpcfact-box-09-transportista').toggle(!privado);
 			}
 		});
 

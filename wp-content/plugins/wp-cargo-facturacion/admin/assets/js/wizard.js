@@ -582,14 +582,16 @@ jQuery(document).ready(function($) {
             if (!$('#wpcfact-guia-modalidad').val()) {
                 camposFaltantes.push('Modalidad de Traslado');
             }
-            if (!$('#wpcfact-guia-09-transportista-ruc').val()) {
-                camposFaltantes.push('RUC del Transportista');
-            }
-            if (!$('#wpcfact-guia-09-transportista-nombre').val()) {
-                camposFaltantes.push('Razón Social del Transportista');
-            }
-            // Conductor solo obligatorio en Transporte Privado (modalidad 02)
+            // Transportista solo para modalidad 01, conductor solo para modalidad 02
             const modalidad09 = $('#wpcfact-guia-modalidad').val();
+            if (modalidad09 !== '02') {
+                if (!$('#wpcfact-guia-09-transportista-ruc').val()) {
+                    camposFaltantes.push('RUC del Transportista');
+                }
+                if (!$('#wpcfact-guia-09-transportista-nombre').val()) {
+                    camposFaltantes.push('Razón Social del Transportista');
+                }
+            }
             if (modalidad09 === '02') {
                 if (!$('#wpcfact-guia-09-conductor-dni').val() || $('#wpcfact-guia-09-conductor-dni').val().length !== 8) {
                     camposFaltantes.push('DNI del Conductor (8 dígitos)');
