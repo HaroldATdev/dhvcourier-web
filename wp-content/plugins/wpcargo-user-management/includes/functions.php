@@ -803,3 +803,19 @@ function wpcuser_unique_id($user)
 
     return $user_ID ? $user_ID : '';
 }
+
+// Rename the wpcargo roles globally so it affects all lists (like #wpcumanage-avail_roles)
+add_action('init', function() {
+    global $wp_roles;
+    if ( ! isset( $wp_roles ) ) {
+        $wp_roles = new WP_Roles();
+    }
+    if ( isset( $wp_roles->roles['wpcargo_client'] ) ) {
+        $wp_roles->roles['wpcargo_client']['name'] = __('Cliente', 'wpcargo-umanagement');
+        $wp_roles->role_names['wpcargo_client'] = __('Cliente', 'wpcargo-umanagement');
+    }
+    if ( isset( $wp_roles->roles['wpcargo_driver'] ) ) {
+        $wp_roles->roles['wpcargo_driver']['name'] = __('Conductor', 'wpcargo-umanagement');
+        $wp_roles->role_names['wpcargo_driver'] = __('Conductor', 'wpcargo-umanagement');
+    }
+});

@@ -1709,6 +1709,10 @@ msgstr "Ej: 12345"
 msgid "http://wptaskforce.com/"
 msgstr "http://wptaskforce.com/"
 
+#: classes/class-wpc-print.php:37 classes/class-wpc-print.php:41
+msgid "Print Track Result"
+msgstr "Imprimir Resultado de Seguimiento"
+
 #. Description of the plugin/theme
 msgid ""
 "WPCargo is a WordPress plug-in designed to provide ideal technology solution "

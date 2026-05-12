@@ -378,16 +378,16 @@ function wpcumanage_plugins_loaded_callback()
   add_action('wpcumanage_user_table_data', 'wpcumanage_user_table_data_name');
   add_action('wpcumanage_user_table_header', 'wpcumanage_user_table_header_email');
   add_action('wpcumanage_user_table_data', 'wpcumanage_user_table_data_email');
-  add_action('wpcumanage_user_table_header', 'wpcumanage_user_table_header_roles');
+  add_action('wpcumanage_user_table_header', 'wpcumanage_user_table_header_roles', 100);
   add_action('wpcumanage_user_table_data', 'wpcumanage_user_table_data_roles');
-  add_action('wpcumanage_user_table_header', 'wpcumanage_user_table_header_groups');
-  add_action('wpcumanage_user_table_data', 'wpcumanage_user_table_data_groups');
+  // add_action('wpcumanage_user_table_header', 'wpcumanage_user_table_header_groups');
+  // add_action('wpcumanage_user_table_data', 'wpcumanage_user_table_data_groups');
   add_action('wpcumanage_user_table_header', 'wpcumanage_user_table_header_status');
   add_action('wpcumanage_user_table_data', 'wpcumanage_user_table_data_status');
-  add_action('wpcumanage_user_table_header', 'wpcumanage_user_table_header_access', 100);
-  add_action('wpcumanage_user_table_data', 'wpcumanage_user_table_data_access', 100);
-  add_action('wpcumanage_user_table_header', 'wpcumanage_user_table_header_defaults', 100);
-  add_action('wpcumanage_user_table_data', 'wpcumanage_user_table_data_defaults', 100);
+  // add_action('wpcumanage_user_table_header', 'wpcumanage_user_table_header_access', 100);
+  // add_action('wpcumanage_user_table_data', 'wpcumanage_user_table_data_access', 100);
+  // add_action('wpcumanage_user_table_header', 'wpcumanage_user_table_header_defaults', 100);
+  // add_action('wpcumanage_user_table_data', 'wpcumanage_user_table_data_defaults', 100);
   add_action('wpcumanage_before_user_table', 'wpcumanage_user_saved_callback');
   add_action('wpcumanage_before_user_form', 'wpcumanage_user_saved_callback');
   // User Groups
