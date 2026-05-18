@@ -83,6 +83,36 @@
 								<?php do_action( 'wpcfe_shipment_table_header' ); ?>
 								<?php do_action( 'wpcfe_shipment_table_header_action' ); ?>
 							</tr>
+							<style>
+							/* Contenedor de la celda */
+							#shipments-table-list th.form-check,
+							#shipments-table-list td.form-check {
+								padding: 10px 5px !important; /* Espacio controlado */
+								width: 35px !important;       /* Ancho fijo para la columna */
+								min-width: 35px !important;
+								text-align: center !important;
+								vertical-align: top !important; /* Alineado arriba con el texto */
+							}
+
+							/* Ajuste del checkbox real */
+							#shipments-table-list .form-check-input {
+								margin: 0 !important;
+								cursor: pointer !important;
+								position: static !important; /* Quitamos el relative para evitar bloqueos */
+								opacity: 1 !important;       /* Aseguramos que sea visible y clickeable */
+								z-index: 10 !important;      /* Lo traemos al frente */
+							}
+
+							/* Desactivamos el label para que no robe el clic si está vacío */
+							#shipments-table-list .form-check-label {
+								display: none !important; 
+							}
+
+							/* Alineación específica para el checkbox del header */
+							#wpcfe-select-all {
+								margin-top: 5px !important;
+							}
+							</style>
 						</thead>
 						<tbody>
 							<?php	
