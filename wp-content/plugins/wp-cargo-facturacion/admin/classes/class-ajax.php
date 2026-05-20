@@ -295,6 +295,7 @@ class WPC_Facturacion_Ajax {
 		$guia_09_conductor_nombre     = sanitize_text_field( $_POST['guia_09_conductor_nombre'] ?? '' );
 		$guia_09_conductor_licencia   = sanitize_text_field( $_POST['guia_09_conductor_licencia'] ?? '' );
 		$guia_09_vehiculo_placa       = sanitize_text_field( $_POST['guia_09_vehiculo_placa'] ?? '' );
+		$guia_09_mtc_autorizacion     = sanitize_text_field( $_POST['guia_09_mtc_autorizacion'] ?? '' );
 		$guia_09_partida_departamento = sanitize_text_field( $_POST['guia_09_partida_departamento'] ?? '' );
 		$guia_09_partida_provincia    = sanitize_text_field( $_POST['guia_09_partida_provincia'] ?? '' );
 		$guia_09_partida_distrito     = sanitize_text_field( $_POST['guia_09_partida_distrito'] ?? '' );
@@ -318,6 +319,21 @@ class WPC_Facturacion_Ajax {
 		$guia_conductor_nombre        = sanitize_text_field( $_POST['guia_conductor_nombre'] ?? '' );
 		$guia_conductor_licencia      = sanitize_text_field( $_POST['guia_conductor_licencia'] ?? '' );
 		$guia_vehiculo_placa          = sanitize_text_field( $_POST['guia_vehiculo_placa'] ?? '' );
+		$guia_mtc_autorizacion        = sanitize_text_field( $_POST['guia_mtc_autorizacion'] ?? '' );
+		// Indicadores de traslado
+		$ind_retorno_vacio                = ! empty( $_POST['ind_retorno_vacio'] ) && $_POST['ind_retorno_vacio'] === '1';
+		$ind_retorno_envases              = ! empty( $_POST['ind_retorno_envases'] ) && $_POST['ind_retorno_envases'] === '1';
+		$ind_transbordo                   = ! empty( $_POST['ind_transbordo'] ) && $_POST['ind_transbordo'] === '1';
+		$ind_m1l                          = ! empty( $_POST['ind_m1l'] ) && $_POST['ind_m1l'] === '1';
+		$ind_datos_transportista          = ! empty( $_POST['ind_datos_transportista'] ) && $_POST['ind_datos_transportista'] === '1';
+		$ind_traslado_total_31            = ! empty( $_POST['ind_traslado_total_31'] ) && $_POST['ind_traslado_total_31'] === '1';
+		$ind_subcontratado                = ! empty( $_POST['ind_subcontratado'] ) && $_POST['ind_subcontratado'] === '1';
+		$ind_subcontratado_empresa_nombre = sanitize_text_field( $_POST['ind_subcontratado_empresa_nombre'] ?? '' );
+		$ind_subcontratado_empresa_ruc    = sanitize_text_field( $_POST['ind_subcontratado_empresa_ruc'] ?? '' );
+		$ind_flete_pagador                = sanitize_text_field( $_POST['ind_flete_pagador'] ?? 'Remitente' );
+		$ind_flete_tercero_nombre         = sanitize_text_field( $_POST['ind_flete_tercero_nombre'] ?? '' );
+		$ind_flete_tercero_doc_tipo       = sanitize_text_field( $_POST['ind_flete_tercero_doc_tipo'] ?? '6' );
+		$ind_flete_tercero_doc_num        = sanitize_text_field( $_POST['ind_flete_tercero_doc_num'] ?? '' );
 
 		// Modo libre: líneas manuales
 		$lineas_libres = array();
@@ -421,7 +437,7 @@ class WPC_Facturacion_Ajax {
 			if ( ! class_exists( 'WPC_Facturacion_Constructor_Guia' ) ) {
 				require_once dirname( __FILE__ ) . '/../../includes/class-constructor-guia.php';
 			}
-			$resultado = WPC_Facturacion_Constructor_Guia::emitir( $user_id, $envios, $tipo, $doc_num, $nombre, $direccion, $guia_peso, $guia_motivo, $guia_modalidad, $guia_remitente_doc, $guia_remitente_nombre, $guia_conductor_dni, $guia_conductor_nombre, $guia_conductor_licencia, $guia_vehiculo_placa, $guia_ubigeo_partida, $guia_ubigeo_llegada, $guia_09_transportista_ruc, $guia_09_transportista_nombre, $guia_09_conductor_dni, $guia_09_conductor_nombre, $guia_09_conductor_licencia, $guia_09_vehiculo_placa, $guia_09_partida_departamento, $guia_09_partida_provincia, $guia_09_partida_distrito, $guia_09_llegada_departamento, $guia_09_llegada_provincia, $guia_09_llegada_distrito, $guia_31_partida_departamento, $guia_31_partida_provincia, $guia_31_partida_distrito, $guia_31_llegada_departamento, $guia_31_llegada_provincia, $guia_31_llegada_distrito );
+			$resultado = WPC_Facturacion_Constructor_Guia::emitir( $user_id, $envios, $tipo, $doc_num, $nombre, $direccion, $guia_peso, $guia_motivo, $guia_modalidad, $guia_remitente_doc, $guia_remitente_nombre, $guia_conductor_dni, $guia_conductor_nombre, $guia_conductor_licencia, $guia_vehiculo_placa, $guia_ubigeo_partida, $guia_ubigeo_llegada, $guia_09_transportista_ruc, $guia_09_transportista_nombre, $guia_09_conductor_dni, $guia_09_conductor_nombre, $guia_09_conductor_licencia, $guia_09_vehiculo_placa, $guia_09_partida_departamento, $guia_09_partida_provincia, $guia_09_partida_distrito, $guia_09_llegada_departamento, $guia_09_llegada_provincia, $guia_09_llegada_distrito, $guia_31_partida_departamento, $guia_31_partida_provincia, $guia_31_partida_distrito, $guia_31_llegada_departamento, $guia_31_llegada_provincia, $guia_31_llegada_distrito, $guia_mtc_autorizacion, $guia_09_mtc_autorizacion, $ind_retorno_vacio, $ind_retorno_envases, $ind_transbordo, $ind_m1l, $ind_datos_transportista, $ind_traslado_total_31, $ind_subcontratado, $ind_subcontratado_empresa_nombre, $ind_subcontratado_empresa_ruc, $ind_flete_pagador, $ind_flete_tercero_nombre, $ind_flete_tercero_doc_tipo, $ind_flete_tercero_doc_num );
 		} elseif ( 'libre' === $modo ) {
 			$resultado = WPC_Facturacion_Constructor::emitir_libre( $user_id, $lineas_libres, $tipo, $doc_num, $nombre, $direccion, $forma_pago );
 		} else {

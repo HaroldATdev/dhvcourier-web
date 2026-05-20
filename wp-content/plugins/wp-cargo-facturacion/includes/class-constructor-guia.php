@@ -7,7 +7,7 @@ require_once plugin_dir_path( __FILE__ ) . 'ubigeos.php';
 
 class WPC_Facturacion_Constructor_Guia {
 
-	public static function emitir( $user_id, $envios_ids, $tipo, $doc_num, $nombre, $direccion, $peso, $motivo, $modalidad, $remitente_doc = '', $remitente_nombre = '', $conductor_dni = '', $conductor_nombre = '', $conductor_licencia = '', $vehiculo_placa = '', $ubigeo_partida = '150101', $ubigeo_llegada = '150131', $transportista_09_ruc = '', $transportista_09_nombre = '', $conductor_09_dni = '', $conductor_09_nombre = '', $conductor_09_licencia = '', $vehiculo_09_placa = '', $partida_09_departamento = '', $partida_09_provincia = '', $partida_09_distrito = '', $llegada_09_departamento = '', $llegada_09_provincia = '', $llegada_09_distrito = '', $partida_departamento = '', $partida_provincia = '', $partida_distrito = '', $llegada_departamento = '', $llegada_provincia = '', $llegada_distrito = '' ) {
+	public static function emitir( $user_id, $envios_ids, $tipo, $doc_num, $nombre, $direccion, $peso, $motivo, $modalidad, $remitente_doc = '', $remitente_nombre = '', $conductor_dni = '', $conductor_nombre = '', $conductor_licencia = '', $vehiculo_placa = '', $ubigeo_partida = '150101', $ubigeo_llegada = '150131', $transportista_09_ruc = '', $transportista_09_nombre = '', $conductor_09_dni = '', $conductor_09_nombre = '', $conductor_09_licencia = '', $vehiculo_09_placa = '', $partida_09_departamento = '', $partida_09_provincia = '', $partida_09_distrito = '', $llegada_09_departamento = '', $llegada_09_provincia = '', $llegada_09_distrito = '', $partida_departamento = '', $partida_provincia = '', $partida_distrito = '', $llegada_departamento = '', $llegada_provincia = '', $llegada_distrito = '', $mtc_autorizacion = '', $mtc_09_autorizacion = '', $ind_retorno_vacio = false, $ind_retorno_envases = false, $ind_transbordo = false, $ind_m1l = false, $ind_datos_transportista = false, $ind_traslado_total_31 = false, $ind_subcontratado = false, $ind_subcontratado_empresa_nombre = '', $ind_subcontratado_empresa_ruc = '', $ind_flete_pagador = 'Remitente', $ind_flete_tercero_nombre = '', $ind_flete_tercero_doc_tipo = '6', $ind_flete_tercero_doc_num = '' ) {
 		global $wpdb;
 
 		// 1. Obtener RUC emisor
@@ -73,13 +73,63 @@ class WPC_Facturacion_Constructor_Guia {
 		$scheme_id = ( strlen( $doc_num ) === 11 ) ? '6' : ( strlen( $doc_num ) === 8 ? '1' : '4' );
 
 		// 5a. Construir Shipment según el tipo de guía
+		// Construir SpecialInstructions dinámicamente
+		$special_instructions = array();
+		if ( $ind_retorno_vacio )   $special_instructions[] = array( '_text' => 'SUNAT_Envio_IndicadorRetornoVehiculoVacio' );
+		if ( $ind_retorno_envases ) $special_instructions[] = array( '_text' => 'SUNAT_Envio_IndicadorRetornoVehiculoConEnvaseVacio' );
+		if ( $ind_transbordo )      $special_instructions[] = array( '_text' => 'SUNAT_Envio_IndicadorTransbordoProgramado' );
+		// Indicadores exclusivos tipo 09
+		if ( $tipo === '09' && $ind_m1l )                 $special_instructions[] = array( '_text' => 'SUNAT_Envio_IndicadorTrasladoVehiculoM1L' );
+		if ( $tipo === '09' && $ind_datos_transportista ) $special_instructions[] = array( '_text' => 'SUNAT_Envio_IndicadorVehiculoConductoresTransp' );
+		// Indicadores exclusivos tipo 31
+		if ( $tipo === '31' && $ind_traslado_total_31 ) $special_instructions[] = array( '_text' => 'SUNAT_Envio_IndicadorTrasladoTotal' );
+		if ( $tipo === '31' && $ind_subcontratado )    $special_instructions[] = array( '_text' => 'SUNAT_Envio_IndicadorTrasporteSubcontratado' );
+		// Pagador de flete (tipo 31 siempre lo incluye)
 		if ( $tipo === '31' ) {
+			if ( $ind_flete_pagador === 'Tercero' )           $special_instructions[] = array( '_text' => 'SUNAT_Envio_IndicadorPagadorFlete_Tercero' );
+			elseif ( $ind_flete_pagador === 'Subcontratador' ) $special_instructions[] = array( '_text' => 'SUNAT_Envio_IndicadorPagadorFlete_Subcontratador' );
+			else                                               $special_instructions[] = array( '_text' => 'SUNAT_Envio_IndicadorPagadorFlete_Remitente' );
+		}
+
+		if ( $tipo === '31' ) {
+			// Construir cac:OriginatorCustomerParty y cac:Consignment si hay subcontratado
+			$originator_party = null;
+			$consignment      = null;
+			if ( $ind_subcontratado && $ind_subcontratado_empresa_ruc ) {
+				$originator_party = array(
+					'cac:Party' => array(
+						'cac:PartyIdentification' => array(
+							'cbc:ID' => array( '_attributes' => array( 'schemeID' => '6' ), '_text' => $ind_subcontratado_empresa_ruc )
+						),
+						'cac:PartyLegalEntity' => array(
+							'cbc:RegistrationName' => array( '_text' => $ind_subcontratado_empresa_nombre )
+						)
+					)
+				);
+				$consignment = array(
+					'cbc:ID' => array( '_text' => 'SUNAT_Envio' ),
+					'cac:LogisticsOperatorParty' => array(
+						'cac:PartyIdentification' => array(
+							'cbc:ID' => array( '_attributes' => array( 'schemeID' => '6' ), '_text' => $ind_subcontratado_empresa_ruc )
+						),
+						'cac:PartyLegalEntity' => array(
+							'cbc:RegistrationName' => array( '_text' => $ind_subcontratado_empresa_nombre )
+						)
+					)
+				);
+			}
 			// Guía de Transportista (tipo 31)
 			// Siempre tiene CarrierParty + DriverPerson (como array)
 			$shipment = array(
 				'cbc:ID'                  => array( '_text' => 'SUNAT_Envio' ),
 				'cbc:GrossWeightMeasure'  => array( '_attributes' => array( 'unitCode' => 'KGM' ), '_text' => number_format( $peso, 3, '.', '' ) ),
-				'cbc:SpecialInstructions' => array( array( '_text' => 'SUNAT_Envio_IndicadorPagadorFlete_Remitente' ) ),
+				'cbc:SpecialInstructions' => $special_instructions,
+			);
+			// Insertar cac:Consignment si hay subcontratado
+			if ( isset( $consignment ) && $consignment ) {
+				$shipment['cac:Consignment'] = $consignment;
+			}
+			$shipment += array(
 				'cac:ShipmentStage' => array(
 					'cac:TransitPeriod' => array( 'cbc:StartDate' => array( '_text' => $fecha_emision ) ),
 					'cac:CarrierParty'  => array(
@@ -87,7 +137,7 @@ class WPC_Facturacion_Constructor_Guia {
 							'cbc:ID' => array( '_attributes' => array( 'schemeID' => '6' ), '_text' => $ruc_emisor )
 						),
 						'cac:PartyLegalEntity' => array(
-							'cbc:CompanyID' => array( '_text' => get_option( 'wpcfact_mtc_autorizacion', '0' ) )
+							'cbc:CompanyID' => array( '_text' => $mtc_autorizacion ?: get_option( 'wpcfact_mtc_autorizacion', '0' ) )
 						)
 					),
 					'cac:DriverPerson' => array(
@@ -132,16 +182,19 @@ class WPC_Facturacion_Constructor_Guia {
 							'cbc:RegistrationNationalityID' => array( '_text' => $vehiculo_placa )
 						),
 						'cac:ShipmentDocumentReference' => array(
-							'cbc:ID' => array( '_attributes' => array( 'schemeID' => '06' ), '_text' => '0' )
+							'cbc:ID' => array( '_attributes' => array( 'schemeID' => '06' ), '_text' => ( $mtc_autorizacion ?: get_option( 'wpcfact_mtc_autorizacion', '0' ) ) )
 						)
 					)
 				)
 			);
+			// Insertar OriginatorCustomerParty y Consignment en el documento si aplica
+			// (se agregan al document_body más adelante)
 		} else {
 			// Guía de Remisión Remitente (tipo 09)
 			// Modalidad 01 (Transporte Público):  CarrierParty solamente
 			// Modalidad 02 (Transporte Privado):  DriverPerson (array) + TransportHandlingUnit, sin CarrierParty
 			if ( $modalidad === '02' ) {
+				// Modalidad 02 (Privado): DriverPerson + TransportHandlingUnit, sin CarrierParty
 				$shipment_stage_09 = array(
 					'cbc:TransportModeCode' => array( '_text' => $modalidad ),
 					'cac:TransitPeriod'     => array( 'cbc:StartDate' => array( '_text' => $fecha_emision ) ),
@@ -160,15 +213,57 @@ class WPC_Facturacion_Constructor_Guia {
 				$shipment_transporte = array(
 					'cac:TransportHandlingUnit' => array(
 						'cac:TransportEquipment' => array(
-							'cbc:ID' => array( '_text' => $vehiculo_09_placa ?: $conductor_09_licencia ),
+							'cbc:ID' => array( '_text' => $vehiculo_09_placa ),
+							'cac:ApplicableTransportMeans' => array(
+								'cbc:RegistrationNationalityID' => array( '_text' => $vehiculo_09_placa )
+							),
 							'cac:ShipmentDocumentReference' => array(
-								'cbc:ID' => array( '_attributes' => array( 'schemeID' => '06' ), '_text' => '0' )
+								'cbc:ID' => array( '_attributes' => array( 'schemeID' => '06' ), '_text' => $mtc_09_autorizacion ?: '0' )
+							)
+						)
+					)
+				);
+			} elseif ( $ind_datos_transportista ) {
+				// Modalidad 01 + Datos del Transportista: CarrierParty + DriverPerson + TransportHandlingUnit
+				$shipment_stage_09 = array(
+					'cbc:TransportModeCode' => array( '_text' => $modalidad ),
+					'cac:TransitPeriod'     => array( 'cbc:StartDate' => array( '_text' => $fecha_emision ) ),
+					'cac:CarrierParty' => array(
+						'cac:PartyIdentification' => array(
+							'cbc:ID' => array( '_attributes' => array( 'schemeID' => '6' ), '_text' => $transportista_09_ruc ?: $ruc_emisor )
+						),
+						'cac:PartyLegalEntity' => array(
+							'cbc:RegistrationName' => array( '_text' => $transportista_09_nombre ?: $razon_social_emisor ),
+							'cbc:CompanyID'        => array( '_text' => $mtc_09_autorizacion ?: get_option( 'wpcfact_mtc_autorizacion', '0' ) )
+						)
+					),
+					'cac:DriverPerson' => array(
+						array(
+							'cbc:ID'         => array( '_attributes' => array( 'schemeID' => '1' ), '_text' => $conductor_09_dni ),
+							'cbc:FirstName'  => array( '_text' => $conductor_09_nombre ?: ' ' ),
+							'cbc:FamilyName' => array( '_text' => '-' ),
+							'cbc:JobTitle'   => array( '_text' => 'Principal' ),
+							'cac:IdentityDocumentReference' => array(
+								'cbc:ID' => array( '_text' => $conductor_09_licencia ?: '00000' )
+							),
+						)
+					),
+				);
+				$shipment_transporte = array(
+					'cac:TransportHandlingUnit' => array(
+						'cac:TransportEquipment' => array(
+							'cbc:ID' => array( '_text' => $vehiculo_09_placa ),
+							'cac:ApplicableTransportMeans' => array(
+								'cbc:RegistrationNationalityID' => array( '_text' => $vehiculo_09_placa )
+							),
+							'cac:ShipmentDocumentReference' => array(
+								'cbc:ID' => array( '_attributes' => array( 'schemeID' => '06' ), '_text' => $mtc_09_autorizacion ?: '0' )
 							)
 						)
 					)
 				);
 			} else {
-				// Modalidad 01: Transporte Público — solo CarrierParty
+				// Modalidad 01 (Público) sin datos de transportista: solo CarrierParty
 				$shipment_stage_09 = array(
 					'cbc:TransportModeCode' => array( '_text' => $modalidad ),
 					'cac:TransitPeriod'     => array( 'cbc:StartDate' => array( '_text' => $fecha_emision ) ),
@@ -184,11 +279,17 @@ class WPC_Facturacion_Constructor_Guia {
 				$shipment_transporte = array();
 			}
 
-			$shipment = array_merge(
-				array(
+			$shipment_09_base = array(
 					'cbc:ID'                 => array( '_text' => 'SUNAT_Envio' ),
 					'cbc:HandlingCode'       => array( '_text' => $motivo ),
 					'cbc:GrossWeightMeasure' => array( '_attributes' => array( 'unitCode' => 'KGM' ), '_text' => number_format( $peso, 3, '.', '' ) ),
+				);
+				if ( ! empty( $special_instructions ) ) {
+					$shipment_09_base['cbc:SpecialInstructions'] = $special_instructions;
+				}
+			$shipment = array_merge(
+				$shipment_09_base,
+				array(
 					'cac:ShipmentStage' => $shipment_stage_09,
 					'cac:Delivery' => array(
 						'cac:DeliveryAddress' => array(
@@ -240,6 +341,10 @@ class WPC_Facturacion_Constructor_Guia {
 			'cac:Shipment' => $shipment,
 		'cac:DespatchLine' => array()
 	);
+		// Insertar OriginatorCustomerParty (tipo 31 con subcontratado)
+		if ( isset( $originator_party ) && $originator_party ) {
+			$document_body['cac:OriginatorCustomerParty'] = $originator_party;
+		}
 		// Líneas de la guía
 		$line_id = 1;
 		foreach ( $envios_datos as $envio ) {

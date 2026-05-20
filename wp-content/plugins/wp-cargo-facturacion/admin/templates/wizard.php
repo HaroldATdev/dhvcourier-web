@@ -186,11 +186,20 @@
 				<div class="wpcfact-input-group" style="flex:1;">
 					<label>Motivo de Traslado</label>
 				<select id="wpcfact-guia-motivo" class="wpcfact-select">
-					<option value="01">Venta</option>
-					<option value="14">Venta sujeta a confirmación del comprador</option>
-					<option value="02">Compra</option>
-					<option value="04">Traslado entre establecimientos de la misma empresa</option>
-					<option value="13">Otros</option>
+					<option value="01">01 - Venta</option>
+					<option value="02">02 - Compra</option>
+					<option value="03">03 - Devolución</option>
+					<option value="04">04 - Traslado entre establecimientos de la misma empresa</option>
+					<option value="05">05 - Consignación</option>
+					<option value="06">06 - Devolución de consignación</option>
+					<option value="07">07 - Recojo de bienes transformados</option>
+					<option value="08">08 - Importación</option>
+					<option value="09">09 - Exportación</option>
+					<option value="13">13 - Otros</option>
+					<option value="14">14 - Venta sujeta a confirmación del comprador</option>
+					<option value="17">17 - Traslado de bienes para transformación</option>
+					<option value="18">18 - Traslado emisor itinerante CP</option>
+					<option value="19">19 - Traslado a zona primaria</option>
 				</select>
 			</div>
 			<div class="wpcfact-input-group" style="flex:1;">
@@ -236,6 +245,10 @@
 					<div class="wpcfact-input-group" style="flex:1; min-width:120px;">
 						<label>Placa del Vehículo</label>
 						<input type="text" id="wpcfact-guia-09-vehiculo-placa" class="wpcfact-input" placeholder="ABC-123">
+					</div>
+					<div class="wpcfact-input-group" style="flex:1; min-width:160px;">
+						<label>Número de Registro MTC <small style="color:#6b7280;">(opcional)</small></label>
+						<input type="text" id="wpcfact-guia-09-mtc-autorizacion" class="wpcfact-input" placeholder="Ej: 15M25043035E">
 					</div>
 				</div>
 			</div>
@@ -369,10 +382,109 @@
 						<label>Placa del Vehículo</label>
 						<input type="text" id="wpcfact-guia-vehiculo-placa" class="wpcfact-input" placeholder="ABC-123">
 					</div>
+					<div class="wpcfact-input-group" style="flex:1; min-width:160px;">
+						<label>Número de Registro MTC <small style="color:#6b7280;">(opcional)</small></label>
+						<input type="text" id="wpcfact-guia-mtc-autorizacion" class="wpcfact-input" placeholder="Ej: MTC-12345">
+					</div>
 				</div>
 			</div>
 
 		<small style="color:#64748b; margin-top:25px; display:block; padding:15px; background:#f1f5f9; border-radius:6px; border-left:3px solid #94a3b8;">(El sistema usará la dirección del emisor como punto de partida y la dirección del destinatario como punto de llegada).</small>
+
+		<!-- Indicadores de traslado: comunes a tipo 09 y 31 -->
+		<div id="wpcfact-indicadores-traslado" style="display:none; margin-top:30px; padding:20px; background:#f0fdf4; border-radius:6px; border-left:4px solid #22c55e;">
+			<h4 style="margin:0 0 18px 0; color:#1e293b; font-size:16px;">Indicadores de Traslado</h4>
+			<div style="display:flex; gap:20px; flex-wrap:wrap; align-items:center;">
+
+				<label style="display:flex; align-items:center; gap:8px; cursor:pointer; min-width:200px;">
+					<div class="wpcfact-toggle-wrap">
+						<input type="checkbox" id="wpcfact-ind-retorno-vacio" class="wpcfact-toggle-input">
+						<span class="wpcfact-toggle-label" data-on="Sí" data-off="No"></span>
+					</div>
+					<span style="font-size:14px; color:#374151;">Retorno de Vehículo Vacío</span>
+				</label>
+
+				<label style="display:flex; align-items:center; gap:8px; cursor:pointer; min-width:220px;">
+					<div class="wpcfact-toggle-wrap">
+						<input type="checkbox" id="wpcfact-ind-retorno-envases" class="wpcfact-toggle-input">
+						<span class="wpcfact-toggle-label" data-on="Sí" data-off="No"></span>
+					</div>
+					<span style="font-size:14px; color:#374151;">Retorno con Envases Vacíos</span>
+				</label>
+
+				<label style="display:flex; align-items:center; gap:8px; cursor:pointer; min-width:200px;">
+					<div class="wpcfact-toggle-wrap">
+						<input type="checkbox" id="wpcfact-ind-transbordo" class="wpcfact-toggle-input">
+						<span class="wpcfact-toggle-label" data-on="Sí" data-off="No"></span>
+					</div>
+					<span style="font-size:14px; color:#374151;">Transbordo Programado</span>
+				</label>
+
+				<!-- Solo tipo 09: Vehículos M1 o L (exclusivo con Datos del Transportista) -->
+				<label id="wpcfact-ind-wrap-m1l" style="display:none; align-items:center; gap:8px; cursor:pointer; min-width:210px;">
+					<div class="wpcfact-toggle-wrap">
+						<input type="checkbox" id="wpcfact-ind-m1l" class="wpcfact-toggle-input">
+						<span class="wpcfact-toggle-label" data-on="Sí" data-off="No"></span>
+					</div>
+					<span style="font-size:14px; color:#374151;">Vehículos Categoría M1 o L</span>
+				</label>
+
+				<!-- Solo tipo 09: Datos del Transportista (exclusivo con M1L) -->
+				<label id="wpcfact-ind-wrap-datos-transportista" style="display:none; align-items:center; gap:8px; cursor:pointer; min-width:220px;">
+					<div class="wpcfact-toggle-wrap">
+						<input type="checkbox" id="wpcfact-ind-datos-transportista" class="wpcfact-toggle-input">
+						<span class="wpcfact-toggle-label" data-on="Sí" data-off="No"></span>
+					</div>
+					<span style="font-size:14px; color:#374151;">Datos del Transportista</span>
+				</label>
+
+				<!-- Solo tipo 31: Traslado Total -->
+				<label id="wpcfact-ind-wrap-traslado-total-31" style="display:none; align-items:center; gap:8px; cursor:pointer; min-width:200px;">
+					<div class="wpcfact-toggle-wrap">
+						<input type="checkbox" id="wpcfact-ind-traslado-total-31" class="wpcfact-toggle-input">
+						<span class="wpcfact-toggle-label" data-on="Sí" data-off="No"></span>
+					</div>
+					<span style="font-size:14px; color:#374151;">Traslado Total de Bienes</span>
+				</label>
+
+				<!-- Solo tipo 31: Transporte Subcontratado -->
+				<label id="wpcfact-ind-wrap-subcontratado" style="display:none; align-items:center; gap:8px; cursor:pointer; min-width:220px;">
+					<div class="wpcfact-toggle-wrap">
+						<input type="checkbox" id="wpcfact-ind-subcontratado" class="wpcfact-toggle-input">
+						<span class="wpcfact-toggle-label" data-on="Sí" data-off="No"></span>
+					</div>
+					<span style="font-size:14px; color:#374151;">Transporte Subcontratado</span>
+				</label>
+
+			</div>
+
+			<!-- Campos de empresa subcontratante (solo tipo 31, cuando Subcontratado ON) -->
+			<div id="wpcfact-ind-wrap-subcontratado-empresa" style="display:none; margin-top:14px; display:none; gap:10px; flex-wrap:wrap; align-items:center;">
+				<input type="text" id="wpcfact-ind-subcontratado-empresa-nombre" class="wpcfact-input" placeholder="Empresa que subcontrata" style="flex:2; min-width:200px;">
+				<input type="text" id="wpcfact-ind-subcontratado-empresa-ruc" class="wpcfact-input" placeholder="RUC de la empresa" style="flex:1; min-width:140px;" maxlength="11">
+			</div>
+
+			<!-- Flete pagado por (solo tipo 31) -->
+			<div id="wpcfact-ind-wrap-flete" style="display:none; margin-top:14px; gap:10px; flex-wrap:wrap; align-items:center;">
+				<span style="font-size:14px; color:#374151; white-space:nowrap; font-weight:500;">Flete pagado por</span>
+				<select id="wpcfact-ind-flete-pagador" class="wpcfact-select" style="min-width:180px;">
+					<option value="Remitente">Remitente</option>
+					<option value="Subcontratador" id="wpcfact-ind-flete-opt-subcontratador" disabled>Subcontratador</option>
+					<option value="Tercero">Tercero</option>
+				</select>
+				<!-- Campos extra cuando flete = Tercero -->
+				<div id="wpcfact-ind-wrap-flete-tercero" style="display:none; gap:10px; flex-wrap:wrap; align-items:center; width:100%; margin-top:8px;">
+					<input type="text" id="wpcfact-ind-flete-tercero-nombre" class="wpcfact-input" placeholder="Nombre de quien paga el servicio" style="flex:2; min-width:200px;">
+					<select id="wpcfact-ind-flete-tercero-doc-tipo" class="wpcfact-select" style="min-width:80px;">
+						<option value="6">RUC</option>
+						<option value="1">DNI</option>
+					</select>
+					<input type="text" id="wpcfact-ind-flete-tercero-doc-num" class="wpcfact-input" placeholder="Número" style="flex:1; min-width:120px;">
+				</div>
+			</div>
+
+			</div>
+		</div>
 
 		<div style="background:#fffbeb; border:1px solid #fef3c7; border-left:4px solid #f59e0b; padding:18px; border-radius:6px; margin-top:30px; color:#b45309; line-height:1.6;">
 			<strong>ℹ️ Nota:</strong> Las líneas del comprobante/guía se autogenerarán indicando el servicio y el número de tracking de cada envío seleccionado.
@@ -397,6 +509,21 @@
 					jQuery('#wpcfact-box-09-conductor').hide();
 					jQuery('#wpcfact-box-09-transportista').hide();
 				}
+				// Indicadores de traslado
+				jQuery('#wpcfact-indicadores-traslado').show();
+				jQuery('#wpcfact-ind-wrap-m1l').css('display', val === '09' ? 'flex' : 'none');
+				jQuery('#wpcfact-ind-wrap-datos-transportista').css('display', val === '09' ? 'flex' : 'none');
+				jQuery('#wpcfact-ind-wrap-traslado-total-31').css('display', val === '31' ? 'flex' : 'none');
+				jQuery('#wpcfact-ind-wrap-subcontratado').css('display', val === '31' ? 'flex' : 'none');
+				jQuery('#wpcfact-ind-wrap-flete').css('display', val === '31' ? 'flex' : 'none');
+				// Ocultar campos condicionales al cambiar tipo
+				jQuery('#wpcfact-ind-wrap-subcontratado-empresa, #wpcfact-ind-wrap-flete-tercero').hide();
+				// Resetear toggles exclusivos al cambiar tipo
+				jQuery('#wpcfact-ind-m1l, #wpcfact-ind-datos-transportista').prop('checked', false);
+				jQuery('#wpcfact-ind-retorno-vacio, #wpcfact-ind-retorno-envases').prop('checked', false);
+				jQuery('#wpcfact-ind-subcontratado').prop('checked', false);
+				jQuery('#wpcfact-ind-flete-opt-subcontratador').prop('disabled', true);
+				jQuery('#wpcfact-ind-flete-pagador').val('Remitente');
 				if (val === '09') {
 					cargarDepartamentos('tipo09-partida');
 					cargarDepartamentos('tipo09-llegada');
@@ -406,6 +533,7 @@
 				}
 			} else {
 				jQuery('#wpcfact-campos-guia').hide();
+				jQuery('#wpcfact-indicadores-traslado').hide();
 				jQuery('#wpcfact-forma-pago').closest('.wpcfact-input-group').show();
 			}
 		});
@@ -414,9 +542,59 @@
 		jQuery('#wpcfact-guia-modalidad').on('change', function() {
 			if (jQuery('#wpcfact-tipo-doc').val() === '09') {
 				var privado = jQuery(this).val() === '02';
-				jQuery('#wpcfact-box-09-conductor').toggle(privado);
+				var datosTransp = jQuery('#wpcfact-ind-datos-transportista').is(':checked');
+				jQuery('#wpcfact-box-09-conductor').toggle(privado || datosTransp);
 				jQuery('#wpcfact-box-09-transportista').toggle(!privado);
 			}
+		});
+
+		// Exclusión mutua: Retorno Vacío ↔ Retorno Envases
+		jQuery('#wpcfact-ind-retorno-vacio').on('change', function() {
+			if (jQuery(this).is(':checked')) jQuery('#wpcfact-ind-retorno-envases').prop('checked', false);
+		});
+		jQuery('#wpcfact-ind-retorno-envases').on('change', function() {
+			if (jQuery(this).is(':checked')) jQuery('#wpcfact-ind-retorno-vacio').prop('checked', false);
+		});
+
+		// Exclusión mutua: M1L ↔ Datos del Transportista
+		jQuery('#wpcfact-ind-m1l').on('change', function() {
+			if (jQuery(this).is(':checked')) {
+				jQuery('#wpcfact-ind-datos-transportista').prop('checked', false);
+				// Datos del transportista OFF: ocultar conductor en modalidad pública
+				if (jQuery('#wpcfact-guia-modalidad').val() !== '02') {
+					jQuery('#wpcfact-box-09-conductor').hide();
+				}
+			}
+		});
+		jQuery('#wpcfact-ind-datos-transportista').on('change', function() {
+			if (jQuery(this).is(':checked')) {
+				jQuery('#wpcfact-ind-m1l').prop('checked', false);
+				// Datos del transportista ON: mostrar conductor siempre
+				jQuery('#wpcfact-box-09-conductor').show();
+			} else {
+				// Datos del transportista OFF: ocultar conductor si modalidad pública
+				if (jQuery('#wpcfact-guia-modalidad').val() !== '02') {
+					jQuery('#wpcfact-box-09-conductor').hide();
+				}
+			}
+		});
+
+		// Transporte Subcontratado (tipo 31): muestra empresa + habilita opción flete
+		jQuery('#wpcfact-ind-subcontratado').on('change', function() {
+			var on = jQuery(this).is(':checked');
+			jQuery('#wpcfact-ind-wrap-subcontratado-empresa').css('display', on ? 'flex' : 'none');
+			jQuery('#wpcfact-ind-flete-opt-subcontratador').prop('disabled', !on);
+			// Si se desactiva y está seleccionado Subcontratador, volver a Remitente
+			if (!on && jQuery('#wpcfact-ind-flete-pagador').val() === 'Subcontratador') {
+				jQuery('#wpcfact-ind-flete-pagador').val('Remitente');
+				jQuery('#wpcfact-ind-wrap-flete-tercero').hide();
+			}
+		});
+
+		// Flete pagado por (tipo 31): muestra campos de Tercero
+		jQuery('#wpcfact-ind-flete-pagador').on('change', function() {
+			var esTercero = jQuery(this).val() === 'Tercero';
+			jQuery('#wpcfact-ind-wrap-flete-tercero').css('display', esTercero ? 'flex' : 'none');
 		});
 
 		// Cargar departamentos

@@ -752,6 +752,7 @@ jQuery(document).ready(function($) {
             guia_09_conductor_nombre: $('#wpcfact-guia-09-conductor-nombre').val() || '',
             guia_09_conductor_licencia: $('#wpcfact-guia-09-conductor-licencia').val() || '',
             guia_09_vehiculo_placa: $('#wpcfact-guia-09-vehiculo-placa').val() || '',
+            guia_09_mtc_autorizacion: $('#wpcfact-guia-09-mtc-autorizacion').val() || '',
             guia_09_partida_departamento: $('#wpcfact-guia-09-partida-departamento').val() || '',
             guia_09_partida_provincia: $('#wpcfact-guia-09-partida-provincia').val() || '',
             guia_09_partida_distrito: $('#wpcfact-guia-09-partida-distrito').val() || '',
@@ -769,7 +770,22 @@ jQuery(document).ready(function($) {
             guia_conductor_dni: $('#wpcfact-guia-conductor-dni').val() || '',
             guia_conductor_nombre: $('#wpcfact-guia-conductor-nombre').val() || '',
             guia_conductor_licencia: $('#wpcfact-guia-conductor-licencia').val() || '',
-            guia_vehiculo_placa: $('#wpcfact-guia-vehiculo-placa').val() || ''
+            guia_vehiculo_placa: $('#wpcfact-guia-vehiculo-placa').val() || '',
+            guia_mtc_autorizacion: $('#wpcfact-guia-mtc-autorizacion').val() || '',
+            // Indicadores de traslado
+            ind_retorno_vacio:                  $('#wpcfact-ind-retorno-vacio').is(':checked') ? '1' : '0',
+            ind_retorno_envases:                $('#wpcfact-ind-retorno-envases').is(':checked') ? '1' : '0',
+            ind_transbordo:                     $('#wpcfact-ind-transbordo').is(':checked') ? '1' : '0',
+            ind_m1l:                            $('#wpcfact-ind-m1l').is(':checked') ? '1' : '0',
+            ind_datos_transportista:            $('#wpcfact-ind-datos-transportista').is(':checked') ? '1' : '0',
+            ind_traslado_total_31:              $('#wpcfact-ind-traslado-total-31').is(':checked') ? '1' : '0',
+            ind_subcontratado:                  $('#wpcfact-ind-subcontratado').is(':checked') ? '1' : '0',
+            ind_subcontratado_empresa_nombre:   $('#wpcfact-ind-subcontratado-empresa-nombre').val() || '',
+            ind_subcontratado_empresa_ruc:      $('#wpcfact-ind-subcontratado-empresa-ruc').val() || '',
+            ind_flete_pagador:                  $('#wpcfact-ind-flete-pagador').val() || 'Remitente',
+            ind_flete_tercero_nombre:           $('#wpcfact-ind-flete-tercero-nombre').val() || '',
+            ind_flete_tercero_doc_tipo:         $('#wpcfact-ind-flete-tercero-doc-tipo').val() || '6',
+            ind_flete_tercero_doc_num:          $('#wpcfact-ind-flete-tercero-doc-num').val() || '',
         };
 
         showStep(4);
