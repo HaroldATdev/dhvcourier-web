@@ -34,7 +34,11 @@ if ( !empty( $shipment_id ) ) :
 	$telefono_destinatario = esc_html( get_post_meta( $shipment->ID, 'telefono_destinatario', true ) );
 	$direccion_destinatario= esc_html( get_post_meta( $shipment->ID, 'direccion_destinatario', true ) );
 	$monto                 = esc_html( get_post_meta( $shipment->ID, 'monto', true ) );
-	$peso                  = esc_html( get_post_meta( $shipment->ID, 'peso', true ) );
+	$tipo_medida_cot       = get_post_meta( $shipment->ID, 'wpcte_tipo_medida', true );
+	$peso_cotizado         = (float) get_post_meta( $shipment->ID, 'wpcte_peso_cotizado', true );
+	$dim_alto              = (float) get_post_meta( $shipment->ID, 'wpcte_dim_alto',  true );
+	$dim_ancho             = (float) get_post_meta( $shipment->ID, 'wpcte_dim_ancho', true );
+	$dim_largo             = (float) get_post_meta( $shipment->ID, 'wpcte_dim_largo', true );
 	$condicion_pago        = esc_html( get_post_meta( $shipment->ID, 'condicion_pago', true ) );
 	$total_bultos          = esc_html( get_post_meta( $shipment->ID, 'total_bultos', true ) );
 
@@ -253,7 +257,11 @@ if ( !empty( $shipment_id ) ) :
 			<div class="dhv-info-chips">
 				<?php if($created_date):?><div class="dhv-chip"><span>Creación</span><strong><?php echo $created_date;?></strong></div><?php endif;?>
 				<?php if($monto):?><div class="dhv-chip"><span>Monto</span><strong>S/ <?php echo $monto;?></strong></div><?php endif;?>
-				<?php if($peso):?><div class="dhv-chip"><span>Peso</span><strong><?php echo $peso;?> kg</strong></div><?php endif;?>
+				<?php if($tipo_medida_cot === 'peso' && $peso_cotizado > 0): ?>
+				<div class="dhv-chip"><span>Peso</span><strong><?php echo number_format($peso_cotizado,2); ?> kg</strong></div>
+				<?php elseif($tipo_medida_cot === 'volumen' && ($dim_alto || $dim_ancho || $dim_largo)): ?>
+				<div class="dhv-chip"><span>Dimensiones</span><strong><?php echo number_format($dim_alto,0).' × '.number_format($dim_ancho,0).' × '.number_format($dim_largo,0); ?> cm</strong></div>
+				<?php endif;?>
 				<?php if($condicion_pago):?><div class="dhv-chip"><span>Pago</span><strong><?php echo ucfirst($condicion_pago);?></strong></div><?php endif;?>
 				<?php if($total_bultos):?><div class="dhv-chip"><span>Bultos</span><strong><?php echo $total_bultos;?></strong></div><?php endif;?>
 			</div>

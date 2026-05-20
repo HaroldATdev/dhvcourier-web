@@ -1367,6 +1367,22 @@ document.getElementById('wpcte-cot-btn').addEventListener('click',function(){
     window._wpcte_precio=precio;
     window._wpcte_orig=origCot;
     window._wpcte_dest=destCot;
+    // ── Tipo de medida y valor de peso cotizado ──────────────────────────
+    window._wpcte_tipo_medida='';
+    window._wpcte_peso_cotizado=0;
+    window._wpcte_dim_alto=0;window._wpcte_dim_ancho=0;window._wpcte_dim_largo=0;
+    if(m==='carga_general'){
+        window._wpcte_tipo_medida=medida==='vol'?'volumen':'peso';
+        window._wpcte_peso_cotizado=Number(pesoEf);
+        if(medida==='vol'){
+            window._wpcte_dim_alto=Number(alto);
+            window._wpcte_dim_ancho=Number(ancho);
+            window._wpcte_dim_largo=Number(largo);
+        }
+    }else if(m==='aereo'){
+        window._wpcte_tipo_medida='peso';
+        window._wpcte_peso_cotizado=Number(peso3);
+    }
 });
 
     var montoMinCotizacion=null;
@@ -1430,6 +1446,17 @@ if(btnCont2){
             if(_dc)s2('lugar_destino',_dc);
         }
         _fillCampos();setTimeout(_fillCampos,300);setTimeout(_fillCampos,800);setTimeout(_fillCampos,1500);
+        // ── Pasar tipo de medida y peso cotizado al formulario ────────────
+        (function(){
+            var _f=document.querySelector('form.add-shipment');
+            if(!_f)return;
+            var _campos={wpcte_tipo_medida:window._wpcte_tipo_medida||'',wpcte_peso_cotizado:window._wpcte_peso_cotizado||0,wpcte_dim_alto:window._wpcte_dim_alto||0,wpcte_dim_ancho:window._wpcte_dim_ancho||0,wpcte_dim_largo:window._wpcte_dim_largo||0};
+            Object.keys(_campos).forEach(function(k){
+                var el=_f.querySelector('input[name="'+k+'"]');
+                if(!el){el=document.createElement('input');el.type='hidden';el.name=k;_f.appendChild(el);}
+                el.value=_campos[k];
+            });
+        })();
     });
 }
 
@@ -2205,6 +2232,14 @@ function wpcte_guardar_meta( $post_id ) {
         update_post_meta( $post_id, 'direccion_remitente', sanitize_text_field( $_POST['direccion_remitente'] ) );
     if ( isset( $_POST['costo_envio'] ) && $_POST['costo_envio'] !== '' )
         update_post_meta( $post_id, 'costo_envio', sanitize_text_field( $_POST['costo_envio'] ) );
+    if ( ! empty( $_POST['wpcte_tipo_medida'] ) )
+        update_post_meta( $post_id, 'wpcte_tipo_medida', sanitize_key( $_POST['wpcte_tipo_medida'] ) );
+    if ( isset( $_POST['wpcte_peso_cotizado'] ) && is_numeric( $_POST['wpcte_peso_cotizado'] ) )
+        update_post_meta( $post_id, 'wpcte_peso_cotizado', (float) $_POST['wpcte_peso_cotizado'] );
+    foreach ( array( 'wpcte_dim_alto', 'wpcte_dim_ancho', 'wpcte_dim_largo' ) as $_dim ) {
+        if ( isset( $_POST[ $_dim ] ) && is_numeric( $_POST[ $_dim ] ) )
+            update_post_meta( $post_id, $_dim, (float) $_POST[ $_dim ] );
+    }
 
     $posted_shipper = isset( $_POST['registered_shipper'] ) ? absint( $_POST['registered_shipper'] ) : 0;
     if ( $posted_shipper > 0 ) {
@@ -2231,6 +2266,14 @@ function wpcte_guardar_meta_late( $post_id ) {
         update_post_meta( $post_id, 'tipo_envio', sanitize_key( $_POST['wpcte_tipo_envio'] ) );
     if ( isset( $_POST['direccion_remitente'] ) )
         update_post_meta( $post_id, 'direccion_remitente', sanitize_text_field( $_POST['direccion_remitente'] ) );
+    if ( ! empty( $_POST['wpcte_tipo_medida'] ) )
+        update_post_meta( $post_id, 'wpcte_tipo_medida', sanitize_key( $_POST['wpcte_tipo_medida'] ) );
+    if ( isset( $_POST['wpcte_peso_cotizado'] ) && is_numeric( $_POST['wpcte_peso_cotizado'] ) )
+        update_post_meta( $post_id, 'wpcte_peso_cotizado', (float) $_POST['wpcte_peso_cotizado'] );
+    foreach ( array( 'wpcte_dim_alto', 'wpcte_dim_ancho', 'wpcte_dim_largo' ) as $_dim ) {
+        if ( isset( $_POST[ $_dim ] ) && is_numeric( $_POST[ $_dim ] ) )
+            update_post_meta( $post_id, $_dim, (float) $_POST[ $_dim ] );
+    }
     // Si es agencia/almacen y viene seleccionado conductor de entrega, sincronizar wpcargo_driver
     $posted_tipo2 = ! empty( $_POST['wpcte_tipo_envio'] ) ? sanitize_key( $_POST['wpcte_tipo_envio'] ) : ( get_post_meta( $post_id, 'tipo_envio', true ) ?: '' );
     if ( in_array( $posted_tipo2, array( 'agencia', 'almacen' ), true ) ) {
@@ -3489,5 +3532,47 @@ if(typeof jQuery !== 'undefined'){
 }
 })();
 </script>
+    <?php
+}
+
+/* ======================================================================
+   TRACKING: Reemplazar tabla de paquetes por campo de peso del cotizador
+   ====================================================================== */
+add_action( 'wp', 'wpcte_setup_tracking_pesos', 5 );
+function wpcte_setup_tracking_pesos() {
+    if ( is_admin() ) return;
+    if ( ( sanitize_key( $_GET['wpcfe'] ?? '' ) ) !== 'track' ) return;
+    remove_action( 'wpcargo_after_package_details', 'wpcargo_multiple_package_after_track_details', 5 );
+    remove_action( 'wpcargo_after_package_details', 'wpcargo_multiple_package_details_tbl_responsive', 10 );
+    remove_action( 'wpcargo_after_package_totals', 'wpcargo_after_package_details_callback', 10 );
+    add_action( 'wpcargo_after_package_totals', 'wpcte_pesos_tracking_render', 10, 1 );
+}
+
+function wpcte_pesos_tracking_render( $shipment ) {
+    if ( empty( $shipment ) ) return;
+    $post_id     = (int) $shipment->ID;
+    $tipo_medida = get_post_meta( $post_id, 'wpcte_tipo_medida', true );
+    if ( empty( $tipo_medida ) ) return;
+
+    if ( $tipo_medida === 'volumen' ) {
+        $alto  = (float) get_post_meta( $post_id, 'wpcte_dim_alto',  true );
+        $ancho = (float) get_post_meta( $post_id, 'wpcte_dim_ancho', true );
+        $largo = (float) get_post_meta( $post_id, 'wpcte_dim_largo', true );
+        if ( ! $alto && ! $ancho && ! $largo ) return;
+        $valor = esc_html( number_format( $alto, 0 ) ) . ' × ' . esc_html( number_format( $ancho, 0 ) ) . ' × ' . esc_html( number_format( $largo, 0 ) ) . ' cm';
+    } else {
+        $peso = (float) get_post_meta( $post_id, 'wpcte_peso_cotizado', true );
+        if ( $peso <= 0 ) return;
+        $unit  = function_exists( 'wpcargo_package_settings' ) ? esc_html( wpcargo_package_settings()->weight_unit ) : 'kg';
+        $valor = esc_html( number_format( $peso, 2 ) ) . ' ' . $unit;
+    }
+    ?>
+    <div id="wpcte-peso-tracking" style="margin:1rem 0;">
+        <div class="card">
+            <div class="card-body text-center" style="padding:.8rem 1rem;">
+                <span style="font-size:1.1rem;font-weight:700;"><?php echo $valor; ?></span>
+            </div>
+        </div>
+    </div>
     <?php
 }
