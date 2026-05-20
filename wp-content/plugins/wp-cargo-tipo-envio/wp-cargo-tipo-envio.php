@@ -3566,9 +3566,14 @@ function wpcte_pesos_tracking_render( $shipment ) {
         $unit  = function_exists( 'wpcargo_package_settings' ) ? esc_html( wpcargo_package_settings()->weight_unit ) : 'kg';
         $valor = esc_html( number_format( $peso, 2 ) ) . ' ' . $unit;
     }
+    $tipo_label = $tipo_medida === 'volumen' ? 'Por Volumen' : 'Por Peso';
     ?>
     <div id="wpcte-peso-tracking" style="margin:1rem 0;">
         <div class="card">
+            <div class="card-header" style="font-weight:700;">
+                Medida del Envío
+                <span style="font-weight:400;font-size:.85rem;margin-left:.5rem;color:#666;">(<?php echo esc_html( $tipo_label ); ?>)</span>
+            </div>
             <div class="card-body text-center" style="padding:.8rem 1rem;">
                 <span style="font-size:1.1rem;font-weight:700;"><?php echo $valor; ?></span>
             </div>
