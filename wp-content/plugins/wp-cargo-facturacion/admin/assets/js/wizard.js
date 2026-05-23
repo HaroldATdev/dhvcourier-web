@@ -531,6 +531,7 @@ jQuery(document).ready(function($) {
         }
 
         detectarTipoDoc();
+        $('#wpcfact-tipo-doc').trigger('change'); // Sincronizar visibilidad de campos de guía con el tipo seleccionado
         showStep(3);
     });
 

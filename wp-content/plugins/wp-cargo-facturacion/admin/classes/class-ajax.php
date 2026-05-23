@@ -417,12 +417,14 @@ class WPC_Facturacion_Ajax {
 				require_once dirname( __FILE__ ) . '/../../includes/class-constructor-notaventa.php';
 			}
 			$resultado = WPC_Facturacion_Constructor_NotaVenta::emitir( $user_id, $envios, $doc_num, $nombre, $direccion, $forma_pago );
-		} elseif ( $tipo === '09' || $tipo === '31' ) {
+		} elseif ( ( $tipo === '09' || $tipo === '31' ) && 'libre' !== $modo ) {
+			// Guía de Remisión Remitente (09) o Transportista (31) con envíos vinculados
 			if ( ! class_exists( 'WPC_Facturacion_Constructor_Guia' ) ) {
 				require_once dirname( __FILE__ ) . '/../../includes/class-constructor-guia.php';
 			}
 			$resultado = WPC_Facturacion_Constructor_Guia::emitir( $user_id, $envios, $tipo, $doc_num, $nombre, $direccion, $guia_peso, $guia_motivo, $guia_modalidad, $guia_remitente_doc, $guia_remitente_nombre, $guia_conductor_dni, $guia_conductor_nombre, $guia_conductor_licencia, $guia_vehiculo_placa, $guia_ubigeo_partida, $guia_ubigeo_llegada, $guia_09_transportista_ruc, $guia_09_transportista_nombre, $guia_09_conductor_dni, $guia_09_conductor_nombre, $guia_09_conductor_licencia, $guia_09_vehiculo_placa, $guia_09_partida_departamento, $guia_09_partida_provincia, $guia_09_partida_distrito, $guia_09_llegada_departamento, $guia_09_llegada_provincia, $guia_09_llegada_distrito, $guia_31_partida_departamento, $guia_31_partida_provincia, $guia_31_partida_distrito, $guia_31_llegada_departamento, $guia_31_llegada_provincia, $guia_31_llegada_distrito );
 		} elseif ( 'libre' === $modo ) {
+			// Modo libre: líneas manuales (cualquier tipo, incluido 09/31)
 			$resultado = WPC_Facturacion_Constructor::emitir_libre( $user_id, $lineas_libres, $tipo, $doc_num, $nombre, $direccion, $forma_pago );
 		} else {
 			$resultado = WPC_Facturacion_Constructor::emitir( $user_id, $envios, $tipo, $doc_num, $nombre, $direccion, $forma_pago );
