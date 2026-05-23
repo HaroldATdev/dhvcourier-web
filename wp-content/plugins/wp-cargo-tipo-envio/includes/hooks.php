@@ -898,6 +898,7 @@ document.getElementById('wpcte-cot-btn').addEventListener('click',function(){
     window._wpcte_dest=destCot;
 });
 
+    /* -- INICIO: Lógica de restricción de monto mínimo de cotización (deshabilitada) --
     var montoMinCotizacion=null;
     function wpcteParseMonto(v){
         if(v===null||v===undefined)return NaN;
@@ -935,6 +936,7 @@ document.getElementById('wpcte-cot-btn').addEventListener('click',function(){
         if(me)me.value=n.toFixed(2);
         wpcteInitValidacionMonto();
     };
+    -- FIN: Lógica de restricción de monto mínimo de cotización (deshabilitada) */
 
 /* ── Botón continuar (solo crear) ─────────────────────────── */
 var btnCont2=document.getElementById('wpcte-btn-continuar');
